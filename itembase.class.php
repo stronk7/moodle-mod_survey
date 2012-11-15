@@ -960,7 +960,7 @@ class surveyitem_base {
             if (strlen($this->customnumber)) {
                 $values['customnumber'] = '0';
             } else {
-                $values['customnumber'] = 'null';
+                $values['customnumber'] = '\'\'';
             }
         } else {
             $values['customnumber'] = '\''.$this->customnumber.'\'';
@@ -997,7 +997,7 @@ class surveyitem_base {
 
         // override: $value['fieldname']
         /*------------------------------------------------*/
-        $values['fieldname'] = empty($this->fieldname) ? 'null' : '\''.$this->fieldname.'\'';
+        $values['fieldname'] = empty($this->fieldname) ? '\'\'' : '\''.$this->fieldname.'\'';
 
 
         // $si_fields = array(...'indent', 'basicform', 'advancedsearch', 'draft',
@@ -1078,7 +1078,7 @@ class surveyitem_base {
             if (strlen($this->parentcontent)) {
                 $values['parentcontent'] = '0';
             } else {
-                $values['parentcontent'] = 'null';
+                $values['parentcontent'] = '\'\'';
             }
         } else {
             $values['parentcontent'] = $this->parentcontent;
@@ -1159,12 +1159,15 @@ class surveyitem_base {
         foreach($values as $k => $v) {
             if ($v === 'err') { // the field has not been touched
                 // look at the value stored in $this
-                if (empty($this->{$k})) {
-                    $values[$k] = '\'\'';
+                if (is_null($this->{$k})) {
+                    $values[$k] = 'null';
                 } else {
-                    $val = strval($this->{$k});
-                    if (is_numeric($val)) {
-                        $values[$k] = $val;
+                    if (empty($this->{$k})) {
+                        if (strlen($this->{$k})) {
+                            $values[$k] = '0';
+                        } else {
+                            $values[$k] = '\'\'';
+                        }
                     } else {
                         $values[$k] = '\''.$this->{$k}.'\'';
                     }

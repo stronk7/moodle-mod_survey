@@ -1668,8 +1668,8 @@ function survey_wlib_content(&$libcontent, $surveyid, $data, &$langtree) {
     // STEP 02: verify $itemseeds is not empty
     if (!count($itemseeds)) return;
 
-    // STEP 03: prima di aggiungere la plugin fittizia 'item'
-    //          sostituisci '// require_once(_LIBRARIES_)' con l'elenco delle require_once
+    // STEP 03: before adding the fictitious plugin 'item'
+    //          replace '// require_once(_LIBRARIES_)' with the list of require_once
     $librarycall = 'require_once($CFG->dirroot.\'/mod/survey/lib.php\');'."\n";
     $librarycall .= 'require_once($CFG->dirroot.\'/mod/survey/template/lib.php\');'."\n";
     foreach ($itemseeds as $itemseed) {
@@ -1677,7 +1677,7 @@ function survey_wlib_content(&$libcontent, $surveyid, $data, &$langtree) {
     }
     $libcontent = str_replace('// require_once(_LIBRARIES_);', $librarycall, $libcontent);
 
-    // STEP 04: aggiungi in testa l'elemento 'item'
+    // STEP 04: add, at top, the 'item' element
     $base = new stdClass();
     $base->plugin = 'item';
     $itemseeds = array_merge(array('item' => $base), $itemseeds);
@@ -1685,10 +1685,10 @@ function survey_wlib_content(&$libcontent, $surveyid, $data, &$langtree) {
     // STEP 05: build survey_$plugin table structure array
     foreach ($itemseeds as $itemseed) {
         $tablename = 'survey_'.$itemseed->plugin;
-        if ($structure = survey_get_db_structure($tablename)) { // <-- only page break returns false
+        if ($structure = survey_get_db_structure($tablename)) {
             $structures[$tablename] = $structure;
 
-            // se c'è un campo che finisce in _sid crea la riga di inizializzazione dell'indice
+            // if there is a field ending in '_sid' create the line initializing the index
             $currentsid = array();
             foreach ($structure as $field) {
                 if (substr($field, -4) == '_sid') {
@@ -2227,12 +2227,19 @@ function survey_build_preset_content($survey) {
         $xmltable = $xmlitem->addChild('survey_item');
         foreach ($structure as $field) {
             if ($field == 'parentid') {
-                $sqlparams = array('id' => $item->parentid);
-                // I store sortindex instead of parentid, because at restore time parent id will change
-                $parentvalue = $DB->get_field('survey_item', 'sortindex', $sqlparams);
-                $val = $parentvalue;
+                if ($item->parentid) {
+                    $sqlparams = array('id' => $item->parentid);
+                    // I store sortindex instead of parentid, because at restore time parent id will change
+                    $val = $DB->get_field('survey_item', 'sortindex', $sqlparams);
+                } else {
+                    $val = 0;
+                }
             } else {
-                $val = $item->{$field};
+                if (is_null($item->{$field})) {
+                    $val = SURVEY_EMPTYPRESETFIELD;
+                } else {
+                    $val = $item->{$field};
+                }
             }
             $xmlfield = $xmltable->addChild($field, $val);
         }
