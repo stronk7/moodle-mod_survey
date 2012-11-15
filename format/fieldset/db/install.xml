@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/survey/db" VERSION="20090908" COMMENT="XMLDB file for Moodle mod/survey"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="survey_fieldset" COMMENT="fieldset type">
+      <FIELDS>
+        <FIELD NAME="id"           TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true"             SEQUENCE="true"                            NEXT="surveyid"/>
+        <FIELD NAME="surveyid"     TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id"             NEXT="itemid"/>
+        <FIELD NAME="itemid"       TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"       NEXT="fslabel_sid"/>
+
+        <FIELD NAME="fslabel_sid"  TYPE="int"  LENGTH="4"  NOTNULL="false"                             SEQUENCE="false" PREVIOUS="itemid"         NEXT="fslabel"/>
+        <FIELD NAME="fslabel"      TYPE="char" LENGTH="32" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="fslabel_sid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="surveyid" UNIQUE="false" FIELDS="surveyid" NEXT="itemid"/>
+        <INDEX NAME="itemid"   UNIQUE="true"  FIELDS="itemid"   PREVIOUS="surveyid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

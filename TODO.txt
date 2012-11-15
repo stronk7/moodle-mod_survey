@@ -1,0 +1,30 @@
+-> at submit time (the last one, when the submission become SURVEY_CLOSED)
+       I must cleanup the submission because of this problem:
+       at t1: the user answers TRUE to a branching question
+       at t2: the user answer the child (via TRUE) question
+       at t3: the user returns back and choose FALSE for the branching question
+       at t4: then answer the child (via FALSE) question.
+       At this stage the db is not correct and needs cleanup.
+-> does it make sense the research per label?
+-> validate the content of the XML uploaded by the user
+-> at uninstall time delete 'mod_survey' files too
+-> make a general test as teacher and student too (thanks to JR)
+-> * Deletion confirmation date error:
+Are you sure you want delete the selected survey owned by John Doe,
+created on Sunday, 4 November 2012, 11:09 AM and modified on *Thursday,
+1 January 1970, 1:00 AM*? (thanks to JR)
+-> The Validate tab should only be displayed if the survey contains
+branching questions. (thanks to JR)
+-> This has lots of features, but the consequence is that the page is
+"cluttered" with too many settings. Obviously a Show/Hide advanced
+button is needed. (thanks to JR)
+-> ** Required does not work : module refuses to save or submit responses if ALL
+questions have not been answered, does not take into account the
+"required" setting! (thanks to JR)
+-> * folder mod/survey/field should be renamed to /questiontypes  (thanks to JR)
+-> *** month values should range from 1 to 12 (not 0 to 11!) (thanks to JR)
+-> * Checkbox ** Default does not work (thanks to JR)
+-> * Note: it would be useful to have a "manage question types" feature for
+this module, similar to the Quiz questions manage question types, so
+that an Admin would be able to disable/enable survey question types at
+site level. (thanks to JR)

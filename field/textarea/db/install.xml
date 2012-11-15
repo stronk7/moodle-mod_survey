@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/survey/db" VERSION="20090908" COMMENT="XMLDB file for Moodle mod/survey"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="survey_textarea" COMMENT="Text (long) type surveyfield">
+      <FIELDS>
+        <FIELD NAME="id"           TYPE="int" LENGTH="10" NOTNULL="true"  UNSIGNED="true"             SEQUENCE="true"                          NEXT="surveyid"/>
+        <FIELD NAME="surveyid"     TYPE="int" LENGTH="10" NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id"           NEXT="itemid"/>
+        <FIELD NAME="itemid"       TYPE="int" LENGTH="10" NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"     NEXT="useeditor"/>
+
+        <FIELD NAME="useeditor"    TYPE="int" LENGTH="4"  NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="itemid"       NEXT="arearows"/>
+        <FIELD NAME="arearows"     TYPE="int" LENGTH="4"  NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="useeditor"    NEXT="areacols"/>
+        <FIELD NAME="areacols"     TYPE="int" LENGTH="4"  NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="arearows"     NEXT="minlength"/>
+
+        <FIELD NAME="minlength"    TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true"             SEQUENCE="false" PREVIOUS="areacols"     NEXT="maxlength"/>
+        <FIELD NAME="maxlength"    TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true"             SEQUENCE="false" PREVIOUS="minlength"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="surveyid" UNIQUE="false" FIELDS="surveyid" NEXT="itemid"/>
+        <INDEX NAME="itemid"   UNIQUE="true"  FIELDS="itemid"   PREVIOUS="surveyid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

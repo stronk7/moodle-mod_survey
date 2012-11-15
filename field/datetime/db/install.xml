@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/survey/db" VERSION="20090908" COMMENT="XMLDB file for Moodle mod/survey"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="survey_datetime" COMMENT="Date and time type surveyfield">
+      <FIELDS>
+        <FIELD NAME="id"            TYPE="int" LENGTH="10" NOTNULL="true"  UNSIGNED="true"              SEQUENCE="true"                           NEXT="surveyid"/>
+        <FIELD NAME="surveyid"      TYPE="int" LENGTH="10" NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="id"            NEXT="itemid"/>
+        <FIELD NAME="itemid"        TYPE="int" LENGTH="10" NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"      NEXT="defaultoption"/>
+
+        <FIELD NAME="defaultoption" TYPE="int" LENGTH="2"  NOTNULL="true"  UNSIGNED="false" DEFAULT="2" SEQUENCE="false" PREVIOUS="itemid"        NEXT="defaultvalue"/>
+        <FIELD NAME="defaultvalue"  TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="defaultoption" NEXT="lowerbound"/>
+
+        <FIELD NAME="lowerbound"    TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="defaultvalue"  NEXT="upperbound"/>
+        <FIELD NAME="upperbound"    TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="lowerbound"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="surveyid" UNIQUE="false" FIELDS="surveyid" NEXT="itemid"/>
+        <INDEX NAME="itemid"   UNIQUE="true"  FIELDS="itemid"   PREVIOUS="surveyid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

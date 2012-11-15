@@ -1,0 +1,213 @@
+/* styles used by survey */
+.xdebug-error {
+    font-size:large;
+}
+
+/* surveyfields */
+#page-mod-survey-view table#manageitems,
+#page-mod-survey-view table#managepresets {
+    width:100%;
+}
+
+#page-mod-survey-view table#manageitems .plugin {
+    padding:0.5em;
+    text-align:center;
+}
+
+#page-mod-survey-view table#manageitems .sortindex {
+    padding:0.5em;
+    text-align:right;
+    min-width:2.5em;
+}
+
+#page-mod-survey-view table#manageitems .parentitem {
+    padding:0.5em;
+    text-align:left;
+    white-space:nowrap;
+}
+
+#page-mod-survey-view table#manageitems .uavailability,
+#page-mod-survey-view table#manageitems .mavailability {
+    padding:0.5em;
+    text-align:center;
+    white-space:nowrap;
+}
+
+#page-mod-survey-view table#manageitems .basicformpage {
+    padding:0.5em;
+    white-space:nowrap;
+    text-align:center;
+}
+
+#page-mod-survey-view table#manageitems .content {
+    padding:0.5em;
+}
+
+#page-mod-survey-view table#manageitems .customnumber {
+    padding:0.5em;
+    white-space:nowrap;
+}
+
+#page-mod-survey-view table#manageitems .actions {
+    padding:0.5em;
+    white-space:nowrap;
+}
+
+#page-mod-survey-view table#manageitems img.movetarget {
+    height:16px;
+    width:80px;
+}
+
+#page-mod-survey-view table#manageitems .header {
+    text-align:center;
+}
+
+#page-mod-survey-view table#manageitems .dimmed,
+#page-mod-survey-view table#validaterelations .dimmed {
+    color:#CDCDCD;
+}
+
+/* validaterelations */
+#page-mod-survey-view table#validaterelations {
+    width:100%;
+}
+
+#page-mod-survey-view table#validaterelations .plugin {
+    padding:0.5em;
+    text-align:center;
+}
+
+#page-mod-survey-view table#validaterelations .content {
+    padding:0.5em;
+}
+
+#page-mod-survey-view table#validaterelations .sortindex {
+    padding:0.5em;
+    text-align:right;
+    min-width:2.5em;
+}
+
+#page-mod-survey-view table#validaterelations .parentitem {
+    padding:0.5em;
+    text-align:left;
+    white-space:nowrap;
+}
+
+#page-mod-survey-view table#validaterelations .parentconstraints {
+    padding:0.5em;
+    text-align:left;
+    white-space:nowrap;
+}
+
+#page-mod-survey-view table#validaterelations .status {
+    padding:0.5em;
+    white-space:nowrap;
+}
+
+#page-mod-survey-view table#validaterelations .status .warningmessage {
+    color:yellow;
+}
+
+#page-mod-survey-view table#validaterelations .status .errormessage {
+    color:red;
+}
+
+#page-mod-survey-view table#validaterelations .actions,
+#page-mod-survey-view table#managepresets .actions {
+    padding:0.5em;
+    white-space:nowrap;
+}
+
+#page-mod-survey-view table#validaterelations .header {
+    text-align:center;
+}
+
+/* submissions */
+#page-mod-survey-view table#submissions {
+    width:100%;
+}
+
+#page-mod-survey-view table#submissions .cell {
+    vertical-align:middle;
+}
+
+#page-mod-survey-view table#submissions .actions,
+#page-mod-survey-view table#managepresets .actions {
+    padding:0.5em;
+    width:3em;
+}
+
+#page-mod-survey-view table#submissions .picture {
+    padding:0.5em;
+    width:1.2em;
+}
+
+#page-mod-survey-view .fitem .felement.fstatic > p {
+    line-height:1.2em;
+    display:inline;
+}
+
+/* BEGIN OF: selectors for the static field explaining the format needed by each plugin in parentcontent field */
+#page-mod-survey-view .pluginname {
+    left:0;
+    width:25%;
+    float:left;
+    /*border:1px green solid;*/
+}
+
+#page-mod-survey-view .inputformat {
+    position:relative:
+    padding-left:26%;
+    margin-left:26%;
+    /*border:1px blue solid;*/
+}
+
+#page-mod-survey-view .felement.fstatic ul {
+    line-height:1.2em;
+}
+/* END OF: selectors for the static field explaining the format needed by each plugin in parentcontent field */
+
+
+#page-mod-survey-view .mform .fitem .felement .longfield {
+    width:25em;
+}
+
+#page-mod-survey-view .mform .fitem .felement.fgroup {
+    /*padding-bottom:1em;*/
+}
+
+#page-mod-survey-view .mform .fitem .felement .indent-1 {
+    margin-left:5%;
+}
+
+#page-mod-survey-view .mform .fitem .felement .indent-2 {
+    margin-left:10%;
+}
+
+#page-mod-survey-view .mform .fitem .felement .indent-3 {
+    margin-left:15%;
+}
+
+#page-mod-survey-view .mform .fitem .felement .indent-4 {
+    margin-left:20%;
+}
+
+#page-mod-survey-view .mform .fitem .felement .indent-5 {
+    margin-left:25%;
+}
+
+#page-mod-survey-view .mform .fitem .felement .indent-6 {
+    margin-left:30%;
+}
+
+#page-mod-survey-view .mform .fitem .felement .indent-7 {
+    margin-left:35%;
+}
+
+#page-mod-survey-view .mform .fitem .felement .indent-8 {
+    margin-left:40%;
+}
+
+#page-mod-survey-view .mform .fitem .felement .indent-9 {
+    margin-left:45%;
+}

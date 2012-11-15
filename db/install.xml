@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/survey/db" VERSION="20101203" COMMENT="XMLDB file for Moodle mod/survey"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="survey" COMMENT="All surveys activities" NEXT="survey_item">
+      <FIELDS>
+        <FIELD NAME="id"               TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"               SEQUENCE="true"                              NEXT="course"/>
+        <FIELD NAME="course"           TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="id"               NEXT="name"/>
+        <FIELD NAME="name"             TYPE="char" LENGTH="255"    NOTNULL="true"                  DEFAULT="err" SEQUENCE="false" PREVIOUS="course"           NEXT="intro"/>
+        <FIELD NAME="intro"            TYPE="text" LENGTH="small"  NOTNULL="false"                               SEQUENCE="false" PREVIOUS="name"             NEXT="introformat"/>
+        <FIELD NAME="introformat"      TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="intro"            NEXT="readaccess"/>
+        <FIELD NAME="readaccess"       TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="introformat"      NEXT="editaccess"/>
+        <FIELD NAME="editaccess"       TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="readaccess"       NEXT="deleteaccess"/>
+        <FIELD NAME="deleteaccess"     TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="editaccess"       NEXT="newpageforchild"/>
+        <FIELD NAME="newpageforchild"  TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="deleteaccess"     NEXT="saveresume"/>
+        <FIELD NAME="saveresume"       TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="newpageforchild"  NEXT="captcha"/>
+        <FIELD NAME="captcha"          TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="saveresume"       NEXT="history"/>
+        <FIELD NAME="history"          TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="captcha"          NEXT="anonymous"/>
+        <FIELD NAME="anonymous"        TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="history"          NEXT="timeopen"/>
+        <FIELD NAME="timeopen"         TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="true"               SEQUENCE="false" PREVIOUS="anonymous"        NEXT="timeclose"/>
+        <FIELD NAME="timeclose"        TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="true"               SEQUENCE="false" PREVIOUS="timeopen"         NEXT="startyear"/>
+        <FIELD NAME="startyear"        TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="timeclose"        NEXT="stopyear"/>
+        <FIELD NAME="stopyear"         TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="startyear"        NEXT="maxentries"/>
+        <FIELD NAME="maxentries"       TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="stopyear"         NEXT="notifyrole"/>
+        <FIELD NAME="notifyrole"       TYPE="char" LENGTH="255"    NOTNULL="false"                               SEQUENCE="false" PREVIOUS="maxentries"       NEXT="notifymore"/>
+        <FIELD NAME="notifymore"       TYPE="text" LENGTH="small"  NOTNULL="false"                               SEQUENCE="false" PREVIOUS="notifyrole"       NEXT="thankshtml"/>
+        <FIELD NAME="thankshtml"       TYPE="text" LENGTH="small"  NOTNULL="false"                               SEQUENCE="false" PREVIOUS="notifymore"       NEXT="thankshtmlformat"/>
+        <FIELD NAME="thankshtmlformat" TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="thankshtml"       NEXT="timecreated"/>
+
+        <FIELD NAME="timecreated"      TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="thankshtmlformat" NEXT="timemodified"/>
+        <FIELD NAME="timemodified"     TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="true"               SEQUENCE="false" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="survey_item" COMMENT="Survey items (items == fields + formats)" PREVIOUS="survey" NEXT="survey_submissions">
+      <FIELDS>
+        <FIELD NAME="id"               TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"               SEQUENCE="true"                              NEXT="surveyid"/>
+        <FIELD NAME="surveyid"         TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="id"               NEXT="type"/>
+
+        <FIELD NAME="type"             TYPE="char" LENGTH="32"     NOTNULL="true"                  DEFAULT="err" SEQUENCE="false" PREVIOUS="surveyid"         NEXT="plugin"/>
+        <FIELD NAME="plugin"           TYPE="char" LENGTH="32"     NOTNULL="true"                  DEFAULT="err" SEQUENCE="false" PREVIOUS="type"             NEXT="externalname"/>
+
+        <FIELD NAME="externalname"     TYPE="char" LENGTH="32"     NOTNULL="false"                               SEQUENCE="false" PREVIOUS="plugin"           NEXT="content_sid"/>
+
+        <FIELD NAME="content_sid"      TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="externalname"     NEXT="content"/>
+        <FIELD NAME="content"          TYPE="text" LENGTH="small"  NOTNULL="false"                               SEQUENCE="false" PREVIOUS="content_sid"      NEXT="contentformat"/>
+        <FIELD NAME="contentformat"    TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="content"          NEXT="customnumber"/>
+
+        <FIELD NAME="customnumber"     TYPE="char" LENGTH="64"     NOTNULL="false"                               SEQUENCE="false" PREVIOUS="contentformat"    NEXT="extrarow"/>
+        <FIELD NAME="extrarow"         TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="customnumber"     NEXT="softinfo"/>
+        <FIELD NAME="softinfo"         TYPE="char" LENGTH="255"    NOTNULL="false"                               SEQUENCE="false" PREVIOUS="extrarow"         NEXT="required"/>
+        <FIELD NAME="required"         TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="softinfo"         NEXT="fieldname"/>
+        <FIELD NAME="fieldname"        TYPE="char" LENGTH="64"     NOTNULL="false"                               SEQUENCE="false" PREVIOUS="required"         NEXT="indent"/>
+        <FIELD NAME="indent"           TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="fieldname"        NEXT="basicform"/>
+
+<!-- template section -->
+        <FIELD NAME="basicform"        TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="indent"           NEXT="advancedsearch"/>
+        <FIELD NAME="advancedsearch"   TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="basicform"        NEXT="draft"/>
+
+        <FIELD NAME="draft"            TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="advancedsearch"   NEXT="sortindex"/>
+        <FIELD NAME="sortindex"        TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="draft"            NEXT="basicformpage"/>
+        <FIELD NAME="basicformpage"    TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="sortindex"        NEXT="advancedformpage"/>
+        <FIELD NAME="advancedformpage" TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="basicformpage"    NEXT="parentid"/>
+        <FIELD NAME="parentid"         TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="true"               SEQUENCE="false" PREVIOUS="advancedformpage" NEXT="parentcontent"/>
+        <FIELD NAME="parentcontent"    TYPE="char" LENGTH="255"    NOTNULL="false"                               SEQUENCE="false" PREVIOUS="parentid"         NEXT="parentvalue"/>
+        <FIELD NAME="parentvalue"      TYPE="char" LENGTH="255"    NOTNULL="false"                               SEQUENCE="false" PREVIOUS="parentcontent"    NEXT="timecreated"/>
+
+        <FIELD NAME="timecreated"      TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="parentvalue"      NEXT="timemodified"/>
+        <FIELD NAME="timemodified"     TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="true"               SEQUENCE="false" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="surveyid" UNIQUE="false" FIELDS="surveyid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="survey_submissions" COMMENT="Contents provided by users submissions" PREVIOUS="survey_item" NEXT="survey_userdata">
+      <FIELDS>
+        <FIELD NAME="id"            TYPE="int"  LENGTH="10"    NOTNULL="true"  UNSIGNED="true"               SEQUENCE="true"                          NEXT="surveyid"/>
+        <FIELD NAME="surveyid"      TYPE="int"  LENGTH="10"    NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="id"           NEXT="userid"/>
+        <FIELD NAME="userid"        TYPE="int"  LENGTH="10"    NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="surveyid"     NEXT="status"/>
+
+        <FIELD NAME="status"        TYPE="int"  LENGTH="4"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="userid"       NEXT="timecreated"/>
+        <FIELD NAME="timecreated"   TYPE="int"  LENGTH="10"    NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="status"       NEXT="timemodified"/>
+        <FIELD NAME="timemodified"  TYPE="int"  LENGTH="10"    NOTNULL="false" UNSIGNED="true"               SEQUENCE="false" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="surveyid" UNIQUE="false" FIELDS="surveyid" NEXT="userid"/>
+        <INDEX NAME="userid"   UNIQUE="false" FIELDS="userid"   PREVIOUS="surveyid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="survey_userdata" COMMENT="Contents provided by users submissions" PREVIOUS="survey_submissions">
+      <FIELDS>
+        <FIELD NAME="id"            TYPE="int"  LENGTH="10"    NOTNULL="true"  UNSIGNED="true"               SEQUENCE="true"                          NEXT="submissionid"/>
+        <FIELD NAME="submissionid"  TYPE="int"  LENGTH="10"    NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="id"           NEXT="itemid"/>
+
+        <FIELD NAME="itemid"        TYPE="int"  LENGTH="10"    NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="submissionid" NEXT="content"/>
+        <FIELD NAME="content"       TYPE="text" LENGTH="big"   NOTNULL="false"                               SEQUENCE="false" PREVIOUS="itemid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="itemid" UNIQUE="false" FIELDS="itemid"/>
+      </INDEXES>
+    </TABLE>
+</TABLES>
+</XMLDB>
+
