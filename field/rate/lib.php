@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 
-//rates STYLES
+// rates STYLES
 define('SURVEYFIELD_RATE_USERADIO' , 0);
 define('SURVEYFIELD_RATE_USESELECT', 1);
 define('SURVEYFIELD_RATE_VALUERATE_SEPARATOR', ': ');

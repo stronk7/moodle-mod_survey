@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->component = 'mod_survey'; // Full name of the plugin (used for diagnostics)
+$module->component = 'mod_survey';     // Full name of the plugin (used for diagnostics)
 $module->maturity = MATURITY_ALPHA;    //MATURITY_RC
 $module->version = 2012111001;         // The current module version (Date: YYYYMMDDXX)
 $module->requires = 2010031900;        // Requires this Moodle version

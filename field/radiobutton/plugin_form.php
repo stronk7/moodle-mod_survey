@@ -35,43 +35,43 @@ require_once($CFG->dirroot.'/mod/survey/field/radiobutton/lib.php');
 class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // comincio con la "sezione" comune della form
         parent::definition();
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::options_sid
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'options_sid';
         $mform->addElement('hidden', $fieldname, '');
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::options
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'options';
         $mform->addElement('textarea', $fieldname, get_string($fieldname, 'surveyfield_radiobutton'), array('wrap' => 'virtual', 'rows' => '10', 'cols' => '65'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_radiobutton');
         $mform->addRule($fieldname, get_string($fieldname.'_err', 'surveyfield_radiobutton'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_TEXT);
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::labelother
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'labelother';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_radiobutton'), array('maxlength' => '64', 'size' => '50'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_radiobutton');
         $mform->setType($fieldname, PARAM_TEXT);
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::defaultvalue
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'defaultvalue';
         $elementgroup=array();
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_radiobutton'), SURVEY_CUSTOMDEFAULT);
@@ -88,9 +88,9 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname, $item->item_generate_standard_default());
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::adjustment
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'adjustment';
         $options = array(SURVEY_HORIZONTAL => get_string('horizontal', 'surveyfield_radiobutton'), SURVEY_VERTICAL => get_string('vertical', 'surveyfield_radiobutton'));
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_radiobutton'), $options);
@@ -98,25 +98,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setType($fieldname, PARAM_TEXT);
         $mform->setDefault($fieldname, SURVEY_VERTICAL);
 
-        //-------------------------------------------------------------------------------
-        // buttons
-        if (!empty($item->itemid)) {
-            $fieldname = 'buttons';
-            $elementgroup=array();
-            $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));
-            $elementgroup[] = $mform->createElement('submit', 'saveasnew', get_string('saveasnew', 'survey'));
-            $elementgroup[] = $mform->createElement('cancel');
-            $mform->addGroup($elementgroup, $fieldname.'_group', '', ' ', false);
-            $mform->closeHeaderBefore($fieldname.'_group');
-        } else {
-            $this->add_action_buttons(true, get_string('add'));
-        }
-
-        //-------------------------------------------------------------------------------
-        // sono alla fine della form
-        // qui pre-definisco i valori dei campi che ho passato alla form
-        // tramite
-        // $this->set_data($item); // commented on September 17, 2012
+        $this->add_item_buttons();
     }
 
     function validation($data, $files) {
@@ -127,9 +109,9 @@ class survey_pluginform extends surveyitem_baseform {
         $clean_options = survey_textarea_to_array($data['options']);
         $clean_labelother = trim($data['labelother']);
         $clean_defaultvalue = isset($data['defaultvalue']) ? trim($data['defaultvalue']) : '';
-//print_object($clean_options);
-//print_object($clean_labelother);
-//print_object($clean_defaultvalue);
+// print_object($clean_options);
+// print_object($clean_labelother);
+// print_object($clean_defaultvalue);
 
         // costruisco il vettore $value ($label non mi interessa) a partire da $clean_options e $clean_labelother
         $values = array();

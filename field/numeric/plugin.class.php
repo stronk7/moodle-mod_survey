@@ -399,7 +399,7 @@ class surveyfield_numeric extends surveyitem_base {
         $mform->addElement('text', $fieldname, $elementlabel, array('class' => 'indent-'.$this->indent, 'itemid' => $this->itemid));
         $mform->setType($fieldname, PARAM_RAW); // see: moodlelib.php lines 133+
         if (!$searchform) {
-            $mform->setDefault($fieldname, number_format($this->defaultvalue, $this->decimals));
+            $mform->setDefault($fieldname, number_format((double)$this->defaultvalue, $this->decimals));
             $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
             if ($this->required && $canaddrequiredrule) {
                 $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');

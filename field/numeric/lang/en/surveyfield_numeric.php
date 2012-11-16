@@ -26,15 +26,15 @@
 $string['parentformat'] = '[12345.67 or 12345,67]';
 $string['parentformatdecimal'] = '[12345{$a}67]';
 $string['pluginname'] = 'Numeric';
+$string['userfriendlypluginname'] = 'Numeric';
 $string['defaultvalue_help'] = 'This is the value the remote user will find answered by default';
 $string['defaultvalue'] = 'Default';
 $string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';
-$string['numeric'] = 'Numeric';
 $string['digits_help'] = 'The number of digits of the number';
 $string['digits'] = 'Digits';
 $string['signed_help'] = 'Is the expected number supposed to be signed?';
 $string['signed'] = 'Signed value';
-$string['decimalautofix'] = 'exceeding or missing decimals will be dropped out or replaced with zeroes';
+$string['decimalautofix'] = 'exceeding or missing decimals will be dropped out or filled with zeroes';
 $string['decimals_help'] = 'The number of decimals places of the request number';
 $string['decimals'] = 'Decimal positions';
 $string['declaredecimalseparator'] = 'decimal separator is supposed to be \'{$a}\'';

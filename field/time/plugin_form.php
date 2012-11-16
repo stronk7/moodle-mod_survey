@@ -35,18 +35,18 @@ require_once($CFG->dirroot.'/mod/survey/field/time/lib.php');
 class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // comincio con la "sezione" comune della form
         parent::definition();
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $hoptions = array();
         for ($i = 0; $i <= 23; $i++) {
             $hoptions[$i] = sprintf("%02d", $i);
@@ -56,9 +56,9 @@ class survey_pluginform extends surveyitem_baseform {
             $moptions[$i] = sprintf("%02d", $i);
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::defaultvalue
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'defaultvalue';
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_time'), SURVEY_CUSTOMDEFAULT);
@@ -85,9 +85,9 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'validation';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::lowerbound
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'lowerbound';
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hoptions);
@@ -97,9 +97,9 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setDefault($fieldname.'_hour', 0);
         $mform->setDefault($fieldname.'_minute', 0);
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::upperbound
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'upperbound';
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hoptions);
@@ -109,34 +109,16 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setDefault($fieldname.'_hour', 23);
         $mform->setDefault($fieldname.'_minute', 59);
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::rangetype
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'rangetype';
         $options = array(SURVEYFIELD_TIME_INTERNALRANGE => get_string('internalrange', 'surveyfield_time'), SURVEYFIELD_TIME_EXTERNALRANGE => get_string('externalrange', 'surveyfield_time'));
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_time'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_time');
         $mform->setType($fieldname, PARAM_INT);
 
-        //-------------------------------------------------------------------------------
-        // buttons
-        if (!empty($item->itemid)) {
-            $fieldname = 'buttons';
-            $elementgroup=array();
-            $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));
-            $elementgroup[] = $mform->createElement('submit', 'saveasnew', get_string('saveasnew', 'survey'));
-            $elementgroup[] = $mform->createElement('cancel');
-            $mform->addGroup($elementgroup, $fieldname.'_group', '', ' ', false);
-            $mform->closeHeaderBefore($fieldname.'_group');
-        } else {
-            $this->add_action_buttons(true, get_string('add'));
-        }
-
-        //-------------------------------------------------------------------------------
-        // sono alla fine della form
-        // qui pre-definisco i valori dei campi che ho passato alla form
-        // tramite
-        // $this->set_data($item); // commented on September 17, 2012
+        $this->add_item_buttons();
     }
 
     function validation($data, $files) {

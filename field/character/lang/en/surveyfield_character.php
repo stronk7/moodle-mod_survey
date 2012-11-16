@@ -25,7 +25,7 @@
 
 $string['parentformat'] = '[an_alphanum_string]';
 $string['pluginname'] = 'Character';
-$string['character'] = 'Short text';
+$string['userfriendlypluginname'] = 'Short text';
 $string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';
 $string['defaultvalue_help'] = 'This is the value the remote user will find answered by default';
 $string['defaultvalue'] = 'Default';

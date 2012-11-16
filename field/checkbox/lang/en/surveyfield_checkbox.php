@@ -27,7 +27,6 @@ require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/lib.php');
 
 $string['adjustment_help'] = 'How this list of items will be shown? In horital or in vertical?';
 $string['adjustment'] = 'Adjustment';
-$string['checkbox'] = 'Checkbox';
 $string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';
 $string['defaultvalue_help'] = 'This is the value the remote user will find answered by default. The default for this type of question is mandatory so, whether not specified for required items, it will be the first available option. For not required items, unspecified default will provide "Not answering" as pre-filled answer.';
 $string['defaultvalue'] = 'Default';
@@ -40,6 +39,7 @@ $string['options_err'] = 'Options need your attection';
 $string['options_help'] = 'The list of the options for this item. You are allowed to write them as: value'.SURVEY_VALUELABELSEPARATOR.'label in order to define value and label both. The label will be displayed close to the corresponding checkbox, the value will be stored in the survey field. If you only specify one word per line (without separator), value and label will both be valued to that word.';
 $string['options'] = 'Options';
 $string['pluginname'] = 'Checkbox';
+$string['userfriendlypluginname'] = 'Checkbox';
 $string['vertical'] = 'vertical';
 $string['option'] = 'Option';
 $string['allowed'] = 'allowed';

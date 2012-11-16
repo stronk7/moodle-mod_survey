@@ -28,16 +28,16 @@
  * Post installation procedure
  */
 function xmldb_surveyfield_checkbox_install() {
-    //global $CFG, $DB;
-    //require_once(dirname(__FILE__) . '/upgradelib.php');
+    // global $CFG, $DB;
+    // require_once(dirname(__FILE__) . '/upgradelib.php');
 }
 
 /**
  * Post installation procedure recovery
  */
 function xmldb_surveyfield_checkbox_install_recovery() {
-    //global $CFG, $DB;
-    //require_once(dirname(__FILE__) . '/upgradelib.php');
+    // global $CFG, $DB;
+    // require_once(dirname(__FILE__) . '/upgradelib.php');
 
     // continue upgrading from old survey 1.x if needed
     // surveyfield_checkbox_upgrade_legacy();

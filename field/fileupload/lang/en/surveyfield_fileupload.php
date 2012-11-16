@@ -24,7 +24,7 @@
  */
 
 $string['pluginname'] = 'File upload';
-$string['fileupload'] = 'File upload';
+$string['userfriendlypluginname'] = 'File upload';
 $string['maxbytes_help'] = 'Maximum size of the file to upload';
 $string['maxbytes'] = 'Maximum file size';
 $string['filetypes_help'] = 'The comma separated list of allowed file extension';

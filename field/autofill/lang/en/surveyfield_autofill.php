@@ -25,7 +25,7 @@
 
 $string['parentformat'] = '[an_alphanum_string]';
 $string['pluginname'] = 'Autofill';
-$string['autofill'] = 'Autofill';
+$string['userfriendlypluginname'] = 'Autofill';
 $string['submissiontime'] = 'submission time';
 $string['submissiondate'] = 'submission date';
 $string['submissiondateandtime'] = 'submission date and time';

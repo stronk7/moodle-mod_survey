@@ -71,12 +71,12 @@ if (!$survey->history) {
 $tableheaders[] = get_string('actions');
 $table->define_headers($tableheaders);
 
-//$table->collapsible(true);
+// $table->collapsible(true);
 $table->sortable(true, 'sortindex', 'ASC');//sorted by sortindex by default
 $table->no_sorting('actions');
 
-//$table->column_style('actions', 'width', '60px');
-//$table->column_style('actions', 'align', 'center');
+// $table->column_style('actions', 'width', '60px');
+// $table->column_style('actions', 'align', 'center');
 $table->column_class('picture', 'picture');
 $table->column_class('fullname', 'fullname');
 $table->column_class('status', 'status');
@@ -97,7 +97,7 @@ $table->set_attribute('cellpadding', 5);
 $table->set_attribute('id', 'submissions');
 $table->set_attribute('class', 'generaltable');
 $table->set_attribute('align', 'center');
-//$table->set_attribute('width', '90%');
+// $table->set_attribute('width', '90%');
 $table->setup();
 
 /******************************************************************************/
@@ -230,7 +230,7 @@ if ($submissions->valid()) {
             $icons .= '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
         } else {                                                                                              // view only
             $paramurl['pag'] = SURVEY_SUBMISSION_READONLY;
-            //$paramurl['act'] = SURVEY_VIEWSURVEY;
+            // $paramurl['act'] = SURVEY_VIEWSURVEY;
             $basepath = new moodle_url('view.php', $paramurl);
             $icontitle = $restrictedaccess;
             $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';

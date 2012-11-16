@@ -435,7 +435,7 @@ class surveyfield_character extends surveyitem_base {
                     }
                     break;
                 case SURVEYFIELD_CHARACTER_URLPATTERN:
-                    //if (!preg_match('~^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$~i', $data[$fieldname])) {
+                    // if (!preg_match('~^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$~i', $data[$fieldname])) {
                     if (!survey_character_is_valid_url($data[$fieldname])) {
                         $errors[$fieldname] = get_string('uerr_invalidurl', 'surveyfield_character');
                     }

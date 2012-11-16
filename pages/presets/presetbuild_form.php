@@ -38,31 +38,31 @@ class survey_presetbuildform extends moodleform {
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
 
-        //----------------------------------------
+        // ----------------------------------------
         // presetbuild::surveyid
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'surveyid';
         $mform->addElement('hidden', $fieldname, 0);
 
-        //----------------------------------------
+        // ----------------------------------------
         // presetbuild::presetname
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'presetname';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
         $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_FILE); // presetname is going to be a file name
 
-        //----------------------------------------
+        // ----------------------------------------
         // presetbuild::overwrite
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'overwrite';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-        //----------------------------------------
+        // ----------------------------------------
         // presetbuild::sharinglevel
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'sharinglevel';
         $options = array();
 
@@ -72,7 +72,7 @@ class survey_presetbuildform extends moodleform {
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
         $mform->setDefault($fieldname, CONTEXT_SYSTEM);
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons(false, get_string('continue'));
     }
@@ -88,7 +88,11 @@ class survey_presetbuildform extends moodleform {
             foreach ($componentfiles as $xmlfile) {
                 $comparename = str_replace(' ', '_', $data['presetname']).'.xml';
                 if ($comparename == $xmlfile->get_filename()) {
-                    $errors['presetname'] = get_string('enteruniquename', 'survey', $data['presetname']);
+                    if (isset($data['overwrite'])) {
+                        $xmlfile->delete();
+                    } else {
+                        $errors['presetname'] = get_string('enteruniquename', 'survey', $data['presetname']);
+                    }
                     break;
                 }
             }

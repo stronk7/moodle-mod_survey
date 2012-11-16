@@ -508,7 +508,7 @@ class surveyfield_checkbox extends surveyitem_base {
         }
 
         if (empty($return)) {
-            //$return[] = get_string('missinganswer', 'survey');
+            // $return[] = get_string('missinganswer', 'survey');
             $olduserdata->content = null;
         } else {
             $olduserdata->content = implode(SURVEYFIELD_CHECKBOX_VALUESEPARATOR, $return);

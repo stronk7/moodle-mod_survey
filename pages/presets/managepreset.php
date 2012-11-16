@@ -63,7 +63,7 @@ $tableheaders[] = get_string('timecreated', 'survey');
 $tableheaders[] = get_string('actions');
 $table->define_headers($tableheaders);
 
-//$table->collapsible(true);
+// $table->collapsible(true);
 $table->sortable(true, 'presetname'); //sorted by sortindex by default
 $table->no_sorting('actions');
 
@@ -73,10 +73,10 @@ $table->column_class('timecreated', 'timecreated');
 $table->column_class('actions', 'actions');
 
 // definisco delle proprietà generali per tutta la tabella
-//$table->set_attribute('cellpadding', '5');
+// $table->set_attribute('cellpadding', '5');
 $table->set_attribute('id', 'managepresets');
 $table->set_attribute('class', 'generaltable');
-//$table->set_attribute('width', '90%');
+// $table->set_attribute('width', '90%');
 $table->setup();
 
 $applytitle = get_string('applypreset', 'survey');
@@ -85,8 +85,8 @@ $exporttitle = get_string('presetexport', 'survey');
 
 $options = survey_get_sharinglevel_options($cm->id, $survey);
 
-//echo '$options:';
-//var_dump($options);
+// echo '$options:';
+// var_dump($options);
 
 $presets = new stdClass();
 foreach($options as $sharinglevel => $v) {
@@ -98,13 +98,13 @@ foreach($options as $sharinglevel => $v) {
     $presets->{$contextstring} = survey_get_available_presets($contextid, 'mod_survey');
 }
 
-//echo '$presets:';
-//var_dump($presets);
+// echo '$presets:';
+// var_dump($presets);
 
 foreach($presets as $contextstring => $contextfiles) {
     foreach($contextfiles as $xmlfile) {
-//echo '$xmlfile:';
-//var_dump($xmlfile);
+// echo '$xmlfile:';
+// var_dump($xmlfile);
         $tablerow = array();
         $tablerow[] = $xmlfile->get_filename();
         $tablerow[] = get_string($contextstring, 'survey');
@@ -113,7 +113,7 @@ foreach($presets as $contextstring => $contextfiles) {
         $paramurl_base['fid'] = $xmlfile->get_id();
 
         $icons = '';
-        //*************************************** SURVEY_DELETEPRESET
+        // *************************************** SURVEY_DELETEPRESET
         if ($xmlfile->get_userid() == $USER->id) { // only the owner can delete his/her preset
             $paramurl = $paramurl_base + array('act' => SURVEY_DELETEPRESET);
             $basepath = new moodle_url('view.php', $paramurl);
@@ -122,7 +122,7 @@ foreach($presets as $contextstring => $contextfiles) {
             $icons .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$deletetitle.'" title="'.$deletetitle.'" /></a>&nbsp;';
         }
 
-        //*************************************** SURVEY_EXPORTPRESET
+        // *************************************** SURVEY_EXPORTPRESET
         $paramurl = $paramurl_base + array('act' => SURVEY_EXPORTPRESET);
         $basepath = new moodle_url('view.php', $paramurl);
 

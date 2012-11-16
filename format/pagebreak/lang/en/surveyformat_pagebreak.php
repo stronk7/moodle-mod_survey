@@ -24,4 +24,4 @@
  */
 
 $string['pluginname'] = 'Page break';
-$string['pagebreak'] = 'Page break';
+$string['userfriendlypluginname'] = 'Page break';

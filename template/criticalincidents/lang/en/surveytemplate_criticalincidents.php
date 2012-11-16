@@ -24,6 +24,7 @@
  */
 
 $string['pluginname'] = 'Critical Incidents';
+
 $string['content01'] = '<p>While thinking about recent events in this class, answer the questions below.</p>';
 $string['content02'] = '<p>At what moment in class were you most engaged as a learner?</p>';
 $string['content03'] = '<p>At what moment in class were you most distanced as a learner?</p>';

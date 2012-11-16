@@ -305,8 +305,8 @@ class surveyfield_multiselect extends surveyitem_base {
         $disabilitationinfo = array();
 
         // I need to know how to call mfrom element corresponding to the content of $child_parentcontent
-        //$valuelabel = $this->item_get_value_label_array('options');
-        //$constraintsvalues = survey_textarea_to_array($child_parentcontent);
+        // $valuelabel = $this->item_get_value_label_array('options');
+        // $constraintsvalues = survey_textarea_to_array($child_parentcontent);
         // it is needed to order $constraintsvalues as $fieldname is ordered
 
         $mformelementinfo = new stdClass();

@@ -36,21 +36,21 @@ class survey_itemtypeform extends moodleform {
 
         $mform = $this->_form;
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::plugin
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'plugin';
         // TAKE CARE! Here the plugin holds type and plugin both
         $field_plugins = survey_get_plugin_list(SURVEY_FIELD, true);
         $format_plugins = survey_get_plugin_list(SURVEY_FORMAT, true);
 
         foreach ($field_plugins as $k => $v) {
-            $field_plugins[$k] = get_string($v, 'surveyfield_'.$v);
+            $field_plugins[$k] = get_string('userfriendlypluginname', 'surveyfield_'.$v);
         }
         asort($field_plugins);
 
         foreach ($format_plugins as $k => $v) {
-            $format_plugins[$k] = get_string($v, 'surveyformat_'.$v);
+            $format_plugins[$k] = get_string('userfriendlypluginname', 'surveyformat_'.$v);
         }
         asort($format_plugins);
 
@@ -60,7 +60,7 @@ class survey_itemtypeform extends moodleform {
         $mform->addElement('selectgroups', $fieldname, get_string($fieldname, 'survey'), $pluginlist);
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons(false, get_string('continue'));
     }

@@ -575,7 +575,7 @@ class surveyfield_rate extends surveyitem_base {
             $olduserdata->content = null;
         } else {
             $valuelabel = $this->item_get_value_label_array('options');
-            //var_dump($valuelabel);
+            // var_dump($valuelabel);
             $optioncount = count($valuelabel);
             $i = 0;
             $return = array();

@@ -34,11 +34,11 @@ function xmldb_surveytemplate_collesactualpreferred_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    //if ($oldversion < 2012101103) {
+    // if ($oldversion < 2012101103) {
 
         // survey savepoint reached
     //    upgrade_plugin_savepoint(true, 2012062560, 'surveytemplate_collesactualpreferred', 'survey');
-    //}
+    // }
 
     return true;
 }

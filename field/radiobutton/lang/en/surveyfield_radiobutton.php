@@ -27,7 +27,8 @@ require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/lib.php');
 
 $string['parentformat'] = '[label]';
 $string['parentcontent_err'] = '{$a} is not part of the options of the depend item. The constraint can never be verified.';
-$string['pluginname'] = 'Radio buttons';
+$string['pluginname'] = 'Radio button';
+$string['userfriendlypluginname'] = 'Radio buttons';
 $string['adjustment_help'] = 'How this list of items will be shown? In horital or in vertical?';
 $string['adjustment'] = 'Adjustment';
 $string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';
@@ -39,7 +40,6 @@ $string['labelother'] = 'Option "other"';
 $string['options_err'] = 'Options need your attection';
 $string['options_help'] = 'The list of the options for this item. You are allowed to write them as: value'.SURVEY_VALUELABELSEPARATOR.'label in order to define value and label both. The label will be displayed close to the corresponding radio button, the value will be stored in the survey field. If you only specify one word per line (without separator), value and label will both be valued to that word.';
 $string['options'] = 'Options';
-$string['radiobutton'] = 'Radio button';
 $string['vertical'] = 'vertical';
 $string['customdefault'] = 'Custom';
 $string['uerr_optionnotset'] = 'Please choose an option';

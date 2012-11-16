@@ -34,11 +34,11 @@ function xmldb_surveyfield_radiobutton_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    //if ($oldversion < 2012101103) {
+    // if ($oldversion < 2012101103) {
 
         // survey savepoint reached
     //    upgrade_plugin_savepoint(true, 2012062560, 'surveyfield_radiobutton', 'survey');
-    //}
+    // }
 
     return true;
 }

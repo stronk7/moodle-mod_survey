@@ -24,6 +24,6 @@
  */
 
 $string['pluginname'] = 'Fieldset';
-$string['fieldset'] = 'Fieldset';
+$string['userfriendlypluginname'] = 'Fieldset';
 $string['fieldsetname'] = 'Fieldset label';
 $string['fieldsetname_help'] = 'The label describing by the fieldset.';

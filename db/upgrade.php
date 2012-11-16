@@ -44,11 +44,11 @@ function xmldb_survey_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
 
-    //if ($oldversion < 2012101103) {
+    // if ($oldversion < 2012101103) {
 
         // survey savepoint reached
     //    upgrade_mod_savepoint(true, 2012101103, 'survey');
-    //}
+    // }
 
     return true;
 }

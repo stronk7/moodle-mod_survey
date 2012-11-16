@@ -35,27 +35,27 @@ require_once($CFG->dirroot.'/mod/survey/field/datetime/lib.php');
 class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // comincio con la "sezione" comune della form
         parent::definition();
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $startyear = $this->_customdata->survey->startyear;
         $stopyear = $this->_customdata->survey->stopyear;
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::defaultvalue
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'defaultvalue';
         $days = array_combine(range(1, 31), range(1, 31));
-        //$months = array_combine(range(0, 11), range(0, 11));
+        // $months = array_combine(range(0, 11), range(0, 11));
         $months = array();
         for ($i=1; $i<=12; $i++) {
             $months[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), "%B"); // january, february, march...
@@ -96,9 +96,9 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'validation';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::lowerbound
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'lowerbound';
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('select', $fieldname.'_day', '', $days);
@@ -114,9 +114,9 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setDefault($fieldname.'_hour', '0');
         $mform->setDefault($fieldname.'_minute', '0');
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::upperbound
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'upperbound';
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('select', $fieldname.'_day', '', $days);
@@ -132,25 +132,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setDefault($fieldname.'_hour', '23');
         $mform->setDefault($fieldname.'_minute', '59');
 
-        //-------------------------------------------------------------------------------
-        // buttons
-        if (!empty($item->itemid)) {
-            $fieldname = 'buttons';
-            $elementgroup=array();
-            $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));
-            $elementgroup[] = $mform->createElement('submit', 'saveasnew', get_string('saveasnew', 'survey'));
-            $elementgroup[] = $mform->createElement('cancel');
-            $mform->addGroup($elementgroup, $fieldname.'_group', '', ' ', false);
-            $mform->closeHeaderBefore($fieldname.'_group');
-        } else {
-            $this->add_action_buttons(true, get_string('add'));
-        }
-
-        //-------------------------------------------------------------------------------
-        // sono alla fine della form
-        // qui pre-definisco i valori dei campi che ho passato alla form
-        // tramite
-        // $this->set_data($item); // commented on September 17, 2012
+        $this->add_item_buttons();
     }
 
     function validation($data, $files) {

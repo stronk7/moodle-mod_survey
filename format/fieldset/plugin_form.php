@@ -35,11 +35,11 @@ require_once($CFG->dirroot.'/mod/survey/format/fieldset/lib.php');
 class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,43 +49,25 @@ class survey_pluginform extends surveyitem_baseform {
         $typename = get_string('pluginname', 'surveyformat_'.$item->plugin);
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey', $typename));
 
-    //----------------------------------------
+    // ----------------------------------------
     // newitem::content
-    //----------------------------------------
+    // ----------------------------------------
         $fieldname = 'fslabel';
         $mform->addElement('text', $fieldname, get_string('fieldsetname', 'surveyformat_fieldset'));
         $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->addHelpButton($fieldname, 'fieldsetname', 'surveyformat_fieldset');
         $mform->setType($fieldname, PARAM_TEXT);
 
-    //----------------------------------------
+    // ----------------------------------------
     // newitem::contentformat
-    //----------------------------------------
+    // ----------------------------------------
         $fieldname = 'contentformat';
         $mform->addElement('hidden', $fieldname, PARAM_CLEANHTML);
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // finisco con la "sezione" comune della form
         parent::definition();
 
-        //-------------------------------------------------------------------------------
-        // buttons
-        if (!empty($item->itemid)) {
-            $fieldname = 'buttons';
-            $elementgroup=array();
-            $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));
-            $elementgroup[] = $mform->createElement('submit', 'saveasnew', get_string('saveasnew', 'survey'));
-            $elementgroup[] = $mform->createElement('cancel');
-            $mform->addGroup($elementgroup, $fieldname.'_group', '', ' ', false);
-            $mform->closeHeaderBefore($fieldname.'_group');
-        } else {
-            $this->add_action_buttons(true, get_string('add'));
-        }
-
-        //-------------------------------------------------------------------------------
-        // sono alla fine della form
-        // qui pre-definisco i valori dei campi che ho passato alla form
-        // tramite
-        // $this->set_data($item); // commented on September 17, 2012
+        $this->add_item_buttons();
     }
 }

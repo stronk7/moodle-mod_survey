@@ -26,9 +26,9 @@ class survey_exportform extends moodleform {
 
         $mform = $this->_form;
 
-        //----------------------------------------
+        // ----------------------------------------
         // submissionexport::status
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'status';
         if ($this->_customdata->saveresume) {
             $options = array(SURVEY_STATUSCLOSED => get_string('statusclosed'    , 'survey'),
@@ -39,9 +39,9 @@ class survey_exportform extends moodleform {
             $mform->addElement('hidden', $fieldname, SURVEY_STATUSCLOSED);
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // submissionexport::basicform
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'basicform';
         if ($this->_customdata->canaccessadvancedform) {
             $options = array(SURVEY_FILLONLY => get_string('download_usercanfill', 'survey'),
@@ -51,16 +51,16 @@ class survey_exportform extends moodleform {
             $mform->addElement('hidden', $fieldname, SURVEY_FILLONLY);
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // submissionexport::includedraft
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'includedraft';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         $mform->setType($fieldname, PARAM_INT);
 
-        //----------------------------------------
+        // ----------------------------------------
         // submissionexport::downloadtype
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'downloadtype';
         $pluginlist = array(SURVEY_DOWNLOADCSV => get_string('downloadtocsv', 'survey'),
                             SURVEY_DOWNLOADXLS => get_string('downloadtoxls', 'survey'));

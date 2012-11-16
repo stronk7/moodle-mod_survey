@@ -26,6 +26,7 @@
 require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/lib.php');
 
 $string['pluginname'] = 'Rate';
+$string['userfriendlypluginname'] = 'Rate';
 $string['customdefault'] = 'Custom';
 $string['deafultsnotunique'] = 'Defaults have to be different whether different rates is required';
 $string['default_notamongrates'] = 'The default item "{$a}" was not found among rates';
@@ -39,7 +40,6 @@ $string['notenoughrares'] = 'Number of rates is not enough to force different ra
 $string['options_err'] = 'Options need your attection';
 $string['options_help'] = 'The list of the options for this item.';
 $string['options'] = 'Options';
-$string['rate'] = 'Rate';
 $string['rates_err'] = 'Number of rates has to be greater or equal than the number of options to allow different rates';
 $string['rates_err'] = 'Provided rates need your attention';
 $string['rates_help'] = 'The list of values to rate the options of this question. You can choose to write them with the format: value'.SURVEY_VALUELABELSEPARATOR.'label. The label will be displayed on the screen, the value will be stored in the survey field. If you only specify one word per line, value and label will both be valued to that word.';

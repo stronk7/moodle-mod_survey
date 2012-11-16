@@ -28,14 +28,14 @@
  */
 
 function xmldb_survey_install() {
-    //global $CFG, $DB;
-    //require_once(dirname(__FILE__) . '/upgradelib.php');
+    // global $CFG, $DB;
+    // require_once(dirname(__FILE__) . '/upgradelib.php');
 }
 
 /**
  * Post installation procedure recovery
  */
 function xmldb_survey_install_recovery() {
-    //global $CFG, $DB;
-    //require_once(dirname(__FILE__) . '/upgradelib.php');
+    // global $CFG, $DB;
+    // require_once(dirname(__FILE__) . '/upgradelib.php');
 }

@@ -35,44 +35,44 @@ require_once($CFG->dirroot.'/mod/survey/field/select/lib.php');
 class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // comincio con la "sezione" comune della form
         parent::definition();
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::options_sid
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'options_sid';
         $mform->addElement('hidden', $fieldname, '');
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::options
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'options';
         $mform->addElement('textarea', $fieldname, get_string($fieldname, 'surveyfield_select'), array('wrap' => 'virtual', 'rows' => '10', 'cols' => '65'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_select');
         $mform->addRule($fieldname, get_string($fieldname.'_err', 'surveyfield_select'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_TEXT);
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::labelother
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'labelother';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_select'), array('maxlength' => '64', 'size' => '50'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_select');
-        //$mform->addRule($fieldname, get_string($fieldname.'_err', 'surveyfield_select'), 'required', null, 'client');
+        // $mform->addRule($fieldname, get_string($fieldname.'_err', 'surveyfield_select'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_TEXT);
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::defaultvalue
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'defaultvalue';
         $elementgroup=array();
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_select'), SURVEY_CUSTOMDEFAULT);
@@ -89,28 +89,7 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname, $item->item_generate_standard_default());
         }
 
-        //-------------------------------------------------------------------------------
-        // buttons
-        if (!empty($item->itemid)) {
-            $fieldname = 'buttons';
-            $elementgroup=array();
-            $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));
-            $elementgroup[] = $mform->createElement('submit', 'saveasnew', get_string('saveasnew', 'survey'));
-            $elementgroup[] = $mform->createElement('cancel');
-            $mform->addGroup($elementgroup, $fieldname.'_group', '', ' ', false);
-            $mform->closeHeaderBefore($fieldname.'_group');
-        } else {
-            $this->add_action_buttons(true, get_string('add'));
-        }
-
-// echo '$this:';
-// var_dump($this);
-// die;
-        //-------------------------------------------------------------------------------
-        // sono alla fine della form
-        // qui pre-definisco i valori dei campi che ho passato alla form
-        // tramite
-        // $this->set_data($item); // commented on September 17, 2012
+        $this->add_item_buttons();
     }
 
     function validation($data, $files) {

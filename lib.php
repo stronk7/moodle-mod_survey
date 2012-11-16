@@ -216,10 +216,10 @@ function survey_add_instance($survey) {
     survey_save_user_style($survey, $context);
 
     // manage thankshtml editor
-    //if (!isset($survey->coursemodule)) {
-        //$cm = get_coursemodule_from_id('survey', $survey->id, 0, false, MUST_EXIST);
-        //$survey->coursemodule = $cm->id;
-    //}
+    // if (!isset($survey->coursemodule)) {
+        // $cm = get_coursemodule_from_id('survey', $survey->id, 0, false, MUST_EXIST);
+        // $survey->coursemodule = $cm->id;
+    // }
     $editoroptions = survey_get_editor_options();
     if ($draftitemid = $survey->thankshtml_editor['itemid']) {
         $survey->thankshtml = file_save_draft_area_files($draftitemid, $context->id, 'mod_survey', 'thankshtml', $survey->id, $editoroptions, $survey->thankshtml_editor['text']);
@@ -686,8 +686,8 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     $canmanageplugin = survey_user_can_manage_plugin($cm);
 
     $survey = $DB->get_record('survey', array('id' => $cm->instance));
-    //$currentgroup = groups_get_activity_group($cm);
-    //$groupmode = groups_get_activity_groupmode($cm);
+    // $currentgroup = groups_get_activity_group($cm);
+    // $groupmode = groups_get_activity_groupmode($cm);
 
     $navref->add(SURVEY_TAB1NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => 1)));
     if ($canmanageitems) {
@@ -731,10 +731,10 @@ function survey_user_can_manage_plugin($cm) {
  * @param navigation_node $surveynode {@link navigation_node}
  */
 function survey_extend_settings_navigation(settings_navigation $settings, navigation_node $surveynode) {
-    //global $CFG, $PAGE;
+    // global $CFG, $PAGE;
 
-    //$exportlabel = 'SURVEY_TAB'.SURVEY_TABITEMS.'NAME';
-    //$surveynode->add(constant($exportlabel), new moodle_url('view.php', array('s' => $PAGE->cm->instance, 'tab' => SURVEY_TABITEMS)));
+    // $exportlabel = 'SURVEY_TAB'.SURVEY_TABITEMS.'NAME';
+    // $surveynode->add(constant($exportlabel), new moodle_url('view.php', array('s' => $PAGE->cm->instance, 'tab' => SURVEY_TABITEMS)));
 }
 
 // //////////////////////////////////////////////////////////////////////////////

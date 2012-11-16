@@ -35,22 +35,22 @@ require_once($CFG->dirroot.'/mod/survey/field/autofill/lib.php');
 class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
         $survey = $this->_customdata->survey;
         $hassubmissions = $this->_customdata->hassubmissions;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // finisco con la "sezione" comune della form
         parent::definition();
 
-    //----------------------------------------
+    // ----------------------------------------
     // newitem::contentelement$i
-    //----------------------------------------
+    // ----------------------------------------
         $options = survey_autofill_get_elements($survey->id);
         for ($i = 1; $i < 6; $i++) {
             $fieldname = 'element_'.$i;
@@ -67,33 +67,15 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setType($fieldname.'_text', PARAM_TEXT);
         }
 
-    //----------------------------------------
+    // ----------------------------------------
     // newitem::showfield
-    //----------------------------------------
+    // ----------------------------------------
         $fieldname = 'showfield';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'surveyfield_autofill'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_autofill');
         $mform->setType($fieldname, PARAM_INT);
 
-        //-------------------------------------------------------------------------------
-        // buttons
-        if (!empty($item->itemid)) {
-            $fieldname = 'buttons';
-            $elementgroup=array();
-            $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));
-            $elementgroup[] = $mform->createElement('submit', 'saveasnew', get_string('saveasnew', 'survey'));
-            $elementgroup[] = $mform->createElement('cancel');
-            $mform->addGroup($elementgroup, $fieldname.'_group', '', ' ', false);
-            $mform->closeHeaderBefore($fieldname.'_group');
-        } else {
-            $this->add_action_buttons(true, get_string('add'));
-        }
-
-        //-------------------------------------------------------------------------------
-        // sono alla fine della form
-        // qui pre-definisco i valori dei campi che ho passato alla form
-        // tramite
-        // $this->set_data($item); // commented on September 17, 2012
+        $this->add_item_buttons();
     }
 
     function validation($data, $files) {

@@ -201,7 +201,7 @@ class surveyfield_radiobutton extends surveyitem_base {
         $firstoption = reset($optionarray);
 
         if (preg_match('/^(.*)'.SURVEY_VALUELABELSEPARATOR.'(.*)$/', $firstoption, $match)) { // do not warn: it can never be equal to zero
-            //print_object($match);
+            // print_object($match);
             $default = $match[1];
         } else {
             $default = $firstoption;

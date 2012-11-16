@@ -197,7 +197,7 @@ class surveyfield_select extends surveyitem_base {
         $firstoption = reset($optionarray);
 
         if (preg_match('/^(.*)'.SURVEY_VALUELABELSEPARATOR.'(.*)$/', $firstoption, $match)) { // do not warn: it can never be equal to zero
-            //print_object($match);
+            // print_object($match);
             $default = $match[1];
         } else {
             $default = $firstoption;
@@ -464,7 +464,7 @@ class surveyfield_select extends surveyitem_base {
             } else {
                 $olduserdata->content = $itemdetail['mainelement'];
             }
-//echo '$olduserdata->content = '.$olduserdata->content.'<br />';
+// echo '$olduserdata->content = '.$olduserdata->content.'<br />';
             return;
         }
 

@@ -39,6 +39,6 @@ function xmldb_surveytemplate_criticalincidents_install() {
  * Post installation procedure recovery
  */
 function xmldb_surveytemplate_criticalincidents_install_recovery() {
-    //global $CFG, $DB;
-    //require_once(dirname(__FILE__) . '/upgradelib.php');
+    // global $CFG, $DB;
+    // require_once(dirname(__FILE__) . '/upgradelib.php');
 }

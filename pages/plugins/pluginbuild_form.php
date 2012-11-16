@@ -10,15 +10,15 @@ class survey_exportplugin extends moodleform {
 
         $mform = $this->_form;
 
-        //----------------------------------------
+        // ----------------------------------------
         // pluginbuild::surveyid
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'surveyid';
         $mform->addElement('hidden', $fieldname, 0);
 
-        //----------------------------------------
+        // ----------------------------------------
         // pluginbuild::pluginname
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'pluginname';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');

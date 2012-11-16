@@ -177,9 +177,9 @@ function surveytemplate_collesactualpreferred_add() {
 
             // survey_radiobutton
             /*------------------------------------------------*/
-            //$radio_options_sid++;      // it never changes from 1
-            //$radio_labelother_sid++;   // it never changes from 0
-            //$radio_defaultvalue_sid++; // it never changes from 0
+            // $radio_options_sid++;      // it never changes from 1
+            // $radio_labelother_sid++;   // it never changes from 0
+            // $radio_defaultvalue_sid++; // it never changes from 0
             $values = array(0, $itemid, $radio_options_sid, null,
                             $radio_labelother_sid, null, SURVEY_INVITATIONDEFAULT,
                             $radio_defaultvalue_sid, null, SURVEY_HORIZONTAL);
@@ -206,9 +206,9 @@ function surveytemplate_collesactualpreferred_add() {
 
     // survey_select
     /*------------------------------------------------*/
-    //$select_options_sid++;      // it never changes from 2
-    //$select_labelother_sid++;   // it never changes from 0
-    //$select_defaultvalue_sid++; // it never changes from 0
+    // $select_options_sid++;      // it never changes from 2
+    // $select_labelother_sid++;   // it never changes from 0
+    // $select_defaultvalue_sid++; // it never changes from 0
     $values = array(0, $itemid, $select_options_sid, null,
                     $select_labelother_sid, null, SURVEY_INVITATIONDEFAULT,
                     $select_defaultvalue_sid, null);

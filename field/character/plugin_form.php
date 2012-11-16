@@ -35,20 +35,20 @@ require_once($CFG->dirroot.'/mod/survey/field/character/lib.php');
 class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // comincio con la "sezione" comune della form
         parent::definition();
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::defaultvalue
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'defaultvalue';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_character'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_character');
@@ -61,9 +61,9 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'validation';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::pattern
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'pattern';
         $options = array();
         $options[SURVEYFIELD_CHARACTER_EMAILPATTERN] = get_string('mail', 'surveyfield_character');
@@ -80,9 +80,9 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setType($fieldname, PARAM_RAW);
         $mform->setDefault($fieldname.'_check', 'checked');
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::minlength
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'minlength';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_character'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_character');
@@ -90,9 +90,9 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setDefault($fieldname, 0);
         $mform->setType($fieldname, PARAM_INT);
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::maxlength
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'maxlength';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_character'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_character');
@@ -100,25 +100,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setDefault($fieldname, 255);
         $mform->setType($fieldname, PARAM_INT);
 
-        //-------------------------------------------------------------------------------
-        // buttons
-        if (!empty($item->itemid)) {
-            $fieldname = 'buttons';
-            $elementgroup=array();
-            $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));
-            $elementgroup[] = $mform->createElement('submit', 'saveasnew', get_string('saveasnew', 'survey'));
-            $elementgroup[] = $mform->createElement('cancel');
-            $mform->addGroup($elementgroup, $fieldname.'_group', '', ' ', false);
-            $mform->closeHeaderBefore($fieldname.'_group');
-        } else {
-            $this->add_action_buttons(true, get_string('add'));
-        }
-
-        //-------------------------------------------------------------------------------
-        // sono alla fine della form
-        // qui pre-definisco i valori dei campi che ho passato alla form
-        // tramite
-        // $this->set_data($item); // commented on September 17, 2012
+        $this->add_item_buttons();
     }
 
     function validation($data, $files) {

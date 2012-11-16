@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-//question pre-selected by default along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// question pre-selected by default along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Strings for component 'field_select', language 'en', branch 'MOODLE_20_STABLE'
@@ -28,6 +28,7 @@ require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/lib.php');
 $string['parentformat'] = '[label]';
 $string['parentcontent_err'] = '{$a} is not part of the options of the depend item. The constraint can never be verified.';
 $string['pluginname'] = 'Select';
+$string['userfriendlypluginname'] = 'Select';
 $string['defaultvalue_help'] = 'This is the value the remote user will find answered by default. The default for this type of question is mandatory so, whether not specified for required items, it will be the first available option. For not required items, unspecified default will provide "Not answering" as pre-filled answer.';
 $string['defaultvalue'] = 'Default';
 $string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';
@@ -36,7 +37,6 @@ $string['options_help'] = 'The list of the options for this item. You are allowe
 $string['options'] = 'Options';
 $string['labelother_help'] = 'If this question is equipped with the option "other" followed by a text field, enter here the label for that option. You can choose to write this option with the format: label'.SURVEY_OTHERSEPARATOR.'value. The label will be displayed on the screen, the value will be used as default for the text field. If you only specify one word, the field default will be neglected.';
 $string['labelother'] = 'Option "other"';
-$string['select'] = 'Select';
 $string['customdefault'] = 'Custom';
 $string['standarddefault'] = 'Standard';
 $string['default_missing'] = 'Default is missing. You may like to choose the "{$a}" radio button.';

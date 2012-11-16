@@ -28,16 +28,16 @@
  * Post installation procedure
  */
 function xmldb_surveyformat_label_install() {
-    //global $CFG, $DB;
-    //require_once(dirname(__FILE__) . '/upgradelib.php');
+    // global $CFG, $DB;
+    // require_once(dirname(__FILE__) . '/upgradelib.php');
 }
 
 /**
  * Post installation procedure recovery
  */
 function xmldb_surveyformat_label_install_recovery() {
-    //global $CFG, $DB;
-    //require_once(dirname(__FILE__) . '/upgradelib.php');
+    // global $CFG, $DB;
+    // require_once(dirname(__FILE__) . '/upgradelib.php');
 
     // continue upgrading from old survey 1.x if needed
     // surveyformat_label_upgrade_legacy();

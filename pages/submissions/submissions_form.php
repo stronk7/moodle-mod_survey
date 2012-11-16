@@ -64,8 +64,8 @@ class survey_submissionform extends moodleform {
             $context = context_module::instance($cmid);
 
             foreach ($itemseeds as $itemseed) {
-//echo '$itemseed->basicformpage):';
-//var_dump($itemseed->basicformpage);
+// echo '$itemseed->basicformpage):';
+// var_dump($itemseed->basicformpage);
                 // Show the item only if:
                 //     - all has to going to the same page
                 //       OR
@@ -111,7 +111,7 @@ class survey_submissionform extends moodleform {
             }
         }
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // buttons
         $buttonarray = array();
         if ($formpage != 1) { // 0 or greater than 1
@@ -138,8 +138,8 @@ class survey_submissionform extends moodleform {
     function validation($data, $files) {
         global $DB;
 
-        //$cmid = $this->_customdata->cmid;
-        //$lastformpage = $this->_customdata->lastformpage;
+        // $cmid = $this->_customdata->cmid;
+        // $lastformpage = $this->_customdata->lastformpage;
         $survey = $this->_customdata->survey;
         $submissionid = $this->_customdata->submissionid;
         $formpage = $this->_customdata->formpage;

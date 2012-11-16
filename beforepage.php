@@ -40,9 +40,9 @@ switch ($currenttab) {
 }
 $currentpage = optional_param('pag', $defaultpage, PARAM_INT);
 
-// // //////////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////////////
 // here I manage all the redirection forced before the beginning of the output ($PAGE)
-// // //////////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////////////
 
 switch ($currenttab) {
     case SURVEY_TABSUBMISSIONS:
@@ -440,7 +440,6 @@ switch ($currenttab) {
         }
         break;
     case SURVEY_TABPRESETS:
-
         switch ($currentpage) {
             case SURVEY_PRESETS_MANAGE: // Manage
                 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
@@ -457,7 +456,7 @@ switch ($currenttab) {
                         $filename = $xmlfile->get_filename();
                         $content = $xmlfile->get_content();
 
-                        //echo '<textarea rows="10" cols="100">'.$content.'</textarea>';
+                        // echo '<textarea rows="10" cols="100">'.$content.'</textarea>';
 
                         $presetname = clean_filename('temppreset-' . gmdate("Ymd_Hi"));
                         $exportsubdir = "mod_survey/presetexport";
@@ -497,16 +496,7 @@ switch ($currenttab) {
 
                 if ($formdata = $mform->get_data()) {
                     $xmlcontent = survey_build_preset_content($survey);
-                    //echo '<textarea rows="80" cols="100">'.$xmlcontent.'</textarea>';
-                    $contextid = survey_get_contextid_from_sharinglevel($formdata->sharinglevel);
-                    $componentfiles = survey_get_available_presets($contextid, 'mod_survey');
-
-                    foreach ($componentfiles as $xmlfile) {
-                        $comparename = str_replace(' ', '_', $formdata->presetname).'.xml';
-                        if ($comparename == $xmlfile->get_filename()) {
-                            $xmlfile->delete();
-                        }
-                    }
+                    // echo '<textarea rows="80" cols="100">'.$xmlcontent.'</textarea>';
 
                     survey_save_preset($formdata, $xmlcontent);
 

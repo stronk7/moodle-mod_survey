@@ -461,9 +461,9 @@ class surveyfield_age extends surveyitem_base {
 
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years, array('class' => 'indent-'.$this->indent));
-        //$elementgroup[] = $mform->createElement('static', 'yearlabel_'.$this->itemid, null, get_string('years'));
+        // $elementgroup[] = $mform->createElement('static', 'yearlabel_'.$this->itemid, null, get_string('years'));
         $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
-        //$elementgroup[] = $mform->createElement('static', 'monthlabel_'.$this->itemid, null, get_string('months', 'survey'));
+        // $elementgroup[] = $mform->createElement('static', 'monthlabel_'.$this->itemid, null, get_string('months', 'survey'));
 
         if ($this->required && (!$searchform)) {
             $mform->addGroup($elementgroup, $fieldname.'_group', $elementlabel, ' ', false);

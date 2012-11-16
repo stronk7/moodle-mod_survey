@@ -33,9 +33,9 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool true if success
  */
 function mod_survey_uninstall() {
-    //global $DB;
+    // global $DB;
 
-    //$dbman = $DB->get_manager();
+    // $dbman = $DB->get_manager();
 
     return true;
 }

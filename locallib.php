@@ -1100,8 +1100,8 @@ function survey_get_my_groups($cm) {
 function survey_show_thanks_page($survey, $cm) {
     global $OUTPUT;
 
-//$output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', 'items', $item->itemid);
-//$mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
+// $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', 'items', $item->itemid);
+// $mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
 
 
     if (!empty($survey->thankshtml)) {
@@ -1363,7 +1363,7 @@ function survey_find_submissions($findparams) {
     unset($findparams[$firstitemid]); // drop the first element of $findparams
 
     // should work but does not: MDL-27629
-    //$submissionidlist = $DB->get_records('survey_userdata', array('itemid' => $firstitemid, $DB->sql_compare_text('content') => $firstcontent), 'submissionid');
+    // $submissionidlist = $DB->get_records('survey_userdata', array('itemid' => $firstitemid, $DB->sql_compare_text('content') => $firstcontent), 'submissionid');
 
     $where = 'itemid = :itemid AND '.$DB->sql_compare_text('content').' = :content';
     $params = array('itemid' => $firstitemid, 'content' => (string)$firstcontent);
@@ -1525,7 +1525,7 @@ function survey_plugin_build($data) {
                 make_temp_directory($temp_subdir.'/lang/'.$userlang);
             }
 
-//echo '$master_basepath = '.$master_basepath.'<br />';
+// echo '$master_basepath = '.$master_basepath.'<br />';
 
             $filecopyright = file_get_contents($master_basepath.'/lang/en/surveytemplate_pluginname.php');
             // replace surveyTemplatePluginMaster with the name of the current survey
@@ -1533,8 +1533,8 @@ function survey_plugin_build($data) {
 
             $savedstrings = $filecopyright.survey_extract_original_string($langtree);
 
-//echo '<textarea rows="30" cols="100">'.$savedstrings.'</textarea>';
-//die;
+// echo '<textarea rows="30" cols="100">'.$savedstrings.'</textarea>';
+// die;
 
             // create - this could be 'en' such as 'it'
             $filehandler = fopen($temp_path.'/surveytemplate_'.$data->pluginname.'.php', 'w');
@@ -1798,7 +1798,7 @@ function survey_wlib_intro_si_values(&$libcontent, $si_sid) {
  */
 function survey_wlib_write_si_values(&$libcontent, $values) {
     $libcontent .= '    $values = array(';
-    //$libcontent .= implode(',', $values);
+    // $libcontent .= implode(',', $values);
     $libcontent .= survey_wrap_line($values, 20);
     $libcontent .= ');'."\n";
     // Take care you always write sortindex instead of parentid
@@ -1828,7 +1828,7 @@ function survey_wlib_intro_plugin_values(&$libcontent, $currentplugin, $currents
  */
 function survey_wlib_write_plugin_values(&$libcontent, $values, $tablename, $currentplugin) {
     $libcontent .= '        $values = array(';
-    //$libcontent .= implode(',', $values);
+    // $libcontent .= implode(',', $values);
     $libcontent .= survey_wrap_line($values, 24);
     $libcontent .= ');'."\n";
     $libcontent .= '        $itemid = $DB->insert_record(\''.$tablename.'\', array_combine($'.$currentplugin.'_fields, $values));'."\n";
@@ -2430,11 +2430,10 @@ function survey_delete_preset($cm, $confirm, $fileid) {
  */
 function survey_upload_preset($formdata) {
 
-    $contextid = survey_get_contextid_from_sharinglevel($formdata->sharinglevel);
-
     $preset_options = survey_get_preset_options();
 
     $fieldname = 'importfile';
+    $contextid = survey_get_contextid_from_sharinglevel($formdata->sharinglevel);
     if ($draftitemid = $formdata->{$fieldname.'_filemanager'}) {
         file_save_draft_area_files($draftitemid, $contextid, 'mod_survey', SURVEY_PRESETFILEAREA, 0, $preset_options);
     }
@@ -2466,7 +2465,7 @@ function survey_get_preset_options() {
 }
 
 /**
- * survey_get_preset_options
+ * survey_get_contextid_from_sharinglevel
  * @param none
  * @return $filemanager_options
  */

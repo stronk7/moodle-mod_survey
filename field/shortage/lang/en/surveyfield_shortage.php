@@ -25,13 +25,13 @@
 
 $string['parentformat'] = '[yy]';
 $string['pluginname'] = 'Short age';
+$string['userfriendlypluginname'] = 'Age (short) [yy]';
 $string['defaultvalue_help'] = 'This is the short age the remote user will find answered by default. The default for this type of question is mandatory.';
 $string['defaultvalue'] = 'Default';
 $string['lowerbound_help'] = 'The lower age the user will be allowed to enter';
 $string['lowerbound'] = 'Lower bound';
 $string['upperbound_help'] = 'The upper age the user will be allowed to enter';
 $string['upperbound'] = 'Upper bound';
-$string['shortage'] = 'Age (short) [yy]';
 $string['outofrangedefault'] = 'Default does not fall within the specified range';
 $string['and'] = ' and ';
 $string['restriction_lowerupper'] = 'Age is supposed to fit between {$a}';

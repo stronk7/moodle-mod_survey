@@ -65,8 +65,8 @@ $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
 
 // other things you may want to set - remove if not needed
-//$PAGE->set_cacheable(false);
-//$PAGE->set_focuscontrol('some-html-id');
+// $PAGE->set_cacheable(false);
+// $PAGE->set_focuscontrol('some-html-id');
 
 // Output starts here
 echo $OUTPUT->header();

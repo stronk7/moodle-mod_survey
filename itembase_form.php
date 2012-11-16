@@ -42,27 +42,27 @@ class surveyitem_baseform extends moodleform {
 
         $mform = $this->_form;
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::itemid
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'itemid';
         $mform->addElement('hidden', $fieldname, '');
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::pluginid
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'pluginid';
         $mform->addElement('hidden', $fieldname, '');
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::type
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'type';
         $mform->addElement('hidden', $fieldname, 'bloodytype');
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::plugin
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'plugin';
         $mform->addElement('hidden', $fieldname, 'bloodyplugin');
 
@@ -74,21 +74,21 @@ class surveyitem_baseform extends moodleform {
             $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::externalname
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'externalname';
         $mform->addElement('hidden', $fieldname, '');
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::content_sid
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'content_sid';
         $mform->addElement('hidden', $fieldname, '');
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::content & contentformat
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'content_editor';
         if ($item->item_form_requires[$fieldname]) {
             $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES);
@@ -98,9 +98,9 @@ class surveyitem_baseform extends moodleform {
             $mform->setType($fieldname, PARAM_CLEANHTML);
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::extrarow
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'extrarow';
         if ($forceextrarow = $item->item_form_requires[$fieldname]) {
             if ($forceextrarow === 'disable') {
@@ -118,9 +118,9 @@ class surveyitem_baseform extends moodleform {
             $mform->setType($fieldname, PARAM_INT);
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::softinfo
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'softinfo';
         if ($item->item_form_requires[$fieldname]) {
             $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'), array('class' => 'longfield'));
@@ -128,9 +128,9 @@ class surveyitem_baseform extends moodleform {
             $mform->setType($fieldname, PARAM_TEXT);
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::customnumber
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'customnumber';
         if ($item->item_form_requires[$fieldname]) {
             $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'));
@@ -138,9 +138,9 @@ class surveyitem_baseform extends moodleform {
             $mform->setType($fieldname, PARAM_TEXT);
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::indent
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'indent';
         if ($item->item_form_requires[$fieldname]) {
             $options = array_combine(range(0, 9), range(0, 9));
@@ -149,9 +149,9 @@ class surveyitem_baseform extends moodleform {
             $mform->setDefault($fieldname, '0');
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::required
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'required';
         if ($item->item_form_requires[$fieldname]) {
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
@@ -159,9 +159,9 @@ class surveyitem_baseform extends moodleform {
             $mform->setType($fieldname, PARAM_INT);
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::fieldname
-        //----------------------------------------
+        // ----------------------------------------
         // for SURVEY_FIELD only
         $fieldname = 'fieldname';
         if ($item->item_form_requires[$fieldname]) {
@@ -176,9 +176,9 @@ class surveyitem_baseform extends moodleform {
         $fieldname = 'basicform_fs';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::draft
-        //----------------------------------------
+        // ----------------------------------------
         if (!$hassubmissions) {
             $fieldname = 'draft';
             if ($item->item_form_requires[$fieldname]) {
@@ -188,28 +188,36 @@ class surveyitem_baseform extends moodleform {
             }
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::basicform
-        //----------------------------------------
-        if (!$hassubmissions) {
-            $fieldname = 'basicform';
-            if ($item->item_form_requires[$fieldname]) {
-                $options = array();
+        // ----------------------------------------
+        $fieldname = 'basicform';
+        if ($item->item_form_requires[$fieldname]) {
+            $options = array();
+            if ($hassubmissions) {
+                if ($item->{$fieldname} != SURVEY_NOTPRESENT) {
+                    // if the item is NOT_PRESENT you can not add it when survey $hassubmissions
+                    $options[SURVEY_FILLONLY] = get_string('usercanfill', 'survey');
+                    if ($item->flag->issearchable || ($item->type == SURVEY_FORMAT)) {
+                        $options[SURVEY_FILLANDSEARCH] = get_string('usercansearch', 'survey');
+                    }
+                }
+            } else {
                 $options[SURVEY_NOTPRESENT] = get_string('notinbasicform', 'survey');
                 $options[SURVEY_FILLONLY] = get_string('usercanfill', 'survey');
                 if ($item->flag->issearchable || ($item->type == SURVEY_FORMAT)) {
                     $options[SURVEY_FILLANDSEARCH] = get_string('usercansearch', 'survey');
                 }
-                $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
-                $mform->addHelpButton($fieldname, $fieldname, 'survey');
-                $mform->setType($fieldname, PARAM_INT);
-                $mform->disabledIf($fieldname, 'draft', 'checked');
             }
+            $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
+            $mform->addHelpButton($fieldname, $fieldname, 'survey');
+            $mform->setType($fieldname, PARAM_INT);
+            $mform->disabledIf($fieldname, 'draft', 'checked');
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::advancedsearch
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'advancedsearch';
         if ($item->item_form_requires[$fieldname]) {
             if ($item->flag->issearchable) {
@@ -226,9 +234,9 @@ class surveyitem_baseform extends moodleform {
         $fieldname = 'branching_fs';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::parentid
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'parentid';
         if ($item->item_form_requires[$fieldname]) {
             // create the list of each item with:
@@ -280,18 +288,18 @@ class surveyitem_baseform extends moodleform {
             $mform->setType($fieldname, PARAM_INT);
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::parentcontent
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'parentcontent';
         if ($item->item_form_requires[$fieldname]) {
             $mform->addElement('textarea', $fieldname, get_string($fieldname, 'survey'), array('wrap' => 'virtual', 'rows' => '5', 'cols' => '45'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_RAW);
 
-            //----------------------------------------
+            // ----------------------------------------
             // newitem::parentformat
-            //----------------------------------------
+            // ----------------------------------------
             $fieldname = 'parentformat';
             $a = '<ul>';
             foreach ($pluginarray as $plugin) {
@@ -304,9 +312,9 @@ class surveyitem_baseform extends moodleform {
             $mform->addElement('static', $fieldname, get_string('note', 'survey'), get_string($fieldname, 'survey', $a));
         }
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::parentvalue
-        //----------------------------------------
+        // ----------------------------------------
         // $fieldname = 'parentvalue';
         // $mform->addElement('hidden', $fieldname, '');
 
@@ -318,6 +326,29 @@ class surveyitem_baseform extends moodleform {
             $fieldname = 'specializations';
             $typename = get_string('pluginname', 'surveyfield_'.$item->item_get_plugin());
             $mform->addElement('header', $fieldname, get_string($fieldname, 'survey', $typename));
+        }
+    }
+
+    function add_item_buttons() {
+        $mform = $this->_form;
+
+        $item = $this->_customdata->item;
+        $hassubmissions = $this->_customdata->hassubmissions;
+
+        // -------------------------------------------------------------------------------
+        // buttons
+        if (!empty($item->itemid)) {
+            $fieldname = 'buttons';
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));
+            if (!$hassubmissions) {
+                $elementgroup[] = $mform->createElement('submit', 'saveasnew', get_string('saveasnew', 'survey'));
+            }
+            $elementgroup[] = $mform->createElement('cancel');
+            $mform->addGroup($elementgroup, $fieldname.'_group', '', ' ', false);
+            $mform->closeHeaderBefore($fieldname.'_group');
+        } else {
+            $this->add_action_buttons(true, get_string('add'));
         }
     }
 

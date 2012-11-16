@@ -136,9 +136,9 @@ function surveytemplate_attls_add() {
 
         // survey_radiobutton
         /*------------------------------------------------*/
-        //$radio_options_sid++;      // it never changes from 1
-        //$radio_labelother_sid++;   // it never changes from 0
-        //$radio_defaultvalue_sid++; // it never changes from 0
+        // $radio_options_sid++;      // it never changes from 1
+        // $radio_labelother_sid++;   // it never changes from 0
+        // $radio_defaultvalue_sid++; // it never changes from 0
         $values = array(0, $itemid, $radio_options_sid, null,
                         $radio_labelother_sid, null, SURVEY_INVITATIONDEFAULT,
                         $radio_defaultvalue_sid, null, SURVEY_HORIZONTAL);

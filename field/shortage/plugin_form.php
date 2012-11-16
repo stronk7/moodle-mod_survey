@@ -37,25 +37,25 @@ class survey_pluginform extends surveyitem_baseform {
     function definition() {
         $maximumshortage = get_config('surveyfield_shortage', 'maximumshortage');
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // comincio con la "sezione" comune della form
         parent::definition();
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $format = get_string('strftimemonthyear', 'langconfig');
 
         $years = array_combine(range(0, $maximumshortage), range(0, $maximumshortage));
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::defaultvalue
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'defaultvalue';
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_shortage'), SURVEY_CUSTOMDEFAULT);
@@ -77,41 +77,23 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'validation';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::lowerbound
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'lowerbound';
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_shortage'), $years);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_shortage');
         $mform->setDefault($fieldname, '0');
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::upperbound
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'upperbound';
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_shortage'), $years);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_shortage');
         $mform->setDefault($fieldname, $maximumshortage);
 
-        //-------------------------------------------------------------------------------
-        // buttons
-        if (!empty($item->itemid)) {
-            $fieldname = 'buttons';
-            $elementgroup = array();
-            $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));
-            $elementgroup[] = $mform->createElement('submit', 'saveasnew', get_string('saveasnew', 'survey'));
-            $elementgroup[] = $mform->createElement('cancel');
-            $mform->addGroup($elementgroup, $fieldname.'_group', '', ' ', false);
-            $mform->closeHeaderBefore($fieldname.'_group');
-        } else {
-            $this->add_action_buttons(true, get_string('add'));
-        }
-
-        //-------------------------------------------------------------------------------
-        // sono alla fine della form
-        // qui pre-definisco i valori dei campi che ho passato alla form
-        // tramite
-        // $this->set_data($item); // commented on September 17, 2012
+        $this->add_item_buttons();
     }
 
     function validation($data, $files) {

@@ -117,7 +117,7 @@ $tableheaders[] = get_string('customnumber_header', 'survey');
 $tableheaders[] = get_string('actions');
 $table->define_headers($tableheaders);
 
-//$table->collapsible(true);
+// $table->collapsible(true);
 $table->sortable(true, 'sortindex'); //sorted by sortindex by default
 $table->no_sorting('uavailability');
 $table->no_sorting('mavailability');
@@ -134,17 +134,17 @@ $table->column_class('content', 'content');
 $table->column_class('customnumber', 'customnumber');
 $table->column_class('actions', 'actions');
 
-//$table->initialbars(true);
+// $table->initialbars(true);
 
 // ometti la casella se duplica la precedente
-//$table->column_suppress('picture');
-//$table->column_suppress('fullname');
+// $table->column_suppress('picture');
+// $table->column_suppress('fullname');
 
 // definisco delle proprietà generali per tutta la tabella
-//$table->set_attribute('cellpadding', '5');
+// $table->set_attribute('cellpadding', '5');
 $table->set_attribute('id', 'manageitems');
 $table->set_attribute('class', 'generaltable');
-//$table->set_attribute('width', '90%');
+// $table->set_attribute('width', '90%');
 $table->setup();
 
 /******************************************************************************/
@@ -211,7 +211,7 @@ if (($action == SURVEY_CHANGEORDERASK) && (!$parentid)) {
 
 foreach ($itemseeds as $itemseed) {
     $item = survey_get_item($itemseed->itemid, $itemseed->type, $itemseed->plugin);
-//print_object($item);
+// print_object($item);
 
     $tablerow = array();
 
@@ -219,17 +219,17 @@ foreach ($itemseeds as $itemseed) {
         continue;
     }
 
-    //*************************************** plugin
-    $plugintitle = get_string('pluginname', 'survey'.$item->type.'_'.$item->plugin);
+    // *************************************** plugin
+    $plugintitle = get_string('userfriendlypluginname', 'survey'.$item->type.'_'.$item->plugin);
     $content = '<img src="'.$OUTPUT->pix_url('icon', 'survey'.$item->type.'_'.$item->plugin).'" class="icon" alt="'.$plugintitle.'" title="'.$plugintitle.'" />';
     $tablerow[] = $content;
 
-    //*************************************** sortindex
+    // *************************************** sortindex
     $tablerow[] = $item->sortindex;
 
-    //*************************************** parentid
+    // *************************************** parentid
     if ($item->parentid) {
-        //if (!empty($content)) $content .= ' ';
+        // if (!empty($content)) $content .= ' ';
         $message = get_string('parentid', 'survey');
         $parentsortindex = $DB->get_field('survey_item', 'sortindex', array('id' => $item->parentid));
         $content = $parentsortindex;
@@ -240,7 +240,7 @@ foreach ($itemseeds as $itemseed) {
     }
     $tablerow[] = $content;
 
-    //*************************************** user availability
+    // *************************************** user availability
     if ($item->draft) {
         $message = get_string('usernoedit', 'survey');
         $content = '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
@@ -274,7 +274,7 @@ foreach ($itemseeds as $itemseed) {
     }
     $tablerow[] = $content;
 
-    //*************************************** advanced availability
+    // *************************************** advanced availability
     if ($item->draft) {
         $message = get_string('advancednoedit', 'survey');
         $content = '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
@@ -293,7 +293,7 @@ foreach ($itemseeds as $itemseed) {
     }
     $tablerow[] = $content;
 
-    //*************************************** page
+    // *************************************** page
     if ($item->plugin != 'pagebreak') {
         $content = ($item->basicformpage) ? $item->basicformpage : '..';
         $content .= '/';
@@ -303,7 +303,7 @@ foreach ($itemseeds as $itemseed) {
     }
     $tablerow[] = $content;
 
-    //*************************************** content
+    // *************************************** content
     $itemcontent = $item->item_get_main_text();
     $item->contentformat = FORMAT_HTML;
     $item->contenttrust = 1;
@@ -311,11 +311,11 @@ foreach ($itemseeds as $itemseed) {
     $output = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', 'items', $item->itemid);
     $tablerow[] = $output;
 
-    //*************************************** customnumber
+    // *************************************** customnumber
     $tablerow[] = ($item->type == SURVEY_FIELD) ? $item->customnumber : '';
 
     if ($action != SURVEY_CHANGEORDERASK) {
-        //*************************************** actions
+        // *************************************** actions
         // /////////////////////////////////////////////////
         // $paramurl_base definition
         $paramurl_base = array();
@@ -328,14 +328,14 @@ foreach ($itemseeds as $itemseed) {
         // /////////////////////////////////////////////////
 
         $icons = '';
-        //*************************************** SURVEY_EDITITEM
+        // *************************************** SURVEY_EDITITEM
         $paramurl = $paramurl_base + array('pag' => SURVEY_ITEMS_CONFIGURE, 'act' => SURVEY_EDITITEM);
         $basepath = new moodle_url('view.php', $paramurl);
 
         $icons .= '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
         $icons .= '<img src="'.$OUTPUT->pix_url('t/edit').'" class="iconsmall" alt="'.$edittitle.'" title="'.$edittitle.'" /></a>&nbsp;';
 
-        //*************************************** SURVEY_CHANGEORDERASK
+        // *************************************** SURVEY_CHANGEORDERASK
         if (!empty($drawmovearrow)) {
             $paramurl = $paramurl_base + array('pag' => SURVEY_ITEMS_REORDER, 'act' => SURVEY_CHANGEORDERASK, 'itm' => $item->sortindex);
             if (!empty($item->parentid)) {
@@ -347,7 +347,7 @@ foreach ($itemseeds as $itemseed) {
             $icons .= '<img src="'.$OUTPUT->pix_url('t/move').'" class="iconsmall" alt="'.$changetitle.'" title="'.$changetitle.'" /></a>&nbsp;';
         }
 
-        //*************************************** SURVEY_HIDEITEM/SURVEY_SHOWITEM
+        // *************************************** SURVEY_HIDEITEM/SURVEY_SHOWITEM
         if (!$hassubmissions) {
             $paramurl = $paramurl_base + array('pag' => SURVEY_ITEMS_MANAGE);
             if (!empty($item->draft)) {
@@ -365,7 +365,7 @@ foreach ($itemseeds as $itemseed) {
             $icons .= '<img src="'.$OUTPUT->pix_url($icopath).'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
         }
 
-        //*************************************** SURVEY_DELETEITEM
+        // *************************************** SURVEY_DELETEITEM
         if (!$hassubmissions) {
             $paramurl = $paramurl_base + array('pag' => SURVEY_ITEMS_MANAGE, 'act' => SURVEY_DELETEITEM, 'itm' => $item->sortindex);
             $basepath = new moodle_url('view.php', $paramurl);
@@ -374,7 +374,7 @@ foreach ($itemseeds as $itemseed) {
             $icons .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$deletetitle.'" title="'.$deletetitle.'" /></a>&nbsp;';
         }
 
-        //*************************************** SURVEY_REQUIRED ON/OFF
+        // *************************************** SURVEY_REQUIRED ON/OFF
         if (isset($item->required)) { // it may not be set as in page_break, autofill or some more
             $paramurl = $paramurl_base + array('pag' => SURVEY_ITEMS_MANAGE);
 
@@ -402,7 +402,7 @@ foreach ($itemseeds as $itemseed) {
             }
         }
 
-        //*************************************** SURVEY_CHANGEINDENT
+        // *************************************** SURVEY_CHANGEINDENT
         if (isset($item->indent)) { // it may not be set as in page_break, autofill and some more
             $paramurl = $paramurl_base + array('pag' => SURVEY_ITEMS_MANAGE, 'act' => SURVEY_CHANGEINDENT);
 
@@ -431,7 +431,7 @@ foreach ($itemseeds as $itemseed) {
     $addedclass = empty($item->draft) ? '' : 'dimmed';
     $table->add_data($tablerow, $addedclass);
 
-    //print_object($item);
+    // print_object($item);
     if ($action == SURVEY_CHANGEORDERASK) {
         // ho chiesto di spostare l'item caratterizzato da:
         // $itemid e $parentid

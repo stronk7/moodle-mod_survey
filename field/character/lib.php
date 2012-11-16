@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 
-//patterns
+// patterns
 define('SURVEYFIELD_CHARACTER_CUSTOMPATTERN', 'PATTERN_CUSTOM');
 define('SURVEYFIELD_CHARACTER_EMAILPATTERN' , 'PATTERN_EMAIL');
 define('SURVEYFIELD_CHARACTER_URLPATTERN'   , 'PATTERN_URL');

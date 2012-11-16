@@ -35,59 +35,41 @@ require_once($CFG->dirroot.'/mod/survey/field/multiselect/lib.php');
 class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // comincio con la "sezione" comune della form
         parent::definition();
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::options_sid
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'options_sid';
         $mform->addElement('hidden', $fieldname, '');
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::options
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'options';
         $mform->addElement('textarea', $fieldname, get_string($fieldname, 'surveyfield_multiselect'), array('wrap' => 'virtual', 'rows' => '10', 'cols' => '65'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_multiselect');
         $mform->addRule($fieldname, get_string($fieldname.'_err', 'surveyfield_multiselect'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_TEXT);
 
-        //----------------------------------------
+        // ----------------------------------------
         // newitem::defaultvalue
-        //----------------------------------------
+        // ----------------------------------------
         $fieldname = 'defaultvalue';
         $mform->addElement('textarea', $fieldname, get_string($fieldname, 'surveyfield_multiselect'), array('wrap' => 'virtual', 'rows' => '10', 'cols' => '65'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_multiselect');
         $mform->setType($fieldname, PARAM_TEXT);
 
-        //-------------------------------------------------------------------------------
-        // buttons
-        if (!empty($item->itemid)) {
-            $fieldname = 'buttons';
-            $elementgroup=array();
-            $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));
-            $elementgroup[] = $mform->createElement('submit', 'saveasnew', get_string('saveasnew', 'survey'));
-            $elementgroup[] = $mform->createElement('cancel');
-            $mform->addGroup($elementgroup, $fieldname.'_group', '', ' ', false);
-            $mform->closeHeaderBefore($fieldname.'_group');
-        } else {
-            $this->add_action_buttons(true, get_string('add'));
-        }
-
-        //-------------------------------------------------------------------------------
-        // sono alla fine della form
-        // qui pre-definisco i valori dei campi che ho passato alla form
-        // tramite
-        // $this->set_data($item); // commented on September 17, 2012
+        $this->add_item_buttons();
     }
 
     function validation($data, $files) {

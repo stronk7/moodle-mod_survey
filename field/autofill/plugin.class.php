@@ -203,7 +203,7 @@ class surveyfield_autofill extends surveyitem_base {
 
         // this item can't be required or not required
         $record->required = null;
-        //unset($record->required);
+        // unset($record->required);
 
         // 1. special management for fields equipped with "free" checkbox
         // nothing to do: they don't exist in this plugin
@@ -349,7 +349,7 @@ class surveyfield_autofill extends surveyitem_base {
             $label = $this->survey_autofill_mform_label();
             if ($this->showfield) {
                 // class doesn't work for this mform element
-                //$mform->addElement('static', 'dummyfieldname', $elementlabel, $label, array('class' => 'indent-'.$this->indent));
+                // $mform->addElement('static', 'dummyfieldname', $elementlabel, $label, array('class' => 'indent-'.$this->indent));
                 $mform->addElement('static', $fieldname.'_static', $elementlabel, $label);
             }
             $mform->addElement('hidden', $fieldname, $label);
@@ -522,45 +522,45 @@ class surveyfield_autofill extends surveyitem_base {
         for ($i = 1; $i < 6; $i++) {
             if (!empty($this->{'element_'.$i})) {
                 switch ($this->{'element_'.$i}) {
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT01:
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT02:
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT03:
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT04:
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT01: // submissionid
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT02: // submissiontime
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT03: // submissiondate
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT04: // submissiondateandtime
                         // if during string build you find a element that can not be valued now,
-                        // overwrite $label and break switch and continue in the for
+                        // overwrite $label, break switch and continue in the for
                         $label = get_string('latevalue', 'surveyfield_autofill');
                         break 2; // it is the first time I use it! Coooool :-)
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT05:
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT05: // userid
                         $label .= $USER->id;
                         break;
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT06:
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT06: // userfirstname
                         $label .= $USER->firstname;
                         break;
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT07:
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT07: // userlastname
                         $label .= $USER->lastname;
                         break;
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT08:
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT08: // userfullname
                         $label .= fullname($USER);
                         break;
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT09:
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT09: // usergroupid
                         $label .= 'usergroupid';
                         break;
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT10:
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT10: // usergroupname
                         $label .= 'usergroupname';
                         break;
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT11:
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT11: // surveyid
                         $label .= $survey->id;
                         break;
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT12:
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT12: // surveyname
                         $label .= $survey->name;
                         break;
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT13:
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT13: // courseid
                         $label .= $COURSE->id;
                         break;
-                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT14:
+                    case SURVEYFIELD_AUTOFILL_CONTENTELEMENT14: // coursename
                         $label .= $COURSE->name;
                         break;
-                    default:
+                    default:                                    // label
                         $label .= $this->{'element_'.$i};
                 }
             }

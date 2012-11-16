@@ -69,9 +69,9 @@ class survey_addsetform extends moodleform {
         }
         asort($presetsfiles);
 
-        //----------------------------------------
-        //addset::itemset
-        //----------------------------------------
+        // ----------------------------------------
+        // addset::itemset
+        // ----------------------------------------
         $fieldname = 'itemset';
         if (count($surveyplugins)) {
             if (count($presetsfiles)) {
@@ -94,9 +94,9 @@ class survey_addsetform extends moodleform {
             $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         }
 
-        //----------------------------------------
-        //addset::otheritems
-        //----------------------------------------
+        // ----------------------------------------
+        // addset::otheritems
+        // ----------------------------------------
         $fieldname = 'actionoverother';
         $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('ignoreitems', 'survey'), SURVEY_IGNOREITEMS);
         $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('draftitems', 'survey'), SURVEY_DRAFTITEMS);
@@ -105,7 +105,7 @@ class survey_addsetform extends moodleform {
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'survey');
         $mform->setDefault($fieldname, SURVEY_IGNOREITEMS);
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons(false, get_string('continue'));
     }

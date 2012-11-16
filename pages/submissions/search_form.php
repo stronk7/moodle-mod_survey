@@ -68,7 +68,7 @@ class survey_searchform extends moodleform {
         }
         $itemseeds->close();
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         // buttons
         // $this->add_action_buttons(true, get_string('search'));
         $buttonarray = array();

@@ -24,9 +24,9 @@
  */
 
 $string['pluginname'] = 'Text area';
+$string['userfriendlypluginname'] = 'Long text (essay)';
 $string['useeditor_help'] = 'Is the answer supposed to be in plain text or in html?';
 $string['useeditor'] = 'Use html editor';
-$string['textarea'] = 'Text (essay)';
 $string['areacols_help'] = 'Define a custom width for the text area';
 $string['areacols'] = 'Area width in columns';
 $string['arearows_help'] = 'Define a custom width for the text area';

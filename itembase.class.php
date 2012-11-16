@@ -376,18 +376,18 @@ class surveyitem_base {
                 if ($this->flag->useplugintable) {
                     $record->id = $record->pluginid;
                     if ($DB->update_record($tablename, $record)) {
-                        //$status = SURVEY_ITEMEDITED;
+                        // $status = SURVEY_ITEMEDITED;
                         $userfeedback += 3; //1*2^1+1*2^0
                     } else {
-                        //$status = SURVEY_ITEMEDITFAIL;
+                        // $status = SURVEY_ITEMEDITFAIL;
                         $userfeedback += 2; //1*2^1+0*2^0
                     }
                 } else {
-                    //$status = SURVEY_ITEMADDED;
+                    // $status = SURVEY_ITEMADDED;
                     $userfeedback += 3; //1*2^1+1*2^0
                 }
             } else {
-                //$status = SURVEY_ITEMEDITFAIL;
+                // $status = SURVEY_ITEMEDITFAIL;
                 $userfeedback += 2; //1*2^1+0*2^0
             }
 
@@ -488,7 +488,7 @@ class surveyitem_base {
                 if ($record->content_editor['text'] === $referencestring) {
                     // leave the field empty
                     $record->content_editor['text'] = null;
-                //} else {
+                // } else {
                     // $record->content_editor['text'] holds a custom text. Do not touch it.
                 }
             }
@@ -509,7 +509,7 @@ class surveyitem_base {
                 if ($record->{$fieldname} === $referencestring) {
                     // leave the field empty
                     $record->{$fieldname} = null;
-                //} else {
+                // } else {
                     // $this->{$fieldname} holds a custom text. Do not touch it.
                 }
             }
@@ -561,7 +561,7 @@ class surveyitem_base {
         }
         // Luglio_Mercoledì_193_2012_07_3_11_16_03_59
 
-        //be careful to ensure the returned array matches that produced by getdate() above
+        // be careful to ensure the returned array matches that produced by getdate() above
         list(
             $getdate['month'],
             $getdate['weekday'],
@@ -575,7 +575,7 @@ class surveyitem_base {
             $getdate['seconds']
         ) = explode('_', $datestring);
 
-    //print_object($getdate);
+    // print_object($getdate);
         return $getdate;
     }
 
@@ -664,7 +664,7 @@ class surveyitem_base {
         $valuelabel = array();
         foreach ($options as $option) {
             if (preg_match('/^(.*)'.SURVEY_VALUELABELSEPARATOR.'(.*)$/', $option, $match)) { // do not worry: it can never be equal to zero
-                //print_object($match);
+                // print_object($match);
                 $valuelabel[$match[1]] = $match[2];
             } else {
                 $valuelabel[$option] = $option;

@@ -36,7 +36,7 @@ if ($currenttab == SURVEY_TABPLUGINS) {
 $inactive = null;
 $activetwo = null;
 
-//==> single tab definition
+// ==> single tab definition
 $row = array();
 
 // -----------------------------------------------------------------------------
@@ -70,7 +70,7 @@ if ($canmanageplugin) {
     $row[] = new tabobject(SURVEY_TAB4NAME, $elementurl->out(), SURVEY_TAB4NAME);
 }
 
-//==> tab row definition
+// ==> tab row definition
 $tabs = array();
 $tabs[] = $row; // Array of tabs. Closes the tab row element definition
                 // next tabs element is going to define the pages row

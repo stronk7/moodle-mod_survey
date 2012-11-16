@@ -27,12 +27,12 @@ require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/lib.php');
 
 $string['parentformat'] = '[label<br />one more label<br />last label]';
 $string['pluginname'] = 'Multiple selection';
+$string['userfriendlypluginname'] = 'Multiple selection';
 $string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';
 $string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';
 $string['defaultvalue_help'] = 'This is the value the remote user will find answered by default';
 $string['defaultvalue'] = 'Default';
 $string['defaultvalue'] = 'Default';
-$string['multiselect'] = 'List item (multi select)';
 $string['options_err'] = 'Options need your attection';
 $string['options_help'] = 'The list of the options for this item. You are allowed to write them as: value'.SURVEY_VALUELABELSEPARATOR.'label in order to define value and label both. The label will be displayed in the element list, the value will be stored in the survey field. If you only specify one word per line (without separator), value and label will both be valued to that word.';
 $string['options'] = 'Options';

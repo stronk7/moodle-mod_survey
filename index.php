@@ -76,10 +76,10 @@ if ($course->format == 'weeks') {
 
 foreach ($surveys as $survey) {
     if (!$survey->visible) {
-        //Show dimmed if the mod is hidden
+        // Show dimmed if the mod is hidden
         $link = '<a class="dimmed" href="view.php?id='.$survey->coursemodule.'">'.format_string($survey->name).'</a>';
     } else {
-        //Show normal if the mod is visible
+        // Show normal if the mod is visible
         $link = '<a href="view.php?id='.$survey->coursemodule.'">'.format_string($survey->name).'</a>';
     }
 
