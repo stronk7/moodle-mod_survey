@@ -42,25 +42,25 @@ class survey_pluginform extends surveyitem_baseform {
         // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
-    // here I open a new fieldset
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // here I open a new fieldset
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
         $fieldname = 'specializations';
         $typename = get_string('pluginname', 'surveyformat_'.$item->plugin);
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey', $typename));
 
-    // ----------------------------------------
-    // newitem::content
-    // ----------------------------------------
+        // ----------------------------------------
+        // newitem::content
+        // ----------------------------------------
         $fieldname = 'fslabel';
         $mform->addElement('text', $fieldname, get_string('fieldsetname', 'surveyformat_fieldset'));
         $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->addHelpButton($fieldname, 'fieldsetname', 'surveyformat_fieldset');
         $mform->setType($fieldname, PARAM_TEXT);
 
-    // ----------------------------------------
-    // newitem::contentformat
-    // ----------------------------------------
+        // ----------------------------------------
+        // newitem::contentformat
+        // ----------------------------------------
         $fieldname = 'contentformat';
         $mform->addElement('hidden', $fieldname, PARAM_CLEANHTML);
 

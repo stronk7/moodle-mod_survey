@@ -72,7 +72,7 @@ $tableheaders[] = get_string('actions');
 $table->define_headers($tableheaders);
 
 // $table->collapsible(true);
-$table->sortable(true, 'sortindex', 'ASC');//sorted by sortindex by default
+$table->sortable(true, 'sortindex', 'ASC'); // sorted by sortindex by default
 $table->no_sorting('actions');
 
 // $table->column_style('actions', 'width', '60px');
@@ -139,9 +139,7 @@ if ($searchfields_get) {
         $index = $element[1];
         $longformfield[$index] = $element[0];
     }
-// echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-// echo '$longformfield:';
-// var_dump($longformfield);
+
     if ($submissionidlist = survey_find_submissions($longformfield)) {
         $sql = 'SELECT s.*, s.id as submissionid,
                        u.firstname, u.lastname, u.id, u.picture, u.imagealt, u.email
@@ -192,7 +190,9 @@ if ($submissions->valid()) {
     $mygroups = survey_get_my_groups($cm);
     foreach ($submissions as $submission) {
 
-        if (!$canreadallsubmissions && !survey_i_can_read($survey, $mygroups, $submission->userid)) continue;
+        if (!$canreadallsubmissions && !survey_i_can_read($survey, $mygroups, $submission->userid)) {
+            continue;
+        }
 
         $tablerow = array();
 

@@ -36,11 +36,11 @@ class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
         // -------------------------------------------------------------------------------
-        // acquisisco i valori per pre-definire i campi della form
+        // get values to pre-define form fields
         $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
-        // comincio con la "sezione" comune della form
+        // start with the common section of the form
         parent::definition();
 
         // -------------------------------------------------------------------------------
@@ -55,9 +55,9 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setDefault($fieldname, '');
         $mform->setType($fieldname, PARAM_RAW);
 
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
-    // here I open a new fieldset
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // here I open a new fieldset
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
         $fieldname = 'validation';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 

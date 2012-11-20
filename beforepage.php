@@ -210,7 +210,9 @@ switch ($currenttab) {
                     $sqlparams['basicform'] = SURVEY_FILLANDSEARCH;
                 }
 
-                if (!$DB->count_records('survey_item', $sqlparams)) break;
+                if (!$DB->count_records('survey_item', $sqlparams)) {
+                    break;
+                }
 
                 // ////////////////////////////
                 // prepare params for the search form
@@ -234,9 +236,9 @@ switch ($currenttab) {
 
                     $infoperitem = array();
                     foreach ($fromform as $elementname => $content) {
-        // echo '$elementname = '.$elementname.'<br />';
-        // echo '$content = '.$content.'<br />';
-        // TODO: questa routine deve essere ulteriormente testata
+                        // echo '$elementname = '.$elementname.'<br />';
+                        // echo '$content = '.$content.'<br />';
+                        // TODO: this routine needs more testing
                         // mi interessano solo i campi della search form che contengono qualcosa ma che non contengono SURVEY_NOANSWERVALUE
                         if (isset($content) && ($content != SURVEY_NOANSWERVALUE)) {
                             if (preg_match($regexp, $elementname, $matches)) {
@@ -257,14 +259,16 @@ switch ($currenttab) {
                             }
                         }
                     }
-        // echo '$infoperitem:';
-        // var_dump($infoperitem);
+                    // echo '$infoperitem:';
+                    // var_dump($infoperitem);
                     $searchfields = array();
                     foreach ($infoperitem as $iteminfo) {
-        // echo '$iteminfo:';
-        // var_dump($iteminfo);
+                        // echo '$iteminfo:';
+                        // var_dump($iteminfo);
                         // do not waste your time
-                        if ( isset($iteminfo->extra['noanswer']) && $iteminfo->extra['noanswer'] ) continue;
+                        if ( isset($iteminfo->extra['noanswer']) && $iteminfo->extra['noanswer'] ) {
+                            continue;
+                        }
 
                         $item = survey_get_item($iteminfo->itemid, $iteminfo->type, $iteminfo->plugin);
 
@@ -273,9 +277,9 @@ switch ($currenttab) {
 
                         $searchfields[] = $userdata->content.SURVEY_URLVALUESEPARATOR.$iteminfo->itemid;
                     }
-        // echo '$searchfields:';
-        // var_dump($searchfields);
-                    // definisco searchfields_get per fargli trasportare le informazioni
+                    // echo '$searchfields:';
+                    // var_dump($searchfields);
+                    // define searchfields_get to let it carry all the information to the next URL
                     $searchfields_get = implode(SURVEY_URLPARAMSEPARATOR, $searchfields);
 
                     $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => SURVEY_SUBMISSION_MANAGE);
@@ -357,7 +361,7 @@ switch ($currenttab) {
                 $mform = new survey_pluginform($formurl, $formparams);
 
                 if ($mform->is_cancelled()) {
-                    $paramurl['pag'] = SURVEY_ITEMS_MANAGE ;
+                    $paramurl['pag'] = SURVEY_ITEMS_MANAGE;
                     $returnurl = new moodle_url('view.php', $paramurl);
                     redirect($returnurl);
                 } else if ($fromform = $mform->get_data()) {

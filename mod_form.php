@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
@@ -27,10 +26,10 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform = $this->_form;
 
         // -------------------------------------------------------------------------------
-    // / Adding the "general" fieldset, where all the common settings are showed
+        // Adding the "general" fieldset, where all the common settings are showed
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-    // / Adding the standard "name" field
+        // Adding the standard "name" field
         $fieldname = 'name';
         $mform->addElement('text', $fieldname, get_string('survey'.$fieldname, 'survey'), array('size' => '64'));
         if (!empty($CFG->formatstringstriptags)) {
@@ -42,14 +41,14 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->addRule($fieldname, get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton($fieldname, 'surveyname', 'survey');
 
-    // / Adding the standard "intro" and "introformat" fields
+        // Adding the standard "intro" and "introformat" fields
         $this->add_intro_editor(false);
 
-    // / Open date
+        // Open date
         $fieldname = 'timeopen';
         $mform->addElement('date_time_selector', $fieldname, get_string($fieldname, 'survey'), array('optional' => true));
 
-    // / Close date
+        // Close date
         $fieldname = 'timeclose';
         $mform->addElement('date_time_selector', $fieldname, get_string($fieldname, 'survey'), array('optional' => true));
 
@@ -57,20 +56,20 @@ class mod_survey_mod_form extends moodleform_mod {
         $fieldname = 'access';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-    // / note about access rights
+        // note about access rights
         $fieldname = 'accessrightsnote';
         $groupmode = isset($cm) ? groups_get_activity_groupmode($cm, $COURSE) : 0;
         if (!empty($groupmode)) {
             $mform->addElement('static', $fieldname, 'Note:', get_string($fieldname.'_group', 'survey'));
-        // / prepare access right
+        // prepare access right
             $subjects = array('none', 'owner', 'group', 'all');
         } else {
             $mform->addElement('static', $fieldname, get_string('note', 'survey'), get_string($fieldname.'_nogroup', 'survey'));
-        // / prepare access right
+        // prepare access right
             $subjects = array('none', 'owner', 'all');
         }
 
-    // / access right
+        // access right
         $ro_label = get_string('readonly', 'survey');
         $rw_label = get_string('readwrite', 'survey');
         $del_label = get_string('delete', 'survey');
@@ -104,35 +103,35 @@ class mod_survey_mod_form extends moodleform_mod {
         $fieldname = 'dataentry';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-    // / newpageforchild
+    // newpageforchild
         $fieldname = 'newpageforchild';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-    // / allow/deny saveresume
+        // allow/deny saveresume
         $fieldname = 'saveresume';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-    // / history
+        // history
         $fieldname = 'history';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-    // / allow/deny anonymous
+        // allow/deny anonymous
         $fieldname = 'anonymous';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-    // / captcha
-        // recaptcha
+        // captcha
+            // recaptcha
         if (survey_site_recaptcha_enabled()) {
             $fieldname = 'captcha';
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
         }
 
-    // / startyear
+        // startyear
         $boundaryyear = array_combine(range(1655, 2285), range(1655, 2285));
 
         $fieldname = 'startyear';
@@ -140,27 +139,27 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->setDefault($fieldname, SURVEY_MINEVERYEAR);
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-    // / stopyear
+        // stopyear
         $fieldname = 'stopyear';
         $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $boundaryyear);
         $mform->setDefault($fieldname, SURVEY_MAXEVERYEAR);
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-    // / userstyle
+        // userstyle
         $fieldname = 'userstyle';
         $filemanager_options = survey_get_user_style_options();
         $mform->addElement('filemanager', $fieldname.'_filemanager', get_string($fieldname, 'survey'), null, $filemanager_options);
         $mform->addHelpButton($fieldname.'_filemanager', $fieldname, 'survey');
 
-    // / maxentries
+        // maxentries
         $fieldname = 'maxentries';
         $countoptions = array(0 => get_string('unlimited', 'survey'))+
-                        (array_combine(range(1, SURVEY_MAX_ENTRIES),   //keys
-                                       range(1, SURVEY_MAX_ENTRIES))); //values
+                        (array_combine(range(1, SURVEY_MAX_ENTRIES),   // keys
+                                       range(1, SURVEY_MAX_ENTRIES))); // values
         $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $countoptions);
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-    // / notifyteachers
+        // notifyteachers
         $fieldname = 'notifyrole';
         $options = array();
         $context = context_course::instance($COURSE->id);
@@ -168,19 +167,19 @@ class mod_survey_mod_form extends moodleform_mod {
         $guestrole = get_guest_role();
         $roles[$guestrole->id] = $guestrole;
         $roleoptions = role_fix_names($roles, $context, ROLENAME_ALIAS, true);
-        foreach($roleoptions as $roleid => $rolename) {
+        foreach ($roleoptions as $roleid => $rolename) {
             $options[$roleid] = $rolename;
         }
         $select = $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
         $select->setMultiple(true);
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-    // / notifyteachers
+        // notifyteachers
         $fieldname = 'notifymore';
         $mform->addElement('textarea', $fieldname, get_string($fieldname, 'survey'), array('wrap' => 'virtual', 'rows' => '10', 'cols' => '65'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-    // / define thanks page
+        // define thanks page
         $fieldname = 'thankshtml';
         // $context = context_course::instance($COURSE->id); <-- just defined 20 rows above
         $editoroptions = survey_get_editor_options();
@@ -246,7 +245,6 @@ class mod_survey_mod_form extends moodleform_mod {
 
             $default_values['thankshtml_editor']['format'] = $default_values['thankshtmlformat'];
             $default_values['thankshtml_editor']['itemid'] = $draftitemid;
-
 
             // notifyrole
             $presetroles = explode(',', $default_values['notifyrole']);

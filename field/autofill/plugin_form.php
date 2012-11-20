@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along wi<a href="../age/version.php">version.php</a>th Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
@@ -48,9 +48,9 @@ class survey_pluginform extends surveyitem_baseform {
         // I close with the common section of the form
         parent::definition();
 
-    // ----------------------------------------
-    // newitem::contentelement$i
-    // ----------------------------------------
+        // ----------------------------------------
+        // newitem::contentelement$i
+        // ----------------------------------------
         $options = survey_autofill_get_elements($survey->id);
         for ($i = 1; $i < 6; $i++) {
             $fieldname = 'element_'.$i;
@@ -67,9 +67,9 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setType($fieldname.'_text', PARAM_TEXT);
         }
 
-    // ----------------------------------------
-    // newitem::showfield
-    // ----------------------------------------
+        // ----------------------------------------
+        // newitem::showfield
+        // ----------------------------------------
         $fieldname = 'showfield';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'surveyfield_autofill'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_autofill');

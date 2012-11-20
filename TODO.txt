@@ -1,9 +1,9 @@
 -> at submit time (the last one, when the submission become SURVEY_CLOSED)
        I must cleanup the submission because of this problem:
-       at t1: the user answers TRUE to a branching question
-       at t2: the user answer the child (via TRUE) question
-       at t3: the user returns back and choose FALSE for the branching question
-       at t4: then answer the child (via FALSE) question.
+       at t1: the user answers true to a branching question
+       at t2: the user answer the child (via true) question
+       at t3: the user returns back and choose false for the branching question
+       at t4: then answer the child (via false) question.
        At this stage the db is not correct and needs cleanup.
 -> does it make sense the research per label?
 -> validate the content of the XML uploaded by the user

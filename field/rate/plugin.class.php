@@ -63,7 +63,7 @@ class surveyfield_rate extends surveyitem_base {
     /*
      * $defaultoption
      */
-    public $defaultoption = SURVEY_INVITATIONDEFAULT; //<-- TODO: perché se metto '' non seleziona il radio button corrispondente?
+    public $defaultoption = SURVEY_INVITATIONDEFAULT;
 
     /*
      * $defaultvalue = the value of the field when the form is initially displayed.
@@ -211,9 +211,15 @@ class surveyfield_rate extends surveyitem_base {
      */
     public function item_generate_standard_default($options=null, $rates=null, $forcedifferentrates=null) {
 
-        if (is_null($options))             $options = $this->options;
-        if (is_null($rates))               $rates = $this->rates;
-        if (is_null($forcedifferentrates)) $forcedifferentrates = $this->forcedifferentrates;
+        if (is_null($options)) {
+            $options = $this->options;
+        }
+        if (is_null($rates)) {
+            $rates = $this->rates;
+        }
+        if (is_null($forcedifferentrates)) {
+            $forcedifferentrates = $this->forcedifferentrates;
+        }
 
         if ($optionscount = count(survey_textarea_to_array($options))) {
             $ratesarray = survey_textarea_to_array($rates);
@@ -227,7 +233,9 @@ class surveyfield_rate extends surveyitem_base {
                         $defaultrate = $pair[0];
                     }
                     $default[] = $defaultrate;
-                    if (count($default) == $optionscount) break;
+                    if (count($default) == $optionscount) {
+                        break;
+                    }
                 }
             } else {
                 $firstrate = reset($ratesarray);
@@ -346,8 +354,8 @@ class surveyfield_rate extends surveyitem_base {
         }
 
         // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, TRUE);
-        if ($errindex !== FALSE) {
+        $errindex = array_search('err', $values, true);
+        if ($errindex !== false) {
             throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
         }
 
@@ -481,7 +489,9 @@ class surveyfield_rate extends surveyitem_base {
 
         $options = $this->item_get_one_word_per_row('options');
 
-        if (isset($data[$fieldname.'_noanswer'])) return; // nothing to validate
+        if (isset($data[$fieldname.'_noanswer'])) {
+            return; // nothing to validate
+        }
 
         $optionindex = 0;
         $return = false;
@@ -498,13 +508,14 @@ class surveyfield_rate extends surveyitem_base {
             }
             $optionindex++;
         }
-        if ($return) return;
-
+        if ($return) {
+            return;
+        }
 
         if (!empty($this->forcedifferentrates)) {
             $optionscount = count($this->item_get_value_label_array('options'));
             $rates = array();
-            for ( $i = 0; $i < $optionscount; $i++ ) {
+            for ( $i = 0; $i < $optionscount; $i++) {
                 $rates[] = $data[$fieldname.'_'.$i];
             }
 
@@ -571,7 +582,7 @@ class surveyfield_rate extends surveyitem_base {
      * @return
      */
     public function userform_save($itemdetail, $olduserdata) {
-       if (isset($itemdetail['noanswer'])) {
+        if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
         } else {
             $valuelabel = $this->item_get_value_label_array('options');
@@ -600,10 +611,10 @@ class surveyfield_rate extends surveyitem_base {
      * @return
      */
     public function userform_set_prefill($olduserdata) {
-//     [survey_field_rate_157_0] => italiano: 3
-//     [survey_field_rate_157_1] => inglese: 2
-//     [survey_field_rate_157_2] => francese: 1
-//     [survey_field_rate_157_noanswer] => 0
+        // [survey_field_rate_157_0] => italian: 3
+        // [survey_field_rate_157_1] => english: 2
+        // [survey_field_rate_157_2] => french: 1
+        // [survey_field_rate_157_noanswer] => 0
 
         $prefill = array();
 
@@ -624,9 +635,9 @@ class surveyfield_rate extends surveyitem_base {
                         $valueindex++;
                     }
                 }
-            } else {
+            // } else {
                 // nothing was set
-                // do not accept defaults but override them
+                // do not accept defaults but overwrite them
             }
 
             // _noanswer

@@ -349,13 +349,13 @@ class surveyitem_base {
                 // $tablename
                 if ($this->flag->useplugintable) {
                     if ($DB->insert_record($tablename, $record)) {
-                        $userfeedback += 1; //0*2^1+1*2^0
+                        $userfeedback += 1; // 0*2^1+1*2^0
                     }
                 } else {
-                    $userfeedback += 1; //0*2^1+1*2^0
+                    $userfeedback += 1; // 0*2^1+1*2^0
                 }
             } else {
-                $userfeedback += 0; //0*2^1+0*2^0
+                $userfeedback += 0; // 0*2^1+0*2^0
             }
 
             $logaction = ($userfeedback) ? 'add item' : 'add item failed';
@@ -377,18 +377,18 @@ class surveyitem_base {
                     $record->id = $record->pluginid;
                     if ($DB->update_record($tablename, $record)) {
                         // $status = SURVEY_ITEMEDITED;
-                        $userfeedback += 3; //1*2^1+1*2^0
+                        $userfeedback += 3; // 1*2^1+1*2^0
                     } else {
                         // $status = SURVEY_ITEMEDITFAIL;
-                        $userfeedback += 2; //1*2^1+0*2^0
+                        $userfeedback += 2; // 1*2^1+0*2^0
                     }
                 } else {
                     // $status = SURVEY_ITEMADDED;
-                    $userfeedback += 3; //1*2^1+1*2^0
+                    $userfeedback += 3; // 1*2^1+1*2^0
                 }
             } else {
                 // $status = SURVEY_ITEMEDITFAIL;
-                $userfeedback += 2; //1*2^1+0*2^0
+                $userfeedback += 2; // 1*2^1+0*2^0
             }
 
             $logaction = ($userfeedback) ? 'update item' : 'update item failed';
@@ -396,19 +396,18 @@ class surveyitem_base {
             if ($record->id) { // if the item was successfully saved
                 // draft/regular part 3
                 if ( ($olddraft == 1) && ($record->draft == 0) ) {
-                    if (survey_manage_item_show(1, $cm, $record->itemid, $record->type))  {
+                    if (survey_manage_item_show(1, $cm, $record->itemid, $record->type)) {
                         // una catena undrafted
-                        $userfeedback += 4; //1*2^2
+                        $userfeedback += 4; // 1*2^2
                     }
                 }
                 if ( ($olddraft == 0) && ($record->draft == 1) ) {
                     if (survey_manage_item_hide(1, $cm, $record->itemid, $record->type)) {
                         // una catena drafted
-                        $userfeedback += 8; //1*2^3
+                        $userfeedback += 8; // 1*2^3
                     }
                 }
                 // end of: draft/regular part 3
-
 
                 // adesso, indipendentemente dalla paternità, verifica che i figli siano nella stessa user form
                 // se stanno in una differente form, spostali
@@ -416,14 +415,14 @@ class surveyitem_base {
                     if ($record->basicform != SURVEY_NOTPRESENT) { // if the item is not in the user form
                         if (survey_move_regular_items($record->itemid, $record->basicform)) {
                             // una catena drafted
-                            $userfeedback += 16; //1*2^4
+                            $userfeedback += 16; // 1*2^4
                         }
                     }
 
                     if ($record->basicform == SURVEY_NOTPRESENT) { // if the item is in the user form
                         if (survey_move_regular_items($record->itemid, 0)) {
                             // una catena drafted
-                            $userfeedback += 32; //1*2^5
+                            $userfeedback += 32; // 1*2^5
                         }
                     }
                 }
@@ -443,7 +442,9 @@ class surveyitem_base {
      * @return
      */
     public function item_builtin_string_load_support($fields=null) {
-        if (empty($this->externalname)) return;
+        if (empty($this->externalname)) {
+            return;
+        }
 
         if (is_null($fields)) {
             $fields = array('content');
@@ -454,8 +455,12 @@ class surveyitem_base {
 
         // special care for content editor
         foreach ($fields as $fieldname) {
-            if (!isset($this->{$fieldname.'_sid'})) continue;
-            if (!strlen($this->{$fieldname.'_sid'})) continue;
+            if (!isset($this->{$fieldname.'_sid'})) {
+                continue;
+            }
+            if (!strlen($this->{$fieldname.'_sid'})) {
+                continue;
+            }
 
             $stringindex = $fieldname.sprintf('%02d', $this->{$fieldname.'_sid'});
             $this->{$fieldname} = get_string($stringindex, 'surveytemplate_'.$this->externalname);
@@ -469,7 +474,9 @@ class surveyitem_base {
      * @return
      */
     public function item_builtin_string_save_support(&$record, $fields=null) {
-        if (empty($this->externalname)) return;
+        if (empty($this->externalname)) {
+            return;
+        }
 
         if (is_null($fields)) {
             $fields = array();
@@ -496,7 +503,6 @@ class surveyitem_base {
             // content has already been managed: take it off now
             $fields = array_diff($fields, array('content'));
         }
-
 
         // usually this routine is not executed
         // $fields['options'] = 'options_sid';
@@ -575,7 +581,7 @@ class surveyitem_base {
             $getdate['seconds']
         ) = explode('_', $datestring);
 
-    // print_object($getdate);
+        // print_object($getdate);
         return $getdate;
     }
 
@@ -825,7 +831,9 @@ class surveyitem_base {
     public function item_get_db_structure($tablename=null, $dropid=true) {
         global $DB;
 
-        if (empty($tablename)) $tablename = 'survey_'.$this->plugin;
+        if (empty($tablename)) {
+            $tablename = 'survey_'.$this->plugin;
+        }
 
         $dbstructure = array();
         if ($dbfields = $DB->get_columns($tablename)) {
@@ -859,13 +867,15 @@ class surveyitem_base {
      */
     public function item_get_si_values($data, $sistructure, $sisid) {
         global $DB;
-// echo '$data:';
-// var_dump($data);
-// echo '$sistructure:';
-// var_dump($sistructure);
-// echo '$sisid:';
-// var_dump($sisid);
-// die;
+
+        // echo '$data:';
+        // var_dump($data);
+        // echo '$sistructure:';
+        // var_dump($sistructure);
+        // echo '$sisid:';
+        // var_dump($sisid);
+        // die;
+
         $tablename = 'survey_item';
 
         // STEP 01: define the value aray
@@ -926,8 +936,6 @@ class surveyitem_base {
         /*------------------------------------------------*/
         $values['externalname'] = '\''.$data->pluginname.'\'';
 
-
-
         // $si_fields = array(...'content_sid', 'content', 'contentformat', 'customnumber',
 
         // override: $value['content_sid'] has already been done
@@ -966,7 +974,6 @@ class surveyitem_base {
             $values['customnumber'] = '\''.$this->customnumber.'\'';
         }
 
-
         // $si_fields = array(...'extrarow', 'softinfo', 'required', 'fieldname',
 
         // override: $value['extrarow']
@@ -998,7 +1005,6 @@ class surveyitem_base {
         // override: $value['fieldname']
         /*------------------------------------------------*/
         $values['fieldname'] = empty($this->fieldname) ? '\'\'' : '\''.$this->fieldname.'\'';
-
 
         // $si_fields = array(...'indent', 'basicform', 'advancedsearch', 'draft',
 
@@ -1043,7 +1049,6 @@ class surveyitem_base {
         /*------------------------------------------------*/
         $values['draft'] = $this->draft;
 
-
         // $si_fields = array(...'sortindex', 'basicformpage', 'advancedformpage', 'parentid',
 
         // override: $value['sortindex']
@@ -1068,7 +1073,6 @@ class surveyitem_base {
             $sqlparams = array('id' => $this->parentid);
             $values['parentid'] = $DB->get_field('survey_item', 'sortindex', $sqlparams, MUST_EXIST);
         }
-
 
         // $si_fields = array(...'parentcontent', 'parentvalue', 'timecreated', 'timemodified');
 
@@ -1104,10 +1108,9 @@ class surveyitem_base {
         /*------------------------------------------------*/
         $values['timemodified'] = '\'\'';
 
-
         // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, TRUE);
-        if ($errindex !== FALSE) {
+        $errindex = array_search('err', $values, true);
+        if ($errindex !== false) {
             throw new moodle_exception('$values[\''.$errindex.'\'] of survey_items was not properly managed');
         }
 
@@ -1156,7 +1159,7 @@ class surveyitem_base {
             $values = $this->update_values_defaultoption($values);
         }
 
-        foreach($values as $k => $v) {
+        foreach ($values as $k => $v) {
             if ($v === 'err') { // the field has not been touched
                 // look at the value stored in $this
                 if (is_null($this->{$k})) {
@@ -1222,8 +1225,12 @@ class surveyitem_base {
     public function userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem=null) {
         global $DB;
 
-        if ($survey->newpageforchild) return true;
-        if (empty($parentitem)) return true;
+        if ($survey->newpageforchild) {
+            return true;
+        }
+        if (empty($parentitem)) {
+            return true;
+        }
 
         // is its parentitem in its same page?
         $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
@@ -1259,7 +1266,9 @@ class surveyitem_base {
     public function userform_dispose_unexpected_values(&$fromform) {
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
-        if (isset($fromform->{$fieldname})) unset($fromform->{$fieldname});
+        if (isset($fromform->{$fieldname})) {
+            unset($fromform->{$fieldname});
+        }
     }
 
     /**
@@ -1272,8 +1281,12 @@ class surveyitem_base {
     public function userform_disable_element($mform, $searchform=false) {
         global $DB;
 
-        if ($searchform) return;
-        if (!$this->parentid || ($this->type == SURVEY_FORMAT)) return;
+        if ($searchform) {
+            return;
+        }
+        if (!$this->parentid || ($this->type == SURVEY_FORMAT)) {
+            return;
+        }
 
         $childname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
         if ($this->userform_mform_element_is_group()) {

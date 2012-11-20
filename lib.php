@@ -196,7 +196,7 @@ function survey_add_instance($survey) {
 
     $survey->timecreated = time();
 
-    # You may have to add extra stuff in here #
+    // You may have to add extra stuff in here
     list($survey->readaccess, $survey->editaccess, $survey->deleteaccess) = explode('.', $survey->accessrights);
 
     $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers');
@@ -247,7 +247,7 @@ function survey_update_instance($survey) {
     $survey->timemodified = time();
     $survey->id = $survey->instance;
 
-    # You may have to add extra stuff in here #
+    // You may have to add extra stuff in here
     list($survey->readaccess, $survey->editaccess, $survey->deleteaccess) = explode('.', $survey->accessrights);
 
     $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers');
@@ -320,7 +320,7 @@ function survey_delete_instance($id) {
         return false;
     }
 
-    # Delete any dependent records here #
+    // Delete any dependent records here
 
     $DB->delete_records('survey', array('id' => $survey->id));
 
@@ -413,7 +413,7 @@ function survey_get_recent_mod_activity(&$activities, &$index, $timestart, $cour
 
 /**
  * Prints single activity item prepared by {@see survey_get_recent_mod_activity()}
-
+ *
  * @return void
  */
 function survey_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
@@ -498,12 +498,12 @@ function survey_get_extra_capabilities() {
 function survey_scale_used($surveyid, $scaleid) {
     global $DB;
 
-    /** @example */
-//     if ($scaleid and $DB->record_exists('survey', array('id' => $surveyid, 'grade' => -$scaleid))) {
-//         return true;
-//     } else {
-//         return false;
-//     }
+    /* @example */
+    // if ($scaleid and $DB->record_exists('survey', array('id' => $surveyid, 'grade' => -$scaleid))) {
+    //     return true;
+    // } else {
+    //     return false;
+    // }
     return false;
 }
 
@@ -518,7 +518,7 @@ function survey_scale_used($surveyid, $scaleid) {
 function survey_scale_used_anywhere($scaleid) {
     global $DB;
 
-    /** @example */
+    /* @example */
     if ($scaleid and $DB->record_exists('survey', array('grade' => -$scaleid))) {
         return true;
     } else {
@@ -537,7 +537,7 @@ function survey_grade_item_update(stdClass $survey) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    /** @example */
+    /* @example */
     $item = array();
     $item['itemname'] = clean_param($survey->name, PARAM_NOTAGS);
     $item['gradetype'] = GRADE_TYPE_VALUE;
@@ -560,7 +560,7 @@ function survey_update_grades(stdClass $survey, $userid = 0) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
 
-    /** @example */
+    /* @example */
     $grades = array(); // populate array of grade objects indexed by userid
 
     grade_update('mod/survey', $survey->course, 'mod', 'survey', $survey->id, 0, $grades);
@@ -834,9 +834,9 @@ function survey_get_post_actions() {
 }
 
 /**
- *  This gets an array with default options for the editor
+ * This gets an array with default options for the editor
  *
- *  @return array the options
+ * @return array the options
  */
 function survey_get_editor_options() {
     return array('trusttext' => true, 'subdirs' => false, 'maxfiles' => EDITOR_UNLIMITED_FILES);

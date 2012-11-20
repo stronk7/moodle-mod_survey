@@ -118,7 +118,7 @@ $tableheaders[] = get_string('actions');
 $table->define_headers($tableheaders);
 
 // $table->collapsible(true);
-$table->sortable(true, 'sortindex'); //sorted by sortindex by default
+$table->sortable(true, 'sortindex'); // sorted by sortindex by default
 $table->no_sorting('uavailability');
 $table->no_sorting('mavailability');
 $table->no_sorting('actions');
@@ -211,7 +211,6 @@ if (($action == SURVEY_CHANGEORDERASK) && (!$parentid)) {
 
 foreach ($itemseeds as $itemseed) {
     $item = survey_get_item($itemseed->itemid, $itemseed->type, $itemseed->plugin);
-// print_object($item);
 
     $tablerow = array();
 
@@ -442,7 +441,9 @@ foreach ($itemseeds as $itemseed) {
             $drawmoveherebox = $drawmoveherebox || ($item->itemid == $parentid);
 
             // se hai appena superato un item con $item->parentid == $itemid, fermati per sempre
-            if ($item->parentid == $itemid) $drawmoveherebox = false;
+            if ($item->parentid == $itemid) {
+                $drawmoveherebox = false;
+            }
         } else {
             $drawmoveherebox = $drawmoveherebox && ($item->parentid != $itemid);
         }

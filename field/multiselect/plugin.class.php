@@ -212,7 +212,7 @@ class surveyfield_multiselect extends surveyitem_base {
 
         $errcount = 0;
         foreach ($childvalue as $value) {
-            if (array_search($value, $valuelabelkeys) === FALSE) {
+            if (array_search($value, $valuelabelkeys) === false) {
                 $errcount++;
             }
         }
@@ -241,8 +241,8 @@ class surveyfield_multiselect extends surveyitem_base {
         $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
 
         // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, TRUE);
-        if ($errindex !== FALSE) {
+        $errindex = array_search('err', $values, true);
+        if ($errindex !== false) {
             throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
         }
 
@@ -387,9 +387,9 @@ class surveyfield_multiselect extends surveyitem_base {
                 }
                 $presetstr = implode(',', $preset);
                 $prefill[$fieldname] = $presetstr;
-            } else {
+            // } else {
                 // nothing was set
-                // do not accept defaults but override them
+                // do not accept defaults but overwrite them
             }
         } // else use item defaults
 

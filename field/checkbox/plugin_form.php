@@ -101,12 +101,6 @@ class survey_pluginform extends surveyitem_baseform {
         $clean_options = survey_textarea_to_array($data['options']);
         $clean_defaultvalue = survey_textarea_to_array($data['defaultvalue']);
         $clean_labelother = trim($data['labelother']);
-// echo 'clean_options<br />';
-// print_object($clean_options);
-// echo 'clean_labelother<br />';
-// print_object($clean_labelother);
-// echo '$clean_defaultvalue:';
-// var_dump($clean_defaultvalue);
 
         // costruisco il vettore $value ($label non mi interessa) a partire da $clean_options e $clean_labelother
         $values = array();

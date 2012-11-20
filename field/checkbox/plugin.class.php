@@ -233,7 +233,7 @@ class surveyfield_checkbox extends surveyitem_base {
 
         $errcount = 0;
         foreach ($childvalue as $value) {
-            if (array_search($value, $valuelabelkeys) === FALSE) {
+            if (array_search($value, $valuelabelkeys) === false) {
                 $errcount++;
             }
         }
@@ -274,8 +274,8 @@ class surveyfield_checkbox extends surveyitem_base {
         $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
 
         // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, TRUE);
-        if ($errindex !== FALSE) {
+        $errindex = array_search('err', $values, true);
+        if ($errindex !== false) {
             throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
         }
 
@@ -400,7 +400,7 @@ class surveyfield_checkbox extends surveyitem_base {
             $mformelementinfo->parentname = $fieldname.'_'.$index;
             $mformelementinfo->operator = 'eq';
             $constrainindex = array_search($value, $constraintsvalues);
-            if ($constrainindex === FALSE) {
+            if ($constrainindex === false) {
                 $mformelementinfo->content = '1';
             } else {
                 unset($constraintsvalues[$constrainindex]);
@@ -478,12 +478,18 @@ class surveyfield_checkbox extends surveyitem_base {
         $valuelabel = array_keys($valuelabel);
         foreach ($valuelabel as $index => $value) { // index and value because I issued: array_keys
             $itemname = $fieldname.'_'.$index;
-            if (isset($fromform->{$itemname})) unset($fromform->{$itemname});
+            if (isset($fromform->{$itemname})) {
+                unset($fromform->{$itemname});
+            }
         }
         $itemname = $fieldname.'_other';
-        if (isset($fromform->{$itemname})) unset($fromform->{$itemname});
+        if (isset($fromform->{$itemname})) {
+            unset($fromform->{$itemname});
+        }
         $itemname = $fieldname.'_text';
-        if (isset($fromform->{$itemname})) unset($fromform->{$itemname});
+        if (isset($fromform->{$itemname})) {
+            unset($fromform->{$itemname});
+        }
     }
 
     /**
@@ -535,7 +541,7 @@ class surveyfield_checkbox extends surveyitem_base {
                 $answers = explode(SURVEYFIELD_CHECKBOX_VALUESEPARATOR, $olduserdata->content);
                 foreach ($answers as $answer) {
                     $checkboxindex = array_search($answer, $valuelabel);
-                    if ($checkboxindex !== FALSE) {
+                    if ($checkboxindex !== false) {
                         $uniqueid = $fieldname.'_'.$checkboxindex;
                         $prefill[$uniqueid] = 1;
                     } else {
@@ -545,7 +551,7 @@ class surveyfield_checkbox extends surveyitem_base {
                 }
             } else {
                 // nothing was set
-                // do not accept defaults but override them
+                // do not accept defaults but overwrite them
                 foreach ($valuelabel as $checkboxindex => $label) {
                     $uniqueid = $fieldname.'_'.$checkboxindex;
                     $prefill[$uniqueid] = 0;

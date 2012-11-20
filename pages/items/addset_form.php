@@ -51,7 +51,7 @@ class survey_addsetform extends moodleform {
 
         $presets = new stdClass();
         $presetsfiles = array();
-        foreach($options as $sharinglevel => $v) {
+        foreach ($options as $sharinglevel => $v) {
             $parts = explode('_', $sharinglevel);
             $contextlevel = $parts[0];
 
@@ -60,9 +60,9 @@ class survey_addsetform extends moodleform {
             $presets->{$contextstring} = survey_get_available_presets($contextid);
         }
 
-        foreach($presets as $contextstring => $contextfiles) {
+        foreach ($presets as $contextstring => $contextfiles) {
             $contextlabel = get_string($contextstring, 'survey');
-            foreach($contextfiles as $xmlfile) {
+            foreach ($contextfiles as $xmlfile) {
                 $itemsetname = $xmlfile->get_filename();
                 $presetsfiles['PRESET_'.$xmlfile->get_id()] = '('.$contextlabel.') '.$itemsetname;
             }

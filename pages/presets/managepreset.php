@@ -64,7 +64,7 @@ $tableheaders[] = get_string('actions');
 $table->define_headers($tableheaders);
 
 // $table->collapsible(true);
-$table->sortable(true, 'presetname'); //sorted by sortindex by default
+$table->sortable(true, 'presetname'); // sorted by sortindex by default
 $table->no_sorting('actions');
 
 $table->column_class('presetname', 'presetname');
@@ -89,7 +89,7 @@ $options = survey_get_sharinglevel_options($cm->id, $survey);
 // var_dump($options);
 
 $presets = new stdClass();
-foreach($options as $sharinglevel => $v) {
+foreach ($options as $sharinglevel => $v) {
     $parts = explode('_', $sharinglevel);
     $contextlevel = $parts[0];
 
@@ -101,10 +101,10 @@ foreach($options as $sharinglevel => $v) {
 // echo '$presets:';
 // var_dump($presets);
 
-foreach($presets as $contextstring => $contextfiles) {
-    foreach($contextfiles as $xmlfile) {
-// echo '$xmlfile:';
-// var_dump($xmlfile);
+foreach ($presets as $contextstring => $contextfiles) {
+    foreach ($contextfiles as $xmlfile) {
+        // echo '$xmlfile:';
+        // var_dump($xmlfile);
         $tablerow = array();
         $tablerow[] = $xmlfile->get_filename();
         $tablerow[] = get_string($contextstring, 'survey');

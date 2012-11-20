@@ -99,9 +99,6 @@ class survey_pluginform extends surveyitem_baseform {
         $clean_options = survey_textarea_to_array($data['options']);
         $clean_labelother = trim($data['labelother']);
         $clean_defaultvalue = isset($data['defaultvalue']) ? trim($data['defaultvalue']) : '';
-// print_object($clean_options);
-// print_object($clean_labelother);
-// print_object($clean_defaultvalue);
 
         // costruisco il vettore $value ($label non mi interessa) a partire da $clean_options e $clean_labelother
         $values = array();
@@ -123,8 +120,7 @@ class survey_pluginform extends surveyitem_baseform {
             }
         }
 
-
-        // se default == noanswer ma è obbligatorio => errore
+        // if (default == noanswer but the item is mandatory) then => error
         if ( ($data['defaultoption'] == SURVEY_NOANSWERDEFAULT) && isset($data['required']) ) {
             $a = get_string('noanswer', 'survey');
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);

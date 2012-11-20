@@ -64,8 +64,9 @@ class survey_submissionform extends moodleform {
             $context = context_module::instance($cmid);
 
             foreach ($itemseeds as $itemseed) {
-// echo '$itemseed->basicformpage):';
-// var_dump($itemseed->basicformpage);
+                // echo '$itemseed->basicformpage):';
+                // var_dump($itemseed->basicformpage);
+
                 // Show the item only if:
                 //     - all has to going to the same page
                 //       OR
@@ -156,7 +157,9 @@ class survey_submissionform extends moodleform {
                 $plugin = $parts[2]; // item plugin
                 $itemid = $parts[3]; // item id
 
-                if ($itemid == $olditemid) continue;
+                if ($itemid == $olditemid) {
+                    continue;
+                }
 
                 $olditemid = $itemid;
 
@@ -179,8 +182,8 @@ class survey_submissionform extends moodleform {
 
                 if ($itemallowed) {
                     $item->userform_mform_validation($data, $errors, $survey, $canaccessadvancedform, $parentitem);
-//                 } else {
-// echo 'parent item didn't allow the validation of the child item '.$item->itemid.', plugin = '.$item->plugin.'<br />';
+                // } else {
+                    // echo 'parent item didn't allow the validation of the child item '.$item->itemid.', plugin = '.$item->plugin.'<br />';
                 }
             }
         }

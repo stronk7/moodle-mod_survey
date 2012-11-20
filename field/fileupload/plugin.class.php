@@ -223,8 +223,8 @@ class surveyfield_fileupload extends surveyitem_base {
         $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
 
         // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, TRUE);
-        if ($errindex !== FALSE) {
+        $errindex = array_search('err', $values, true);
+        if ($errindex !== false) {
             throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
         }
 
@@ -347,7 +347,7 @@ class surveyfield_fileupload extends surveyitem_base {
      * @return
      */
     public function userform_set_prefill($olduserdata) {
-// echo 'Sono appena arrivato in userform_set_prefill e mi è stato passato il seguente $olduserdata<br />';
+// echo 'Just arrived in userform_set_prefill with the following $olduserdata<br />';
 // var_dump($olduserdata);
 // die;
         $prefill = array();
@@ -361,9 +361,9 @@ class surveyfield_fileupload extends surveyitem_base {
             $prefill[$fieldname.'_filemanager'] = $olduserdata->{$fieldname.'_filemanager'};
         } // else use item defaults
 
-// echo 'Ho modificato $olduserdata nella versione qui mostrata<br />';
+// echo 'I modified $olduserdata as here displayed<br />';
 // var_dump($olduserdata);
-// echo 'Sto per uscire da userform_set_prefill con il seguente $prefill<br />';
+// echo 'Going to get out from userform_set_prefill with the following $prefill<br />';
 // var_dump($prefill);
         return $prefill;
     }

@@ -42,9 +42,9 @@ class survey_pluginform extends surveyitem_baseform {
         // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
-    // here I open a new fieldset
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // here I open a new fieldset
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
         $fieldname = 'specializations';
         $typename = get_string('pluginname', 'surveyformat_'.$item->plugin);
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey', $typename));
@@ -55,9 +55,9 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'labelintro_sid';
         $mform->addElement('hidden', $fieldname, '');
 
-    // ----------------------------------------
-    // newitem::labelintro
-    // ----------------------------------------
+        // ----------------------------------------
+        // newitem::labelintro
+        // ----------------------------------------
         $fieldname = 'labelintro';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyformat_label'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyformat_label');

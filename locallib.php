@@ -140,7 +140,7 @@ function survey_non_empty_only($arrayelement) {
 function survey_textarea_to_array($textareacontent) {
 
     $textareacontent = trim($textareacontent);
-    $textareacontent = str_replace("\r",'', $textareacontent);
+    $textareacontent = str_replace("\r", '', $textareacontent);
 
     $rows = explode("\n", $textareacontent);
 
@@ -606,7 +606,9 @@ function survey_page_has_items($surveyid, $canaccessadvancedform, $formpage, $su
     // start looking ONLY at empty($item->parentid) because it doesn't involve extra queries
     foreach ($itemseeds as $itemseed) {
         // se è un elemento di formato, non conta
-        if ($itemseed->type == SURVEY_FORMAT) continue;
+        if ($itemseed->type == SURVEY_FORMAT) {
+            continue;
+        }
 
         if (empty($itemseed->parentid)) {
             // se almeno uno ha il parentid vuoto, ho finito
@@ -642,7 +644,9 @@ function survey_page_has_items($surveyid, $canaccessadvancedform, $formpage, $su
 function survey_child_is_allowed_static($submissionid, $itemrecord) {
     global $DB;
 
-    if (!$itemrecord->parentid) return TRUE;
+    if (!$itemrecord->parentid) {
+        return true;
+    }
 
     $where = array('submissionid' => $submissionid, 'itemid' => $itemrecord->parentid);
     $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
@@ -809,17 +813,17 @@ function survey_save_user_data($fromform) {
         }
     }
 
-//     if (isset($infoperitem)) {
-//         echo '$infoperitem = <br />';
-//         print_object($infoperitem);
-//     } else {
-//         echo 'Non ho trovato nulla<br />';
-//     }
+    // if (isset($infoperitem)) {
+    //     echo '$infoperitem = <br />';
+    //     print_object($infoperitem);
+    // } else {
+    //     echo 'Non ho trovato nulla<br />';
+    // }
 
-// once $infoperitem is onboard...
-//    aggiorno o creo il record appropriato
-//    chiedendo alla parent class di gestire l'informazione che le appartiene
-//    passandole $iteminfo->extra
+    // once $infoperitem is onboard...
+    //    I update or create the corresponding record
+    //    asking to parent class to manage the information it holds
+    //    passing it $iteminfo->extra
 
     foreach ($infoperitem as $iteminfo) {
         if (!$olduserdata = $DB->get_record('survey_userdata', array('submissionid' => $iteminfo->submissionid, 'itemid' => $iteminfo->itemid))) {
@@ -835,7 +839,6 @@ function survey_save_user_data($fromform) {
         }
         $olduserdata->timecreated = time();
 
-        // ora che sai la plugin passa tutti i campi necessari per il salvataggio del dato alla classe padre
         $item = survey_get_item($iteminfo->itemid, $iteminfo->type, $iteminfo->plugin);
 
         // in this method I update $olduserdata->content
@@ -1100,8 +1103,8 @@ function survey_get_my_groups($cm) {
 function survey_show_thanks_page($survey, $cm) {
     global $OUTPUT;
 
-// $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', 'items', $item->itemid);
-// $mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
+    // $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', 'items', $item->itemid);
+    // $mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
 
 
     if (!empty($survey->thankshtml)) {
@@ -1152,7 +1155,7 @@ function survey_export($cm, $fromform, $survey) {
     $itemlistsql = 'SELECT si.id, si.fieldname, si.plugin
                     FROM {survey_item} si
                     WHERE si.surveyid = :surveyid
-                        AND si.type = "'.SURVEY_FIELD.'"'; //<-- ONLY FIELDS hold data, COLELCTION_FORMAT items do not hold data
+                        AND si.type = "'.SURVEY_FIELD.'"'; // <-- ONLY FIELDS hold data, COLELCTION_FORMAT items do not hold data
     if ($fromform->basicform == SURVEY_FILLONLY) {
         // I need records with:
         //     basicform == SURVEY_FILLONLY OR basicform == SURVEY_FILLANDSEARCH
@@ -1169,9 +1172,9 @@ function survey_export($cm, $fromform, $survey) {
         die;
     }
 
-// echo '$fieldidlist:';
-// var_dump($fieldidlist);
-// die;
+    // echo '$fieldidlist:';
+    // var_dump($fieldidlist);
+    // die;
 
     $richsubmissionssql = 'SELECT s.id, s.status, s.timecreated, s.timemodified, ';
     if (empty($survey->anonymous)) {
@@ -1226,7 +1229,9 @@ function survey_export($cm, $fromform, $survey) {
 
         foreach ($richsubmissions as $richsubmission) {
 
-            if (!$canreadallsubmissions && !survey_i_can_read($survey, $mygroups, $richsubmission->userid)) continue;
+            if (!$canreadallsubmissions && !survey_i_can_read($survey, $mygroups, $richsubmission->userid)) {
+                continue;
+            }
 
             if ($oldrichsubmissionid == $richsubmission->id) {
                 $recordtoexport[$richsubmission->itemid] = survey_decode_content($richsubmission);
@@ -1353,7 +1358,9 @@ function survey_find_submissions($findparams) {
     //     altrimenti, hai trovato la submission che cerchi
 
     // la form di ricerca è vuota: restituisci tutte le submissions
-    if (!$findparams) return;
+    if (!$findparams) {
+        return;
+    }
 
     $keys = array_keys($findparams);
     $firstitemid = $keys[0];
@@ -1473,11 +1480,11 @@ function survey_plugin_build($data) {
 
         $temp_fullpath = $CFG->tempdir.'/'.$temp_path;
 
-// echo '<hr />Intervengo sul file: '.$master_file.'<br />';
-// echo $master_fileinfo["dirname"] . "<br />";
-// echo $master_fileinfo["basename"] . "<br />";
-// echo $master_fileinfo["extension"] . "<br />";
-// echo dirname($master_file) . "<br />";
+        // echo '<hr />Operate on the file: '.$master_file.'<br />';
+        // echo $master_fileinfo["dirname"] . "<br />";
+        // echo $master_fileinfo["basename"] . "<br />";
+        // echo $master_fileinfo["extension"] . "<br />";
+        // echo dirname($master_file) . "<br />";
 
         if ($master_fileinfo['basename'] == 'icon.gif') {
             // copia icon.gif
@@ -1525,7 +1532,7 @@ function survey_plugin_build($data) {
                 make_temp_directory($temp_subdir.'/lang/'.$userlang);
             }
 
-// echo '$master_basepath = '.$master_basepath.'<br />';
+            // echo '$master_basepath = '.$master_basepath.'<br />';
 
             $filecopyright = file_get_contents($master_basepath.'/lang/en/surveytemplate_pluginname.php');
             // replace surveyTemplatePluginMaster with the name of the current survey
@@ -1533,8 +1540,8 @@ function survey_plugin_build($data) {
 
             $savedstrings = $filecopyright.survey_extract_original_string($langtree);
 
-// echo '<textarea rows="30" cols="100">'.$savedstrings.'</textarea>';
-// die;
+            // echo '<textarea rows="30" cols="100">'.$savedstrings.'</textarea>';
+            // die;
 
             // create - this could be 'en' such as 'it'
             $filehandler = fopen($temp_path.'/surveytemplate_'.$data->pluginname.'.php', 'w');
@@ -1605,7 +1612,7 @@ function survey_plugin_build($data) {
         $filenames[] = 'lang/'.$userlang;
     }
 
-if (false) {
+    // if (false) {
     foreach ($filelist as $file) {
         unlink($file);
     }
@@ -1613,7 +1620,7 @@ if (false) {
         rmdir($temp_basedir.'/'.$file);
     }
     rmdir($temp_basedir);
-}
+    // }
 
     // Return the full path to the exported preset file:
     return $exportfile;
@@ -1666,7 +1673,9 @@ function survey_wlib_content(&$libcontent, $surveyid, $data, &$langtree) {
     $itemseeds = $DB->get_records_sql($sql, $params);
 
     // STEP 02: verify $itemseeds is not empty
-    if (!count($itemseeds)) return;
+    if (!count($itemseeds)) {
+        return;
+    }
 
     // STEP 03: before adding the fictitious plugin 'item'
     //          replace '// require_once(_LIBRARIES_)' with the list of require_once
@@ -1922,7 +1931,9 @@ function survey_drop_unexpected_values(&$fromform) {
             $plugin = $parts[2]; // item plugin
             $itemid = $parts[3]; // item id
 
-            if ($itemid == $olditemid) continue;
+            if ($itemid == $olditemid) {
+                continue;
+            }
 
             $olditemid = $itemid;
 
@@ -2009,7 +2020,7 @@ function survey_notifyroles($survey, $cm) {
                     if (isset($groupmemberroles[$role])) {
                         $roledata = $groupmemberroles[$role];
 
-                        foreach($roledata->users as $member) {
+                        foreach ($roledata->users as $member) {
                             $shortmember = new stdClass();
                             $shortmember->id = $member->id;
                             $shortmember->firstname = $member->firstname;

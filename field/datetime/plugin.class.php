@@ -394,8 +394,8 @@ class surveyfield_datetime extends surveyitem_base {
         $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
 
         // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, TRUE);
-        if ($errindex !== FALSE) {
+        $errindex = array_search('err', $values, true);
+        if ($errindex !== false) {
             throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
         }
 
@@ -529,8 +529,9 @@ class surveyfield_datetime extends surveyitem_base {
             // nothing to do here
         }
 
-        if (isset($data[$fieldname.'_noanswer'])) return; // nothing to validate
-
+        if (isset($data[$fieldname.'_noanswer'])) {
+            return; // nothing to validate
+        }
         if ($data[$fieldname.'_day'] == SURVEY_INVITATIONVALUE) {
             $errors[$fieldname.'_group'] = get_string('uerr_daynotset', 'surveyfield_datetime');
             return;
@@ -661,17 +662,29 @@ class surveyfield_datetime extends surveyitem_base {
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
         $itemname = $fieldname.'_day';
-        if (isset($fromform->{$itemname})) unset($fromform->{$itemname});
+        if (isset($fromform->{$itemname})) {
+            unset($fromform->{$itemname});
+        }
         $itemname = $fieldname.'_month';
-        if (isset($fromform->{$itemname})) unset($fromform->{$itemname});
+        if (isset($fromform->{$itemname})) {
+            unset($fromform->{$itemname});
+        }
         $itemname = $fieldname.'_year';
-        if (isset($fromform->{$itemname})) unset($fromform->{$itemname});
+        if (isset($fromform->{$itemname})) {
+            unset($fromform->{$itemname});
+        }
         $itemname = $fieldname.'_hour';
-        if (isset($fromform->{$itemname})) unset($fromform->{$itemname});
+        if (isset($fromform->{$itemname})) {
+            unset($fromform->{$itemname});
+        }
         $itemname = $fieldname.'_minute';
-        if (isset($fromform->{$itemname})) unset($fromform->{$itemname});
+        if (isset($fromform->{$itemname})) {
+            unset($fromform->{$itemname});
+        }
         $itemname = $fieldname.'_noanswer';
-        if (isset($fromform->{$itemname})) unset($fromform->{$itemname});
+        if (isset($fromform->{$itemname})) {
+            unset($fromform->{$itemname});
+        }
     }
 
     /**
@@ -714,9 +727,9 @@ class surveyfield_datetime extends surveyitem_base {
                     $prefill[$fieldname.'_hour'] = $datetimearray['hours'];
                     $prefill[$fieldname.'_minute'] = $datetimearray['minutes'];
                 }
-            } else {
+            // } else {
                 // nothing was set
-                // do not accept defaults but override them
+                // do not accept defaults but overwrite them
             }
 
             // _noanswer

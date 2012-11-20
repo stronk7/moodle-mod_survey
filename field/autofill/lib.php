@@ -70,7 +70,9 @@ function survey_autofill_get_elements($surveyid) {
     // user
     $begin = $end + 1;
     $menuelements = 3; // 3 == ('number of cycles' - 1)
-    if ($usegroups) $menuelements += 2; // 'group ID' and 'group name'
+    if ($usegroups) {
+        $menuelements += 2; // 'group ID' and 'group name'
+    }
     $end = $begin + $menuelements;
     $subelements = array();
     for ($i = $begin; $i <= $end; $i++) {

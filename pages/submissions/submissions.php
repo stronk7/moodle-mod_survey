@@ -98,10 +98,10 @@ if (!empty($submissionid)) {
 
     $prefill['submissionid'] = $submissionid;
 
-//     $mygroups = survey_get_my_groups($cm);
-//     $icanedit = survey_i_can_edit($survey, $mygroups, $submission->userid);
-//     $icanedit = ($icanedit || survey_user_can_edit_all_submissions($cm));
-//     $icanedit = ($icanedit && ($action != SURVEY_VIEWSURVEY));
+    // $mygroups = survey_get_my_groups($cm);
+    // $icanedit = survey_i_can_edit($survey, $mygroups, $submission->userid);
+    // $icanedit = ($icanedit || survey_user_can_edit_all_submissions($cm));
+    // $icanedit = ($icanedit && ($action != SURVEY_VIEWSURVEY));
 }
 $prefill['formpage'] = $formpage; // go to populate the hidden field of the form
 

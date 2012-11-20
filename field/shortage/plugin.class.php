@@ -53,7 +53,7 @@ class surveyfield_shortage extends surveyitem_base {
     /*
      * $defaultoption
      */
-    public $defaultoption = SURVEY_INVITATIONDEFAULT; //<-- TODO: perché se metto '' non seleziona il radio button corrispondente?
+    public $defaultoption = SURVEY_INVITATIONDEFAULT;
 
     /*
      * $defaultvalue = the value of the field when the form is initially displayed.
@@ -323,8 +323,8 @@ class surveyfield_shortage extends surveyitem_base {
         $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
 
         // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, TRUE);
-        if ($errindex !== FALSE) {
+        $errindex = array_search('err', $values, true);
+        if ($errindex !== false) {
             throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
         }
 
@@ -407,7 +407,9 @@ class surveyfield_shortage extends surveyitem_base {
 
         $userinput = $data[$fieldname];
 
-        if ($userinput == SURVEY_NOANSWERVALUE) return;
+        if ($userinput == SURVEY_NOANSWERVALUE) {
+            return;
+        }
         if ($haslowerbound && ($userinput < $this->lowerbound)) {
             $errors[$fieldname] = get_string('uerr_lowerthanminimum', 'surveyfield_shortage');
         }
@@ -467,9 +469,9 @@ class surveyfield_shortage extends surveyitem_base {
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (!empty($olduserdata->content)) {
                 $prefill[$fieldname] = $olduserdata->content;
-            } else {
+            // } else {
                 // nothing was set
-                // do not accept defaults but override them
+                // do not accept defaults but overwrite them
             }
         } // else use item defaults
 

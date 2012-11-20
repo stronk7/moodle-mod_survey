@@ -57,7 +57,7 @@ $tableheaders[] = get_string('actions');
 $table->define_headers($tableheaders);
 
 // $table->collapsible(true);
-$table->sortable(true, 'sortindex', 'ASC'); //sorted by sortindex by default
+$table->sortable(true, 'sortindex', 'ASC'); // sorted by sortindex by default
 $table->no_sorting('uavailability');
 $table->no_sorting('mavailability');
 $table->no_sorting('actions');
@@ -159,10 +159,10 @@ foreach ($itemseeds as $itemseed) {
     // *************************************** status
     if ($item->parentid) {
         $status = $parentitem->item_parent_validate_child_constraints($item->parentvalue);
-        if ($status === TRUE) {
+        if ($status === true) {
             $tablerow[] = $okstring;
         } else {
-            if ($status === FALSE) {
+            if ($status === false) {
                 if (empty($item->draft)) {
                     $tablerow[] = '<span class="errormessage">'.get_string('wrongrelation', 'survey', $item->parentcontent).'</span>';
                 } else {

@@ -118,9 +118,15 @@ class surveyfield_numeric extends surveyitem_base {
         parent::item_load($itemid);
 
         // float numbers need more attention because I can write them using , or .
-        if (!empty($this->defaultvalue)) $this->defaultvalue = format_float($this->defaultvalue, $this->decimals);
-        if (!empty($this->lowerbound)) $this->lowerbound = format_float($this->lowerbound, $this->decimals);
-        if (!empty($this->upperbound)) $this->upperbound = format_float($this->upperbound, $this->decimals);
+        if (!empty($this->defaultvalue)) {
+            $this->defaultvalue = format_float($this->defaultvalue, $this->decimals);
+        }
+        if (!empty($this->lowerbound)) {
+            $this->lowerbound = format_float($this->lowerbound, $this->decimals);
+        }
+        if (!empty($this->upperbound)) {
+            $this->upperbound = format_float($this->upperbound, $this->decimals);
+        }
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
@@ -147,9 +153,15 @@ class surveyfield_numeric extends surveyitem_base {
         $record->signed = isset($record->signed) ? 1 : 0;
 
         // float numbers need more attention because I can write them using , or .
-        if (!empty($this->defaultvalue)) $this->defaultvalue = unformat_float($this->defaultvalue);
-        if (!empty($this->lowerbound)) $this->lowerbound = unformat_float($this->lowerbound);
-        if (!empty($this->upperbound)) $this->upperbound = unformat_float($this->upperbound);
+        if (!empty($this->defaultvalue)) {
+            $this->defaultvalue = unformat_float($this->defaultvalue);
+        }
+        if (!empty($this->lowerbound)) {
+            $this->lowerbound = unformat_float($this->lowerbound);
+        }
+        if (!empty($this->upperbound)) {
+            $this->upperbound = unformat_float($this->upperbound);
+        }
 
         // multilang save support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
@@ -377,8 +389,8 @@ class surveyfield_numeric extends surveyitem_base {
         $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
 
         // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, TRUE);
-        if ($errindex !== FALSE) {
+        $errindex = array_search('err', $values, true);
+        if ($errindex !== false) {
             throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
         }
 
@@ -428,7 +440,9 @@ class surveyfield_numeric extends surveyitem_base {
             }
         }
 
-        if (!isset($data[$fieldname])) return;
+        if (!isset($data[$fieldname])) {
+            return;
+        }
 
         // if it is not a number, shouts
         $thenumber = unformat_float($data[$fieldname]);
@@ -485,7 +499,9 @@ class surveyfield_numeric extends surveyitem_base {
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
         $itemname = $fieldname;
-        if (isset($fromform->{$itemname})) unset($fromform->{$itemname});
+        if (isset($fromform->{$itemname})) {
+            unset($fromform->{$itemname});
+        }
     }
 
     /**
@@ -529,9 +545,9 @@ class surveyfield_numeric extends surveyitem_base {
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (!empty($olduserdata->content)) {
                 $prefill[$fieldname] = $olduserdata->content;
-            } else {
+            // } else {
                 // nothing was set
-                // do not accept defaults but override them
+                // do not accept defaults but overwrite them
             }
         } // else use item defaults
 

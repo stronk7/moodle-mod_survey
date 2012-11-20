@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -31,6 +30,6 @@ class surveytemplate_collesactual {
      * @return record
      */
     public function apply_survey_settings($record) {
-       return $record;
+        return $record;
     }
 }

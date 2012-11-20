@@ -68,7 +68,7 @@ class surveyfield_select extends surveyitem_base {
     /*
      * $defaultoption
      */
-    public $defaultoption = SURVEY_INVITATIONDEFAULT; //<-- TODO: perché se metto '' non seleziona il radio button corrispondente?
+    public $defaultoption = SURVEY_INVITATIONDEFAULT;
 
     /*
      * $defaultvalue = the value of the field when the form is initially displayed.
@@ -293,8 +293,8 @@ class surveyfield_select extends surveyitem_base {
         $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
 
         // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, TRUE);
-        if ($errindex !== FALSE) {
+        $errindex = array_search('err', $values, true);
+        if ($errindex !== false) {
             throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
         }
 
@@ -447,7 +447,9 @@ class surveyfield_select extends surveyitem_base {
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
         $itemname = $fieldname;
-        if (isset($fromform->{$itemname})) unset($fromform->{$itemname});
+        if (isset($fromform->{$itemname})) {
+            unset($fromform->{$itemname});
+        }
     }
 
     /**
@@ -464,7 +466,6 @@ class surveyfield_select extends surveyitem_base {
             } else {
                 $olduserdata->content = $itemdetail['mainelement'];
             }
-// echo '$olduserdata->content = '.$olduserdata->content.'<br />';
             return;
         }
 
@@ -496,7 +497,7 @@ class surveyfield_select extends surveyitem_base {
                 }
             } else {
                 // nothing was set
-                // do not accept defaults but override them
+                // do not accept defaults but overwrite them
                 // Ma se questa è una select, come può essere empty($olduserdata->content)? Ho selezionato la voce "Not answering"
                 $prefill[$fieldname] = '';
             }

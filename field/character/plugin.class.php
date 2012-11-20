@@ -138,8 +138,12 @@ class surveyfield_character extends surveyitem_base {
         // whether executed, the 'content' field is ALWAYS handled
         $this->item_builtin_string_save_support($record);
 
-        if (!isset($record->minlength)) $record->minlength = 0;
-        if (!isset($record->maxlength)) $record->maxlength = 255;
+        if (!isset($record->minlength)) {
+            $record->minlength = 0;
+        }
+        if (!isset($record->maxlength)) {
+            $record->maxlength = 255;
+        }
         // Do parent item saving stuff here (surveyitem_base::save($record)))
         return parent::item_save($record);
     }
@@ -372,8 +376,8 @@ class surveyfield_character extends surveyitem_base {
         }
 
         // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, TRUE);
-        if ($errindex !== FALSE) {
+        $errindex = array_search('err', $values, true);
+        if ($errindex !== false) {
             throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
         }
 
