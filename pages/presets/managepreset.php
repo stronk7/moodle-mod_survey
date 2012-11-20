@@ -95,7 +95,7 @@ foreach($options as $sharinglevel => $v) {
 
     $contextid = survey_get_contextid_from_sharinglevel($sharinglevel);
     $contextstring = survey_get_contextstring_from_sharinglevel($contextlevel);
-    $presets->{$contextstring} = survey_get_available_presets($contextid, 'mod_survey');
+    $presets->{$contextstring} = survey_get_available_presets($contextid);
 }
 
 // echo '$presets:';

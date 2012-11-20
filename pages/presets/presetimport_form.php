@@ -63,9 +63,9 @@ class survey_presetimportform extends moodleform {
 
         // get all preset files in the specified context
         $contextid = survey_get_contextid_from_sharinglevel($data['sharinglevel']);
-        $componentfiles = survey_get_available_presets($contextid, 'mod_survey');
+        $componentfiles = survey_get_available_presets($contextid);
 
-        // TODO: there is a bug. Uploading a second file, the first in the same area get deleted. I can not understand the reason.
+        // TODO: there is a bug. Uploading a second file in the same context, the first get deleted. I can not understand the reason.
         foreach ($componentfiles as $xmlfile) {
             $filename = $xmlfile->get_filename();
             if (in_array($filename, $uploadedfiles)) {

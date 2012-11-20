@@ -63,18 +63,8 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addHelpButton($fieldname, $fieldname, 'surveyformat_label');
         $mform->setType($fieldname, PARAM_TEXT);
 
-    // ----------------------------------------
-    // newitem::content & contentformat
-    // ----------------------------------------
-        $fieldname = 'content_editor';
-        $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES);
-        $mform->addElement('editor', $fieldname, get_string($fieldname, 'surveyformat_label'), null, $editoroptions);
-        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
-        $mform->addHelpButton($fieldname, $fieldname, 'surveyformat_label');
-        $mform->setType($fieldname, PARAM_CLEANHTML);
-
         // -------------------------------------------------------------------------------
-        // finisco con la "sezione" comune della form
+        // I close with the common section of the form
         parent::definition();
 
         $this->add_item_buttons();

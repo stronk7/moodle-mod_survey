@@ -98,7 +98,9 @@ switch ($currenttab) {
 
                 if ($fromform = $mform->get_data()) {
 
-                    survey_drop_unexpected_values($fromform);
+                    if (!$survey->newpageforchild) {
+                        survey_drop_unexpected_values($fromform);
+                    }
 
                     $timenow = time();
                     $savebutton = (isset($fromform->savebutton) && ($fromform->savebutton));
@@ -143,8 +145,10 @@ switch ($currenttab) {
                     // oramai ho salvato
 
                     // BEGIN: send email whether requested
-                    if (!empty($survey->notifyrole) || !empty($survey->notifymore)) {
-                        survey_notifyroles($survey, $cm);
+                    if ($record->status = SURVEY_STATUSCLOSED) {
+                        if (!empty($survey->notifyrole) || !empty($survey->notifymore)) {
+                            survey_notifyroles($survey, $cm);
+                        }
                     }
                     // END: send email whether requested
 

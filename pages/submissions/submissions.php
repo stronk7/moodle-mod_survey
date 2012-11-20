@@ -75,7 +75,7 @@ if ($savebutton) {
 // silly orientation text for the user
 // $lastformpage has been defined in beforepage.php
 if ($lastformpage > 1) {
-    // if $formpage == 0 non ho più pagine con items
+    // if $formpage == 0 no more pages with items are available
     $a = new stdclass();
     $a->formpage = ($formpage == 0) ? $lastformpage : $formpage;
     $a->lastformpage = $lastformpage;

@@ -399,7 +399,8 @@ class surveyfield_numeric extends surveyitem_base {
         $mform->addElement('text', $fieldname, $elementlabel, array('class' => 'indent-'.$this->indent, 'itemid' => $this->itemid));
         $mform->setType($fieldname, PARAM_RAW); // see: moodlelib.php lines 133+
         if (!$searchform) {
-            $mform->setDefault($fieldname, number_format((double)$this->defaultvalue, $this->decimals));
+            $decimalseparator = get_string('decsep', 'langconfig');
+            $mform->setDefault($fieldname, number_format((double)$this->defaultvalue, $this->decimals, $decimalseparator, ''));
             $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
             if ($this->required && $canaddrequiredrule) {
                 $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
@@ -430,7 +431,8 @@ class surveyfield_numeric extends surveyitem_base {
         if (!isset($data[$fieldname])) return;
 
         // if it is not a number, shouts
-        if (!$thenumber = unformat_float($data[$fieldname])) {
+        $thenumber = unformat_float($data[$fieldname]);
+        if (is_null($thenumber)) {
             $errors[$fieldname] = get_string('uerr_notanumber', 'surveyfield_numeric');
         } else {
             // if it is < 0 but has been defined as unsigned, shouts

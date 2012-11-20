@@ -161,21 +161,26 @@ class survey_submissionform extends moodleform {
                 $olditemid = $itemid;
 
                 $item = survey_get_item($itemid, $type, $plugin);
-                if (empty($item->parentid)) {
+                if ($survey->newpageforchild) {
                     $itemallowed = true;
                     $parentitem = null;
                 } else {
-                    // chiama il padre
-                    $parentitem = survey_get_item($item->parentid);
-                    // digli che il figlio ha come parentcontent 12/4/1968
-                    $itemallowed = $parentitem->userform_child_is_allowed_dynamic($item->parentcontent, $data);
-                    // il padre, sapendo come è fatto, compara quello che vuole e risponde
+                    if (empty($item->parentid)) {
+                        $itemallowed = true;
+                        $parentitem = null;
+                    } else {
+                        // call its parent
+                        $parentitem = survey_get_item($item->parentid);
+                        // tell parent that his child has as parentcontent 12/4/1968
+                        $itemallowed = $parentitem->userform_child_is_allowed_dynamic($item->parentcontent, $data);
+                        // parent item, knowing how itself exactly is, compare what is needed and provide an answer
+                    }
                 }
 
                 if ($itemallowed) {
                     $item->userform_mform_validation($data, $errors, $survey, $canaccessadvancedform, $parentitem);
 //                 } else {
-// echo 'Non ho consentito la validazione dell\'item '.$item->itemid.', plugin = '.$item->plugin.'<br />';
+// echo 'parent item didn't allow the validation of the child item '.$item->itemid.', plugin = '.$item->plugin.'<br />';
                 }
             }
         }

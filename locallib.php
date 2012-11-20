@@ -521,7 +521,7 @@ function survey_assign_pages($canaccessadvancedform=false) {
 
     // were pages assigned?
     $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
-    if (!$pagenumber = $DB->get_field('survey_item', 'MIN('.$pagefield.')', array('surveyid' => $survey->id, 'draft' => 0))) {
+    if (!$pagenumber = $DB->get_field('survey_item', 'MAX('.$pagefield.')', array('surveyid' => $survey->id, 'draft' => 0))) {
         $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
         $pagenumber = 1;
         $conditions = array('surveyid' => $survey->id, 'draft' => 0);
@@ -2274,10 +2274,10 @@ function survey_build_preset_content($survey) {
  * @param array $presets
  * @return array An array of presets
  */
-function survey_get_available_presets($contextid, $component) {
+function survey_get_available_presets($contextid) {
 
     $fs = get_file_storage();
-    $files = $fs->get_area_files($contextid, $component, SURVEY_PRESETFILEAREA);
+    $files = $fs->get_area_files($contextid, 'mod_survey', SURVEY_PRESETFILEAREA);
     if (empty($files)) {
         return array();
     }

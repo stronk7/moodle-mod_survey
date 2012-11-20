@@ -45,7 +45,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform = $this->_form;
 
         // -------------------------------------------------------------------------------
-        // finisco con la "sezione" comune della form
+        // I close with the common section of the form
         parent::definition();
 
     // ----------------------------------------

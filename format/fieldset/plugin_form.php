@@ -65,7 +65,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addElement('hidden', $fieldname, PARAM_CLEANHTML);
 
         // -------------------------------------------------------------------------------
-        // finisco con la "sezione" comune della form
+        // I close with the common section of the form
         parent::definition();
 
         $this->add_item_buttons();

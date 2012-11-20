@@ -83,7 +83,7 @@ class survey_presetbuildform extends moodleform {
         if (!isset($data['overwrite'])) {
             // get all preset files
             $contextid = survey_get_contextid_from_sharinglevel($data['sharinglevel']);
-            $componentfiles = survey_get_available_presets($contextid, 'mod_survey');
+            $componentfiles = survey_get_available_presets($contextid);
 
             foreach ($componentfiles as $xmlfile) {
                 $comparename = str_replace(' ', '_', $data['presetname']).'.xml';

@@ -57,7 +57,7 @@ class survey_addsetform extends moodleform {
 
             $contextid = survey_get_contextid_from_sharinglevel($sharinglevel);
             $contextstring = survey_get_contextstring_from_sharinglevel($contextlevel);
-            $presets->{$contextstring} = survey_get_available_presets($contextid, 'mod_survey');
+            $presets->{$contextstring} = survey_get_available_presets($contextid);
         }
 
         foreach($presets as $contextstring => $contextfiles) {
