@@ -68,16 +68,16 @@ switch ($currenttab) {
                 echo 'and the right "case" is missing<br />';
         }
         break;
-    case SURVEY_TABPRESETS:
+    case SURVEY_TABTEMPLATES:
         switch ($currentpage) {
-            case SURVEY_PRESETS_MANAGE: // Manage
-                include_once($CFG->dirroot.'/mod/survey/pages/presets/managepreset.php');
+            case SURVEY_TEMPLATES_MANAGE: // Manage
+                include_once($CFG->dirroot.'/mod/survey/pages/template/managetemplate.php');
                 break;
-            case SURVEY_PRESETS_BUILD: // Build
-                include_once($CFG->dirroot.'/mod/survey/pages/presets/presetbuild.php');
+            case SURVEY_TEMPLATES_BUILD: // Build
+                include_once($CFG->dirroot.'/mod/survey/pages/template/createtemplate.php');
                 break;
-            case SURVEY_PRESETS_IMPORT: // Import
-                include_once($CFG->dirroot.'/mod/survey/pages/presets/presetimport.php');
+            case SURVEY_TEMPLATES_IMPORT: // Import
+                include_once($CFG->dirroot.'/mod/survey/pages/template/importtemplate.php');
                 break;
             default:
                 echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';

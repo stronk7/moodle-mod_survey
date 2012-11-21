@@ -545,7 +545,7 @@ class surveyfield_numeric extends surveyitem_base {
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (!empty($olduserdata->content)) {
                 $decimalseparator = get_string('decsep', 'langconfig');
-                $prefill[$fieldname] = number_format((double)$olduserdata->content, $this->decimals, $decimalseparator, ''));
+                $prefill[$fieldname] = number_format((double)$olduserdata->content, $this->decimals, $decimalseparator, '');
             // } else {
                 // nothing was set
                 // do not accept defaults but overwrite them

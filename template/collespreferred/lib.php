@@ -43,7 +43,7 @@ function surveytemplate_collespreferred_add() {
     $si_fields = array('surveyid'      , 'type'            , 'plugin'          , 'externalname' ,
                        'content_sid'   , 'content'         , 'contentformat'   , 'customnumber' ,
                        'extrarow'      , 'softinfo'        , 'required'        , 'fieldname'    ,
-                       'indent'        , 'basicform'       , 'advancedsearch'  , 'draft'        ,
+                       'indent'        , 'basicform'       , 'advancedsearch'  , 'hide'         ,
                        'sortindex'     , 'basicformpage'   , 'advancedformpage', 'parentid'     ,
                        'parentcontent' , 'parentvalue'     , 'timecreated'     , 'timemodified');
 

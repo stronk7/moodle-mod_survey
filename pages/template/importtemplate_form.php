@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') OR die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
-class survey_presetbuildform extends moodleform {
+class survey_templateimportform extends moodleform {
 
     function definition() {
         $mform = $this->_form;
@@ -39,29 +39,21 @@ class survey_presetbuildform extends moodleform {
         $survey = $this->_customdata->survey;
 
         // ----------------------------------------
-        // presetbuild::surveyid
+        // templateimport::importfile
         // ----------------------------------------
-        $fieldname = 'surveyid';
-        $mform->addElement('hidden', $fieldname, 0);
+        $fieldname = 'importfile';
+        $template_options = survey_get_template_options();
+        $mform->addElement('filemanager', $fieldname.'_filemanager', get_string($fieldname, 'survey'), null, $template_options);
 
         // ----------------------------------------
-        // presetbuild::presetname
-        // ----------------------------------------
-        $fieldname = 'presetname';
-        $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'));
-        $mform->addHelpButton($fieldname, $fieldname, 'survey');
-        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
-        $mform->setType($fieldname, PARAM_FILE); // presetname is going to be a file name
-
-        // ----------------------------------------
-        // presetbuild::overwrite
+        // templateimport::overwrite
         // ----------------------------------------
         $fieldname = 'overwrite';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
         // ----------------------------------------
-        // presetbuild::sharinglevel
+        // templateimport::sharinglevel
         // ----------------------------------------
         $fieldname = 'sharinglevel';
         $options = array();
@@ -74,25 +66,39 @@ class survey_presetbuildform extends moodleform {
 
         // -------------------------------------------------------------------------------
         // buttons
-        $this->add_action_buttons(false, get_string('continue'));
+        $this->add_action_buttons(false, get_string('templateimport', 'survey'));
     }
 
     function validation($data, $files) {
+        global $USER;
+
         $errors = parent::validation($data, $files);
 
-        if (!isset($data['overwrite'])) {
-            // get all preset files
-            $contextid = survey_get_contextid_from_sharinglevel($data['sharinglevel']);
-            $componentfiles = survey_get_available_presets($contextid);
+        $fs = get_file_storage();
+        $usercontext = context_user::instance($USER->id);
+        $draftitemid = file_get_submitted_draft_itemid('importfile_filemanager');
+        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, '', false);
 
-            foreach ($componentfiles as $xmlfile) {
-                $comparename = str_replace(' ', '_', $data['presetname']).'.xml';
-                if ($comparename == $xmlfile->get_filename()) {
-                    if (isset($data['overwrite'])) {
-                        $xmlfile->delete();
-                    } else {
-                        $errors['presetname'] = get_string('enteruniquename', 'survey', $data['presetname']);
-                    }
+        $uploadedfiles = array();
+        foreach ($draftfiles as $file) {
+            if ($file->is_directory()) {
+                continue;
+            }
+            $uploadedfiles[] = $file->get_filename();
+        }
+
+        // get all template files in the specified context
+        $contextid = survey_get_contextid_from_sharinglevel($data['sharinglevel']);
+        $componentfiles = survey_get_available_templates($contextid);
+
+        // TODO: there is a bug. Uploading a second file in the same context, the first get deleted. I can not understand the reason.
+        foreach ($componentfiles as $xmlfile) {
+            $filename = $xmlfile->get_filename();
+            if (in_array($filename, $uploadedfiles)) {
+                if (isset($data['overwrite'])) {
+                    $xmlfile->delete();
+                } else {
+                    $errors['importfile_filemanager'] = get_string('enteruniquename', 'survey', $filename);
                     break;
                 }
             }

@@ -240,7 +240,7 @@ foreach ($itemseeds as $itemseed) {
     $tablerow[] = $content;
 
     // *************************************** user availability
-    if ($item->draft) {
+    if ($item->hide) {
         $message = get_string('usernoedit', 'survey');
         $content = '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
         $message = get_string('usernosearch', 'survey');
@@ -274,7 +274,7 @@ foreach ($itemseeds as $itemseed) {
     $tablerow[] = $content;
 
     // *************************************** advanced availability
-    if ($item->draft) {
+    if ($item->hide) {
         $message = get_string('advancednoedit', 'survey');
         $content = '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
         $message = get_string('advancednosearch', 'survey');
@@ -349,7 +349,7 @@ foreach ($itemseeds as $itemseed) {
         // *************************************** SURVEY_HIDEITEM/SURVEY_SHOWITEM
         if (!$hassubmissions) {
             $paramurl = $paramurl_base + array('pag' => SURVEY_ITEMS_MANAGE);
-            if (!empty($item->draft)) {
+            if (!empty($item->hide)) {
                 $icopath = 't/show';
                 $paramurl = $paramurl + array('act' => SURVEY_SHOWITEM);
                 $message = $showtitle;
@@ -427,7 +427,7 @@ foreach ($itemseeds as $itemseed) {
 
     $tablerow[] = $icons;
 
-    $addedclass = empty($item->draft) ? '' : 'dimmed';
+    $addedclass = empty($item->hide) ? '' : 'dimmed';
     $table->add_data($tablerow, $addedclass);
 
     // print_object($item);

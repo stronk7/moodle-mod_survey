@@ -14,22 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Defines the version of survey
+ * This file replaces the legacy STATEMENTS section in db/install.xml,
+ * lib.php/modulename_install() post installation hook and partially defaults.php
  *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
- *
- * @package   mod_survey
- * @copyright 2013 kordan <kordan@mclink.it>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    surveytemplate
+ * @subpackage sample_tree
+ * @copyright  2013 kordan <kordan@mclink.it>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->component = 'mod_survey';     // Full name of the plugin (used for diagnostics)
-$module->maturity = MATURITY_ALPHA;    // MATURITY_RC
-$module->version = 2012112101;         // The current module version (Date: YYYYMMDDXX)
-$module->requires = 2010031900;        // Requires this Moodle version
-$module->cron = 3600;                  // Period for cron to check this module (secs)
+require_once(dirname(dirname(__FILE__)).'/lib.php');
+
+/**
+ * Post installation procedure
+ */
+function xmldb_surveytemplate_sample_tree_install() {
+    surveytemplate_sample_tree_add();
+}
+
+/**
+ * Post installation procedure recovery
+ */
+function xmldb_surveytemplate_sample_tree_install_recovery() {
+    // global $CFG, $DB;
+    // require_once(dirname(__FILE__) . '/upgradelib.php');
+}

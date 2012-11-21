@@ -177,10 +177,10 @@ class surveyitem_baseform extends moodleform {
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
         // ----------------------------------------
-        // newitem::draft
+        // newitem::hide
         // ----------------------------------------
         if (!$hassubmissions) {
-            $fieldname = 'draft';
+            $fieldname = 'hide';
             if ($item->item_form_requires[$fieldname]) {
                 $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
                 $mform->addHelpButton($fieldname, $fieldname, 'survey');
@@ -212,7 +212,7 @@ class surveyitem_baseform extends moodleform {
             $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_INT);
-            $mform->disabledIf($fieldname, 'draft', 'checked');
+            $mform->disabledIf($fieldname, 'hide', 'checked');
         }
 
         // ----------------------------------------
@@ -224,7 +224,7 @@ class surveyitem_baseform extends moodleform {
                 $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
                 $mform->addHelpButton($fieldname, $fieldname, 'survey');
                 $mform->setType($fieldname, PARAM_INT);
-                $mform->disabledIf($fieldname, 'draft', 'checked');
+                $mform->disabledIf($fieldname, 'hide', 'checked');
             }
         }
 
@@ -278,7 +278,7 @@ class surveyitem_baseform extends moodleform {
                 if (strlen($content) > $maxlength) {
                     $content = substr($content, 0, $maxlength);
                 }
-                $disabled = ($record->draft == 1) ? array('disabled' => 'disabled') : null;
+                $disabled = ($record->hide == 1) ? array('disabled' => 'disabled') : null;
                 $select->addOption($content, $record->id, $disabled);
             }
             $records->close();

@@ -43,11 +43,18 @@ function xmldb_survey_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // if ($oldversion < 2012101103) {
+    if ($oldversion < 2012112101) {
+
+        // Rename field draft on table survey_item to hide
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('draft', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'advancedsearch');
+
+        // Launch rename field draft
+        $dbman->rename_field($table, $field, 'hide');
 
         // survey savepoint reached
-    //    upgrade_mod_savepoint(true, 2012101103, 'survey');
-    // }
+        upgrade_mod_savepoint(true, 2012112101, 'survey');
+    }
 
     return true;
 }

@@ -129,9 +129,9 @@ class surveyitem_base {
     public $advancedsearch = 0;
 
     /**
-     * $draft = is this field going to be shown in the form?
+     * $hide = is this field going to be shown in the form?
      */
-    public $draft = 0;
+    public $hide = 0;
 
     /**
      * $sortindex = the order of this item in the survey form
@@ -196,7 +196,7 @@ class surveyitem_base {
         'indent' => true,
         'basicform' => true,
         'advancedsearch' => true,
-        'draft' => true,
+        'hide' => true,
         'parentid' => true,
         'parentcontent' => true
     );
@@ -286,14 +286,14 @@ class surveyitem_base {
         // extrarow
         // $record->extrarow = (isset($record->extrarow)) ? 1 : 0; // extrarow is advcheckbox so doesn't need my intervention
 
-        // draft
-        // draft/regular part 1
-        if ($this->item_form_requires['draft']) {
-            $record->draft = isset($record->draft) ? 1 : 0;
+        // hide
+        // hide/regular part 1
+        if ($this->item_form_requires['hide']) {
+            $record->hide = isset($record->hide) ? 1 : 0;
         } else {
-            $record->draft = null;
+            $record->hide = null;
         }
-        // end of: draft/regular part 1
+        // end of: hide/regular part 1
 
         // advancedsearch
         if ($this->item_form_requires['advancedsearch']) {
@@ -315,19 +315,19 @@ class surveyitem_base {
         // $userfeedback
         //   +--- children moved out from user entry form
         //   |       +--- children moved in the user entry form
-        //   |       |       +--- child drafted because of this item draft
-        //   |       |       |       +--- parent undrafted because of this item undraft
+        //   |       |       +--- child hided because of this item hide
+        //   |       |       |       +--- parent was shown because this item was shown
         //   |       |       |       |       +--- new|edit
         //   |       |       |       |       |       +--- success|fail
         // [0|1] - [0|1] - [0|1] - [0|1] - [0|1] - [0|1]
-        // l'ultima cifra == 1 significa che il processo è andato a buon fine
-        // l'ultima cifra == 0 significa che il processo NON è andato a buon fine
-        // la penultima cifra == 0 significa NEW
-        // la penultima cifra == 1 significa EDIT
+        // last digit == 1 means that the process was successfull
+        // last digit == 0 means that the process was NOT successfull
+        // beforelast digit == 0 means NEW
+        // beforelast digit == 1 means EDIT
 
-        // la (cifra in posizione 2) == 1 significa item undrafted
-        // la (cifra in posizione 3) == 1 significa item set to draft because of this item draft
-        // la (cifra in posizione 4) == 1 significa item set to draft because this item was removed from the user entry form
+        // (digit in place 2) == 1 means item shown
+        // (digit in place 3) == 1 means item hided because this item was hided
+        // (digit in place 4) == 1 means item hided because this item was removed from the user entry form
 
         $userfeedback = SURVEY_NOFEEDBACK;
         // Does this record need to be saved as new record or as un update on a preexisting record?
@@ -360,9 +360,9 @@ class surveyitem_base {
 
             $logaction = ($userfeedback) ? 'add item' : 'add item failed';
         } else {
-            // draft/regular part 2
-            $olddraft = $DB->get_field('survey_item', 'draft', array('id' => $record->itemid)); // used later
-            // end of: draft/regular 2
+            // hide/regular part 2
+            $oldhide = $DB->get_field('survey_item', 'hide', array('id' => $record->itemid)); // used later
+            // end of: hide/regular 2
 
             // survey_item
             // id
@@ -394,34 +394,34 @@ class surveyitem_base {
             $logaction = ($userfeedback) ? 'update item' : 'update item failed';
 
             if ($record->id) { // if the item was successfully saved
-                // draft/regular part 3
-                if ( ($olddraft == 1) && ($record->draft == 0) ) {
+                // hide/regular part 3
+                if ( ($oldhide == 1) && ($record->hide == 0) ) {
                     if (survey_manage_item_show(1, $cm, $record->itemid, $record->type)) {
-                        // una catena undrafted
+                        // a chain of record has been shown
                         $userfeedback += 4; // 1*2^2
                     }
                 }
-                if ( ($olddraft == 0) && ($record->draft == 1) ) {
+                if ( ($oldhide == 0) && ($record->hide == 1) ) {
                     if (survey_manage_item_hide(1, $cm, $record->itemid, $record->type)) {
-                        // una catena drafted
+                        // a chain of record has been shown
                         $userfeedback += 8; // 1*2^3
                     }
                 }
-                // end of: draft/regular part 3
+                // end of: hide/regular part 3
 
                 // adesso, indipendentemente dalla paternità, verifica che i figli siano nella stessa user form
                 // se stanno in una differente form, spostali
                 if (isset($record->basicform)) { // if the item is not in the user form
                     if ($record->basicform != SURVEY_NOTPRESENT) { // if the item is not in the user form
                         if (survey_move_regular_items($record->itemid, $record->basicform)) {
-                            // una catena drafted
+                            // a chain of record has been shown
                             $userfeedback += 16; // 1*2^4
                         }
                     }
 
                     if ($record->basicform == SURVEY_NOTPRESENT) { // if the item is in the user form
                         if (survey_move_regular_items($record->itemid, 0)) {
-                            // una catena drafted
+                            // a chain of record has been shown
                             $userfeedback += 32; // 1*2^5
                         }
                     }
@@ -868,6 +868,7 @@ class surveyitem_base {
     public function item_get_si_values($data, $sistructure, $sisid) {
         global $DB;
 
+        $pluginname = clean_filename($data->mastertemplatename);
         // echo '$data:';
         // var_dump($data);
         // echo '$sistructure:';
@@ -887,7 +888,7 @@ class surveyitem_base {
         // $si_fields = array('surveyid', 'type', 'plugin', 'externalname',
         //                    'content_sid', 'content', 'contentformat', 'customnumber',
         //                    'extrarow', 'softinfo', 'required', 'fieldname',
-        //                    'indent', 'basicform', 'advancedsearch', 'draft',
+        //                    'indent', 'basicform', 'advancedsearch', 'hide',
         //                    'sortindex', 'basicformpage', 'advancedformpage', 'parentid',
         //                    'parentcontent', 'parentvalue', 'timecreated', 'timemodified');
 
@@ -934,7 +935,7 @@ class surveyitem_base {
 
         // update: $data->externalname
         /*------------------------------------------------*/
-        $values['externalname'] = '\''.$data->pluginname.'\'';
+        $values['externalname'] = '\''.$pluginname.'\'';
 
         // $si_fields = array(...'content_sid', 'content', 'contentformat', 'customnumber',
 
@@ -1006,7 +1007,7 @@ class surveyitem_base {
         /*------------------------------------------------*/
         $values['fieldname'] = empty($this->fieldname) ? '\'\'' : '\''.$this->fieldname.'\'';
 
-        // $si_fields = array(...'indent', 'basicform', 'advancedsearch', 'draft',
+        // $si_fields = array(...'indent', 'basicform', 'advancedsearch', 'hide',
 
         // override: $value['indent']
         /*------------------------------------------------*/
@@ -1045,9 +1046,9 @@ class surveyitem_base {
                 echo 'and the right "case" is missing<br />';
         }
 
-        // override: $value['draft']
+        // override: $value['hide']
         /*------------------------------------------------*/
-        $values['draft'] = $this->draft;
+        $values['hide'] = $this->hide;
 
         // $si_fields = array(...'sortindex', 'basicformpage', 'advancedformpage', 'parentid',
 

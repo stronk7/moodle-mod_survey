@@ -51,14 +51,14 @@ define('SURVEY_REFERRALMONTH'      , 0);
 
 $i=1; define('SURVEY_TABSUBMISSIONS', $i);
 $i++; define('SURVEY_TABITEMS'      , $i);
-$i++; define('SURVEY_TABPRESETS'    , $i);
+$i++; define('SURVEY_TABTEMPLATES'  , $i);
 $i++; define('SURVEY_TABPLUGINS'    , $i);
       define('SURVEY_TABCOUNT'      , $i);
 
 // TAB NAMES
 define('SURVEY_TAB'.SURVEY_TABSUBMISSIONS.'NAME', get_string('tabsubmissionsname', 'survey'));
 define('SURVEY_TAB'.SURVEY_TABITEMS.'NAME'  , get_string('tabitemname', 'survey'));
-define('SURVEY_TAB'.SURVEY_TABPRESETS.'NAME', get_string('tabpresetsname', 'survey'));
+define('SURVEY_TAB'.SURVEY_TABTEMPLATES.'NAME', get_string('tabtemplatename', 'survey'));
 define('SURVEY_TAB'.SURVEY_TABPLUGINS.'NAME', get_string('tabpluginsname', 'survey'));
 
 // PAGES
@@ -78,10 +78,10 @@ define('SURVEY_TAB'.SURVEY_TABPLUGINS.'NAME', get_string('tabpluginsname', 'surv
     define('SURVEY_ITEMS_ADDSET'       , 5);
     define('SURVEY_ITEMS_VALIDATE'     , 6);
 
-    // PRESETS PAGES
-    define('SURVEY_PRESETS_MANAGE'     , 1);
-    define('SURVEY_PRESETS_BUILD'      , 2);
-    define('SURVEY_PRESETS_IMPORT'     , 3);
+    // TEMPLATES PAGES
+    define('SURVEY_TEMPLATES_MANAGE'     , 1);
+    define('SURVEY_TEMPLATES_BUILD'      , 2);
+    define('SURVEY_TEMPLATES_IMPORT'     , 3);
 
     // PLUGINS PAGES
     define('SURVEY_PLUGINS_BUILD'      , 1);
@@ -91,24 +91,24 @@ define('SURVEY_FIELD' , 'field');
 define('SURVEY_FORMAT', 'format');
 
 // ACTIONS
-define('SURVEY_NOACTION'            , '0');
-define('SURVEY_CHOOSEFTYPE'         , '1');
-define('SURVEY_EDITITEM'            , '2');
-define('SURVEY_HIDEITEM'            , '3');
-define('SURVEY_SHOWITEM'            , '4');
-define('SURVEY_DELETEITEM'          , '5');
-define('SURVEY_CHANGEORDERASK'      , '6');
-define('SURVEY_CHANGEORDER'         , '7');
-define('SURVEY_REQUIREDOFF'         , '8');
-define('SURVEY_REQUIREDON'          , '9');
-define('SURVEY_CHANGEINDENT'        , '10');
-define('SURVEY_EDITSURVEY'      , '11');
-define('SURVEY_VIEWSURVEY'      , '12');
-define('SURVEY_DELETESURVEY'    , '13');
-define('SURVEY_DELETEALLSURVEYS', '14');
-define('SURVEY_VALIDATE'            , '15');
-define('SURVEY_DELETEPRESET'        , '16');
-define('SURVEY_EXPORTPRESET'        , '17');
+define('SURVEY_NOACTION'         , '0');
+define('SURVEY_CHOOSEFTYPE'      , '1');
+define('SURVEY_EDITITEM'         , '2');
+define('SURVEY_HIDEITEM'         , '3');
+define('SURVEY_SHOWITEM'         , '4');
+define('SURVEY_DELETEITEM'       , '5');
+define('SURVEY_CHANGEORDERASK'   , '6');
+define('SURVEY_CHANGEORDER'      , '7');
+define('SURVEY_REQUIREDOFF'      , '8');
+define('SURVEY_REQUIREDON'       , '9');
+define('SURVEY_CHANGEINDENT'     , '10');
+define('SURVEY_EDITSURVEY'       , '11');
+define('SURVEY_VIEWSURVEY'       , '12');
+define('SURVEY_DELETESURVEY'     , '13');
+define('SURVEY_DELETEALLSURVEYS' , '14');
+define('SURVEY_VALIDATE'         , '15');
+define('SURVEY_DELETETEMPLATE'   , '16');
+define('SURVEY_EXPORTTEMPLATE'   , '17');
 
 // SAVESTATUS
 define('SURVEY_NOFEEDBACK', 0);
@@ -164,16 +164,19 @@ define('SURVEY_REQUIREDITEM', 1);
 define('SURVEY_OPTIONALITEM', 0);
 
 // fileareas
-define('SURVEY_STYLEFILEAREA', 'userstyle');
-define('SURVEY_PRESETFILEAREA', 'presetfilearea');
+define('SURVEY_STYLEFILEAREA'   , 'userstyle');
+define('SURVEY_TEMPLATEFILEAREA', 'templatefilearea');
 
 // otheritems
-define('SURVEY_DRAFTITEMS', '1');
+define('SURVEY_HIDEITEMS'  , '1');
 define('SURVEY_DELETEITEMS', '2');
 define('SURVEY_IGNOREITEMS', '3');
 
-// empty preset field
-define('SURVEY_EMPTYPRESETFIELD', '@@NULL@@');
+// empty template field
+define('SURVEY_EMPTYTEMPLATEFIELD', '@@NULL@@');
+
+define('SURVEY_USERTEMPLATE', 'TEMPLATE');
+define('SURVEY_MASTERTEMPLATE', 'SURVEYPLUGIN');
 
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API                                                            //
@@ -819,7 +822,7 @@ function survey_fetch_items_seeds($canaccessadvancedform, $searchform=false) {
             $return .= ' AND si.basicform = '.SURVEY_FILLANDSEARCH;
         }
     }
-    $return .= ' AND si.draft = 0
+    $return .= ' AND si.hide = 0
             ORDER BY sortindex';
 
     return $return;

@@ -42,42 +42,42 @@ class survey_addsetform extends moodleform {
             $surveyplugins = array();
 
             foreach ($surveypluginlist as $surveyname => $surveypath) {
-                $surveyplugins['SURVEY_'.$surveyname] = get_string('pluginname', 'surveytemplate_'.$surveyname);
+                $surveyplugins[SURVEY_MASTERTEMPLATE.'_'.$surveyname] = get_string('pluginname', 'surveytemplate_'.$surveyname);
             }
             asort($surveyplugins);
         }
 
         $options = survey_get_sharinglevel_options($cmid, $survey);
 
-        $presets = new stdClass();
-        $presetsfiles = array();
+        $templates = new stdClass();
+        $templatesfiles = array();
         foreach ($options as $sharinglevel => $v) {
             $parts = explode('_', $sharinglevel);
             $contextlevel = $parts[0];
 
             $contextid = survey_get_contextid_from_sharinglevel($sharinglevel);
             $contextstring = survey_get_contextstring_from_sharinglevel($contextlevel);
-            $presets->{$contextstring} = survey_get_available_presets($contextid);
+            $templates->{$contextstring} = survey_get_available_templates($contextid);
         }
 
-        foreach ($presets as $contextstring => $contextfiles) {
+        foreach ($templates as $contextstring => $contextfiles) {
             $contextlabel = get_string($contextstring, 'survey');
             foreach ($contextfiles as $xmlfile) {
                 $itemsetname = $xmlfile->get_filename();
-                $presetsfiles['PRESET_'.$xmlfile->get_id()] = '('.$contextlabel.') '.$itemsetname;
+                $templatesfiles[SURVEY_USERTEMPLATE.'_'.$xmlfile->get_id()] = '('.$contextlabel.') '.$itemsetname;
             }
         }
-        asort($presetsfiles);
+        asort($templatesfiles);
 
         // ----------------------------------------
         // addset::itemset
         // ----------------------------------------
         $fieldname = 'itemset';
         if (count($surveyplugins)) {
-            if (count($presetsfiles)) {
+            if (count($templatesfiles)) {
                 $itemsetlist = array('' => array(get_string('notanyset', 'survey')),
-                                     get_string('modulepresets', 'survey') => $surveyplugins,
-                                     get_string('userpresets', 'survey') => $presetsfiles);
+                                     get_string('mastertemplates', 'survey') => $surveyplugins,
+                                     get_string('usertemplates', 'survey') => $templatesfiles);
                 $mform->addElement('selectgroups', $fieldname, get_string($fieldname, 'survey'), $itemsetlist);
             } else {
                 $surveyplugins = array_merge(array(get_string('notanyset', 'survey')), $surveyplugins);
@@ -86,9 +86,9 @@ class survey_addsetform extends moodleform {
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         } else {
-            if (count($presetsfiles)) {
-                $presetsfiles = array_merge(array(get_string('notanyset', 'survey')), $presetsfiles);
-                $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $presetsfiles);
+            if (count($templatesfiles)) {
+                $templatesfiles = array_merge(array(get_string('notanyset', 'survey')), $templatesfiles);
+                $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $templatesfiles);
             }
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
@@ -99,7 +99,7 @@ class survey_addsetform extends moodleform {
         // ----------------------------------------
         $fieldname = 'actionoverother';
         $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('ignoreitems', 'survey'), SURVEY_IGNOREITEMS);
-        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('draftitems', 'survey'), SURVEY_DRAFTITEMS);
+        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('hideitems', 'survey'), SURVEY_HIDEITEMS);
         $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('deleteitems', 'survey'), SURVEY_DELETEITEMS);
         $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'survey'), '<br />', false);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'survey');

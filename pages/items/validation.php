@@ -163,7 +163,7 @@ foreach ($itemseeds as $itemseed) {
             $tablerow[] = $okstring;
         } else {
             if ($status === false) {
-                if (empty($item->draft)) {
+                if (empty($item->hide)) {
                     $tablerow[] = '<span class="errormessage">'.get_string('wrongrelation', 'survey', $item->parentcontent).'</span>';
                 } else {
                     $tablerow[] = get_string('wrongrelation', 'survey', $item->parentcontent);
@@ -197,7 +197,7 @@ foreach ($itemseeds as $itemseed) {
 
     $tablerow[] = $icons;
 
-    $addedclass = empty($item->draft) ? '' : 'dimmed';
+    $addedclass = empty($item->hide) ? '' : 'dimmed';
     $table->add_data($tablerow, $addedclass);
 }
 $itemseeds->close();

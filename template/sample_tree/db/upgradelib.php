@@ -14,24 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * This is a one-line short description of the file
+ * Functions used by some stages of sample_tree plugin upgrade
  *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
- *
- * @package   mod_survey
- * @copyright 2013 kordan <kordan@mclink.it>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    surveytemplate
+ * @subpackage sample_tree
+ * @copyright  2013 kordan <kordan@mclink.it>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') OR die();
-
-echo $OUTPUT->notification(get_string('currenttotemplate', 'survey'), 'generaltable generalbox boxaligncenter boxwidthwide');
-
-$record = new stdClass();
-$record->surveyid = $survey->id;
-
-$mform->set_data($record);
-$mform->display();

@@ -31,12 +31,12 @@ defined('MOODLE_INTERNAL') OR die();
 require_once('addset_form.php');
 
 $a = new stdClass();
-$a->modulepresets = get_string('modulepresets', 'survey');
-$a->userpresets = get_string('userpresets', 'survey');
+$a->mastertemplates = get_string('mastertemplates', 'survey');
+$a->usertemplates = get_string('usertemplates', 'survey');
 
 $a->pluginstab = get_string('tabpluginsname', 'survey');
-$a->presetstab = get_string('tabpresetsname', 'survey');
-$a->presetexport = get_string('tabpresetspage2', 'survey');
+$a->tabtemplatename = get_string('tabtemplatename', 'survey');
+$a->exporttemplate = get_string('tabtemplatepage2', 'survey');
 $a->none = get_string('notanyset', 'survey');
 $a->delete = get_string('delete', 'survey');
 $a->actionoverother = get_string('actionoverother', 'survey');

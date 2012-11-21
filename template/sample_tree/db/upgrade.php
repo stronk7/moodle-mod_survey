@@ -14,25 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * This is a one-line short description of the file
+ * Keeps track of upgrades to the surveytemplate sample_tree
  *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
- *
- * @package   mod_survey
- * @copyright 2013 kordan <kordan@mclink.it>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    surveytemplate
+ * @subpackage sample_tree
+ * @copyright  2013 kordan <kordan@mclink.it>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+/**
+ * Performs upgrade of the database structure and data
+ *
+ * @param int $oldversion the version we are upgrading from
+ * @return bool true
+ */
+function xmldb_surveytemplate_sample_tree_upgrade($oldversion) {
+    global $DB;
 
-$message = get_string('presetbuildinfo', 'survey');
-echo $OUTPUT->box($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
+    $dbman = $DB->get_manager();
 
-$record = new stdClass();
-$record->surveyid = $survey->id;
-
-$mform->set_data($record);
-$mform->display();
+    return true;
+}

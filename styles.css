@@ -5,7 +5,7 @@
 
 /* surveyfields */
 #page-mod-survey-view table#manageitems,
-#page-mod-survey-view table#managepresets {
+#page-mod-survey-view table#managetemplates {
     width:100%;
 }
 
@@ -113,7 +113,7 @@
 }
 
 #page-mod-survey-view table#validaterelations .actions,
-#page-mod-survey-view table#managepresets .actions {
+#page-mod-survey-view table#managetemplates .actions {
     padding:0.5em;
     white-space:nowrap;
 }
@@ -132,7 +132,7 @@
 }
 
 #page-mod-survey-view table#submissions .actions,
-#page-mod-survey-view table#managepresets .actions {
+#page-mod-survey-view table#managetemplates .actions {
     padding:0.5em;
     width:3em;
 }

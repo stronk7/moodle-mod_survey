@@ -28,29 +28,11 @@
 
 defined('MOODLE_INTERNAL') OR die();
 
-require_once($CFG->dirroot.'/lib/formslib.php');
+$message = get_string('templatecreateinfo', 'survey');
+echo $OUTPUT->box($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
 
-class survey_exportplugin extends moodleform {
+$record = new stdClass();
+$record->surveyid = $survey->id;
 
-    function definition() {
-
-        $mform = $this->_form;
-
-        // ----------------------------------------
-        // pluginbuild::surveyid
-        // ----------------------------------------
-        $fieldname = 'surveyid';
-        $mform->addElement('hidden', $fieldname, 0);
-
-        // ----------------------------------------
-        // pluginbuild::mastertemplatename
-        // ----------------------------------------
-        $fieldname = 'mastertemplatename';
-        $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'));
-        $mform->addHelpButton($fieldname, $fieldname, 'survey');
-        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
-        $mform->setType($fieldname, PARAM_FILE); // this word is going to be a file name
-
-        $this->add_action_buttons(false, get_string('builplugin', 'survey'));
-    }
-}
+$mform->set_data($record);
+$mform->display();

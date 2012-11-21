@@ -62,10 +62,10 @@
 
 <!-- template section -->
         <FIELD NAME="basicform"        TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="indent"           NEXT="advancedsearch"/>
-        <FIELD NAME="advancedsearch"   TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="basicform"        NEXT="draft"/>
+        <FIELD NAME="advancedsearch"   TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="basicform"        NEXT="hide"/>
 
-        <FIELD NAME="draft"            TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="advancedsearch"   NEXT="sortindex"/>
-        <FIELD NAME="sortindex"        TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="draft"            NEXT="basicformpage"/>
+        <FIELD NAME="hide"             TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="advancedsearch"   NEXT="sortindex"/>
+        <FIELD NAME="sortindex"        TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="hide"             NEXT="basicformpage"/>
         <FIELD NAME="basicformpage"    TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="sortindex"        NEXT="advancedformpage"/>
         <FIELD NAME="advancedformpage" TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="basicformpage"    NEXT="parentid"/>
         <FIELD NAME="parentid"         TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="true"               SEQUENCE="false" PREVIOUS="advancedformpage" NEXT="parentcontent"/>

@@ -21,7 +21,7 @@ require_once($CFG->dirroot.'/mod/survey/locallib.php');
 // ////////////////////////////
 // if survey is without items, alert and stop
 $whereparams = array('surveyid' => $survey->id);
-$whereclause = 'surveyid = :surveyid AND draft = 0';
+$whereclause = 'surveyid = :surveyid AND hide = 0';
 if (!$canaccessadvancedform) {
     $whereclause .= ' AND basicform <> '.SURVEY_NOTPRESENT;
 }

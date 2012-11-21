@@ -279,7 +279,7 @@ function survey_add_tree_node(&$tohidelist, &$sortindextohidelist) {
 
     $i = count($tohidelist);
     $itemid = $tohidelist[$i-1];
-    if ($childitems = $DB->get_records('survey_item', array('parentid' => $itemid, 'draft' => 0), 'sortindex', 'id, sortindex')) { // potrebbero non esistere
+    if ($childitems = $DB->get_records('survey_item', array('parentid' => $itemid, 'hide' => 0), 'sortindex', 'id, sortindex')) { // potrebbero non esistere
         foreach ($childitems as $childitem) {
             $tohidelist[] = (int)$childitem->id;
             $sortindextohidelist[] = $childitem->sortindex;
@@ -311,13 +311,13 @@ function survey_manage_item_hide($confirm, $cm, $itemid, $type) {
             $a = new stdClass();
             $a->parentid = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', 'items', $itemid);
             $a->dependencies = implode(', ', $sortindextohidelist);
-            $message = get_string('askitemstodraft', 'survey', $a);
+            $message = get_string('askitemstohide', 'survey', $a);
 
             $optionbase = array('id' => $cm->id, 'tab' => SURVEY_TABITEMS, 'pag' => SURVEY_ITEMS_MANAGE, 'act' => SURVEY_HIDEITEM);
 
             $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRM, 'itemid' => $itemid, 'type' => $type);
             $urlyes = new moodle_url('view.php', $optionsyes);
-            $buttonyes = new single_button($urlyes, get_string('confirmitemstodraft', 'survey'));
+            $buttonyes = new single_button($urlyes, get_string('confirmitemstohide', 'survey'));
 
             $optionsno = $optionbase + array('cnf' => SURVEY_NEGATE);
             $urlno = new moodle_url('view.php', $optionsno);
@@ -326,16 +326,16 @@ function survey_manage_item_hide($confirm, $cm, $itemid, $type) {
             echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
             echo $OUTPUT->footer();
             die;
-        } else { // draft without asking
-            $DB->set_field('survey_item', 'draft', 1, array('id' => $itemid));
+        } else { // hide without asking
+            $DB->set_field('survey_item', 'hide', 1, array('id' => $itemid));
             survey_reset_items_pages($cm->instance);
         }
     } else {
         switch ($confirm) {
             case SURVEY_CONFIRM:
-                // draft items
+                // hide items
                 foreach ($tohidelist as $tohideitemid) {
-                    $DB->set_field('survey_item', 'draft', 1, array('id' => $tohideitemid));
+                    $DB->set_field('survey_item', 'hide', 1, array('id' => $tohideitemid));
                 }
                 survey_reset_items_pages($cm->instance);
                 break;
@@ -411,7 +411,7 @@ function survey_manage_item_show($confirm, $cm, $itemid, $type) {
     $toshowlist = array($itemid);
     $parentitem = $DB->get_record('survey_item', array('id' => $itemid), 'id, parentid, sortindex', MUST_EXIST);
     while (isset($parentitem->parentid)) {
-        if ($parentitem = $DB->get_record('survey_item', array('id' => $parentitem->parentid, 'draft' => 1), 'id, parentid, sortindex')) { // potrebbe non esistere
+        if ($parentitem = $DB->get_record('survey_item', array('id' => $parentitem->parentid, 'hide' => 1), 'id, parentid, sortindex')) { // potrebbe non esistere
             $toshowlist[] = $parentitem->id;
             $sortindextoshowlist[] = $parentitem->sortindex;
         }
@@ -442,15 +442,15 @@ function survey_manage_item_show($confirm, $cm, $itemid, $type) {
             echo $OUTPUT->footer();
             die;
         } else { // show without asking
-            $DB->set_field('survey_item', 'draft', 0, array('id' => $itemid));
+            $DB->set_field('survey_item', 'hide', 0, array('id' => $itemid));
             survey_reset_items_pages($cm->instance);
         }
     } else {
         switch ($confirm) {
             case SURVEY_CONFIRM:
-                // draft items
+                // hide items
                 foreach ($toshowlist as $toshowitemid) {
-                    $DB->set_field('survey_item', 'draft', 0, array('id' => $toshowitemid));
+                    $DB->set_field('survey_item', 'hide', 0, array('id' => $toshowitemid));
                 }
                 survey_reset_items_pages($cm->instance);
                 break;
@@ -521,10 +521,10 @@ function survey_assign_pages($canaccessadvancedform=false) {
 
     // were pages assigned?
     $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
-    if (!$pagenumber = $DB->get_field('survey_item', 'MAX('.$pagefield.')', array('surveyid' => $survey->id, 'draft' => 0))) {
+    if (!$pagenumber = $DB->get_field('survey_item', 'MAX('.$pagefield.')', array('surveyid' => $survey->id, 'hide' => 0))) {
         $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
         $pagenumber = 1;
-        $conditions = array('surveyid' => $survey->id, 'draft' => 0);
+        $conditions = array('surveyid' => $survey->id, 'hide' => 0);
         if ($items = $DB->get_recordset('survey_item', $conditions, 'sortindex', 'id, type, plugin, parentid, '.$pagefield.', sortindex')) {
             foreach ($items as $item) {
 
@@ -1161,8 +1161,8 @@ function survey_export($cm, $fromform, $survey) {
         //     basicform == SURVEY_FILLONLY OR basicform == SURVEY_FILLANDSEARCH
         $itemlistsql .= ' AND si.basicform <> '.SURVEY_NOTPRESENT;
     }
-    if (!isset($fromform->includedraft)) {
-        $itemlistsql .= ' AND si.draft = 0';
+    if (!isset($fromform->includehide)) {
+        $itemlistsql .= ' AND si.hide = 0';
     }
     $itemlistsql .= ' ORDER BY sortindex';
 
@@ -1429,14 +1429,14 @@ function survey_display_user_feedback($userfeedback) {
     for ($position = 2; $position <= 5; $position++) {
         $bit = $userfeedback & pow(2, $position); // bitwise logic
         switch ($position) {
-            case 2: // a chain of items is now no longer drafted
+            case 2: // a chain of items is now shown
                 if ($bit) {
                     $message .= '<br />'.get_string('itemeditshow', 'survey');
                 }
                 break;
-            case 3: // a chain of items is now drafted because one item was drafted
+            case 3: // a chain of items is now hided because one item was hided
                 if ($bit) {
-                    $message .= '<br />'.get_string('itemedithidedraft', 'survey');
+                    $message .= '<br />'.get_string('itemedithidehide', 'survey');
                 }
                 break;
             case 4: // a chain of items was moved in the user entry form
@@ -1464,7 +1464,7 @@ function survey_plugin_build($data) {
 
     $langtree = array();
 
-    $pluginname = clean_filename($data->pluginname);
+    $pluginname = clean_filename($data->mastertemplatename);
     $temp_subdir = "mod_survey/surveyplugins/$pluginname";
     $temp_basedir = $CFG->tempdir.'/'.$temp_subdir;
 
@@ -1544,7 +1544,7 @@ function survey_plugin_build($data) {
             // die;
 
             // create - this could be 'en' such as 'it'
-            $filehandler = fopen($temp_path.'/surveytemplate_'.$data->pluginname.'.php', 'w');
+            $filehandler = fopen($temp_path.'/surveytemplate_'.$pluginname.'.php', 'w');
             // write inside all the strings
             fwrite($filehandler, $savedstrings);
             // close
@@ -1554,7 +1554,7 @@ function survey_plugin_build($data) {
             if ($userlang != 'en') {
                 $temp_path = $CFG->tempdir.'/'.$temp_subdir.'/lang/en';
                 // create
-                $filehandler = fopen($temp_path.'/surveytemplate_'.$data->pluginname.'.php', 'w');
+                $filehandler = fopen($temp_path.'/surveytemplate_'.$pluginname.'.php', 'w');
                 // write inside all the strings in teh form: 'english translation of $string[stringxx]'
                 $savedstrings = $filecopyright.survey_get_translated_strings($langtree, $userlang);
                 // save into surveytemplate_<<$pluginname>>.php
@@ -1590,10 +1590,10 @@ function survey_plugin_build($data) {
         'pix/icon.gif',
         'survey.class.php',
         'version.php',
-        'lang/en/surveytemplate_'.$data->pluginname.'.php',
+        'lang/en/surveytemplate_'.$pluginname.'.php',
     );
     if ($userlang != 'en') {
-        $filenames[] = 'lang/'.$userlang.'/surveytemplate_'.$data->pluginname.'.php';
+        $filenames[] = 'lang/'.$userlang.'/surveytemplate_'.$pluginname.'.php';
     }
 
     $filelist = array();
@@ -1607,22 +1607,23 @@ function survey_plugin_build($data) {
     $fp = get_file_packer('application/zip');
     $fp->archive_to_pathname($filelist, $exportfile);
 
-    $dirnames = array('db/', 'pix/', 'lang/en');
+    $dirnames = array('db/', 'pix/', 'lang/en/');
     if ($userlang != 'en') {
-        $filenames[] = 'lang/'.$userlang;
+        $dirnames[] = 'lang/'.$userlang.'/';
     }
+    $dirnames[] = 'lang/';
 
     // if (false) {
     foreach ($filelist as $file) {
         unlink($file);
     }
     foreach ($dirnames as $dir) {
-        rmdir($temp_basedir.'/'.$file);
+        rmdir($temp_basedir.'/'.$dir);
     }
     rmdir($temp_basedir);
     // }
 
-    // Return the full path to the exported preset file:
+    // Return the full path to the exported template file:
     return $exportfile;
 }
 
@@ -1661,6 +1662,7 @@ function survey_get_db_structure($tablename, $dropid=true) {
 function survey_wlib_content(&$libcontent, $surveyid, $data, &$langtree) {
     global $DB;
 
+    $pluginname = clean_filename($data->mastertemplatename);
     $structures = array();
     $sid = array();
 
@@ -1712,7 +1714,7 @@ function survey_wlib_content(&$libcontent, $surveyid, $data, &$langtree) {
         }
     }
 
-    survey_wlib_structure_values_separator($libcontent, $data->pluginname);
+    survey_wlib_structure_values_separator($libcontent, $pluginname);
 
     // STEP 06: make a list of all itemseeds
     $sql = 'SELECT si.id, si.type, si.plugin
@@ -2148,16 +2150,16 @@ function survey_add_items_from_plugin($survey, $externalname) {
 }
 
 /**
- * survey_add_items_from_preset
- * @param $survey, $presetid
+ * survey_add_items_from_template
+ * @param $survey, $templateid
  * @return
  */
-function survey_add_items_from_preset($survey, $presetid) {
+function survey_add_items_from_template($survey, $templateid) {
     global $DB;
 
-    $presetcontent = survey_get_preset_content($presetid);
+    $templatecontent = survey_get_template_content($templateid);
 
-    $xmltext = simplexml_load_string($presetcontent);
+    $xmltext = simplexml_load_string($templatecontent);
 
     // echo '<h2>Items saved in the file ('.count($xmltext->item).')</h2>';
 
@@ -2172,7 +2174,7 @@ function survey_add_items_from_preset($survey, $presetid) {
                 $fieldname = $field->getName();
                 $fieldvalue = (string)$field;
                 // echo '<div>Table: '.$table->getName().', Field: '.$fieldname.', content: '.$field.'</div>';
-                if ($fieldvalue == SURVEY_EMPTYPRESETFIELD) {
+                if ($fieldvalue == SURVEY_EMPTYTEMPLATEFIELD) {
                     $record[$fieldname] = null;
                 } else {
                     $record[$fieldname] = $fieldvalue;
@@ -2197,23 +2199,23 @@ function survey_add_items_from_preset($survey, $presetid) {
 }
 
 /**
- * survey_get_preset_content
- * @param $presetid
+ * survey_get_template_content
+ * @param $templateid
  * @return
  */
-function survey_get_preset_content($presetid) {
+function survey_get_template_content($templateid) {
     $fs = get_file_storage();
-    $xmlfile = $fs->get_file_by_id($presetid);
+    $xmlfile = $fs->get_file_by_id($templateid);
 
     return $xmlfile->get_content();
 }
 
 /**
- * survey_build_preset_content
+ * survey_create_template_content
  * @param $survey, $externalname
  * @return
  */
-function survey_build_preset_content($survey) {
+function survey_create_template_content($survey) {
     global $CFG, $DB;
 
     $sql = 'SELECT si.id, si.type, si.plugin
@@ -2223,14 +2225,14 @@ function survey_build_preset_content($survey) {
     $params = array('surveyid' => $survey->id);
     $itemseeds = $DB->get_records_sql($sql, $params);
 
-    $xmlpreset = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><items></items>');
+    $xmltemplate = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><items></items>');
     foreach ($itemseeds as $itemseed) {
 
         $id = $itemseed->id;
         $type = $itemseed->type;
         $plugin = $itemseed->plugin;
         $item = survey_get_item($id, $type, $plugin);
-        $xmlitem = $xmlpreset->addChild('item');
+        $xmlitem = $xmltemplate->addChild('item');
 
         // survey_item
         $structure = survey_get_db_structure('survey_item');
@@ -2247,7 +2249,7 @@ function survey_build_preset_content($survey) {
                 }
             } else {
                 if (is_null($item->{$field})) {
-                    $val = SURVEY_EMPTYPRESETFIELD;
+                    $val = SURVEY_EMPTYTEMPLATEFIELD;
                 } else {
                     $val = $item->{$field};
                 }
@@ -2262,7 +2264,7 @@ function survey_build_preset_content($survey) {
             $xmltable = $xmlitem->addChild('survey_'.$plugin);
             foreach ($structure as $field) {
                 if (is_null($item->{$field})) {
-                    $xmlfield = $xmltable->addChild($field, SURVEY_EMPTYPRESETFIELD);
+                    $xmlfield = $xmltable->addChild($field, SURVEY_EMPTYTEMPLATEFIELD);
                 } else {
                     $xmlfield = $xmltable->addChild($field, $item->{$field});
                 }
@@ -2272,45 +2274,45 @@ function survey_build_preset_content($survey) {
         $dom = new DOMDocument('1.0');
         $dom->preserveWhiteSpace = false;
         $dom->formatOutput = true;
-        $dom->loadXML($xmlpreset->asXML());
+        $dom->loadXML($xmltemplate->asXML());
     }
 
     return $dom->saveXML();
 }
 
 /**
- * Gets an array of all of the presets that users have saved to the site.
+ * Gets an array of all of the templates that users have saved to the site.
  *
  * @param stdClass $context The context that we are looking from.
- * @param array $presets
- * @return array An array of presets
+ * @param array $templates
+ * @return array An array of templates
  */
-function survey_get_available_presets($contextid) {
+function survey_get_available_templates($contextid) {
 
     $fs = get_file_storage();
-    $files = $fs->get_area_files($contextid, 'mod_survey', SURVEY_PRESETFILEAREA);
+    $files = $fs->get_area_files($contextid, 'mod_survey', SURVEY_TEMPLATEFILEAREA);
     if (empty($files)) {
         return array();
     }
 
-    $presets = array();
+    $templates = array();
     foreach ($files as $file) {
         if ($file->is_directory()) {
             continue;
         }
 
-        $presets[] = $file;
+        $templates[] = $file;
     }
 
-    return $presets;
+    return $templates;
 }
 
 /**
- * survey_save_preset
+ * survey_save_template
  * @param $survey, $externalname
  * @return
  */
-function survey_save_preset($formadata, $xmlcontent) {
+function survey_save_template($formadata, $xmlcontent) {
     global $USER;
 
     $fs = get_file_storage();
@@ -2320,12 +2322,12 @@ function survey_save_preset($formadata, $xmlcontent) {
     $filerecord->contextid = $contextid;
 
     $filerecord->component = 'mod_survey';
-    $filerecord->filearea = SURVEY_PRESETFILEAREA;
+    $filerecord->filearea = SURVEY_TEMPLATEFILEAREA;
     $filerecord->itemid = 0;
     $filerecord->filepath = '/';
     $filerecord->userid = $USER->id;
 
-    $filerecord->filename = str_replace(' ', '_', $formadata->presetname).'.xml';
+    $filerecord->filename = str_replace(' ', '_', $formadata->templatename).'.xml';
     $fs->create_file_from_string($filerecord, $xmlcontent);
 
     return true;
@@ -2390,18 +2392,18 @@ function survey_get_contextstring_from_sharinglevel($contextlevel) {
 }
 
 /**
- * survey_delete_preset
+ * survey_delete_template
  *
  * @param $cm, $confirm, $fileid
  * @return null
  */
-function survey_delete_preset($cm, $confirm, $fileid) {
+function survey_delete_template($cm, $confirm, $fileid) {
     global $OUTPUT;
 
     if (!$confirm) {
         // ask for confirmation
-        $message = get_string('askdeleteonepreset', 'survey');
-        $optionsbase = array('id' => $cm->id, 'tab' => SURVEY_TABPRESETS, 'pag' => SURVEY_PRESETS_MANAGE, 'act' => SURVEY_DELETEPRESET);
+        $message = get_string('askdeleteonetemplate', 'survey');
+        $optionsbase = array('id' => $cm->id, 'tab' => SURVEY_TABTEMPLATES, 'pag' => SURVEY_TEMPLATES_MANAGE, 'act' => SURVEY_DELETETEMPLATE);
 
         $optionsyes = $optionsbase + array('cnf' => SURVEY_CONFIRM, 'fid' => $fileid);
         $urlyes = new moodle_url('view.php', $optionsyes);
@@ -2434,45 +2436,45 @@ function survey_delete_preset($cm, $confirm, $fileid) {
 }
 
 /**
- * survey_upload_preset
+ * survey_upload_template
  *
  * @param $survey, $context
  * @return null
  */
-function survey_upload_preset($formdata) {
+function survey_upload_template($formdata) {
 
-    $preset_options = survey_get_preset_options();
+    $template_options = survey_get_template_options();
 
     $fieldname = 'importfile';
     $contextid = survey_get_contextid_from_sharinglevel($formdata->sharinglevel);
     if ($draftitemid = $formdata->{$fieldname.'_filemanager'}) {
-        file_save_draft_area_files($draftitemid, $contextid, 'mod_survey', SURVEY_PRESETFILEAREA, 0, $preset_options);
+        file_save_draft_area_files($draftitemid, $contextid, 'mod_survey', SURVEY_TEMPLATEFILEAREA, 0, $template_options);
     }
 
     $fs = get_file_storage();
-    if ($files = $fs->get_area_files($contextid, 'mod_survey', SURVEY_PRESETFILEAREA, 0, 'sortorder', false)) {
+    if ($files = $fs->get_area_files($contextid, 'mod_survey', SURVEY_TEMPLATEFILEAREA, 0, 'sortorder', false)) {
         if (count($files) == 1) {
             // only one file attached, set it as main file automatically
             $file = reset($files);
-            file_set_sortorder($contextid, 'mod_survey', SURVEY_PRESETFILEAREA, 0, $file->get_filepath(), $file->get_filename(), 1);
+            file_set_sortorder($contextid, 'mod_survey', SURVEY_TEMPLATEFILEAREA, 0, $file->get_filepath(), $file->get_filename(), 1);
         }
     }
 }
 
 /**
- * survey_get_preset_options
+ * survey_get_template_options
  * @param none
  * @return $filemanager_options
  */
-function survey_get_preset_options() {
-    $preset_options = array();
-    $preset_options['accepted_types'] = '.xml';
-    $preset_options['maxbytes'] = 0;
-    $preset_options['maxfiles'] = -1;
-    $preset_options['mainfile'] = true;
-    $preset_options['subdirs'] = false;
+function survey_get_template_options() {
+    $template_options = array();
+    $template_options['accepted_types'] = '.xml';
+    $template_options['maxbytes'] = 0;
+    $template_options['maxfiles'] = -1;
+    $template_options['mainfile'] = true;
+    $template_options['subdirs'] = false;
 
-    return $preset_options;
+    return $template_options;
 }
 
 /**

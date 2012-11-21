@@ -27,8 +27,8 @@ switch ($currenttab) {
         $itemcount = $DB->count_records('survey_item', array('surveyid' => $survey->id));
         $defaultpage = ($itemcount) ? SURVEY_ITEMS_MANAGE : SURVEY_ITEMS_ADD;
         break;
-    case SURVEY_TABPRESETS:
-        $defaultpage = SURVEY_PRESETS_BUILD;
+    case SURVEY_TABTEMPLATES:
+        $defaultpage = SURVEY_TEMPLATES_BUILD;
         break;
     case SURVEY_TABPLUGINS:
         $defaultpage = SURVEY_PLUGINS_BUILD;
@@ -203,7 +203,7 @@ switch ($currenttab) {
 
                 break;
             case SURVEY_SUBMISSION_SEARCH:       // display the submission search form
-                $sqlparams = array('surveyid' => $survey->id, 'draft' => 0);
+                $sqlparams = array('surveyid' => $survey->id, 'hide' => 0);
                 if ($canaccessadvancedform) {
                     $sqlparams['advancedsearch'] = SURVEY_ADVFILLANDSEARCH;
                 } else {
@@ -392,10 +392,10 @@ switch ($currenttab) {
                 if ($formdata = $mform->get_data()) {
                     $dbman = $DB->get_manager();
 
-                    if ($formdata->actionoverother == SURVEY_DRAFTITEMS) {
-                        // BEGIN: draft all other items
-                        $DB->set_field('survey_item', 'draft', 1, array('surveyid' => $survey->id, 'draft' => 0));
-                        // END: draft all other items
+                    if ($formdata->actionoverother == SURVEY_HIDEITEMS) {
+                        // BEGIN: hide all other items
+                        $DB->set_field('survey_item', 'hide', 1, array('surveyid' => $survey->id, 'hide' => 0));
+                        // END: hide all other items
                     }
 
                     if ($formdata->actionoverother == SURVEY_DELETEITEMS) {
@@ -420,18 +420,18 @@ switch ($currenttab) {
 
                     $parts = explode('_', $formdata->itemset);
                     $itemsettype = $parts[0];
-                    // Take care: the name of the user survey/preset may include '_'
+                    // Take care: the name of the user survey/template may include '_'
                     $itemsetidentifier = substr($formdata->itemset, strlen($itemsettype)+1);
 
-                    if ($itemsettype == 'SURVEY') {
+                    if ($itemsettype == SURVEY_MASTERTEMPLATE) {
                         // BEGIN: add records from survey plugin
                         survey_add_items_from_plugin($survey, $itemsetidentifier);
                         // END: add records from survey plugin
                     }
-                    if ($itemsettype == 'PRESET') {
-                        // BEGIN: add records from preset
-                        survey_add_items_from_preset($survey, $itemsetidentifier);
-                        // END: add records from preset
+                    if ($itemsettype == SURVEY_USERTEMPLATE) {
+                        // BEGIN: add records from template
+                        survey_add_items_from_template($survey, $itemsetidentifier);
+                        // END: add records from template
                     }
 
                     $paramurl = array();
@@ -447,18 +447,18 @@ switch ($currenttab) {
                 // no warning: leave them untouched
         }
         break;
-    case SURVEY_TABPRESETS:
+    case SURVEY_TABTEMPLATES:
         switch ($currentpage) {
-            case SURVEY_PRESETS_MANAGE: // Manage
+            case SURVEY_TEMPLATES_MANAGE: // Manage
                 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
                 $fileid = optional_param('fid', '', PARAM_INT);
                 $confirm = optional_param('cnf', 0, PARAM_INT);
 
                 switch ($action) {
                     case SURVEY_NOACTION:
-                    case SURVEY_DELETEPRESET:
+                    case SURVEY_DELETETEMPLATE:
                         break;
-                    case SURVEY_EXPORTPRESET:
+                    case SURVEY_EXPORTTEMPLATE:
                         $fs = get_file_storage();
                         $xmlfile = $fs->get_file_by_id($fileid);
                         $filename = $xmlfile->get_filename();
@@ -466,11 +466,11 @@ switch ($currenttab) {
 
                         // echo '<textarea rows="10" cols="100">'.$content.'</textarea>';
 
-                        $presetname = clean_filename('temppreset-' . gmdate("Ymd_Hi"));
-                        $exportsubdir = "mod_survey/presetexport";
+                        $templatename = clean_filename('temptemplate-' . gmdate("Ymd_Hi"));
+                        $exportsubdir = "mod_survey/templateexport";
                         make_temp_directory($exportsubdir);
                         $exportdir = "$CFG->tempdir/$exportsubdir";
-                        $exportfile = $exportdir.'/'.$presetname.'.xml';
+                        $exportfile = $exportdir.'/'.$templatename.'.xml';
                         $exportfilename = basename($exportfile);
 
                         header("Content-Type: application/download\n");
@@ -491,50 +491,50 @@ switch ($currenttab) {
                 }
 
                 break;
-            case SURVEY_PRESETS_BUILD: // Build
-                require_once($CFG->dirroot.'/mod/survey/pages/presets/presetbuild_form.php');
+            case SURVEY_TEMPLATES_BUILD: // Build
+                require_once($CFG->dirroot.'/mod/survey/pages/template/createtemplate_form.php');
 
-                $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABPRESETS, 'pag' => SURVEY_PRESETS_BUILD);
+                $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABTEMPLATES, 'pag' => SURVEY_TEMPLATES_BUILD);
                 $formurl = new moodle_url('view.php', $paramurl);
 
                 $formparams = new stdClass();
                 $formparams->cmid = $cm->id;
                 $formparams->survey = $survey;
-                $mform = new survey_presetbuildform($formurl, $formparams);
+                $mform = new survey_templatebuildform($formurl, $formparams);
 
                 if ($formdata = $mform->get_data()) {
-                    $xmlcontent = survey_build_preset_content($survey);
+                    $xmlcontent = survey_create_template_content($survey);
                     // echo '<textarea rows="80" cols="100">'.$xmlcontent.'</textarea>';
 
-                    survey_save_preset($formdata, $xmlcontent);
+                    survey_save_template($formdata, $xmlcontent);
 
                     $paramurl = array();
                     $paramurl['s'] = $survey->id;
-                    $paramurl['tab'] = SURVEY_TABPRESETS;
-                    $paramurl['pag'] = SURVEY_PRESETS_MANAGE;
+                    $paramurl['tab'] = SURVEY_TABTEMPLATES;
+                    $paramurl['pag'] = SURVEY_TEMPLATES_MANAGE;
                     $redirecturl = new moodle_url('view.php', $paramurl);
                     redirect($redirecturl);
                 }
                 break;
-            case SURVEY_PRESETS_IMPORT: // Import
-                require_once($CFG->dirroot.'/mod/survey/pages/presets/presetimport_form.php');
+            case SURVEY_TEMPLATES_IMPORT: // Import
+                require_once($CFG->dirroot.'/mod/survey/pages/template/importtemplate_form.php');
 
-                $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABPRESETS, 'pag' => SURVEY_PRESETS_IMPORT);
+                $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABTEMPLATES, 'pag' => SURVEY_TEMPLATES_IMPORT);
                 $formurl = new moodle_url('view.php', $paramurl);
 
                 $formparams = new stdClass();
                 $formparams->cmid = $cm->id;
                 $formparams->survey = $survey;
-                $mform = new survey_presetimportform($formurl, $formparams);
+                $mform = new survey_templateimportform($formurl, $formparams);
 
                 if ($formdata = $mform->get_data()) {
 
-                    survey_upload_preset($formdata);
+                    survey_upload_template($formdata);
 
                     $paramurl = array();
                     $paramurl['s'] = $survey->id;
-                    $paramurl['tab'] = SURVEY_TABPRESETS;
-                    $paramurl['pag'] = SURVEY_PRESETS_MANAGE;
+                    $paramurl['tab'] = SURVEY_TABTEMPLATES;
+                    $paramurl['pag'] = SURVEY_TEMPLATES_MANAGE;
                     $redirecturl = new moodle_url('view.php', $paramurl);
                     redirect($redirecturl);
                 }
