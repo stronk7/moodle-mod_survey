@@ -94,7 +94,7 @@ $prefill = array();
 if (!empty($submissionid)) {
     $submission = $DB->get_record('survey_submissions', array('id' => $submissionid));
 
-    $prefill = survey_set_prefill($survey, $canaccessadvancedform, $formpage, $submissionid);
+    $prefill = survey_set_prefill($survey, $canaccessadvancedform, $formpage, $submissionid, false);
 
     $prefill['submissionid'] = $submissionid;
 
@@ -104,6 +104,9 @@ if (!empty($submissionid)) {
     // $icanedit = ($icanedit && ($action != SURVEY_VIEWSURVEY));
 }
 $prefill['formpage'] = $formpage; // go to populate the hidden field of the form
+
+echo '$prefill:';
+var_dump($prefill);
 
 $mform->set_data($prefill);
 $mform->display();

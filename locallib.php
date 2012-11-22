@@ -539,9 +539,7 @@ function survey_assign_pages($canaccessadvancedform=false) {
                 }
                 if ($survey->newpageforchild) {
                     if (!empty($item->parentid)) {
-                        if (!$parentpage = $DB->get_field('survey_item', $pagefield, array('id' => $item->parentid))) { // is still == 0
-                            throw new moodle_exception('pagenotassigned', 'survey', $item->parentid);
-                        }
+                        $parentpage = $DB->get_field('survey_item', $pagefield, array('id' => $item->parentid), MUST_EXIST);
                         if ($parentpage == $pagenumber) {
                             $pagenumber++;
                         }
@@ -599,7 +597,7 @@ function survey_next_not_empty_page($surveyid, $canaccessadvancedform, $formpage
 function survey_page_has_items($surveyid, $canaccessadvancedform, $formpage, $submissionid) {
     global $DB;
 
-    $sql = survey_fetch_items_seeds($canaccessadvancedform);
+    $sql = survey_fetch_items_seeds($canaccessadvancedform, false);
     $params = array('surveyid' => $surveyid, 'formpage' => $formpage);
     $itemseeds = $DB->get_records_sql($sql, $params);
 
@@ -658,11 +656,11 @@ function survey_child_is_allowed_static($submissionid, $itemrecord) {
  * @param $survey, $canaccessadvancedform, $formpage, $submissionid
  * @return
  */
-function survey_set_prefill($survey, $canaccessadvancedform, $formpage, $submissionid) {
+function survey_set_prefill($survey, $canaccessadvancedform, $formpage, $submissionid, $allpages) {
     global $CFG, $DB;
 
     $prefill = array();
-    $sql = survey_fetch_items_seeds($canaccessadvancedform);
+    $sql = survey_fetch_items_seeds($canaccessadvancedform, false, $allpages);
     $params = array('surveyid' => $survey->id, 'formpage' => $formpage);
     if ($itemseeds = $DB->get_recordset_sql($sql, $params)) {
         foreach ($itemseeds as $itemseed) {

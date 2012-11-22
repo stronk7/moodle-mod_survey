@@ -34,7 +34,7 @@ require_once($CFG->dirroot.'/lib/pear/HTML/QuickForm/element.php');
 class survey_submissionform extends moodleform {
 
     function definition() {
-        global $CFG, $DB;
+        global $DB, $OUTPUT, $CFG;
 
         $mform = $this->_form;
 
@@ -44,6 +44,7 @@ class survey_submissionform extends moodleform {
         $submissionid = $this->_customdata->submissionid;
         $formpage = $this->_customdata->formpage;
         $canaccessadvancedform = $this->_customdata->canaccessadvancedform;
+        $currentpage = $this->_customdata->currentpage;
 
         $mform->addElement('hidden', 's', $survey->id);
         $mform->addElement('hidden', 'submissionid', 0);
@@ -55,8 +56,10 @@ class survey_submissionform extends moodleform {
             // let's display final message
             $mform->addElement('static', 'nomoreitems', get_string('note', 'survey'), get_string('nomoreitems', 'survey'));
         } else {
-            $sql = survey_fetch_items_seeds($canaccessadvancedform);
+
             $params = array('surveyid' => $survey->id, 'formpage' => $formpage);
+            $allpages = ($currentpage == SURVEY_SUBMISSION_READONLY);
+            $sql = survey_fetch_items_seeds($canaccessadvancedform, false, $allpages);
             $itemseeds = $DB->get_recordset_sql($sql, $params);
             // I do not need to be sure items are found because I already know this
             // In submissions.php if items are not found I display a message and execution is stopped
@@ -116,6 +119,10 @@ class survey_submissionform extends moodleform {
         // buttons
         $buttonarray = array();
         if ($formpage != 1) { // 0 or greater than 1
+            // $url = $CFG->wwwroot.'/mod/survey/view.php?id=117&amp;tab=1&amp;pag=1&amp;submissionid=2&amp;formpage=1';
+            // $html = '<form method="get" action="'.$url.'"><div><input type="submit" value="&lt;&lt; Previous  page" /></div></form>';
+            // $buttonarray[] = $mform->createElement('html', $html);
+            // $buttonarray[] = $mform->createElement('static', 'justaname', '', $OUTPUT->single_button('http://io.it', get_string('previousformpage', 'survey'), 'get'));
             $buttonarray[] = $mform->createElement('submit', 'prevbutton', get_string('previousformpage', 'survey'));
         }
         if ($survey->saveresume) {
@@ -137,8 +144,6 @@ class survey_submissionform extends moodleform {
     }
 
     function validation($data, $files) {
-        global $DB;
-
         // $cmid = $this->_customdata->cmid;
         // $lastformpage = $this->_customdata->lastformpage;
         $survey = $this->_customdata->survey;

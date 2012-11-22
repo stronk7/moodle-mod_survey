@@ -804,22 +804,26 @@ function survey_get_plugin_list($plugintype=null, $includetype=false, $count=fal
     }
 }
 
-function survey_fetch_items_seeds($canaccessadvancedform, $searchform=false) {
+function survey_fetch_items_seeds($canaccessadvancedform, $searchform, $allpages=false) {
     $return = 'SELECT si.*
                FROM {survey_item} si
                WHERE si.surveyid = :surveyid';
     if ($canaccessadvancedform) {
-        if (!$searchform) { // advanced entry
-            $return .= ' AND si.advancedformpage = :formpage';
-        } else {            // advanced search
+        if ($searchform) { // advanced search
             $return .= ' AND si.advancedsearch = '.SURVEY_ADVFILLANDSEARCH;
+        } else {            // advanced entry
+            if (!$allpages) { // if I am not asking for all the pages, I focus on a single page only
+                $return .= ' AND si.advancedformpage = :formpage';
+            }
         }
     } else {
-        if (!$searchform) { // user entry
-            $return .= ' AND si.basicformpage = :formpage';
-            $return .= ' AND si.basicform <> '.SURVEY_NOTPRESENT;
-        } else {            // user search
+        if ($searchform) { // user search
             $return .= ' AND si.basicform = '.SURVEY_FILLANDSEARCH;
+        } else {            // user entry
+            $return .= ' AND si.basicform <> '.SURVEY_NOTPRESENT;
+            if (!$allpages) { // if I am not asking for all the pages, I focus on a single page only
+                $return .= ' AND si.basicformpage = :formpage';
+            }
         }
     }
     $return .= ' AND si.hide = 0

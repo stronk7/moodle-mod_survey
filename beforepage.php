@@ -58,7 +58,7 @@ switch ($currenttab) {
                 survey_add_custom_css($survey->id, $cm->id);
 
                 // whether it comes from the form or from the redirect in GET, $submissionid is fetched here
-                // if the form (once submitted) send $submissionid == 0, the value will be overriden later in if ($fromform = $mform->get_data()) {
+                // if the form (once submitted) send $submissionid == 0, the value will be overwritten later in if ($fromform = $mform->get_data()) {
 
                 // ////////////////////////////
                 // group items per basicform/advancedform
@@ -75,6 +75,7 @@ switch ($currenttab) {
                 $formparams->lastformpage = $lastformpage;
                 $formparams->canaccessadvancedform = $canaccessadvancedform; // Help selecting the fields to show
                 $formparams->formpage = $formpage;
+                $formparams->currentpage = $currentpage;
 
                 require_once($CFG->dirroot.'/mod/survey/pages/submissions/submissions_form.php');
                 $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => $currentpage);

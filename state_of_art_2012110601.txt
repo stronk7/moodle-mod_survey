@@ -42,3 +42,4 @@ How disable fields upon checkboxes sets? MDL-34760
 $mform->disabledIf doesn't work for 'filemanager' mform elements. MDL-31796
 $mform->disabledIf doesn't work for 'label' mform elements
 Disabled mform items need to be skipped during validation (and more): MDL-34815
+what's happens if inside a survey with newpageforchild = 0 I manually add a page break?
