@@ -42,4 +42,4 @@ $string['uerr_greaterthanmaximum'] = 'Provided age is too high';
 $string['maximumshortage'] = 'Maximum short age';
 $string['maximumshortage_desc'] = 'The maximun short age this software will allow to ever enter';
 $string['customdefault'] = 'Custom';
-$string['uerr_yearnotset'] = 'Please choose an year';
+$string['uerr_yearnotset'] = 'Please choose a year';

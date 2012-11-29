@@ -51,4 +51,4 @@ $string['currentshortdatedefault'] = 'Current short date';
 $string['invitationmonth'] = 'Choose a month';
 $string['invitationyear'] = 'Choose an year';
 $string['uerr_monthnotset'] = 'Please choose a month';
-$string['uerr_yearnotset'] = 'Please choose an year';
+$string['uerr_yearnotset'] = 'Please choose a year';

@@ -19,3 +19,5 @@ button is needed. (thanks to JR)
 this module, similar to the Quiz questions manage question types, so
 that an Admin would be able to disable/enable survey question types at
 site level. (thanks to JR)
+-> The Autofill question message "Content will be added at submit time " should not be displayed to the Student when taking the Survey, as it does not mean anything to him. That is a message for Teacher, not Student. (thanks to JR)
+-> Please provide a "View non-respondents feature" (cf. Feedback plugin and Questionnaire New features version).

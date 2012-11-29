@@ -138,7 +138,7 @@ $string['emptydownload'] = 'The export required has no fields';
 $string['emptymaxformpage'] = 'Required max form page (whether $add = true) is missing';
 $string['emptysearchform'] = 'No questions were found for this search form.<br />This could be due to questions:<ul><li>still not created;</li><li>not visible;</li><li>not set to belong to this form.</li></ul>To add a question to the search form use its availability feature.<br />Take care because only searchable questions can be defined as part of the search form.';
 $string['enteruniquename'] = 'Please choose a unique name since {$a} already exists in the choosen context';
-$string['extrarow_help'] = 'Use this option to keep a row for the question.<br />Extra row is needed whether your question includes images.';
+$string['extrarow_help'] = 'This extra row is needed not only for questions containing an image but also containing text longer than a short line!';
 $string['extrarow'] = 'Extra row for question';
 $string['extrarowisforced'] = '(Extra row has been forced by the plugin)';
 $string['fieldname_help'] = 'The name of the field as it will be once downloaded';
