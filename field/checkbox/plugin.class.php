@@ -335,9 +335,11 @@ class surveyfield_checkbox extends surveyitem_base {
         }
         $mform->addGroup($elementgroup, $fieldname.'_group', $elementlabel, $separator, false);
 
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$searchform) && $canaddrequiredrule) {
-            $mform->addRule($fieldname.'_group', get_string('required'), 'required', null, 'client');
+        $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        if ($this->required && (!$searchform) && (!$maybedisabled)) {
+            // $mform->addRule($fieldname.'_group', get_string('required'), 'required', null, 'client');
+            $mform->addRule($fieldname.'_group', get_string('required'), 'nonempty_rule', $mform);
+            $mform->_required[] = $fieldname.'_group';
         }
     }
 
@@ -347,9 +349,8 @@ class surveyfield_checkbox extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$canaddrequiredrule)) {
-            // CS validaition was not permitted
+        if ($this->required) {
+            // $mform->addRule validaition was not permitted
             // so, here, I need to manually look after the 'required' rule
             $valuelabel = $this->item_get_value_label_array('options');
 
@@ -463,33 +464,6 @@ class surveyfield_checkbox extends surveyitem_base {
         }
 
         return $status;
-    }
-
-    /**
-     * userform_dispose_unexpected_values
-     * this method is responsible for deletion of unexpected $fromform elements
-     * @param $fromform
-     * @return
-     */
-    public function userform_dispose_unexpected_values(&$fromform) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        $valuelabel = $this->item_get_value_label_array('options');
-        $valuelabel = array_keys($valuelabel);
-        foreach ($valuelabel as $index => $value) { // index and value because I issued: array_keys
-            $itemname = $fieldname.'_'.$index;
-            if (isset($fromform->{$itemname})) {
-                unset($fromform->{$itemname});
-            }
-        }
-        $itemname = $fieldname.'_other';
-        if (isset($fromform->{$itemname})) {
-            unset($fromform->{$itemname});
-        }
-        $itemname = $fieldname.'_text';
-        if (isset($fromform->{$itemname})) {
-            unset($fromform->{$itemname});
-        }
     }
 
     /**

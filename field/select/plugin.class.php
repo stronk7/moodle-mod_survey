@@ -326,9 +326,11 @@ class surveyfield_select extends surveyitem_base {
             $mform->addElement('select', $fieldname, $elementlabel, $valuelabel, array('class' => 'indent-'.$this->indent));
 
             if (!$searchform) {
-                $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-                if ($this->required && $canaddrequiredrule) {
-                    $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+                $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+                if ($this->required && (!$maybedisabled)) {
+                    // $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+                    $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
+                    $mform->_required[] = $fieldname;
                 }
 
                 switch ($this->defaultoption) {
@@ -359,9 +361,11 @@ class surveyfield_select extends surveyitem_base {
             $mform->addGroup($elementgroup, $fieldname.'_group', $elementlabel, ' ', false);
 
             if (!$searchform) {
-                $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-                if ($this->required && $canaddrequiredrule) {
-                    $mform->addRule($fieldname.'_group', get_string('required'), 'required', null, 'client');
+                $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+                if ($this->required && (!$maybedisabled)) {
+                    // $mform->addRule($fieldname.'_group', get_string('required'), 'required', null, 'client');
+                    $mform->addRule($fieldname.'_group', get_string('required'), 'nonempty_rule', $mform);
+                    $mform->_required[] = $fieldname.'_group';
                 }
 
                 switch ($this->defaultoption) {
@@ -400,13 +404,7 @@ class surveyfield_select extends surveyitem_base {
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$canaddrequiredrule)) {
-            // CS validaition was not permitted
-            // so, here, I need to manually look after the 'required' rule
-            // nothing to do here
-        }
-
+        // I need to check value is different from SURVEY_INVITATIONVALUE even if it is not required
         if ($data[$fieldname] == SURVEY_INVITATIONVALUE) {
             if (!$this->labelother) {
                 $errors[$fieldname] = get_string('uerr_optionnotset', 'surveyfield_radiobutton');
@@ -435,21 +433,6 @@ class surveyfield_select extends surveyitem_base {
         $disabilitationinfo[] = $mformelementinfo;
 
         return $disabilitationinfo;
-    }
-
-    /**
-     * userform_dispose_unexpected_values
-     * this method is responsible for deletion of unexpected $fromform elements
-     * @param $fromform
-     * @return
-     */
-    public function userform_dispose_unexpected_values(&$fromform) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        $itemname = $fieldname;
-        if (isset($fromform->{$itemname})) {
-            unset($fromform->{$itemname});
-        }
     }
 
     /**

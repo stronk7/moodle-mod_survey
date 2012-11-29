@@ -269,9 +269,11 @@ class surveyfield_multiselect extends surveyitem_base {
             $select->setSelected(implode(',', $defaults));
         } // else do not make a selection [workaround to MDL-]
 
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$searchform) && $canaddrequiredrule) {
-            $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+        $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        if ($this->required && (!$searchform) && (!$maybedisabled)) {
+            // $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+            $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
+            $mform->_required[] = $fieldname;
         }
     }
 
@@ -281,15 +283,11 @@ class surveyfield_multiselect extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$canaddrequiredrule)) {
-            // CS validaition was not permitted
-            // so, here, I need to manually look after the 'required' rule
-            if (empty($data[$fieldname])) {
-                $errors[$fieldname] = get_string('required');
-                return;
-            }
-        }
+        // useless: empty values are checked in Server Side Validation in submissions_form.php
+        // if (empty($data[$fieldname])) {
+        //     $errors[$fieldname] = get_string('required');
+        //     return;
+        // }
     }
 
     /**

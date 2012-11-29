@@ -365,12 +365,7 @@ class surveyfield_autofill extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$canaddrequiredrule)) {
-            // CS validaition was not permitted
-            // so, here, I need to manually look after the 'required' rule
-            // nothing to do here
-        }
+        // nothing to do here
     }
 
     /**
@@ -399,17 +394,6 @@ class surveyfield_autofill extends surveyitem_base {
      * @return
      */
     public function userform_child_is_allowed_dynamic($child_parentcontent, $data) {
-        // $this->flag->ismatchable = false
-        // this method is never called
-    }
-
-    /**
-     * userform_dispose_unexpected_values
-     * this method is responsible for deletion of unexpected $fromform elements
-     * @param $fromform
-     * @return
-     */
-    public function userform_dispose_unexpected_values(&$fromform) {
         // $this->flag->ismatchable = false
         // this method is never called
     }

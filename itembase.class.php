@@ -276,7 +276,7 @@ class surveyitem_base {
         if ($this->item_form_requires['content_editor']) { // i.e. content
             $context = context_module::instance($cm->id);
             $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
-            $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', 'items', $record->itemid);
+            $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
             $record->contentformat = FORMAT_HTML;
         } else { // i.e. fieldset
             $record->content = null;
@@ -633,6 +633,9 @@ class surveyitem_base {
 
         if ($displaymessage) {
             $a = survey_get_sid_field_content($recordtokill, 'content');
+            if (empty($a)) {
+                $a = get_string('userfriendlypluginname', 'surveyformat_'.$plugin);
+            }
             $message = get_string('itemdeleted', 'survey', $a);
             echo $OUTPUT->box($message, 'notice centerpara');
         }
@@ -655,7 +658,7 @@ class surveyitem_base {
         $saveditem->{$fieldname.'format'} = FORMAT_HTML;
         $saveditem->{$fieldname.'trust'} = 1;
 
-        $saveditem = file_prepare_standard_editor($saveditem, $fieldname, $editoroptions, $context, 'mod_survey', 'items', $saveditem->itemid);
+        $saveditem = file_prepare_standard_editor($saveditem, $fieldname, $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $saveditem->itemid);
     }
 
     /**
@@ -1219,28 +1222,53 @@ class surveyitem_base {
     }
 
     /**
-     * userform_can_add_required_rule
+     * userform_can_be_disabled
      * @param
      * @return
      */
-    public function userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem=null) {
+    public function userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem=null) {
         global $DB;
 
         if ($survey->newpageforchild) {
-            return true;
+            return false;
         }
         if (empty($parentitem)) {
-            return true;
+            return false;
         }
 
         // is its parentitem in its same page?
         $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
-        return ($parentitem->{$pagefield} < $this->{$pagefield});
+        return ($parentitem->{$pagefield} == $this->{$pagefield});
+    }
+
+    function userform_can_show_item_as_child($submissionid, $data) {
+        global $DB;
+
+        if (!$this->parentid) { // item is not a child, show it
+            return true;
+        }
+
+        if (!$survey->newpageforchild) { // all in the same page (if page breaks are not added manually)
+            // parent item is probably in this same page BUT CAN even be in a previous page
+            foreach ($data as $itemname => $itemvalue) {
+                if (preg_match('~^(\w+)_('.SURVEY_FIELD.'|'.SURVEY_FORMAT.')_(\w+)_([0-9]+)$~', $itemname, $match)) {
+                    if ($match[4] == $this->parentid) { // parent item has been found in this page
+                        return ($data[$itemname] == $this->parentcontent);
+                    }
+                }
+            }
+        }
+
+        // if execution is still here,
+        // parent item is in a previous page
+        $where = array('submissionid' => $submissionid, 'itemid' => $this->parentid);
+        $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
+        return ($givenanswer === $this->parentvalue);
     }
 
     /**
      * userform_child_is_allowed_dynamic
-     * from parentcontent defines whether an item is supposed to be active (not disabled) in the form so needs validation
+     * as parentitem defines whether a child item is supposed to be active (not disabled) in the form so needs validation
      * ----------------------------------------------------------------------
      * this function is called when $survey->newpageforchild == false
      * that is the current survey lives in just one single web page
@@ -1256,20 +1284,6 @@ class surveyitem_base {
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
         return ($data[$fieldname] == $child_parentcontent);
-    }
-
-    /**
-     * userform_dispose_unexpected_values
-     * this method is responsible for deletion of unexpected $fromform elements
-     * @param $fromform
-     * @return
-     */
-    public function userform_dispose_unexpected_values(&$fromform) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        if (isset($fromform->{$fieldname})) {
-            unset($fromform->{$fieldname});
-        }
     }
 
     /**

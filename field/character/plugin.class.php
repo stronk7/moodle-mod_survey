@@ -399,9 +399,11 @@ class surveyfield_character extends surveyitem_base {
         $mform->setType($fieldname, PARAM_RAW);
         if (!$searchform) {
             $mform->setDefault($fieldname, $this->defaultvalue);
-            $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-            if ($this->required && $canaddrequiredrule) {
-                $mform->addRule($fieldname, get_string('required'), 'required', null, 'server');
+            $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+            if ($this->required && (!$maybedisabled)) {
+                // $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+                $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
+                $mform->_required[] = $fieldname;
             }
         }
     }
@@ -414,15 +416,11 @@ class surveyfield_character extends surveyitem_base {
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$canaddrequiredrule)) {
-            // CS validaition was not permitted
-            // so, here, I need to manually look after the 'required' rule
-            if (empty($data[$fieldname])) {
-                $errors[$fieldname] = get_string('required');
-                return;
-            }
-        }
+        // useless: empty values are checked in Server Side Validation in submissions_form.php
+        // if (empty($data[$fieldname])) {
+        //     $errors[$fieldname] = get_string('required');
+        //     return;
+        // }
 
         $fieldlength = strlen($data[$fieldname]);
         if ($fieldlength > $this->maxlength) {

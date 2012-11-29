@@ -361,9 +361,11 @@ class surveyfield_radiobutton extends surveyitem_base {
         $mform->addGroup($elementgroup, $fieldname.'_group', $elementlabel, $separator, false);
 
         if (!$searchform) {
-            $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-            if ($this->required && $canaddrequiredrule) {
-                $mform->addRule($fieldname.'_group', get_string('required'), 'required', null, 'client');
+            $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+            if ($this->required && (!$maybedisabled)) {
+                // $mform->addRule($fieldname.'_group', get_string('required'), 'required', null, 'client');
+                $mform->addRule($fieldname.'_group', get_string('required'), 'nonempty_rule', $mform);
+                $mform->_required[] = $fieldname.'_group';
             }
 
             switch ($this->defaultoption) {
@@ -394,16 +396,12 @@ class surveyfield_radiobutton extends surveyitem_base {
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$canaddrequiredrule)) {
-            // CS validaition was not permitted
-            // so, here, I need to manually look after the 'required' rule
-            if ( ($data[$fieldname] == 'other') && empty($data[$fieldname.'_text']) ) {
-                $errors[$fieldname.'_text'] = get_string('required');
-                return;
-            }
+        if ( ($data[$fieldname] == 'other') && empty($data[$fieldname.'_text']) ) {
+            $errors[$fieldname.'_text'] = get_string('required');
+            return;
         }
 
+        // I need to check value is different from SURVEY_INVITATIONVALUE even if it is not required
         if ($data[$fieldname] == SURVEY_INVITATIONVALUE) {
             $errors[$fieldname.'_group'] = get_string('uerr_optionnotset', 'surveyfield_radiobutton');
             return;
@@ -459,25 +457,6 @@ class surveyfield_radiobutton extends surveyitem_base {
         }
 
         return $status;
-    }
-
-    /**
-     * userform_dispose_unexpected_values
-     * this method is responsible for deletion of unexpected $fromform elements
-     * @param $fromform
-     * @return
-     */
-    public function userform_dispose_unexpected_values(&$fromform) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        $itemname = $fieldname;
-        if (isset($fromform->{$itemname})) {
-            unset($fromform->{$itemname});
-        }
-        $itemname = $fieldname.'_text';
-        if (isset($fromform->{$itemname})) {
-            unset($fromform->{$itemname});
-        }
     }
 
     /**

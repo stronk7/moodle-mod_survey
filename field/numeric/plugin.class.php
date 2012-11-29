@@ -277,7 +277,7 @@ class surveyfield_numeric extends surveyitem_base {
      * @return
      */
     public function item_atomize_parent_content($parentcontent) {
-        $pattern = '~^([0-9]+)'.get_string('decsep', 'langconfig').'([0-9]+)$~';
+        $pattern = '~^\s*([0-9]+)'.get_string('decsep', 'langconfig').'?([0-9]*)\s*$~';
         preg_match($pattern, $parentcontent, $matches);
 
         return $matches;
@@ -413,9 +413,11 @@ class surveyfield_numeric extends surveyitem_base {
         if (!$searchform) {
             $decimalseparator = get_string('decsep', 'langconfig');
             $mform->setDefault($fieldname, number_format((double)$this->defaultvalue, $this->decimals, $decimalseparator, ''));
-            $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-            if ($this->required && $canaddrequiredrule) {
-                $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+            $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+            if ($this->required && (!$maybedisabled)) {
+                // $mform->addRule($fieldname, get_string('required'), 'required', null, 'server');
+                $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
+                $mform->_required[] = $fieldname;
             }
         }
     }
@@ -430,25 +432,22 @@ class surveyfield_numeric extends surveyitem_base {
 
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$canaddrequiredrule)) {
-            // CS validaition was not permitted
-            // so, here, I need to manually look after the 'required' rule
-            if (empty($data[$fieldname])) {
-                $errors[$fieldname] = get_string('required');
-                return;
-            }
-        }
+        // useless: SURVEY_INVITATIONVALUE is checked in Server Side Validation in submissions_form.php
+        // if (empty($data[$fieldname])) {
+        //     $errors[$fieldname] = get_string('required');
+        //     return;
+        // }
 
         if (!isset($data[$fieldname])) {
             return;
         }
 
         // if it is not a number, shouts
-        $thenumber = unformat_float($data[$fieldname]);
-        if (is_null($thenumber)) {
+        $pattern = '~^\s*([0-9]+)'.get_string('decsep', 'langconfig').'?([0-9]*)\s*$~';
+        if (!preg_match($pattern, $data[$fieldname], $matches)) {
             $errors[$fieldname] = get_string('uerr_notanumber', 'surveyfield_numeric');
         } else {
+            $thenumber = $matches[1].'.'.$matches[2];
             // if it is < 0 but has been defined as unsigned, shouts
             if (!$this->signed && ($thenumber < 0)) {
                 $errors[$fieldname] = get_string('uerr_negative', 'surveyfield_numeric');
@@ -459,12 +458,12 @@ class surveyfield_numeric extends surveyitem_base {
             }
             // if it is > $this->upperbound, shouts
             if (isset($this->upperbound) && ($thenumber > $this->upperbound)) {
-                $errors[$fieldname] = get_string('greaterthanmaximum', 'surveyfield_numeric', $subject);
+                $errors[$fieldname] = get_string('uerr_greaterthanmaximum', 'surveyfield_numeric');
             }
             // if it has decimal but has been defined as integer, shouts
             $is_integer = (bool)(strval(intval($thenumber)) == strval($thenumber));
             if (($this->decimals == 0) && (!$is_integer)) {
-                $errors[$fieldname] = get_string('uerr_notinteger', 'surveyfield_numeric', $subject);
+                $errors[$fieldname] = get_string('uerr_notinteger', 'surveyfield_numeric');
             }
         }
     }
@@ -490,21 +489,6 @@ class surveyfield_numeric extends surveyitem_base {
     }
 
     /**
-     * userform_dispose_unexpected_values
-     * this method is responsible for deletion of unexpected $fromform elements
-     * @param $fromform
-     * @return
-     */
-    public function userform_dispose_unexpected_values(&$fromform) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        $itemname = $fieldname;
-        if (isset($fromform->{$itemname})) {
-            unset($fromform->{$itemname});
-        }
-    }
-
-    /**
      * userform_save
      * starting from the info set by the user in the form
      * I define the info to store in the db
@@ -517,14 +501,14 @@ class surveyfield_numeric extends surveyitem_base {
         } else {
             $decimalseparator = get_string('decsep', 'langconfig');
             $matches = $this->item_atomize_parent_content($itemdetail['mainelement']);
-            $decimals = $matches[2];
-            if (strlen($matches[2]) > $this->decimals) {
+            $decimals = isset($matches[2]) ? $matches[2] : '0';
+            if (strlen($decimals) > $this->decimals) {
                 // round it
-                $decimals = round($matches[2], $this->decimals);
+                $decimals = round((float)$decimals, $this->decimals);
             }
-            if (strlen($matches[2]) < $this->decimals) {
+            if (strlen($decimals) < $this->decimals) {
                 // padright
-                $decimals = str_pad($matches[2], $this->decimals, '0', STR_PAD_RIGHT);
+                $decimals = str_pad($decimals, $this->decimals, '0', STR_PAD_RIGHT);
             }
             $olduserdata->content = $matches[1].$decimalseparator.$decimals;
         }

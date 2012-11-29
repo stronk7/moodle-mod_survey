@@ -234,17 +234,18 @@ class mod_survey_mod_form extends moodleform_mod {
             $default_values[$filename.'_filemanager'] = $draftitemid;
 
             // manage thankshtml editor
+            $filename = 'thankshtml';
             $editoroptions = survey_get_editor_options();
             // editing an existing feedback - let us prepare the added editor elements (intro done automatically)
-            $draftitemid = file_get_submitted_draft_itemid('thankshtml');
-            $default_values['thankshtml_editor']['text'] =
+            $draftitemid = file_get_submitted_draft_itemid($filename);
+            $default_values[$filename.'_editor']['text'] =
                                     file_prepare_draft_area($draftitemid, $this->context->id,
-                                    'mod_survey', 'thankshtml', false,
+                                    'mod_survey', SURVEY_THANKSHTMLFILEAREA, false,
                                     $editoroptions,
-                                    $default_values['thankshtml']);
+                                    $default_values[$filename]);
 
-            $default_values['thankshtml_editor']['format'] = $default_values['thankshtmlformat'];
-            $default_values['thankshtml_editor']['itemid'] = $draftitemid;
+            $default_values[$filename.'_editor']['format'] = $default_values['thankshtmlformat'];
+            $default_values[$filename.'_editor']['itemid'] = $draftitemid;
 
             // notifyrole
             $presetroles = explode(',', $default_values['notifyrole']);

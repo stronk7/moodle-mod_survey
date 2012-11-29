@@ -166,6 +166,8 @@ define('SURVEY_OPTIONALITEM', 0);
 // fileareas
 define('SURVEY_STYLEFILEAREA'   , 'userstyle');
 define('SURVEY_TEMPLATEFILEAREA', 'templatefilearea');
+define('SURVEY_ITEMCONTENTFILEAREA', 'itemcontent');
+define('SURVEY_THANKSHTMLFILEAREA', 'thankshtml');
 
 // otheritems
 define('SURVEY_HIDEITEMS'  , '1');
@@ -225,7 +227,7 @@ function survey_add_instance($survey) {
     // }
     $editoroptions = survey_get_editor_options();
     if ($draftitemid = $survey->thankshtml_editor['itemid']) {
-        $survey->thankshtml = file_save_draft_area_files($draftitemid, $context->id, 'mod_survey', 'thankshtml', $survey->id, $editoroptions, $survey->thankshtml_editor['text']);
+        $survey->thankshtml = file_save_draft_area_files($draftitemid, $context->id, 'mod_survey', SURVEY_THANKSHTMLFILEAREA, $survey->id, $editoroptions, $survey->thankshtml_editor['text']);
         $survey->thankshtmlformat = $survey->thankshtml_editor['format'];
     }
     $DB->update_record('survey', $survey);
@@ -270,7 +272,7 @@ function survey_update_instance($survey) {
     // manage thankshtml editor
     $editoroptions = survey_get_editor_options();
     if ($draftitemid = $survey->thankshtml_editor['itemid']) {
-        $survey->thankshtml = file_save_draft_area_files($draftitemid, $context->id, 'mod_survey', 'thankshtml',
+        $survey->thankshtml = file_save_draft_area_files($draftitemid, $context->id, 'mod_survey', SURVEY_THANKSHTMLFILEAREA,
                 $survey->id, $editoroptions, $survey->thankshtml_editor['text']);
         $survey->thankshtmlformat = $survey->thankshtml_editor['format'];
     }
@@ -605,6 +607,7 @@ function survey_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
     $debug = true;
     if ($debug) {
         $debugfile = $CFG->dataroot.'/debug_'.date("m.d.y_H:i:s").'.txt';
+
         $debughandle = fopen($debugfile, 'w');
         fwrite($debughandle, 'Scrivo dalla riga '.__LINE__.' di '.__FILE__."\n");
         fwrite($debughandle, '$course'."\n");
@@ -643,7 +646,6 @@ function survey_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
     }
 
     $fs = get_file_storage();
-    // (forse $fs è una immagine?)
 
     $fullpath = "/$context->id/mod_survey/$filearea/$itemid/$relativepath";
     if ($debug) {

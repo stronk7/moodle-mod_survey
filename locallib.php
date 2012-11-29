@@ -180,7 +180,10 @@ function survey_manage_item_deletion($confirm, $cm, $itemid, $type, $plugin, $it
         $context = context_module::instance($cm->id);
 
         $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $itemid), MUST_EXIST);
-        $a = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', 'items', $itemid);
+        $a = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $itemid);
+        if (empty($a)) {
+            $a = get_string('userfriendlypluginname', 'surveyformat_'.$plugin);
+        }
         $message = get_string('askdeleteoneitem', 'survey', $a);
 
         // is there any child item link to break
@@ -230,6 +233,9 @@ function survey_manage_item_deletion($confirm, $cm, $itemid, $type, $plugin, $it
                 $deletingrecord = $DB->get_record('survey_item', array('id' => $itemid), 'id, content, content_sid, externalname, sortindex', MUST_EXIST);
                 $killedsortindex = $deletingrecord->sortindex;
                 $a = survey_get_sid_field_content($deletingrecord, 'content');
+                if (empty($a)) {
+                    $a = get_string('userfriendlypluginname', 'surveyformat_'.$plugin);
+                }
 
                 require_once($CFG->dirroot.'/mod/survey/'.$type.'/'.$plugin.'/plugin.class.php');
                 $itemclass = 'survey'.$type.'_'.$plugin;
@@ -309,7 +315,7 @@ function survey_manage_item_hide($confirm, $cm, $itemid, $type) {
             $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $itemid), MUST_EXIST);
 
             $a = new stdClass();
-            $a->parentid = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', 'items', $itemid);
+            $a->parentid = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $itemid);
             $a->dependencies = implode(', ', $sortindextohidelist);
             $message = get_string('askitemstohide', 'survey', $a);
 
@@ -424,7 +430,7 @@ function survey_manage_item_show($confirm, $cm, $itemid, $type) {
             $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $itemid), MUST_EXIST);
 
             $a = new stdClass();
-            $a->lastitem = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', 'items', $itemid);
+            $a->lastitem = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $itemid);
             $a->ancestors = implode(', ', $sortindextoshowlist);
             $message = get_string('askitemsshow', 'survey', $a);
 
@@ -603,13 +609,13 @@ function survey_page_has_items($surveyid, $canaccessadvancedform, $formpage, $su
 
     // start looking ONLY at empty($item->parentid) because it doesn't involve extra queries
     foreach ($itemseeds as $itemseed) {
-        // se è un elemento di formato, non conta
+        // if it is a format element, it is not valid. Neglect it.
         if ($itemseed->type == SURVEY_FORMAT) {
             continue;
         }
 
         if (empty($itemseed->parentid)) {
-            // se almeno uno ha il parentid vuoto, ho finito
+            // if at least one item has an empty parentid, I finished
             return $formpage;
         }
     }
@@ -626,7 +632,7 @@ function survey_page_has_items($surveyid, $canaccessadvancedform, $formpage, $su
 }
 
 /**
- * userform_child_is_allowed_dynamic
+ * survey_child_is_allowed_static
  * from parentcontent defines whether an item is supposed to be active (not disabled) in the form so needs validation
  * ----------------------------------------------------------------------
  * this function is called when $survey->newpageforchild == false
@@ -751,7 +757,7 @@ function survey_set_prefill($survey, $canaccessadvancedform, $formpage, $submiss
 function survey_save_user_data($fromform) {
     global $CFG, $DB, $OUTPUT;
 
-    $regexp = '~'.SURVEY_ITEMPREFIX.'_([a-z]+)_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
+    $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_FIELD.'|'.SURVEY_FORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
 
     $infoperitem = array();
     foreach ($fromform as $itemname => $content) {
@@ -1101,14 +1107,14 @@ function survey_get_my_groups($cm) {
 function survey_show_thanks_page($survey, $cm) {
     global $OUTPUT;
 
-    // $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', 'items', $item->itemid);
+    // $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
     // $mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
 
 
     if (!empty($survey->thankshtml)) {
         $context = context_module::instance($cm->id);
 
-        $message = file_rewrite_pluginfile_urls($survey->thankshtml, 'pluginfile.php', $context->id, 'mod_survey', 'thankshtml', $survey->id);
+        $message = file_rewrite_pluginfile_urls($survey->thankshtml, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_THANKSHTMLFILEAREA, $survey->id);
     } else {
         $message = get_string('defaultthanksmessage', 'survey');
     }
@@ -1918,47 +1924,75 @@ function survey_drop_unexpected_values(&$fromform) {
     // BEGIN: delete all the bloody values that were NOT supposed to be returned: MDL-34815
     $dirtydata = (array)$fromform;
     $indexes = array_keys($dirtydata);
-    $indexes = array_reverse($indexes);
-    // $indexes lists all the item names in reverse order
-    // devo usare il reverse array altrimenti...
-    // ...nel confronto con il parent item potrei trovare che un parent è satato eliminato
 
+    $disposelist = array();
     $olditemid = 0;
+    $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_FIELD.'|'.SURVEY_FORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
     foreach ($indexes as $itemname) {
-        if (preg_match('~^'.SURVEY_ITEMPREFIX.'_~', $itemname)) { // if it starts with SURVEY_ITEMPREFIX_
-            $parts = explode('_', $itemname);
-            $type = $parts[1]; // item type
-            $plugin = $parts[2]; // item plugin
-            $itemid = $parts[3]; // item id
+        if (!preg_match($regexp, $itemname, $matches)) { // if it starts with SURVEY_ITEMPREFIX_
+            continue;
+        }
+        $type = $matches[1]; // item type
+        $plugin = $matches[2]; // item plugin
+        $itemid = $matches[3]; // item id
 
-            if ($itemid == $olditemid) {
-                continue;
+        if ($itemid == $olditemid) {
+            continue;
+        }
+
+        // let's start
+        $olditemid = $itemid;
+
+        $childitem = survey_get_item($itemid, $type, $plugin);
+
+        if (empty($childitem->parentid)) {
+            continue;
+        }
+
+        if (in_array($childitem->parentid, $disposelist)) {
+            $disposelist[] = $childitem->id;
+            continue;
+        }
+
+        // call parentitem
+        $parentitem = survey_get_item($childitem->parentid);
+
+        $parentinsamepage = false;
+        foreach($indexes as $itemname) {
+            if (strpos($itemname, $parentitem->itemid)) {
+                $parentinsamepage = true;
+                break;
             }
+        }
 
-            $olditemid = $itemid;
+        if ($parentinsamepage) { // if parent is in this same page
+            // tell parentitem what child needs in order to be displayed and compare it with what was answered to parentitem ($dirtydata)
+            $expectedvalue = $parentitem->userform_child_is_allowed_dynamic($childitem->parentcontent, $dirtydata);
+            // parentitem, knowing its plugin, compare compara quello che vuole e risponde
 
-            $childitem = survey_get_item($itemid, $type, $plugin);
+            if (!$expectedvalue) {
+                $disposelist[] = $childitem->itemid;
+            }
+        }
+    } // check next item
+    // END: delete all the bloody values that were supposed to NOT be returned: MDL-34815
 
-            $expectedvalue = true;
-            while (!empty($childitem->parentid)) {
-
-                // call parentitem
-                $parentitem = survey_get_item($childitem->parentid);
-
-                // tell parentitem what child needs to be displayed and compare with what was answered to parentitem
-                $expectedvalue = $parentitem->userform_child_is_allowed_dynamic($childitem->parentcontent, $dirtydata);
-                // il padre, sapendo come è fatto, compara quello che vuole e risponde
-
-                if ($expectedvalue) {
-                    $childitem = $parentitem;
-                } else {
-                    $childitem->userform_dispose_unexpected_values($fromform);
-                    break;
+    // if not expected items are here...
+    if (count($disposelist)) {
+        $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_FIELD.'|'.SURVEY_FORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
+        foreach($indexes as $itemname) {
+            if (preg_match($regexp, $itemname, $matches)) {
+                // $type = $matches[1]; // item type
+                // $plugin = $matches[2]; // item plugin
+                $itemid = $matches[3]; // item id
+                // $option = $matches[4]; // _text or _noanswer or...
+                if (in_array($itemid, $disposelist)) {
+                    unset($fromform->$itemname);
                 }
             }
         }
     }
-    // END: delete all the bloody values that were supposed to NOT be returned: MDL-34815
+
 }
 
 /**

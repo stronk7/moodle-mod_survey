@@ -247,9 +247,11 @@ class surveyfield_fileupload extends surveyitem_base {
         $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
         $mform->addElement('filemanager', $fieldname, $elementlabel, null, $attachmentoptions);
 
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$searchform) && $canaddrequiredrule) {
-            $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+        $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        if ($this->required && (!$searchform) && (!$maybedisabled)) {
+            // $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+            $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
+            $mform->_required[] = $fieldname;
         }
     }
 
@@ -259,15 +261,11 @@ class surveyfield_fileupload extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$canaddrequiredrule)) {
-            // CS validaition was not permitted
-            // so, here, I need to manually look after the 'required' rule
-            if (empty($data[$fieldname])) {
-                $errors[$fieldname] = get_string('required');
-                return;
-            }
-        }
+        // useless: empty values are checked in Server Side Validation in submissions_form.php
+        // if (empty($data[$fieldname])) {
+        //     $errors[$fieldname] = get_string('required');
+        //     return;
+        // }
     }
 
     /**
@@ -301,17 +299,6 @@ class surveyfield_fileupload extends surveyitem_base {
     }
 
     /**
-     * userform_dispose_unexpected_values
-     * this method is responsible for deletion of unexpected $fromform elements
-     * @param $fromform
-     * @return
-     */
-    public function userform_dispose_unexpected_values(&$fromform) {
-        // $this->flag->ismatchable = false
-        // this method is never called
-    }
-
-    /**
      * userform_save
      * starting from the info set by the user in the form
      * I define the info to store in the db
@@ -328,7 +315,7 @@ class surveyfield_fileupload extends surveyitem_base {
             $olduserdata->content = $itemdetail['filemanager'];                     // needed for the saving process
 
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-            $olduserdata = file_postupdate_standard_filemanager($olduserdata, $fieldname, $attachmentoptions, $this->context, 'mod_survey', 'items', $olduserdata->id);
+            $olduserdata = file_postupdate_standard_filemanager($olduserdata, $fieldname, $attachmentoptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
 // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
 // echo '$olduserdata:';
 // var_dump($olduserdata);
@@ -356,7 +343,7 @@ class surveyfield_fileupload extends surveyitem_base {
             $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
 
-            $olduserdata = file_prepare_standard_filemanager($olduserdata, $fieldname, $attachmentoptions, $this->context, 'mod_survey', 'items', $olduserdata->id);
+            $olduserdata = file_prepare_standard_filemanager($olduserdata, $fieldname, $attachmentoptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
 
             $prefill[$fieldname.'_filemanager'] = $olduserdata->{$fieldname.'_filemanager'};
         } // else use item defaults
@@ -376,7 +363,7 @@ class surveyfield_fileupload extends surveyitem_base {
      */
     public function userform_db_to_export($itemvalue) {
         $fs = get_file_storage();
-        $files = $fs->get_area_files($this->context->id, 'mod_survey', 'items', $itemvalue->id);
+        $files = $fs->get_area_files($this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $itemvalue->id);
         $filename = array();
         foreach ($files as $file) {
             if ($file->is_directory()) {

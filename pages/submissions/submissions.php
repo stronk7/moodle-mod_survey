@@ -105,8 +105,5 @@ if (!empty($submissionid)) {
 }
 $prefill['formpage'] = $formpage; // go to populate the hidden field of the form
 
-echo '$prefill:';
-var_dump($prefill);
-
 $mform->set_data($prefill);
 $mform->display();

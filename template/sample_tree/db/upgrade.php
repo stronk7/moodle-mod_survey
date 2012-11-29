@@ -14,18 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Keeps track of upgrades to the surveytemplate sample_tree
+ *
+ * @package    surveytemplate
+ * @subpackage sample_tree
+ * @copyright  2013 kordan <kordan@mclink.it>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
+/**
+ * Performs upgrade of the database structure and data
+ *
+ * @param int $oldversion the version we are upgrading from
+ * @return bool true
+ */
+function xmldb_surveytemplate_sample_tree_upgrade($oldversion) {
+    global $DB;
 
-/* is the user allowed to add a new survey? */
-/* are you continuing a partially entered survey? */
-/* are you editing an already closed survey? */
+    $dbman = $DB->get_manager();
 
-if (!isset($mform)) {
-    echo $OUTPUT->notification(get_string('emptysearchform', 'survey'), 'generaltable generalbox boxaligncenter boxwidthnormal');
-
-    $continueurl = new moodle_url('/mod/survey/view.php', array('s' => $survey->id, 'tab' => SURVEY_TABITEMS, 'pag' => SURVEY_ITEMS_MANAGE));
-    echo $OUTPUT->continue_button($continueurl);
-} else {
-    $mform->display();
+    return true;
 }

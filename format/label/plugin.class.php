@@ -226,7 +226,7 @@ class surveyformat_label extends surveyitem_base {
 
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
-        $message = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', 'items', $this->itemid);
+        $message = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
 
         $mform->addElement('static', $fieldname, $this->labelintro, $message);
     }
@@ -237,12 +237,7 @@ class surveyformat_label extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$canaddrequiredrule)) {
-            // CS validaition was not permitted
-            // so, here, I need to manually look after the 'required' rule
-            $this->userform_manualrequiredvalidation($data, $errors);
-        }
+        // nothing to do here
     }
 
     /**

@@ -25,7 +25,6 @@ require_once($CFG->dirroot.'/mod/survey/locallib.php');
 $submission = $DB->get_record('survey_submissions', array('id' => $submissionid));
 
 $prefill = array();
-
 $prefill = survey_set_prefill($survey, $canaccessadvancedform, $formpage, $submissionid, true);
 $prefill['submissionid'] = $submissionid;
 $prefill['formpage'] = $formpage; // go to populate the hidden field of the form

@@ -14,18 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Strings for component 'survey_sample_tree', language 'en', branch 'MOODLE_20_STABLE'
+ *
+ * @package    survey
+ * @subpackage survey_sample_tree
+ * @copyright  2013 kordan <kordan@mclink.it>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
-
-/* is the user allowed to add a new survey? */
-/* are you continuing a partially entered survey? */
-/* are you editing an already closed survey? */
-
-if (!isset($mform)) {
-    echo $OUTPUT->notification(get_string('emptysearchform', 'survey'), 'generaltable generalbox boxaligncenter boxwidthnormal');
-
-    $continueurl = new moodle_url('/mod/survey/view.php', array('s' => $survey->id, 'tab' => SURVEY_TABITEMS, 'pag' => SURVEY_ITEMS_MANAGE));
-    echo $OUTPUT->continue_button($continueurl);
-} else {
-    $mform->display();
-}
+$string['pluginname'] = 'sample_tree';
+$string['content01'] = '<p>domanda di tipo boolean</p>';
+$string['content02'] = '<p>domanda di tipo age</p>';
+$string['content03'] = '<p>Domanda di tipo character</p>';
+$string['defaultvalue01'] = '';

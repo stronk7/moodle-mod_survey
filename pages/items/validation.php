@@ -132,7 +132,7 @@ foreach ($itemseeds as $itemseed) {
     $item->contentformat = FORMAT_HTML;
     $item->contenttrust = 1;
 
-    $output = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', 'items', $item->itemid);
+    $output = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
     $tablerow[] = $output;
 
     // *************************************** sortindex

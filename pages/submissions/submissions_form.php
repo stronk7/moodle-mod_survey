@@ -29,14 +29,15 @@
 defined('MOODLE_INTERNAL') OR die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot.'/lib/pear/HTML/QuickForm/element.php');
+require_once($CFG->dirroot.'/mod/survey/pages/submissions/nonemptyrule.class.php');
 
 class survey_submissionform extends moodleform {
 
     function definition() {
-        global $DB, $OUTPUT, $CFG;
+        global $DB, $CFG;
 
         $mform = $this->_form;
+        $this->surveynonemptyrule = new survey_nonempty_rule();
 
         $cmid = $this->_customdata->cmid;
         $lastformpage = $this->_customdata->lastformpage;
@@ -45,6 +46,8 @@ class survey_submissionform extends moodleform {
         $formpage = $this->_customdata->formpage;
         $canaccessadvancedform = $this->_customdata->canaccessadvancedform;
         $currentpage = $this->_customdata->currentpage;
+
+        $mform->registerRule('nonempty_rule', null, $this->surveynonemptyrule);
 
         $mform->addElement('hidden', 's', $survey->id);
         $mform->addElement('hidden', 'submissionid', 0);
@@ -56,7 +59,6 @@ class survey_submissionform extends moodleform {
             // let's display final message
             $mform->addElement('static', 'nomoreitems', get_string('note', 'survey'), get_string('nomoreitems', 'survey'));
         } else {
-
             $params = array('surveyid' => $survey->id, 'formpage' => $formpage);
             $allpages = ($currentpage == SURVEY_SUBMISSION_READONLY);
             $sql = survey_fetch_items_seeds($canaccessadvancedform, false, $allpages);
@@ -81,9 +83,19 @@ class survey_submissionform extends moodleform {
                     $parentitem = null;
                 }
 
-                if ($survey->newpageforchild) {
-                    $itemaschildisallowed = survey_child_is_allowed_static($submissionid, $itemseed);
+                // is the current item allowed to be displayed in this page?
+                if ($itemseed->parentid) {
+                    // if parentitem is in a previous page, have a check
+                    // otherwise
+                    // display the current item
+                    $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
+                    if ($parentitem->{$pagefield} < $formpage) {
+                        $itemaschildisallowed = survey_child_is_allowed_static($submissionid, $itemseed);
+                    } else {
+                        $itemaschildisallowed = true;
+                    }
                 } else {
+                    // current item has no parent: display it
                     $itemaschildisallowed = true;
                 }
 
@@ -93,7 +105,9 @@ class survey_submissionform extends moodleform {
                     if (isset($item->extrarow) && $item->extrarow) {
                         $elementnumber = $item->customnumber ? $item->customnumber.':' : '';
 
-                        $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', 'items', $item->itemid);
+                        $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
+//echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
+//die;
                         $mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
                     }
 
@@ -119,10 +133,6 @@ class survey_submissionform extends moodleform {
         // buttons
         $buttonarray = array();
         if ($formpage != 1) { // 0 or greater than 1
-            // $url = $CFG->wwwroot.'/mod/survey/view.php?id=117&amp;tab=1&amp;pag=1&amp;submissionid=2&amp;formpage=1';
-            // $html = '<form method="get" action="'.$url.'"><div><input type="submit" value="&lt;&lt; Previous  page" /></div></form>';
-            // $buttonarray[] = $mform->createElement('html', $html);
-            // $buttonarray[] = $mform->createElement('static', 'justaname', '', $OUTPUT->single_button('http://io.it', get_string('previousformpage', 'survey'), 'get'));
             $buttonarray[] = $mform->createElement('submit', 'prevbutton', get_string('previousformpage', 'survey'));
         }
         if ($survey->saveresume) {
@@ -144,6 +154,11 @@ class survey_submissionform extends moodleform {
     }
 
     function validation($data, $files) {
+        if (isset($data['prevbutton'])) {
+            // skip validation
+            return array();
+        }
+
         // $cmid = $this->_customdata->cmid;
         // $lastformpage = $this->_customdata->lastformpage;
         $survey = $this->_customdata->survey;

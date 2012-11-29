@@ -487,13 +487,6 @@ class surveyfield_date extends surveyitem_base {
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$canaddrequiredrule)) {
-            // CS validaition was not permitted
-            // so, here, I need to manually look after the 'required' rule
-            // nothing to do here
-        }
-
         if (isset($data[$fieldname.'_noanswer'])) {
             return; // nothing to validate
         }
@@ -593,33 +586,6 @@ class surveyfield_date extends surveyitem_base {
         }
 
         return $status;
-    }
-
-    /**
-     * userform_dispose_unexpected_values
-     * this method is responsible for deletion of unexpected $fromform elements
-     * @param $fromform
-     * @return
-     */
-    public function userform_dispose_unexpected_values(&$fromform) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        $itemname = $fieldname.'_day';
-        if (isset($fromform->{$itemname})) {
-            unset($fromform->{$itemname});
-        }
-        $itemname = $fieldname.'_month';
-        if (isset($fromform->{$itemname})) {
-            unset($fromform->{$itemname});
-        }
-        $itemname = $fieldname.'_year';
-        if (isset($fromform->{$itemname})) {
-            unset($fromform->{$itemname});
-        }
-        $itemname = $fieldname.'_noanswer';
-        if (isset($fromform->{$itemname})) {
-            unset($fromform->{$itemname});
-        }
     }
 
     /**

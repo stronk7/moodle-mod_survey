@@ -187,12 +187,7 @@ class surveyformat_pagebreak extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$canaddrequiredrule)) {
-            // CS validaition was not permitted
-            // so, here, I need to manually look after the 'required' rule
-            $this->userform_manualrequiredvalidation($data, $errors);
-        }
+        // nothing to do here
     }
 
     /**

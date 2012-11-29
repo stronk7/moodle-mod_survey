@@ -14,18 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Defines the version of survey sample_tree subplugin
+ *
+ * This code fragment is called by moodle_needs_upgrading() and
+ * /admin/index.php
+ *
+ * @package    surveytemplate
+ * @subpackage sample_tree
+ * @copyright  2013 kordan <kordan@mclink.it>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
+defined('MOODLE_INTERNAL') || die();
 
-/* is the user allowed to add a new survey? */
-/* are you continuing a partially entered survey? */
-/* are you editing an already closed survey? */
-
-if (!isset($mform)) {
-    echo $OUTPUT->notification(get_string('emptysearchform', 'survey'), 'generaltable generalbox boxaligncenter boxwidthnormal');
-
-    $continueurl = new moodle_url('/mod/survey/view.php', array('s' => $survey->id, 'tab' => SURVEY_TABITEMS, 'pag' => SURVEY_ITEMS_MANAGE));
-    echo $OUTPUT->continue_button($continueurl);
-} else {
-    $mform->display();
-}
+$plugin->version = 2012111501;
+$plugin->requires = 2010091600;  // Requires this Moodle version

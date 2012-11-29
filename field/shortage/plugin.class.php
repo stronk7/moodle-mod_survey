@@ -355,9 +355,11 @@ class surveyfield_shortage extends surveyitem_base {
 
         $mform->addElement('select', $fieldname, $elementlabel, $years, array('class' => 'indent-'.$this->indent));
 
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ( $this->required && (!$searchform) && $canaddrequiredrule) {
-            $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+        $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        if ( $this->required && (!$searchform) && (!$maybedisabled)) {
+            // $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+            $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
+            $mform->_required[] = $fieldname;
         }
 
         // default section
@@ -390,13 +392,7 @@ class surveyfield_shortage extends surveyitem_base {
 
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
-        $canaddrequiredrule = $this->userform_can_add_required_rule($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$canaddrequiredrule)) {
-            // CS validaition was not permitted
-            // so, here, I need to manually look after the 'required' rule
-            // nothing to do here
-        }
-
+        // I need to check value is different from SURVEY_INVITATIONVALUE even if it is not required
         if ($data[$fieldname] == SURVEY_INVITATIONVALUE) {
             $errors[$fieldname] = get_string('uerr_yearnotset', 'surveyfield_shortage');
             return;

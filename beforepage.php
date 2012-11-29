@@ -88,7 +88,6 @@ switch ($currenttab) {
                 // end of: prepare params for the form
                 // ////////////////////////////
 
-
                 // ////////////////////////////
                 // manage form submission
                 if ($mform->is_cancelled()) {
@@ -99,59 +98,68 @@ switch ($currenttab) {
 
                 if ($fromform = $mform->get_data()) {
 
-                    if (!$survey->newpageforchild) {
-                        survey_drop_unexpected_values($fromform);
+                    if (!isset($fromform->prevbutton)) {
+
+                        // echo '$fromform:';
+                        // var_dump($fromform);
+                        // die;
+                        if (!$survey->newpageforchild) {
+                            survey_drop_unexpected_values($fromform);
+                            // echo 'Sono intervenuto sopprimento le risposte indesiderate<br />';
+                            // echo '$fromform:';
+                            // var_dump($fromform);
+                        }
+
+                        $timenow = time();
+                        $savebutton = (isset($fromform->savebutton) && ($fromform->savebutton));
+                        $saveasnewbutton = (isset($fromform->saveasnewbutton) && ($fromform->saveasnewbutton));
+
+                        if ($saveasnewbutton || empty($fromform->submissionid)) { // new record needed
+                            // add a new record to survey_submissions
+                            // questo record è la base necessaria per dare luogo agli altri eventuali salvataggi
+                            $record = new stdClass();
+                            $record->surveyid = $survey->id;
+                            $record->userid = $USER->id;
+
+                            if (empty($fromform->submissionid)) {
+                                $record->status = SURVEY_STATUSINPROGRESS;
+                                $record->timecreated = $timenow;
+                            }
+                            if ($savebutton) {
+                                $record->status = SURVEY_STATUSCLOSED;
+                                $record->timemodified = $timenow;
+                            }
+                            if ($saveasnewbutton) {
+                                $record->status = SURVEY_STATUSCLOSED;
+                                $record->timecreated = $timenow;
+                                $record->timemodified = $timenow;
+                            }
+
+                            $submissionid = $DB->insert_record('survey_submissions', $record);
+
+                            $fromform->submissionid = $submissionid;
+                        } else {
+                            $record = new stdClass();
+                            $record->id = $fromform->submissionid;
+                            if ($savebutton) {
+                                $record->status = SURVEY_STATUSCLOSED;
+                                $record->timemodified = $timenow;
+                                $DB->update_record('survey_submissions', $record);
+                            }
+                        }
+
+                        survey_save_user_data($fromform);
+
+                        // oramai ho salvato
+
+                        // BEGIN: send email whether requested
+                        if ($record->status = SURVEY_STATUSCLOSED) {
+                            if (!empty($survey->notifyrole) || !empty($survey->notifymore)) {
+                                survey_notifyroles($survey, $cm);
+                            }
+                        }
+                        // END: send email whether requested
                     }
-
-                    $timenow = time();
-                    $savebutton = (isset($fromform->savebutton) && ($fromform->savebutton));
-                    $saveasnewbutton = (isset($fromform->saveasnewbutton) && ($fromform->saveasnewbutton));
-
-                    if ($saveasnewbutton || empty($fromform->submissionid)) { // new record needed
-                        // add a new record to survey_submissions
-                        // questo record è la base necessaria per dare luogo agli altri eventuali salvataggi
-                        $record = new stdClass();
-                        $record->surveyid = $survey->id;
-                        $record->userid = $USER->id;
-
-                        if (empty($fromform->submissionid)) {
-                            $record->status = SURVEY_STATUSINPROGRESS;
-                            $record->timecreated = $timenow;
-                        }
-                        if ($savebutton) {
-                            $record->status = SURVEY_STATUSCLOSED;
-                            $record->timemodified = $timenow;
-                        }
-                        if ($saveasnewbutton) {
-                            $record->status = SURVEY_STATUSCLOSED;
-                            $record->timecreated = $timenow;
-                            $record->timemodified = $timenow;
-                        }
-
-                        $submissionid = $DB->insert_record('survey_submissions', $record);
-
-                        $fromform->submissionid = $submissionid;
-                    } else {
-                        $record = new stdClass();
-                        $record->id = $fromform->submissionid;
-                        if ($savebutton) {
-                            $record->status = SURVEY_STATUSCLOSED;
-                            $record->timemodified = $timenow;
-                            $DB->update_record('survey_submissions', $record);
-                        }
-                    }
-
-                    survey_save_user_data($fromform);
-
-                    // oramai ho salvato
-
-                    // BEGIN: send email whether requested
-                    if ($record->status = SURVEY_STATUSCLOSED) {
-                        if (!empty($survey->notifyrole) || !empty($survey->notifymore)) {
-                            survey_notifyroles($survey, $cm);
-                        }
-                    }
-                    // END: send email whether requested
 
                     $pausebutton = (isset($fromform->pausebutton) && ($fromform->pausebutton));
                     if ($pausebutton) {
@@ -233,7 +241,7 @@ switch ($currenttab) {
                 if ($fromform = $mform->get_data()) { // $mform, here, is the search form
                     // in questa routine non eseguo una vera e propria ricerca
                     // mi limito a definire la stringa di parametri per la chiamata a SURVEY_SUBMISSION_MANAGE
-                    $regexp = '~'.SURVEY_ITEMPREFIX.'_([a-z]+)_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
+                    $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_FIELD.'|'.SURVEY_FORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
 
                     $infoperitem = array();
                     foreach ($fromform as $elementname => $content) {
