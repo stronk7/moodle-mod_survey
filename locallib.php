@@ -1105,7 +1105,7 @@ function survey_get_my_groups($cm) {
  * @return
  */
 function survey_show_thanks_page($survey, $cm) {
-    global $OUTPUT;
+    global $DB, $OUTPUT;
 
     // $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
     // $mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
