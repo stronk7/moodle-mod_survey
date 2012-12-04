@@ -21,7 +21,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_survey_mod_form extends moodleform_mod {
 
     function definition() {
-        global $COURSE, $DB, $cm;
+        global $COURSE, $DB, $CFG, $cm;
 
         $mform = $this->_form;
 
