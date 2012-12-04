@@ -359,7 +359,34 @@ class surveyitem_base {
             }
 
             $logaction = ($userfeedback) ? 'add item' : 'add item failed';
+
+            // special mention for the "editor" field
+            if ($this->item_form_requires['content_editor']) { // i.e. content
+                $context = context_module::instance($cm->id);
+                $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
+                $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
+                $record->contentformat = FORMAT_HTML;
+
+                // survey_item
+                // id
+                $record->id = $record->itemid;
+
+                $DB->update_record('survey_item', $record);
+            }
+
         } else {
+
+            // special mention for the "editor" field
+            if ($this->item_form_requires['content_editor']) { // i.e. content
+                $context = context_module::instance($cm->id);
+                $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
+                $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
+                $record->contentformat = FORMAT_HTML;
+            } else { // i.e. fieldset
+                $record->content = null;
+                $record->contentformat = null;
+            }
+
             // hide/regular part 2
             $oldhide = $DB->get_field('survey_item', 'hide', array('id' => $record->itemid)); // used later
             // end of: hide/regular 2
