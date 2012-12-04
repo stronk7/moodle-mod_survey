@@ -272,17 +272,6 @@ class surveyitem_base {
             $record->required = null;
         }
 
-        // special mention for the "editor" field
-        if ($this->item_form_requires['content_editor']) { // i.e. content
-            $context = context_module::instance($cm->id);
-            $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
-            $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
-            $record->contentformat = FORMAT_HTML;
-        } else { // i.e. fieldset
-            $record->content = null;
-            $record->contentformat = null;
-        }
-
         // extrarow
         // $record->extrarow = (isset($record->extrarow)) ? 1 : 0; // extrarow is advcheckbox so doesn't need my intervention
 
