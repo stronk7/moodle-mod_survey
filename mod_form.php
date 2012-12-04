@@ -69,41 +69,53 @@ class mod_survey_mod_form extends moodleform_mod {
             $subjects = array('none', 'owner', 'all');
         }
 
-        // access right
-        $ro_label = get_string('readonly', 'survey');
-        $rw_label = get_string('readwrite', 'survey');
-        $del_label = get_string('delete', 'survey');
+        if ($CFG->survey_useadvancedpermissions) {
+            // access right
+            $ro_label = get_string('readonly', 'survey');
+            $rw_label = get_string('readwrite', 'survey');
+            $del_label = get_string('delete', 'survey');
 
-        // 3 => 'all'
-        // 2 => 'group'
-        // 1 => 'owner'
-        // 0 => 'none'
-        $accessrights = array();
-        $i = ($groupmode) ? SURVEY_ALL : SURVEY_GROUP;
-        while ($i >= SURVEY_NONE) {
-            $j = $i;
-            while ($j >= SURVEY_NONE) {
-                $k = $j;
-                while ($k >= SURVEY_NONE) {
-                    $index = $i.'.'.$j.'.'.$k;
-                    $index = ($groupmode) ? $index : str_replace(SURVEY_GROUP, SURVEY_ALL, $index);
-                    $accessrights[$index] = $ro_label.': '.$subjects[$i].', '.$rw_label.': '.$subjects[$j].', '.$del_label.': '.$subjects[$k];
-                    $k--;
+            $accessrights = array();
+            $i = ($groupmode) ? SURVEY_ALL : SURVEY_GROUP;
+            while ($i >= SURVEY_NONE) {
+                $j = $i;
+                while ($j >= SURVEY_NONE) {
+                    $k = $j;
+                    while ($k >= SURVEY_NONE) {
+                        $index = $i.'.'.$j.'.'.$k;
+                        $index = ($groupmode) ? $index : str_replace(SURVEY_GROUP, SURVEY_ALL, $index);
+                        $accessrights[$index] = $ro_label.': '.$subjects[$i].', '.$rw_label.': '.$subjects[$j].', '.$del_label.': '.$subjects[$k];
+                        $k--;
+                    }
+                    $j--;
                 }
-                $j--;
+                $i--;
             }
-            $i--;
-        }
 
-        $fieldname = 'accessrights';
-        $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $accessrights);
-        $mform->addHelpButton($fieldname, $fieldname, 'survey');
+            $fieldname = 'accessrights';
+            $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $accessrights);
+            $mform->addHelpButton($fieldname, $fieldname, 'survey');
+        } else {
+            $subject = ($groupmode) ? SURVEY_GROUP : SURVEY_OWNER;
+
+            // readaccess
+            $fieldname = 'readaccess';
+            $mform->addElement('hidden', $fieldname, $subject);
+
+            // editaccess
+            $fieldname = 'editaccess';
+            $mform->addElement('hidden', $fieldname, $subject);
+
+            // deleteaccess
+            $fieldname = 'deleteaccess';
+            $mform->addElement('hidden', $fieldname, SURVEY_OWNER);
+        }
 
         // -------------------------------------------------------------------------------
         $fieldname = 'dataentry';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-    // newpageforchild
+        // newpageforchild
         $fieldname = 'newpageforchild';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');

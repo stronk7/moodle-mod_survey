@@ -1110,7 +1110,6 @@ function survey_show_thanks_page($survey, $cm) {
     // $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
     // $mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
 
-
     if (!empty($survey->thankshtml)) {
         $context = context_module::instance($cm->id);
 
@@ -1670,7 +1669,7 @@ function survey_wlib_content(&$libcontent, $surveyid, $data, &$langtree) {
     $structures = array();
     $sid = array();
 
-   // STEP 01: make a list of used plugins
+    // STEP 01: make a list of used plugins
     $sql = 'SELECT si.plugin
             FROM {survey_item} si
             WHERE si.surveyid = :surveyid
@@ -1958,7 +1957,7 @@ function survey_drop_unexpected_values(&$fromform) {
         $parentitem = survey_get_item($childitem->parentid);
 
         $parentinsamepage = false;
-        foreach($indexes as $itemname) {
+        foreach ($indexes as $itemname) {
             if (strpos($itemname, $parentitem->itemid)) {
                 $parentinsamepage = true;
                 break;
@@ -1980,7 +1979,7 @@ function survey_drop_unexpected_values(&$fromform) {
     // if not expected items are here...
     if (count($disposelist)) {
         $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_FIELD.'|'.SURVEY_FORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
-        foreach($indexes as $itemname) {
+        foreach ($indexes as $itemname) {
             if (preg_match($regexp, $itemname, $matches)) {
                 // $type = $matches[1]; // item type
                 // $plugin = $matches[2]; // item plugin

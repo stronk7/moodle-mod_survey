@@ -202,7 +202,9 @@ function survey_add_instance($survey) {
     $survey->timecreated = time();
 
     // You may have to add extra stuff in here
-    list($survey->readaccess, $survey->editaccess, $survey->deleteaccess) = explode('.', $survey->accessrights);
+    if ($CFG->survey_useadvancedpermissions) {
+        list($survey->readaccess, $survey->editaccess, $survey->deleteaccess) = explode('.', $survey->accessrights);
+    } // else a corresponding hidden field has been provided
 
     $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers');
     foreach ($checkboxes as $checkbox) {
@@ -252,8 +254,9 @@ function survey_update_instance($survey) {
     $survey->timemodified = time();
     $survey->id = $survey->instance;
 
-    // You may have to add extra stuff in here
-    list($survey->readaccess, $survey->editaccess, $survey->deleteaccess) = explode('.', $survey->accessrights);
+    if ($CFG->survey_useadvancedpermissions) {
+        list($survey->readaccess, $survey->editaccess, $survey->deleteaccess) = explode('.', $survey->accessrights);
+    } // else a corresponding hidden field has been provided
 
     $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers');
     foreach ($checkboxes as $checkbox) {

@@ -24,8 +24,8 @@
  */
 
 $string['pluginname'] = 'ATTLS (20 item version)';
-$string['extrarow'] = 'Use extra row for attls built in survey';
-$string['extrarow_desc'] = 'This option let you toggle between having the question on the left or on the top of each set of buttons in ATTLS survey<br />Changes will take effect with new surveys';
+$string['extrarow'] = 'Use extra row for attls built in template';
+$string['extrarow_desc'] = 'This option let you toggle between having the question on the left or on the top of each set of buttons in ATTLS survey<br />Changes will take effect with new templates';
 
 $string['content01'] = '<p>The purpose of this questionnaire is to help us evaluate your attitudes towards thinking and learning. There are no \'right\' or \'wrong\' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.</p>';
 $string['content02'] = '<p>In evaluating what someone says, I focus on the quality of their argument, not on the person who\'s presenting it.</p>';

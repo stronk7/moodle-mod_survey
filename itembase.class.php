@@ -1241,7 +1241,12 @@ class surveyitem_base {
         return ($parentitem->{$pagefield} == $this->{$pagefield});
     }
 
-    function userform_can_show_item_as_child($submissionid, $data) {
+    /**
+     * userform_can_show_item_as_child
+     * @param
+     * @return
+     */
+    public function userform_can_show_item_as_child($submissionid, $data) {
         global $DB;
 
         if (!$this->parentid) { // item is not a child, show it
