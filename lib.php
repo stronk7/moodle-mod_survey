@@ -164,10 +164,10 @@ define('SURVEY_REQUIREDITEM', 1);
 define('SURVEY_OPTIONALITEM', 0);
 
 // fileareas
-define('SURVEY_STYLEFILEAREA'   , 'userstyle');
-define('SURVEY_TEMPLATEFILEAREA', 'templatefilearea');
+define('SURVEY_STYLEFILEAREA'      , 'userstyle');
+define('SURVEY_TEMPLATEFILEAREA'   , 'templatefilearea');
 define('SURVEY_ITEMCONTENTFILEAREA', 'itemcontent');
-define('SURVEY_THANKSHTMLFILEAREA', 'thankshtml');
+define('SURVEY_THANKSHTMLFILEAREA' , 'thankshtml');
 
 // otheritems
 define('SURVEY_HIDEITEMS'  , '1');
@@ -324,13 +324,30 @@ function survey_save_user_style($survey, $context) {
 function survey_delete_instance($id) {
     global $DB;
 
-    if (! $survey = $DB->get_record('survey', array('id' => $id))) {
+    if (!$survey = $DB->get_record('survey', array('id' => $id))) {
         return false;
     }
 
     // Delete any dependent records here
 
     $DB->delete_records('survey', array('id' => $survey->id));
+    // AREAS:
+    //     SURVEY_STYLEFILEAREA
+    //     SURVEY_TEMPLATEFILEAREA
+    //     SURVEY_ITEMCONTENTFILEAREA
+    //     SURVEY_THANKSHTMLFILEAREA
+    // never delete mod_survey files in each AREA in $context = context_user::instance($userid);
+
+    // always delete mod_survey files in each AREA in $context = context_module::instance($contextid);
+
+    // if this is the last survey of this course, delete also:
+    // delete mod_survey files in each AREA in $context = context_course::instance($contextid);
+
+    // if this is the last survey of the category, delete also:
+    // delete mod_survey files in each AREA in $context = context_coursecat::instance($contextid);
+
+    // if this is the very last survey, delete also:
+    // delete mod_survey files in each AREA in $context = context_system::instance();
 
     return true;
 }

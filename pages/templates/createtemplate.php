@@ -28,7 +28,8 @@
 
 defined('MOODLE_INTERNAL') OR die();
 
-$message = get_string('templatecreateinfo', 'survey');
+$a = get_string('sharinglevel', 'survey');
+$message = get_string('templatecreateinfo', 'survey', $a);
 echo $OUTPUT->box($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
 
 $record = new stdClass();

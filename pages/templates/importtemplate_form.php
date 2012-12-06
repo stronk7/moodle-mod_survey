@@ -81,17 +81,22 @@ class survey_templateimportform extends moodleform {
 
         $uploadedfiles = array();
         foreach ($draftfiles as $file) {
-            if ($file->is_directory()) {
-                continue;
+            $xmlfilename = $file->get_filename();
+            $uploadedfiles[] = $xmlfilename;
+            try {
+                $xmlfileid = $file->get_id();
+                $templatecontent = survey_get_template_content($xmlfileid);
+                $xml = @new SimpleXMLElement($templatecontent);
+            } catch (Exception $e) {
+                $errors['importfile_filemanager'] = get_string('invalidtemplate', 'survey', $xmlfilename);
+                return $errors;
             }
-            $uploadedfiles[] = $file->get_filename();
         }
 
         // get all template files in the specified context
         $contextid = survey_get_contextid_from_sharinglevel($data['sharinglevel']);
         $componentfiles = survey_get_available_templates($contextid);
 
-        // TODO: there is a bug. Uploading a second file in the same context, the first get deleted. I can not understand the reason.
         foreach ($componentfiles as $xmlfile) {
             $filename = $xmlfile->get_filename();
             if (in_array($filename, $uploadedfiles)) {

@@ -71,13 +71,13 @@ switch ($currenttab) {
     case SURVEY_TABTEMPLATES:
         switch ($currentpage) {
             case SURVEY_TEMPLATES_MANAGE: // Manage
-                include_once($CFG->dirroot.'/mod/survey/pages/template/managetemplate.php');
+                include_once($CFG->dirroot.'/mod/survey/pages/templates/managetemplate.php');
                 break;
             case SURVEY_TEMPLATES_BUILD: // Build
-                include_once($CFG->dirroot.'/mod/survey/pages/template/createtemplate.php');
+                include_once($CFG->dirroot.'/mod/survey/pages/templates/createtemplate.php');
                 break;
             case SURVEY_TEMPLATES_IMPORT: // Import
-                include_once($CFG->dirroot.'/mod/survey/pages/template/importtemplate.php');
+                include_once($CFG->dirroot.'/mod/survey/pages/templates/importtemplate.php');
                 break;
             default:
                 echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';

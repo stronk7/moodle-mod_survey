@@ -501,7 +501,7 @@ switch ($currenttab) {
 
                 break;
             case SURVEY_TEMPLATES_BUILD: // Build
-                require_once($CFG->dirroot.'/mod/survey/pages/template/createtemplate_form.php');
+                require_once($CFG->dirroot.'/mod/survey/pages/templates/createtemplate_form.php');
 
                 $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABTEMPLATES, 'pag' => SURVEY_TEMPLATES_BUILD);
                 $formurl = new moodle_url('view.php', $paramurl);
@@ -526,7 +526,7 @@ switch ($currenttab) {
                 }
                 break;
             case SURVEY_TEMPLATES_IMPORT: // Import
-                require_once($CFG->dirroot.'/mod/survey/pages/template/importtemplate_form.php');
+                require_once($CFG->dirroot.'/mod/survey/pages/templates/importtemplate_form.php');
 
                 $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABTEMPLATES, 'pag' => SURVEY_TEMPLATES_IMPORT);
                 $formurl = new moodle_url('view.php', $paramurl);

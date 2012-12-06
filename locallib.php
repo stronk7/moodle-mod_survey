@@ -2321,17 +2321,13 @@ function survey_create_template_content($survey) {
 function survey_get_available_templates($contextid) {
 
     $fs = get_file_storage();
-    $files = $fs->get_area_files($contextid, 'mod_survey', SURVEY_TEMPLATEFILEAREA);
+    $files = $fs->get_area_files($contextid, 'mod_survey', SURVEY_TEMPLATEFILEAREA, 0, 'sortorder', false);
     if (empty($files)) {
         return array();
     }
 
     $templates = array();
     foreach ($files as $file) {
-        if ($file->is_directory()) {
-            continue;
-        }
-
         $templates[] = $file;
     }
 
@@ -2371,9 +2367,11 @@ function survey_save_template($formadata, $xmlcontent) {
  * @return null
  */
 function survey_get_sharinglevel_options($cmid, $survey) {
-    global $DB, $COURSE;
+    global $DB, $COURSE, $USER;
 
     $options = array();
+    $options[CONTEXT_USER.'_'.$USER->id] = get_string('user').': '.fullname($USER);
+
     $options[CONTEXT_MODULE.'_'.$cmid] = get_string('module', 'survey').': '.$survey->name;
 
     $options[CONTEXT_COURSE.'_'.$COURSE->id] = get_string('course').': '.$COURSE->shortname;
@@ -2413,9 +2411,12 @@ function survey_get_contextstring_from_sharinglevel($contextlevel) {
         case CONTEXT_MODULE:
             $contextstring = 'module';
             break;
+        case CONTEXT_USER:
+            $contextstring = 'user';
+            break;
         default:
             echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-            echo 'I have $sharinglevel = '.$sharinglevel.'<br />';
+            echo 'I have $contextlevel = '.$contextlevel.'<br />';
             echo 'and the right "case" is missing<br />';
     }
 
@@ -2475,14 +2476,72 @@ function survey_delete_template($cm, $confirm, $fileid) {
 function survey_upload_template($formdata) {
 
     $template_options = survey_get_template_options();
-
-    $fieldname = 'importfile';
     $contextid = survey_get_contextid_from_sharinglevel($formdata->sharinglevel);
-    if ($draftitemid = $formdata->{$fieldname.'_filemanager'}) {
-        file_save_draft_area_files($draftitemid, $contextid, 'mod_survey', SURVEY_TEMPLATEFILEAREA, 0, $template_options);
+    $fs = get_file_storage();
+
+    /*
+     * look at what was already on board
+     */
+    $oldfiles = array();
+    if ($files = $fs->get_area_files($contextid, 'mod_survey', SURVEY_TEMPLATEFILEAREA, 0, 'sortorder', false)) {
+        foreach ($files as $file) {
+            $oldfiles[] = $file->get_filename();
+        }
     }
 
-    $fs = get_file_storage();
+    /*
+     * add current files
+     */
+    $fieldname = 'importfile';
+    if ($draftitemid = $formdata->{$fieldname.'_filemanager'}) {
+        if (isset($template_options['return_types']) && !($template_options['return_types'] & FILE_REFERENCE)) {
+            // we assume that if $options['return_types'] is NOT specified, we DO allow references.
+            // this is not exactly right. BUT there are many places in code where filemanager options
+            // are not passed to file_save_draft_area_files()
+            $allowreferences = false;
+        }
+
+        file_save_draft_area_files($draftitemid, $contextid, 'mod_survey', 'temporaryarea', 0, $template_options);
+        $files = $fs->get_area_files($contextid, 'mod_survey', 'temporaryarea');
+        $filecount = 0;
+        foreach ($files as $file) {
+            if (in_array($file->get_filename(), $oldfiles)) {
+                continue;
+            }
+
+            $file_record = array('contextid' => $contextid, 'component' => 'mod_survey', 'filearea' => SURVEY_TEMPLATEFILEAREA, 'itemid' => 0, 'timemodified' => time());
+            if (!$template_options['subdirs']) {
+                if ($file->get_filepath() !== '/' or $file->is_directory()) {
+                    continue;
+                }
+            }
+            if ($template_options['maxbytes'] and $template_options['maxbytes'] < $file->get_filesize()) {
+                // oversized file - should not get here at all
+                continue;
+            }
+            if ($template_options['maxfiles'] != -1 and $template_options['maxfiles'] <= $filecount) {
+                // more files - should not get here at all
+                break;
+            }
+            if (!$file->is_directory()) {
+                $filecount++;
+            }
+
+            if ($file->is_external_file()) {
+                if (!$allowreferences) {
+                    continue;
+                }
+                $repoid = $file->get_repository_id();
+                if (!empty($repoid)) {
+                    $file_record['repositoryid'] = $repoid;
+                    $file_record['reference'] = $file->get_reference();
+                }
+            }
+
+            $fs->create_file_from_storedfile($file_record, $file);
+        }
+    }
+
     if ($files = $fs->get_area_files($contextid, 'mod_survey', SURVEY_TEMPLATEFILEAREA, 0, 'sortorder', false)) {
         if (count($files) == 1) {
             // only one file attached, set it as main file automatically
@@ -2524,12 +2583,16 @@ function survey_get_contextid_from_sharinglevel($sharinglevel) {
     //  CONTEXT_COURSECAT | $category->id
     //     CONTEXT_COURSE | $COURSE->id
     //     CONTEXT_MODULE | $cm->id
+    //       CONTEXT_USER | $USER->id
 
     if (!isset($parts[0]) || !isset($parts[1])) {
         throw new moodle_exception('Wrong $sharinglevel passed in survey_get_contextid_from_sharinglevel');
     }
 
     switch ($contextlevel) {
+        case CONTEXT_USER:
+            $context = context_user::instance($contextid);
+            break;
         case CONTEXT_MODULE:
             $context = context_module::instance($contextid);
             break;
