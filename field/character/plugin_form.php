@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * This is a one-line short description of the file
  *
  * You can have a rather longer description of the file as well,
@@ -156,9 +156,7 @@ class survey_pluginform extends surveyitem_baseform {
                         }
                         break;
                     default:
-                        echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                        echo 'I have $data[\'pattern_text\'] = '.$data['pattern_text'].'<br />';
-                        echo 'and the right "case" is missing<br />';
+                        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $data[\'pattern_text\'] = '.$data[\'pattern_text\']);
                 }
             }
         }

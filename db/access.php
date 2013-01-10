@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * Capability definitions for the survey module
  *
  * The capabilities are loaded into the database table when the module is
@@ -76,6 +76,19 @@ $capabilities = array(
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:accessreports' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'teacher' => CAP_ALLOW,

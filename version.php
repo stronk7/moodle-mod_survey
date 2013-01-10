@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * Defines the version of survey
  *
  * This code fragment is called by moodle_needs_upgrading() and
@@ -30,6 +30,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $module->component = 'mod_survey';     // Full name of the plugin (used for diagnostics)
 $module->maturity = MATURITY_ALPHA;    // MATURITY_RC
-$module->version = 2012112101;         // The current module version (Date: YYYYMMDDXX)
+$module->version = 2012121801;         // The current module version (Date: YYYYMMDDXX)
 $module->requires = 2010031900;        // Requires this Moodle version
 $module->cron = 3600;                  // Period for cron to check this module (secs)

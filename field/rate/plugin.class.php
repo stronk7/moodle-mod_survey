@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * This is a one-line short description of the file
  *
  * You can have a rather longer description of the file as well,
@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/mod/survey/field/rate/lib.php');
 
 class surveyfield_rate extends surveyitem_base {
 
-    /**
+    /*
      * $surveyid = the id of the survey
      */
     // public $surveyid = 0;
@@ -48,7 +48,7 @@ class surveyfield_rate extends surveyitem_base {
      */
     public $pluginid = 0;
 
-    /********************************************************************/
+    /*******************************************************************/
 
     /*
      * $options = list of options in the form of "$value SURVEY_VALUELABELSEPARATOR $label"
@@ -80,19 +80,19 @@ class surveyfield_rate extends surveyitem_base {
      */
     public $forcedifferentrates = false;
 
-    /**
+    /*
      * $flag = features describing the object
      */
     public $flag;
 
-    /**
+    /*
      * $item_form_requires = list of fields I will see in the form
      * public $item_form_requires;
      */
 
-    /********************************************************************/
+    /*******************************************************************/
 
-    /**
+    /*
      * Class constructor
      *
      * If itemid is provided, load the object (item + base + plugin) from database
@@ -119,7 +119,7 @@ class surveyfield_rate extends surveyitem_base {
         }
     }
 
-    /**
+    /*
      * item_load
      * @param $itemid
      * @return
@@ -136,7 +136,7 @@ class surveyfield_rate extends surveyitem_base {
         $this->item_custom_fields_to_form();
     }
 
-    /**
+    /*
      * item_save
      * @param $record
      * @return
@@ -167,7 +167,7 @@ class surveyfield_rate extends surveyitem_base {
         return parent::item_save($record);
     }
 
-    /**
+    /*
      * item_custom_fields_to_form
      * translates the date class property $fieldlist in $field.'_year' and $field.'_month'
      * @param
@@ -184,7 +184,7 @@ class surveyfield_rate extends surveyitem_base {
         // nothing to do: defaultvalue doesn't need any further care
     }
 
-    /**
+    /*
      * item_custom_fields_to_db
      * sets record field to store the correct value to db for the date custom item
      * @param $record
@@ -203,7 +203,7 @@ class surveyfield_rate extends surveyitem_base {
         }
     }
 
-    /**
+    /*
      * item_generate_standard_default
      * sets record field to store the correct value to db for the date custom item
      * @param $record
@@ -253,7 +253,7 @@ class surveyfield_rate extends surveyitem_base {
         }
     }
 
-    /**
+    /*
      * item_parent_content_format_validation
      * checks whether the user input format in the "parentcontent" field is correct
      * @param $parentcontent
@@ -264,7 +264,7 @@ class surveyfield_rate extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * item_parent_content_content_validation
      * checks whether the user input content in the "parentcontent" field is correct
      * @param $parentcontent
@@ -275,7 +275,7 @@ class surveyfield_rate extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * item_parent_content_encode_value
      * starting from the user input, this function stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
@@ -288,7 +288,7 @@ class surveyfield_rate extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * item_get_hard_info
      * @param
      * @return
@@ -304,7 +304,7 @@ class surveyfield_rate extends surveyitem_base {
         return $hardinfo;
     }
 
-    /**
+    /*
      * item_list_constraints
      * @param
      * @return list of contraints of the plugin in text format
@@ -313,7 +313,7 @@ class surveyfield_rate extends surveyitem_base {
         return 'item_list_constraints method is still under construction for '.$this->plugin;
     }
 
-    /**
+    /*
      * item_parent_validate_child_constraints
      * @param
      * @return status of child relation
@@ -322,7 +322,7 @@ class surveyfield_rate extends surveyitem_base {
         return 'item_parent_validate_child_constraints needs refinements in plugin: '.$this->plugin;
     }
 
-    /**
+    /*
      * item_get_plugin_values
      * @param $pluginstructure
      * @param $pluginsid
@@ -348,9 +348,7 @@ class surveyfield_rate extends surveyitem_base {
                 $values['style'] = 'SURVEYFIELD_RATE_USESELECT';
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $this->style = '.$this->style.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->style = '.$this->style);
         }
 
         // just a check before assuming all has been done correctly
@@ -362,7 +360,7 @@ class surveyfield_rate extends surveyitem_base {
         return $values;
     }
 
-    /**
+    /*
      * userform_mform_element
      * @param $mform
      * @return
@@ -411,9 +409,7 @@ class surveyfield_rate extends surveyitem_base {
                             $mform->setDefault($uniquename, SURVEY_NOANSWERVALUE);
                             break;
                         default:
-                            echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                            echo 'I have $this->defaultoption = '.$this->defaultoption.'<br />';
-                            echo 'and the right "case" is missing<br />';
+                            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
                     }
                 } else {
                     $mform->setDefault($fieldname, SURVEY_NOANSWERVALUE); // free
@@ -444,9 +440,7 @@ class surveyfield_rate extends surveyitem_base {
                             $mform->setDefault($uniquename, SURVEY_NOANSWERVALUE);
                             break;
                         default:
-                            echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                            echo 'I have $this->defaultoption = '.$this->defaultoption.'<br />';
-                            echo 'and the right "case" is missing<br />';
+                            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
                     }
                 } else {
                     $mform->setDefault($fieldname, SURVEY_NOANSWERVALUE); // free
@@ -475,7 +469,7 @@ class surveyfield_rate extends surveyitem_base {
         }
     }
 
-    /**
+    /*
      * userform_mform_validation
      * @param $data, &$errors, $survey
      * @return
@@ -530,7 +524,7 @@ class surveyfield_rate extends surveyitem_base {
         }
     }
 
-    /**
+    /*
      * userform_get_parent_disabilitation_info
      * from child_parentcontent defines syntax for disabledIf
      * @param: $child_parentcontent
@@ -541,7 +535,7 @@ class surveyfield_rate extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * userform_child_is_allowed_dynamic
      * from parentcontent defines whether an item is supposed to be active (not disabled) in the form so needs validation
      * ----------------------------------------------------------------------
@@ -560,7 +554,7 @@ class surveyfield_rate extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * userform_save
      * starting from the info set by the user in the form
      * I define the info to store in the db
@@ -588,7 +582,7 @@ class surveyfield_rate extends surveyitem_base {
         }
     }
 
-    /**
+    /*
      * this method is called from survey_set_prefill (in locallib.php) to set $prefill at user form display time
      * (defaults are set in userform_mform_element)
      *
@@ -635,7 +629,7 @@ class surveyfield_rate extends surveyitem_base {
         return $prefill;
     }
 
-    /**
+    /*
      * userform_mform_element_is_group
      * returns true if the useform mform element for this item id is a group and false if not
      * @param

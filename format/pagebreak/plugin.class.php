@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * This is a one-line short description of the file
  *
  * You can have a rather longer description of the file as well,
@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/mod/survey/format/pagebreak/lib.php');
 
 class surveyformat_pagebreak extends surveyitem_base {
 
-    /**
+    /*
      * $surveyid = the id of the survey
      */
     // public $surveyid = 0;
@@ -48,19 +48,19 @@ class surveyformat_pagebreak extends surveyitem_base {
      */
     public $pluginid = 0;
 
-    /**
+    /*
      * $flag = features describing the object
      */
     public $flag;
 
-    /**
+    /*
      * $item_form_requires = list of fields I will see in the form
      * public $item_form_requires;
      */
 
-    /********************************************************************/
+    /*******************************************************************/
 
-    /**
+    /*
      * Class constructor
      *
      * If itemid is provided, load the object (item + base + plugin) from database
@@ -91,7 +91,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         }
     }
 
-    /**
+    /*
      * item_load
      * @param $itemid
      * @return
@@ -101,7 +101,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         parent::item_load($itemid);
     }
 
-    /**
+    /*
      * item_save
      * @param $record
      * @return
@@ -117,7 +117,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         return parent::item_save($record);
     }
 
-    /**
+    /*
      * item_parent_content_format_validation
      * checks whether the user input format in the "parentcontent" field is correct
      * @param $parentcontent
@@ -128,7 +128,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * item_parent_content_content_validation
      * checks whether the user input content in the "parentcontent" field is correct
      * @param $parentcontent
@@ -139,7 +139,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * item_parent_content_encode_value
      * starting from the user input, this function stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
@@ -152,7 +152,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * item_get_plugin_values
      * @param $pluginstructure
      * @param $pluginsid
@@ -168,7 +168,7 @@ class surveyformat_pagebreak extends surveyitem_base {
     }
 
 
-    /**
+    /*
      * userform_mform_element
      * @param $mform
      * @return
@@ -181,7 +181,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         $mform->addElement('html', '<hr />');
     }
 
-    /**
+    /*
      * userform_mform_validation
      * @param $data, &$errors, $survey
      * @return
@@ -190,7 +190,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         // nothing to do here
     }
 
-    /**
+    /*
      * this method is called from survey_set_prefill (in locallib.php) to set $prefill at user form display time
      * (defaults are set in userform_mform_element)
      *
@@ -203,7 +203,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         return $prefill;
     }
 
-    /**
+    /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
      * @param $richsubmission
@@ -213,7 +213,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         return '';
     }
 
-    /**
+    /*
      * userform_mform_element_is_group
      * returns true if the useform mform element for this item id is a group and false if not
      * @param
@@ -223,7 +223,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         return false;
     }
 
-    /**
+    /*
      * item_get_main_text
      * returns the content of the field defined as main
      * @param

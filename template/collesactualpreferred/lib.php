@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/*
  * @package    surveytemplate
  * @subpackage collesactualpreferred
  * @copyright  2013 kordan <kordan@mclink.it>
@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/mod/survey/lib.php');
 require_once($CFG->dirroot.'/mod/survey/template/lib.php');
 
-/**
+/*
  * surveytemplate_collesactualpreferred_add
  * @param
  * @return

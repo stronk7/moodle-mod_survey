@@ -32,9 +32,7 @@ switch ($action) {
         survey_manage_all_surveys_deletion($confirm, $survey->id);
         break;
     default:
-        echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-        echo 'I have $action = '.$action.'<br />';
-        echo 'and the right "case" is missing<br />';
+        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
 }
 
 $canreadallsubmissions = survey_user_can_read_all_submissions($cm);
@@ -88,7 +86,7 @@ $table->column_class('actions', 'actions');
 
 $table->initialbars(true);
 
-// ometti la casella se duplica la precedente
+// hide the same info whether in two consecutive rows
 $table->column_suppress('picture');
 $table->column_suppress('fullname');
 
@@ -100,7 +98,7 @@ $table->set_attribute('align', 'center');
 // $table->set_attribute('width', '90%');
 $table->setup();
 
-/******************************************************************************/
+/*****************************************************************************/
 if ($survey->readaccess == SURVEY_NONE) {
     $message = get_string('noreadaccess', 'survey');
     echo $OUTPUT->box($message, 'notice centerpara');
@@ -247,7 +245,7 @@ if ($submissions->valid()) {
 
         $tablerow[] = $icons;
 
-        // add row to the tabl
+        // add row to the table
         $table->add_data($tablerow);
     }
 }

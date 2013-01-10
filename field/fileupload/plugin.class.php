@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * This is a one-line short description of the file
  *
  * You can have a rather longer description of the file as well,
@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/mod/survey/field/fileupload/lib.php');
 
 class surveyfield_fileupload extends surveyitem_base {
 
-    /**
+    /*
      * $surveyid = the id of the survey
      */
     // public $surveyid = 0;
@@ -48,41 +48,41 @@ class surveyfield_fileupload extends surveyitem_base {
      */
     public $pluginid = 0;
 
-    /********************************************************************/
+    /*******************************************************************/
 
-    /**
+    /*
      * $maxbytes = the maximum allowed size of the file to upload
      */
     public $maxfiles = '1';
 
-    /**
+    /*
      * $maxbytes = the maximum allowed size of the file to upload
      */
     public $maxbytes = '1024';
 
-    /**
+    /*
      * $filetypes = list of allowed file extension
      */
     public $filetypes = '*';
 
-    /**
+    /*
      * $context = context as it is always required to dial with editors
      */
     private $context;
 
-    /**
+    /*
      * $flag = features describing the object
      */
     public $flag;
 
-    /**
+    /*
      * $item_form_requires = list of fields I will see in the form
      * public $item_form_requires;
      */
 
-    /********************************************************************/
+    /*******************************************************************/
 
-    /**
+    /*
      * Class constructor
      *
      * If itemid is provided, load the object (item + base + plugin) from database
@@ -109,7 +109,7 @@ class surveyfield_fileupload extends surveyitem_base {
         }
     }
 
-    /**
+    /*
      * item_load
      * @param $itemid
      * @return
@@ -123,7 +123,7 @@ class surveyfield_fileupload extends surveyitem_base {
         $this->item_builtin_string_load_support();
     }
 
-    /**
+    /*
      * item_save
      * @param $record
      * @return
@@ -141,7 +141,7 @@ class surveyfield_fileupload extends surveyitem_base {
         return parent::item_save($record);
     }
 
-    /**
+    /*
      * item_parent_content_format_validation
      * checks whether the user input format in the "parentcontent" field is correct
      * @param $parentcontent
@@ -152,7 +152,7 @@ class surveyfield_fileupload extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * item_parent_content_content_validation
      * checks whether the user input content in the "parentcontent" field is correct
      * @param $parentcontent
@@ -163,7 +163,7 @@ class surveyfield_fileupload extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * item_parent_content_encode_value
      * starting from the user input, this function stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
@@ -176,7 +176,7 @@ class surveyfield_fileupload extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * item_get_hard_info
      * @param
      * @return
@@ -195,7 +195,7 @@ class surveyfield_fileupload extends surveyitem_base {
         return $hardinfo;
     }
 
-    /**
+    /*
      * item_list_constraints
      * @param
      * @return list of contraints of the plugin in text format
@@ -204,7 +204,7 @@ class surveyfield_fileupload extends surveyitem_base {
         return 'item_list_constraints method is still under construction for '.$this->plugin;
     }
 
-    /**
+    /*
      * item_parent_validate_child_constraints
      * @param
      * @return status of child relation
@@ -213,7 +213,7 @@ class surveyfield_fileupload extends surveyitem_base {
         return 'item_parent_validate_child_constraints needs refinements in plugin: '.$this->plugin;
     }
 
-    /**
+    /*
      * item_get_plugin_values
      * @param $pluginstructure
      * @param $pluginsid
@@ -231,7 +231,7 @@ class surveyfield_fileupload extends surveyitem_base {
         return $values;
     }
 
-    /**
+    /*
      * userform_mform_element
      * @param $mform
      * @return
@@ -255,7 +255,7 @@ class surveyfield_fileupload extends surveyitem_base {
         }
     }
 
-    /**
+    /*
      * userform_mform_validation
      * @param $data, &$errors, $survey
      * @return
@@ -268,7 +268,7 @@ class surveyfield_fileupload extends surveyitem_base {
         // }
     }
 
-    /**
+    /*
      * userform_get_parent_disabilitation_info
      * from child_parentcontent defines syntax for disabledIf
      * @param: $child_parentcontent
@@ -279,7 +279,7 @@ class surveyfield_fileupload extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * userform_child_is_allowed_dynamic
      * from parentcontent defines whether an item is supposed to be active (not disabled) in the form so needs validation
      * ----------------------------------------------------------------------
@@ -298,7 +298,7 @@ class surveyfield_fileupload extends surveyitem_base {
         // this method is never called
     }
 
-    /**
+    /*
      * userform_save
      * starting from the info set by the user in the form
      * I define the info to store in the db
@@ -325,7 +325,7 @@ class surveyfield_fileupload extends surveyitem_base {
         }
     }
 
-    /**
+    /*
      * this method is called from survey_set_prefill (in locallib.php) to set $prefill at user form display time
      * (defaults are set in userform_mform_element)
      *
@@ -355,7 +355,7 @@ class surveyfield_fileupload extends surveyitem_base {
         return $prefill;
     }
 
-    /**
+    /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
      * @param $richsubmission
@@ -374,7 +374,7 @@ class surveyfield_fileupload extends surveyitem_base {
         return implode(',', $filename);
     }
 
-    /**
+    /*
      * userform_mform_element_is_group
      * returns true if the useform mform element for this item id is a group and false if not
      * @param

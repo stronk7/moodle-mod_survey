@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * This file keeps track of upgrades to the survey module
  *
  * Sometimes, changes between versions involve alterations to database
@@ -32,7 +32,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
+/*
  * xmldb_survey_upgrade
  *
  * @param int $oldversion

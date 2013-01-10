@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/*
  * Strings for component 'field_age', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    survey
@@ -48,7 +48,7 @@ $string['maximumage_desc'] = 'The maximun age this software will allow to ever e
 $string['parentcontent_lowerthanminimum'] = '{$a} is lower than the minimum age so this condition can never be verified.';
 $string['parentcontent_greaterthanmaximum'] = '{$a} is greater than the maximum age so this condition can never be verified.';
 $string['customdefault'] = 'Custom';
-$string['invitationyear'] = 'Choose n year';
+$string['invitationyear'] = 'Choose a year';
 $string['invitationmonth'] = 'Choose a month';
 $string['uerr_yearnotset'] = 'Please choose a year';
 $string['uerr_monthnotset'] = 'Please choose a month';

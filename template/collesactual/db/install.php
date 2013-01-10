@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/*
  * This file replaces the legacy STATEMENTS section in db/install.xml,
  * lib.php/modulename_install() post installation hook and partially defaults.php
  *
@@ -28,14 +28,14 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(dirname(__FILE__)).'/lib.php');
 
-/**
+/*
  * Post installation procedure
  */
 function xmldb_surveytemplate_collesactual_install() {
     surveytemplate_collesactual_add();
 }
 
-/**
+/*
  * Post installation procedure recovery
  */
 function xmldb_surveytemplate_collesactual_install_recovery() {

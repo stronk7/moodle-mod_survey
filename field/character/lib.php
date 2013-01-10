@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/*
  * @package    surveyitem
  * @subpackage character
  * @copyright  2013 kordan <kordan@mclink.it>
@@ -30,7 +30,7 @@ define('SURVEYFIELD_CHARACTER_CUSTOMPATTERN', 'PATTERN_CUSTOM');
 define('SURVEYFIELD_CHARACTER_EMAILPATTERN' , 'PATTERN_EMAIL');
 define('SURVEYFIELD_CHARACTER_URLPATTERN'   , 'PATTERN_URL');
 
-/**
+/*
  * survey_character_text_match_pattern
  * @param $text, $pattern
  * @return
@@ -49,7 +49,7 @@ function survey_character_text_match_pattern($text, $pattern) {
     return ($text == $pattern);
 }
 
-/**
+/*
  * survey_character_is_valid_url
  * @param $url
  * @return

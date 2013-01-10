@@ -35,13 +35,25 @@ switch ($currenttab) {
             case SURVEY_SUBMISSION_SEARCH: // search
                 include_once($CFG->dirroot.'/mod/survey/pages/submissions/search.php');
                 break;
+            case SURVEY_SUBMISSION_REPORT: // report
+                // prevent manual addressing in the addressbar
+                if (!empty($canaccessreports)) {
+                    if ($hassubmissions) {
+                        include_once($CFG->dirroot.'/mod/survey/report/'.$reportname.'/index.php');
+                    } else {
+                        $message = get_string('nosubmissionfound','survey');
+                        echo $OUTPUT->box($message, 'notice centerpara');
+                    }
+                } else {
+                    // URL was manually written. Stop the user.
+                    die();
+                }
+                break;
             case SURVEY_SUBMISSION_EXPORT: // export
                 include_once($CFG->dirroot.'/mod/survey/pages/submissions/export.php');
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $currentpage = '.$currentpage.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currentpage = '.$currentpage);
         }
         break;
     case SURVEY_TABITEMS:
@@ -63,9 +75,7 @@ switch ($currenttab) {
                 include_once($CFG->dirroot.'/mod/survey/pages/items/validation.php');
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $currentpage = '.$currentpage.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currentpage = '.$currentpage);
         }
         break;
     case SURVEY_TABTEMPLATES:
@@ -80,16 +90,12 @@ switch ($currenttab) {
                 include_once($CFG->dirroot.'/mod/survey/pages/templates/importtemplate.php');
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $currentpage = '.$currentpage.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currentpage = '.$currentpage);
         }
         break;
     case SURVEY_TABPLUGINS:
         include_once($CFG->dirroot.'/mod/survey/pages/plugins/pluginbuild.php');
         break;
     default:
-        echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-        echo 'I have $currenttab = '.$currenttab.'<br />';
-        echo 'and the right "case" is missing<br />';
+        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currenttab = '.$currenttab);
 }

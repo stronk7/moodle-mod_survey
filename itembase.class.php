@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * This is a one-line short description of the file
  *
  * You can have a rather longer description of the file as well,
@@ -28,92 +28,92 @@
 
 defined('MOODLE_INTERNAL') OR die();
 
-/**
+/*
  * The base class representing a field
  */
 class surveyitem_base {
 
-    /************************************************************************************/
+    /***********************************************************************************/
     /* BEGIN OF FIELDS OF SURVEY_ITEMS */
-    /************************************************************************************/
+    /***********************************************************************************/
 
-    /**
+    /*
      * unique itemid of the surveyitem in survey_item table
      */
     public $itemid = 0;
 
-    /**
+    /*
      * $surveyid = the id of the survey
      */
     public $surveyid = 0;
 
-    /**
+    /*
      * $type = the type of the item. It can only be: SURVEY_FIELD or SURVEY_FORMAT
      */
     public $type = '';
 
-    /**
+    /*
      * $plugin = the item plugin
      */
     public $plugin = '';
 
-    /**
+    /*
      * $externalname = a string specifing the origin of the item.
      * empty: user made it
      * non empty: belong to a built-in survey
      */
     public $externalname = '';
 
-    /**
+    /*
      * $content_sid = a number specifing the ID of the builtin survey item.
      * empty: user made it
      * non empty: belong to a built-in survey
      */
     public $content_sid = null;
 
-    /**
+    /*
      * $content = the text content of the item.
      */
     public $content = '';
 
-    /**
+    /*
      * $contentformat = the text format of the item.
      * public $contentformat = '';
      */
     public $contentformat = '';
 
-    /**
+    /*
      * $customnumber = the custom number of the item.
      * It usually is 1. 1.1, a, 2.1.a...
      */
     public $customnumber = '';
 
-    /**
+    /*
      * $extrarow = is the extrarow required?
      */
     public $extrarow = 0;
 
-    /**
+    /*
      * $softinfo = an optional text describing the item
      */
     public $softinfo = '';
 
-    /**
+    /*
      * $required = boolean. O == optional item; 1 == mandatory item
      */
     public $required = 0;
 
-    /**
+    /*
      * $fieldname = the name of the field storing data in the db table
      */
     public $fieldname = '';
 
-    /**
+    /*
      * $indent = the indent of the item in the form layout/template
      */
     public $indent = 0;
 
-    /**
+    /*
      * $basicform = will this item be part of users edit/search forms?
      * SURVEY_NOTPRESENT   : no
      * SURVEY_FILLONLY     : yes, only in the "edit" form
@@ -121,66 +121,66 @@ class surveyitem_base {
      */
     public $basicform = 1;
 
-    /**
+    /*
      * $advancedsearch = will this item be part of the advanced search form?
      * SURVEY_ADVFILLONLY     : no, it will not be part
      * SURVEY_ADVFILLANDSEARCH: yes, it will be part of the advanced search form
      */
     public $advancedsearch = 0;
 
-    /**
+    /*
      * $hide = is this field going to be shown in the form?
      */
     public $hide = 0;
 
-    /**
+    /*
      * $sortindex = the order of this item in the survey form
      */
     public $sortindex = 0;
 
-    /**
+    /*
      * $basicformpage = the user survey page for this item
      */
     public $basicformpage = 0;
 
-    /**
+    /*
      * $advancedformpage = the advanced survey page for this item
      */
     public $advancedformpage = 0;
 
-    /**
+    /*
      * $parentid = the item this item depends from
      */
     public $parentid = 0;
 
-    /**
+    /*
      * $parentcontent = the constrain given by item parentid as entered by the survey creator (25/4/1860)
      */
     public $parentcontent = '';
 
-    /**
+    /*
      * $parentvalue = the "well written" constrain given by parentid (1594832670)
      */
     public $parentvalue = '';
 
-    /**
+    /*
      * $timecreated = the creation time of this item
      */
     public $timecreated = 0;
 
-    /**
+    /*
      * $timemodified = the modification time of this item
      */
     public $timemodified = null;
 
-    /**
+    /*
      * $flag = features describing the object
      * I can redeclare the public and protected method/property, but not private
      * so I choose to not declare this properties here
      * public $flag = null;
      */
 
-    /**
+    /*
      * $item_form_requires = list of fields the survey creator will need/see/use in the item definition form
      * By default each item is present in the form
      * so, in each child class, I only need to "deactivate" fields I don't want to see
@@ -200,11 +200,11 @@ class surveyitem_base {
         'parentid' => true,
         'parentcontent' => true
     );
-    /************************************************************************************/
+    /***********************************************************************************/
     /* END OF FIELDS OF SURVEY_ITEMS */
-    /************************************************************************************/
+    /***********************************************************************************/
 
-    /**
+    /*
      * item_load
      * @param $itemid
      * @return
@@ -238,7 +238,7 @@ class surveyitem_base {
         }
     }
 
-    /**
+    /*
      * save
      * Executes surveyitem_<<plugin>> global level actions
      * this is the save point of the global part of each plugin
@@ -451,7 +451,7 @@ class surveyitem_base {
         return $userfeedback;
     }
 
-    /**
+    /*
      * item_builtin_string_load_support
      * questa funzione serve a popolare le stringhe vuote con le stringhe nella lingua dell'utente
      * @param $fields
@@ -483,7 +483,7 @@ class surveyitem_base {
         }
     }
 
-    /**
+    /*
      * item_builtin_string_save_support
      * starting from the item object, replace 'content' and $fields for builtin survey
      * @param $fields
@@ -538,7 +538,7 @@ class surveyitem_base {
         }
     }
 
-    /**
+    /*
      * item_get_full_info == softinfo + hardinfo
      * provides extra description THAT IS NOT SAVED IN THE DATABASE but is shown in the "Add"/"Search" form
      * @param
@@ -558,7 +558,7 @@ class surveyitem_base {
         return ($hardinfo.$separator.$softinfo);
     }
 
-    /**
+    /*
      * item_get_hard_info
      * provides extra hardinfo THAT IS NOT SAVED IN THE DATABASE but is shown in the "Add"/"Search" form
      * @param
@@ -570,7 +570,7 @@ class surveyitem_base {
         return '';
     }
 
-    /**
+    /*
      * item_split_unix_time
      * @param $time
      * @return
@@ -601,7 +601,7 @@ class surveyitem_base {
         return $getdate;
     }
 
-    /**
+    /*
      * item_delete_item
      * @param $itemid, $displaymessage=false
      * @return
@@ -648,7 +648,7 @@ class surveyitem_base {
         }
 
         if ($displaymessage) {
-            $a = survey_get_sid_field_content($recordtokill, 'content');
+            $a = survey_get_sid_field_content($recordtokill);
             if (empty($a)) {
                 $a = get_string('userfriendlypluginname', 'surveyformat_'.$plugin);
             }
@@ -657,7 +657,7 @@ class surveyitem_base {
         }
     }
 
-    /**
+    /*
      * item_set_editor
      * defines presets for the editor field of surveyitem in itembase_form.php
      * (copied from moodle20/cohort/edit.php)
@@ -677,7 +677,7 @@ class surveyitem_base {
         $saveditem = file_prepare_standard_editor($saveditem, $fieldname, $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $saveditem->itemid);
     }
 
-    /**
+    /*
      * item_get_value_label_array
      * translates the class property $this->{$field} in the array array[$value] = $label
      * @param $field='options'
@@ -699,7 +699,7 @@ class surveyitem_base {
         return $valuelabel;
     }
 
-    /**
+    /*
      * item_get_other
      * @param
      * @return
@@ -716,7 +716,7 @@ class surveyitem_base {
         return array($value, $label);
     }
 
-    /**
+    /*
      * item_get_one_word_per_row
      * @param $field='defaultvalue'
      * @return
@@ -730,7 +730,7 @@ class surveyitem_base {
         return $content;
     }
 
-    /**
+    /*
      * item_complete_option_array
      * @param
      * @return
@@ -751,7 +751,7 @@ class surveyitem_base {
         return $return;
     }
 
-    /**
+    /*
      * item_mandatory_is_allowed
      * @param
      * @return
@@ -769,7 +769,7 @@ class surveyitem_base {
         }
     }
 
-    /**
+    /*
      * item_get_type
      * @param
      * @return
@@ -778,7 +778,7 @@ class surveyitem_base {
         return $this->type;
     }
 
-    /**
+    /*
      * item_get_plugin
      * @param
      * @return
@@ -787,7 +787,7 @@ class surveyitem_base {
         return $this->plugin;
     }
 
-    /**
+    /*
      * item_get_extrarow
      * @param
      * @return
@@ -796,7 +796,7 @@ class surveyitem_base {
         return $this->extrarow;
     }
 
-    /**
+    /*
      * item_is_searchable
      * @param
      * @return
@@ -805,7 +805,7 @@ class surveyitem_base {
         return $this->flag->issearchable;
     }
 
-    /**
+    /*
      * item_is_matchable
      * @param
      * @return
@@ -814,7 +814,7 @@ class surveyitem_base {
         return $this->flag->ismatchable;
     }
 
-    /**
+    /*
      * item_has_sortindex
      * @param
      * @return
@@ -823,7 +823,7 @@ class surveyitem_base {
         return !empty($this->sortindex);
     }
 
-    /**
+    /*
      * item_get_sortindex
      * @param
      * @return
@@ -832,7 +832,7 @@ class surveyitem_base {
         return $this->sortindex;
     }
 
-    /**
+    /*
      * item_get_parent_format
      * @param
      * @return
@@ -841,7 +841,7 @@ class surveyitem_base {
         return get_string('parentformat', 'surveyfield_'.$this->plugin);
     }
 
-    /**
+    /*
      * item_get_db_structure
      * returns true if the useform mform element for this item id is a group and false if not
      * @param
@@ -868,7 +868,7 @@ class surveyitem_base {
         return $dbstructure;
     }
 
-    /**
+    /*
      * item_get_main_text
      * returns the content of the field defined as main
      * @param
@@ -878,7 +878,7 @@ class surveyitem_base {
         return $this->content;
     }
 
-    /**
+    /*
      * item_get_si_values
      * returns the content of the field defined as main
      * @param $data, $sistructure, $sisid
@@ -943,9 +943,7 @@ class surveyitem_base {
                 $values['type'] = 'SURVEY_FORMAT';
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $this->type = '.$this->type.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->type = '.$this->type);
         }
 
         // update: $this->plugin
@@ -977,9 +975,7 @@ class surveyitem_base {
                 $values['contentformat'] = '\'\'';
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $this->contentformat = '.$this->contentformat.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->contentformat = '.$this->contentformat);
         }
 
         // override: $value['customnumber']
@@ -1017,9 +1013,7 @@ class surveyitem_base {
                 $values['required'] = 'null';
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $this->required = '.$this->required.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->required = '.$this->required);
         }
 
         // override: $value['fieldname']
@@ -1045,9 +1039,7 @@ class surveyitem_base {
                 $values['basicform'] = 'SURVEY_FILLANDSEARCH';
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $this->basicform = '.$this->basicform.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->basicform = '.$this->basicform);
         }
 
         // override: $value['advancedsearch']
@@ -1060,9 +1052,7 @@ class surveyitem_base {
                 $values['advancedsearch'] = 'SURVEY_ADVFILLANDSEARCH';
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $this->advancedsearch = '.$this->advancedsearch.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->advancedsearch = '.$this->advancedsearch);
         }
 
         // override: $value['hide']
@@ -1137,7 +1127,7 @@ class surveyitem_base {
         return $values;
     }
 
-    /**
+    /*
      * item_get_plugin_values
      * @param $pluginstructure, $pluginsid
      * @return
@@ -1201,7 +1191,7 @@ class surveyitem_base {
         return $values;
     }
 
-    /**
+    /*
      * update_values_defaultoption
      * @param $values
      * @return
@@ -1229,15 +1219,13 @@ class surveyitem_base {
                 $values['defaultoption'] = 'SURVEY_INVITATIONDBVALUE';
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $this->defaultoption = '.$this->defaultoption.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
         }
 
         return $values;
     }
 
-    /**
+    /*
      * userform_can_be_disabled
      * @param
      * @return
@@ -1257,7 +1245,7 @@ class surveyitem_base {
         return ($parentitem->{$pagefield} == $this->{$pagefield});
     }
 
-    /**
+    /*
      * userform_can_show_item_as_child
      * @param
      * @return
@@ -1287,7 +1275,7 @@ class surveyitem_base {
         return ($givenanswer === $this->parentvalue);
     }
 
-    /**
+    /*
      * userform_child_is_allowed_dynamic
      * as parentitem defines whether a child item is supposed to be active (not disabled) in the form so needs validation
      * ----------------------------------------------------------------------
@@ -1307,7 +1295,7 @@ class surveyitem_base {
         return ($data[$fieldname] == $child_parentcontent);
     }
 
-    /**
+    /*
      * userform_disable_element
      * this function is used ONLY if $survey->newpageforchild == true
      * it disables items where parent condition does not match
@@ -1353,7 +1341,7 @@ class surveyitem_base {
         }
     }
 
-    /**
+    /*
      * userform_display_as_read_only
      * @param
      * @return
@@ -1377,7 +1365,7 @@ class surveyitem_base {
         </div>';
     }
 
-    /**
+    /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
      * @param $richsubmission

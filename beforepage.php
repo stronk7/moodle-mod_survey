@@ -34,9 +34,7 @@ switch ($currenttab) {
         $defaultpage = SURVEY_PLUGINS_BUILD;
         break;
     default:
-        echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-        echo 'I have $currentpage = '.$currentpage.'<br />';
-        echo 'and the right "case" is missing<br />';
+        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currentpage = '.$currentpage);
 }
 $currentpage = optional_param('pag', $defaultpage, PARAM_INT);
 
@@ -100,14 +98,8 @@ switch ($currenttab) {
 
                     if (!isset($fromform->prevbutton)) {
 
-                        // echo '$fromform:';
-                        // var_dump($fromform);
-                        // die;
                         if (!$survey->newpageforchild) {
                             survey_drop_unexpected_values($fromform);
-                            // echo 'Sono intervenuto sopprimento le risposte indesiderate<br />';
-                            // echo '$fromform:';
-                            // var_dump($fromform);
                         }
 
                         $timenow = time();
@@ -150,7 +142,7 @@ switch ($currenttab) {
 
                         survey_save_user_data($fromform);
 
-                        // oramai ho salvato
+                        // now, I just saved
 
                         // BEGIN: send email whether requested
                         if ($record->status = SURVEY_STATUSCLOSED) {
@@ -298,7 +290,11 @@ switch ($currenttab) {
                 }
 
                 break;
-            case SURVEY_SUBMISSION_EXPORT:       // export
+            case SURVEY_SUBMISSION_REPORT: // report
+                $reportname = optional_param('rname', '', PARAM_ALPHA);
+                $hassubmissions = survey_has_submissions($survey->id);
+                break;
+            case SURVEY_SUBMISSION_EXPORT: // export
                 require_once($CFG->dirroot.'/mod/survey/pages/submissions/export_form.php');
 
                 $formparams = new stdClass();
@@ -319,9 +315,7 @@ switch ($currenttab) {
                 }
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $currentpage = '.$currentpage.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currentpage = '.$currentpage);
         }
         break;
     case SURVEY_TABITEMS:
@@ -494,9 +488,7 @@ switch ($currenttab) {
                         exit(0);
                         break;
                     default:
-                        echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                        echo 'I have $action = '.$action.'<br />';
-                        echo 'and the right "case" is missing<br />';
+                        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
                 }
 
                 break;
@@ -550,9 +542,7 @@ switch ($currenttab) {
 
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $currentpage = '.$currentpage.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currentpage = '.$currentpage);
         }
         break;
     case SURVEY_TABPLUGINS:
@@ -583,7 +573,5 @@ switch ($currenttab) {
         }
         break;
     default:
-        echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-        echo 'I have $currenttab = '.$currenttab.'<br />';
-        echo 'and the right "case" is missing<br />';
+        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currenttab = '.$currenttab);
 }

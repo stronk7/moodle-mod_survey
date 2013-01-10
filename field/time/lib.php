@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/*
  * @package    surveyitem
  * @subpackage time
  * @copyright  2013 kordan <kordan@mclink.it>
@@ -30,7 +30,7 @@ define('SURVEYFIELD_TIME_INTERNALRANGE', 1);
 define('SURVEYFIELD_TIME_EXTERNALRANGE', 2);
 define('SURVEYFIELD_TIME_FORMAT', '[hh:mm]');
 
-/**
+/*
  * survey_time_check_time
  * @param $hour, $minute
  * @return

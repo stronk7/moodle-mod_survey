@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * This is a one-line short description of the file
  *
  * You can have a rather longer description of the file as well,
@@ -86,7 +86,8 @@ class survey_pluginform extends surveyitem_baseform {
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        // il default "noanswer" non deve essere accettato se la domanda è obbligatoria
+        // "noanswer" default option is not allowed when the item is mandatory
+
         if ( ($data['defaultoption'] == SURVEY_NOANSWERDEFAULT) && isset($data['required']) ) {
             $a = get_string('noanswer', 'survey');
             $errors['defaultvalue'] = get_string('notalloweddefault', 'survey', $a);

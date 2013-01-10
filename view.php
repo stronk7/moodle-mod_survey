@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * Prints a particular instance of survey
  *
  * You can have a rather longer description of the file as well,
@@ -51,6 +51,7 @@ add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, 
 $module = $DB->get_record('modules', array('name' => 'survey'));
 
 $canexportdata = survey_user_can_export_data($cm);
+$canaccessreports = survey_user_can_access_reports($cm);
 $canmanageitems = survey_user_can_manage_items($cm);
 $canmanageplugin = survey_user_can_manage_plugin($cm);
 $canaccessadvancedform = survey_user_can_access_advanced_form($cm);
@@ -59,7 +60,7 @@ $canaccessadvancedform = survey_user_can_access_advanced_form($cm);
 // inside beforepage, maybe, I redirect
 include_once($CFG->dirroot.'/mod/survey/beforepage.php');
 
-// / Print the page header
+// Print the page header
 $PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
@@ -70,11 +71,8 @@ $PAGE->set_heading($course->shortname);
 
 // Output starts here
 echo $OUTPUT->header();
-
-// Replace the following lines with you own code
-// echo $OUTPUT->heading('Yay! It works!');
-
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
+
 include_once($CFG->dirroot.'/mod/survey/moveto.php');
 
 // Finish the page

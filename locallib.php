@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * Internal library of functions for module survey
  *
  * All the survey specific functions, needed to implement the module
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/survey/lib.php');
 
-/**
+/*
  * survey_user_can_do_anything
  * @param
  * @return
@@ -41,7 +41,7 @@ function survey_user_can_do_anything() {
     return (has_capability('moodle/site:doanything', $context));
 }
 
-/**
+/*
  * survey_user_can_access_advanced_form
  * @param $cm
  * @return
@@ -52,7 +52,18 @@ function survey_user_can_access_advanced_form($cm) {
     return (has_capability('mod/survey:accessadvancedform', $context, null, true));
 }
 
-/**
+/*
+ * survey_user_can_access_reports
+ * @param $cm
+ * @return
+ */
+function survey_user_can_access_reports($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:accessreports', $context, null, true));
+}
+
+/*
  * survey_user_can_export_data
  * @param $cm
  * @return
@@ -63,7 +74,7 @@ function survey_user_can_export_data($cm) {
     return (has_capability('mod/survey:exportdata', $context, null, true));
 }
 
-/**
+/*
  * survey_user_can_read_all_submissions
  * @param $cm
  * @return
@@ -74,7 +85,7 @@ function survey_user_can_read_all_submissions($cm) {
     return (has_capability('mod/survey:readall', $context, null, true));
 }
 
-/**
+/*
  * survey_user_can_edit_all_submissions
  * @param $cm
  * @return
@@ -85,7 +96,7 @@ function survey_user_can_edit_all_submissions($cm) {
     return (has_capability('mod/survey:editall', $context, null, true));
 }
 
-/**
+/*
  * survey_user_can_delete_all_submissions
  * @param $cm
  * @return
@@ -96,7 +107,7 @@ function survey_user_can_delete_all_submissions($cm) {
     return (has_capability('mod/survey:deleteall', $context, null, true));
 }
 
-/**
+/*
  * survey_get_item
  * @param $itemid, $type, $plugin
  * @return
@@ -123,7 +134,7 @@ function survey_get_item($itemid=0, $type='', $plugin='') {
     return $item;
 }
 
-/**
+/*
  * survey_non_empty_only
  * @param $arrayelement
  * @return
@@ -132,7 +143,7 @@ function survey_non_empty_only($arrayelement) {
     return strlen(trim($arrayelement)); // returns 0 if the arrayelement is empty
 }
 
-/**
+/*
  * survey_textarea_to_array
  * @param $textareacontent
  * @return
@@ -149,7 +160,7 @@ function survey_textarea_to_array($textareacontent) {
     return $arraytextarea;
 }
 
-/**
+/*
  * survey_clean_textarea_fields
  * @param $record, $fieldlist
  * @return
@@ -166,7 +177,7 @@ function survey_clean_textarea_fields($record, $fieldlist) {
     }
 }
 
-/**
+/*
  * survey_manage_item_deletion
  * @param $confirm, $cm, $itemid, $type, $plugin, $itemtomove, $surveyid
  * @return
@@ -232,7 +243,8 @@ function survey_manage_item_deletion($confirm, $cm, $itemid, $type, $plugin, $it
 
                 $deletingrecord = $DB->get_record('survey_item', array('id' => $itemid), 'id, content, content_sid, externalname, sortindex', MUST_EXIST);
                 $killedsortindex = $deletingrecord->sortindex;
-                $a = survey_get_sid_field_content($deletingrecord, 'content');
+
+                $a = survey_get_sid_field_content($deletingrecord);
                 if (empty($a)) {
                     $a = get_string('userfriendlypluginname', 'surveyformat_'.$plugin);
                 }
@@ -240,6 +252,7 @@ function survey_manage_item_deletion($confirm, $cm, $itemid, $type, $plugin, $it
                 require_once($CFG->dirroot.'/mod/survey/'.$type.'/'.$plugin.'/plugin.class.php');
                 $itemclass = 'survey'.$type.'_'.$plugin;
                 $item = new $itemclass($itemid);
+
                 $item->item_delete_item($itemid);
 
                 // renum sortindex
@@ -268,14 +281,12 @@ function survey_manage_item_deletion($confirm, $cm, $itemid, $type, $plugin, $it
                 echo $OUTPUT->notification($message, 'notifyproblem');
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $confirm = '.$confirm.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $confirm = '.$confirm);
         }
     }
 }
 
-/**
+/*
  * survey_add_tree_node
  * @param $confirm, $cm, $itemid, $type
  * @return
@@ -294,7 +305,7 @@ function survey_add_tree_node(&$tohidelist, &$sortindextohidelist) {
     }
 }
 
-/**
+/*
  * survey_manage_item_hide
  * @param $confirm, $cm, $itemid, $type
  * @return
@@ -351,15 +362,13 @@ function survey_manage_item_hide($confirm, $cm, $itemid, $type) {
                 echo $OUTPUT->notification($message, 'notifyproblem');
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $confirm = '.$confirm.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $confirm = '.$confirm);
         }
     }
     return $itemstoprocess; // did you do something?
 }
 
-/**
+/*
  * survey_move_regular_items
  * @param $itemid, $in
  * @return
@@ -383,7 +392,7 @@ function survey_move_regular_items($itemid, $newbasicform) {
     return $itemstoprocess; // did you do something?
 }
 
-/**
+/*
  * survey_add_regular_item_node
  * @param $tohidelist, $sortindextohidelist, $in
  * @return
@@ -405,7 +414,7 @@ function survey_add_regular_item_node(&$tohidelist, &$sortindextohidelist, $newb
     }
 }
 
-/**
+/*
  * survey_manage_item_show
  * @param $confirm, $cm, $itemid, $type
  * @return
@@ -466,15 +475,13 @@ function survey_manage_item_show($confirm, $cm, $itemid, $type) {
                 echo $OUTPUT->notification($message, 'notifyproblem');
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $confirm = '.$confirm.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $confirm = '.$confirm);
         }
     }
     return $itemstoprocess; // did you do something?
 }
 
-/**
+/*
  * survey_reorder_items
  * @param $itemtomove, $lastitembefore, $surveyid
  * @return
@@ -517,7 +524,7 @@ function survey_reorder_items($itemtomove, $lastitembefore, $surveyid) {
     survey_reset_items_pages($surveyid);
 }
 
-/**
+/*
  * survey_assign_pages
  * @param $canaccessadvancedform=0, $reset=false
  * @return
@@ -560,7 +567,7 @@ function survey_assign_pages($canaccessadvancedform=false) {
     return $pagenumber;
 }
 
-/**
+/*
  * survey_next_not_empty_page
  * @param $surveyid, $canaccessadvancedform, $formpage, $forward, $submissionid=0, $maxformpage=0
  * @return
@@ -595,7 +602,7 @@ function survey_next_not_empty_page($surveyid, $canaccessadvancedform, $formpage
     return $returnpage;
 }
 
-/**
+/*
  * survey_page_has_items
  * @param $surveyid, $canaccessadvancedform, $formpage, $submissionid
  * @return
@@ -631,7 +638,7 @@ function survey_page_has_items($surveyid, $canaccessadvancedform, $formpage, $su
     return 0;
 }
 
-/**
+/*
  * survey_child_is_allowed_static
  * from parentcontent defines whether an item is supposed to be active (not disabled) in the form so needs validation
  * ----------------------------------------------------------------------
@@ -657,7 +664,7 @@ function survey_child_is_allowed_static($submissionid, $itemrecord) {
     return ($givenanswer === $itemrecord->parentvalue);
 }
 
-/**
+/*
  * survey_set_prefill
  * @param $survey, $canaccessadvancedform, $formpage, $submissionid
  * @return
@@ -853,7 +860,7 @@ function survey_save_user_data($fromform) {
     }
 }
 
-/**
+/*
  * survey_i_can_read
  * @param $survey, $mygroup, $ownerid
  * @return whether I am allowed to see the survey submitted by the user belonging to $ownergroup
@@ -884,13 +891,11 @@ function survey_i_can_read($survey, $mygroup, $ownerid) {
             return true;
             break;
         default:
-            echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-            echo 'I have $survey->readaccess = '.$survey->readaccess.'<br />';
-            echo 'and the right "case" is missing<br />';
+            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $survey->readaccess = '.$survey->readaccess);
     }
 }
 
-/**
+/*
  * survey_i_can_edit
  * @param $survey, $mygroup, $ownerid
  * @return whether I am allowed to edit the survey submitted by the user belonging to $ownergroup
@@ -921,13 +926,11 @@ function survey_i_can_edit($survey, $mygroup, $ownerid) {
             return true;
             break;
         default:
-            echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-            echo 'I have $survey->editaccess = '.$survey->editaccess.'<br />';
-            echo 'and the right "case" is missing<br />';
+            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $survey->editaccess = '.$survey->editaccess);
     }
 }
 
-/**
+/*
  * survey_i_can_delete
  * @param $survey, $mygroup, $ownerid
  * @return whether I am allowed to delete the survey submitted by the user belonging to $ownergroup
@@ -958,13 +961,11 @@ function survey_i_can_delete($survey, $mygroup, $ownerid) {
             return true;
             break;
         default:
-            echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-            echo 'I have $survey->deleteaccess = '.$survey->deleteaccess.'<br />';
-            echo 'and the right "case" is missing<br />';
+            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $survey->deleteaccess = '.$survey->deleteaccess);
     }
 }
 
-/**
+/*
  * survey_manage_submission_deletion
  * @param $cm, $confirm, $submissionid
  * @return
@@ -1019,14 +1020,12 @@ function survey_manage_submission_deletion($cm, $confirm, $submissionid) {
                 echo $OUTPUT->notification($message, 'notifyproblem');
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $confirm = '.$confirm.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $confirm = '.$confirm);
         }
     }
 }
 
-/**
+/*
  * survey_manage_all_surveys_deletion
  * @param $cm, $confirm, $submissionid
  * @return
@@ -1071,14 +1070,12 @@ function survey_manage_all_surveys_deletion($confirm, $surveyid) {
                 echo $OUTPUT->notification($message, 'notifyproblem');
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $confirm = '.$confirm.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $confirm = '.$confirm);
         }
     }
 }
 
-/**
+/*
  * survey_get_my_groups
  * @param $cm
  * @return
@@ -1099,7 +1096,7 @@ function survey_get_my_groups($cm) {
     return $mygroups;
 }
 
-/**
+/*
  * survey_show_thanks_page
  * @param $survey, $cm
  * @return
@@ -1141,7 +1138,7 @@ function survey_show_thanks_page($survey, $cm) {
     }
 }
 
-/**
+/*
  * survey_export
  * @param $cm, $fromform, $survey
  * @return
@@ -1167,7 +1164,7 @@ function survey_export($cm, $fromform, $survey) {
     if (!isset($fromform->includehide)) {
         $itemlistsql .= ' AND si.hide = 0';
     }
-    $itemlistsql .= ' ORDER BY sortindex';
+    $itemlistsql .= ' ORDER BY si.sortindex';
 
     // I need get_records_sql instead of get_records because of '<> SURVEY_NOTPRESENT'
     if (!$fieldidlist = $DB->get_records_sql($itemlistsql, $params)) {
@@ -1268,7 +1265,7 @@ function survey_export($cm, $fromform, $survey) {
     }
 }
 
-/**
+/*
  * survey_export_print_header
  * @param $survey, $fieldidlist, $fromform, $worksheet
  * @return
@@ -1298,7 +1295,7 @@ function survey_export_print_header($survey, $fieldidlist, $fromform, $worksheet
     }
 }
 
-/**
+/*
  * survey_decode_content
  * @param $richsubmission
  * @return
@@ -1315,7 +1312,7 @@ function survey_decode_content($richsubmission) {
     return $return;
 }
 
-/**
+/*
  * survey_export_close_record
  * @param $recordtoexport, $downloadtype, $worksheet
  * @return
@@ -1336,7 +1333,7 @@ function survey_export_close_record($recordtoexport, $downloadtype, $worksheet) 
     }
 }
 
-/**
+/*
  * survey_find_submissions
  * @param $findparams
  * @return
@@ -1405,7 +1402,7 @@ function survey_find_submissions($findparams) {
     return $submissionidlist;
 }
 
-/**
+/*
  * survey_display_user_feedback
  * @param $userfeedback
  * @return
@@ -1457,7 +1454,7 @@ function survey_display_user_feedback($userfeedback) {
     return $message;
 }
 
-/**
+/*
  * survey_plugin_build
  * @param $targetuser, $surveyid
  * @return
@@ -1630,7 +1627,7 @@ function survey_plugin_build($data) {
     return $exportfile;
 }
 
-/**
+/*
  * survey_get_db_structure
  * @param $tablename, $dropid=true
  * @return
@@ -1657,7 +1654,7 @@ function survey_get_db_structure($tablename, $dropid=true) {
     }
 }
 
-/**
+/*
  * survey_wlib_content
  * @param &$libcontent, $surveyid, $data, &$langtree
  * @return
@@ -1757,7 +1754,7 @@ function survey_wlib_content(&$libcontent, $surveyid, $data, &$langtree) {
 
 }
 
-/**
+/*
  * survey_wlib_write_table_structure
  * @param &$libcontent, $structure, $plugin, $sid
  * @return
@@ -1775,7 +1772,7 @@ function survey_wlib_write_table_structure(&$libcontent, $structure, $plugin, $s
     $libcontent .= "\n";
 }
 
-/**
+/*
  * survey_wlib_structure_values_separator
  * @param &$libcontent, $pluginname
  * @return
@@ -1788,7 +1785,7 @@ function survey_wlib_structure_values_separator(&$libcontent, $pluginname) {
     $libcontent .= '    // ////////////////////////////////////////////////////////////////////////////////////////////'."\n";
 }
 
-/**
+/*
  * survey_wlib_intro_si_values
  * @param &$libcontent, $si_sid
  * @return
@@ -1805,7 +1802,7 @@ function survey_wlib_intro_si_values(&$libcontent, $si_sid) {
     }
 }
 
-/**
+/*
  * survey_wlib_write_si_values
  * @param &$libcontent, $values
  * @return
@@ -1821,7 +1818,7 @@ function survey_wlib_write_si_values(&$libcontent, $values) {
     $libcontent .= "\n";
 }
 
-/**
+/*
  * survey_wlib_intro_plugin_values
  * @param &$libcontent, $currentplugin, $currentsid
  * @return
@@ -1835,7 +1832,7 @@ function survey_wlib_intro_plugin_values(&$libcontent, $currentplugin, $currents
     }
 }
 
-/**
+/*
  * survey_wlib_write_plugin_values
  * @param &$libcontent, $values, $tablename, $currentplugin
  * @return
@@ -1849,7 +1846,7 @@ function survey_wlib_write_plugin_values(&$libcontent, $values, $tablename, $cur
     $libcontent .= "    //---------- end of this item\n\n";
 }
 
-/**
+/*
  * survey_wrap_line
  * @param $values, $lineindent=20
  * @return
@@ -1868,7 +1865,7 @@ function survey_wrap_line($values, $lineindent=20) {
     return $return;
 }
 
-/**
+/*
  * survey_collect_strings
  * @param &$langtree, $currentsid, $values
  * @return
@@ -1881,7 +1878,7 @@ function survey_collect_strings(&$langtree, $currentsid, $values) {
     }
 }
 
-/**
+/*
  * survey_extract_original_string
  * @param $langtree
  * @return
@@ -1896,7 +1893,7 @@ function survey_extract_original_string($langtree) {
     return "\n".implode("\n", $stringsastext);
 }
 
-/**
+/*
  * survey_get_translated_strings
  * @param $langtree, $userlang
  * @return
@@ -1914,7 +1911,7 @@ function survey_get_translated_strings($langtree, $userlang) {
     return "\n".implode("\n", $stringsastext);
 }
 
-/**
+/*
  * survey_drop_unexpected_values
  * @param &$fromform
  * @return
@@ -1994,7 +1991,7 @@ function survey_drop_unexpected_values(&$fromform) {
 
 }
 
-/**
+/*
  * survey_add_custom_css
  * @param $surveyid, $cmid
  * @return
@@ -2011,26 +2008,26 @@ function survey_add_custom_css($surveyid, $cmid) {
     }
 }
 
-/**
+/*
  * survey_get_sid_field_content
  * @param $record, $fieldname='content'
  * @return
  */
-function survey_get_sid_field_content($record, $fieldname='content') {
+function survey_get_sid_field_content($record) {
     // this function is the equivalent of the method item_builtin_string_load_support in itembase.class.php
     if (empty($record->externalname)) {
-        return $record->{$fieldname};
+        return $record->content;
+    } else {
+        // get the string 'content_sid'
+        // from surveytemplate_{$this->externalname}.php file
+        $stringindex = 'content'.sprintf('%02d', $record->content_sid);
+        $return = get_string($stringindex, 'surveytemplate_'.$record->externalname);
+
+        return $return;
     }
-
-    // prendi la strings {$fieldname.'_sid'}
-    // sul file surveytemplate_{$this->externalname}.php
-    $stringindex = $fieldname.sprintf('%02d', $record->{$fieldname.'_sid'});
-    $return = get_string($stringindex, 'surveytemplate_'.$record->externalname);
-
-    return $return;
 }
 
-/**
+/*
  * survey_notifyroles
  * @param $survey, $cm
  * @return
@@ -2068,8 +2065,8 @@ function survey_notifyroles($survey, $cm) {
             $receivers = array();
         }
     } else {
-        // get_enrolled_users($courseid, $options = array()) <-- manca il ruolo
-        // get_users_from_role_on_context($role, $context); <-- questa va bene ma fa una query per volta, sotto faccio la stessa query una sola volta
+        // get_enrolled_users($courseid, $options = array()) <-- role is missing
+        // get_users_from_role_on_context($role, $context);  <-- this is ok but it makes one query per time, below I make the query once all together
         if ($survey->notifyrole) {
             $sql = 'SELECT DISTINCT ra.userid, u.firstname, u.lastname, u.email
                     FROM (SELECT *
@@ -2127,7 +2124,7 @@ function survey_notifyroles($survey, $cm) {
     }
 }
 
-/**
+/*
  * survey_add_items_from_plugin
  * @param $survey, $externalname
  * @return
@@ -2180,7 +2177,7 @@ function survey_add_items_from_plugin($survey, $externalname) {
     }
 }
 
-/**
+/*
  * survey_add_items_from_template
  * @param $survey, $templateid
  * @return
@@ -2229,7 +2226,7 @@ function survey_add_items_from_template($survey, $templateid) {
     }
 }
 
-/**
+/*
  * survey_get_template_content
  * @param $templateid
  * @return
@@ -2241,7 +2238,7 @@ function survey_get_template_content($templateid) {
     return $xmlfile->get_content();
 }
 
-/**
+/*
  * survey_create_template_content
  * @param $survey, $externalname
  * @return
@@ -2311,7 +2308,7 @@ function survey_create_template_content($survey) {
     return $dom->saveXML();
 }
 
-/**
+/*
  * Gets an array of all of the templates that users have saved to the site.
  *
  * @param stdClass $context The context that we are looking from.
@@ -2334,7 +2331,7 @@ function survey_get_available_templates($contextid) {
     return $templates;
 }
 
-/**
+/*
  * survey_save_template
  * @param $survey, $externalname
  * @return
@@ -2360,7 +2357,7 @@ function survey_save_template($formadata, $xmlcontent) {
     return true;
 }
 
-/**
+/*
  * survey_get_sharinglevel_options
  *
  * @param $cmid, $survey
@@ -2389,7 +2386,7 @@ function survey_get_sharinglevel_options($cmid, $survey) {
     return $options;
 }
 
-/**
+/*
  * survey_get_contextstring_from_sharinglevel
  *
  * @param $contextlevel
@@ -2415,15 +2412,13 @@ function survey_get_contextstring_from_sharinglevel($contextlevel) {
             $contextstring = 'user';
             break;
         default:
-            echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-            echo 'I have $contextlevel = '.$contextlevel.'<br />';
-            echo 'and the right "case" is missing<br />';
+            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $contextlevel = '.$contextlevel);
     }
 
     return $contextstring;
 }
 
-/**
+/*
  * survey_delete_template
  *
  * @param $cm, $confirm, $fileid
@@ -2460,14 +2455,12 @@ function survey_delete_template($cm, $confirm, $fileid) {
                 echo $OUTPUT->notification($message, 'notifyproblem');
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $confirm = '.$confirm.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $confirm = '.$confirm);
         }
     }
 }
 
-/**
+/*
  * survey_upload_template
  *
  * @param $survey, $context
@@ -2551,7 +2544,7 @@ function survey_upload_template($formdata) {
     }
 }
 
-/**
+/*
  * survey_get_template_options
  * @param none
  * @return $filemanager_options
@@ -2567,7 +2560,7 @@ function survey_get_template_options() {
     return $template_options;
 }
 
-/**
+/*
  * survey_get_contextid_from_sharinglevel
  * @param none
  * @return $filemanager_options
@@ -2606,9 +2599,7 @@ function survey_get_contextid_from_sharinglevel($sharinglevel) {
             $context = context_system::instance();
             break;
         default:
-            echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-            echo 'I have $contextlevel = '.$contextlevel.'<br />';
-            echo 'and the right "case" is missing<br />';
+            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $contextlevel = '.$contextlevel);
     }
 
     return $context->id;

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * Library of interface functions and constants for module survey
  *
  * All the core Moodle functions, neeeded to allow the module to work
@@ -68,7 +68,8 @@ define('SURVEY_TAB'.SURVEY_TABPLUGINS.'NAME', get_string('tabpluginsname', 'surv
     define('SURVEY_SUBMISSION_READONLY', 3);
     define('SURVEY_SUBMISSION_MANAGE'  , 4);
     define('SURVEY_SUBMISSION_SEARCH'  , 5);
-    define('SURVEY_SUBMISSION_EXPORT'  , 6);
+    define('SURVEY_SUBMISSION_REPORT'  , 6);
+    define('SURVEY_SUBMISSION_EXPORT'  , 7);
 
     // ITEMS PAGES
     define('SURVEY_ITEMS_MANAGE'       , 1);
@@ -184,7 +185,7 @@ define('SURVEY_MASTERTEMPLATE', 'SURVEYPLUGIN');
 // Moodle core API                                                            //
 // //////////////////////////////////////////////////////////////////////////////
 
-/**
+/*
  * Saves a new instance of the survey into the database
  *
  * Given an object containing all the necessary data,
@@ -237,7 +238,7 @@ function survey_add_instance($survey) {
     return $survey->id;
 }
 
-/**
+/*
  * Updates an instance of the survey in the database
  *
  * Given an object containing all the necessary data,
@@ -285,7 +286,7 @@ function survey_update_instance($survey) {
     return $DB->update_record('survey', $survey);
 }
 
-/**
+/*
  * survey_save_user_style
  *
  * @param $survey, $context
@@ -311,7 +312,7 @@ function survey_save_user_style($survey, $context) {
     }
 }
 
-/**
+/*
  * Removes an instance of the survey from the database
  *
  * Given an ID of an instance of this module,
@@ -352,7 +353,7 @@ function survey_delete_instance($id) {
     return true;
 }
 
-/**
+/*
  * Returns the information on whether the module supports a feature
  *
  * @see plugin_supports() in lib/moodlelib.php
@@ -376,7 +377,7 @@ function survey_supports($feature) {
     }
 }
 
-/**
+/*
  * Returns a small object with summary information about what a
  * user has done with a given particular instance of this module
  * Used for user activity reports.
@@ -392,7 +393,7 @@ function survey_user_outline($course, $user, $mod, $survey) {
     return $return;
 }
 
-/**
+/*
  * Prints a detailed representation of what a user has done with
  * a given particular instance of this module, for user activity reports.
  *
@@ -406,7 +407,7 @@ function survey_user_complete($course, $user, $mod, $survey) {
     return true;
 }
 
-/**
+/*
  * Given a course and a time, this module should find recent activity
  * that has occurred in survey activities and print it out.
  * Return true if there was output, or false is there was none.
@@ -417,7 +418,7 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
     return false;  //  True if anything was printed, otherwise false
 }
 
-/**
+/*
  * Prepares the recent activity data
  *
  * This callback function is supposed to populate the passed array with
@@ -436,7 +437,7 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
 function survey_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
 }
 
-/**
+/*
  * Prints single activity item prepared by {@see survey_get_recent_mod_activity()}
  *
  * @return void
@@ -444,7 +445,7 @@ function survey_get_recent_mod_activity(&$activities, &$index, $timestart, $cour
 function survey_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
 }
 
-/**
+/*
  * Function to be run periodically according to the moodle cron
  * This function searches for things that need to be done, such
  * as sending out mail, toggling flags etc ...
@@ -479,7 +480,7 @@ function survey_cron() {
     return true;
 }
 
-/**
+/*
  * Returns an array of users who are participanting in this survey
  *
  * Must return an array of users who are participants for a given instance
@@ -495,7 +496,7 @@ function survey_get_participants($surveyid) {
     return false;
 }
 
-/**
+/*
  * Returns all other caps used in the module
  *
  * @example return array('moodle/site:accessallgroups');
@@ -509,7 +510,7 @@ function survey_get_extra_capabilities() {
 // Gradebook API                                                              //
 // //////////////////////////////////////////////////////////////////////////////
 
-/**
+/*
  * Is a given scale used by the instance of survey?
  *
  * This function returns if a scale is being used by one survey
@@ -532,7 +533,7 @@ function survey_scale_used($surveyid, $scaleid) {
     return false;
 }
 
-/**
+/*
  * Checks if scale is being used by any instance of survey.
  *
  * This is used to find out if scale used anywhere.
@@ -550,7 +551,7 @@ function survey_scale_used_anywhere($scaleid) {
         return false;
     }
 }
-/**
+/*
  * Creates or updates grade item for the give survey instance
  *
  * Needed by grade_update_mod_grades() in lib/gradelib.php
@@ -572,7 +573,7 @@ function survey_grade_item_update(stdClass $survey) {
     grade_update('mod/survey', $survey->course, 'mod', 'survey', $survey->id, 0, null, $item);
 }
 
-/**
+/*
  * Update survey grades in the gradebook
  *
  * Needed by grade_update_mod_grades() in lib/gradelib.php
@@ -595,7 +596,7 @@ function survey_update_grades(stdClass $survey, $userid = 0) {
 // File API                                                                   //
 // //////////////////////////////////////////////////////////////////////////////
 
-/**
+/*
  * Returns the lists of all browsable file areas within the given module context
  *
  * The file area 'intro' for the activity introduction field is added automatically
@@ -610,7 +611,7 @@ function survey_get_file_areas($course, $cm, $context) {
     return array();
 }
 
-/**
+/*
  * Serves the files from the survey file areas
  *
  * @param stdClass $course
@@ -624,7 +625,7 @@ function survey_get_file_areas($course, $cm, $context) {
 function survey_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
-    $debug = true;
+    $debug = false;
     if ($debug) {
         $debugfile = $CFG->dataroot.'/debug_'.date("m.d.y_H:i:s").'.txt';
 
@@ -694,7 +695,7 @@ function survey_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 // Navigation API                                                             //
 // //////////////////////////////////////////////////////////////////////////////
 
-/**
+/*
  * Extends the global navigation tree by adding survey nodes if there is a relevant content
  *
  * This can be called by an AJAX request so do not rely on $PAGE as it might not be set up properly.
@@ -724,7 +725,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     }
 }
 
-/**
+/*
  * survey_user_can_manage_items
  * @param $cm
  * @return
@@ -735,7 +736,7 @@ function survey_user_can_manage_items($cm) {
     return (has_capability('mod/survey:manageitems', $context, null, true));
 }
 
-/**
+/*
  * survey_user_can_manage_plugin
  * @param $cm
  * @return
@@ -746,7 +747,7 @@ function survey_user_can_manage_plugin($cm) {
     return (has_capability('mod/survey:manageplugin', $context, null, true));
 }
 
-/**
+/*
  * Extends the settings navigation with the survey settings
  *
  * This function is called when the context for the page is a survey module. This is not called by AJAX
@@ -756,17 +757,24 @@ function survey_user_can_manage_plugin($cm) {
  * @param navigation_node $surveynode {@link navigation_node}
  */
 function survey_extend_settings_navigation(settings_navigation $settings, navigation_node $surveynode) {
-    // global $CFG, $PAGE;
+    global $PAGE;
 
-    // $exportlabel = 'SURVEY_TAB'.SURVEY_TABITEMS.'NAME';
-    // $surveynode->add(constant($exportlabel), new moodle_url('view.php', array('s' => $PAGE->cm->instance, 'tab' => SURVEY_TABITEMS)));
+    if ($surveyreportlist = get_plugin_list('surveyreport')) {
+        $icon = new pix_icon('i/report', '', 'moodle', array('class'=>'icon'));
+        $reportnode = $surveynode->add(get_string('report'), null, navigation_node::TYPE_CONTAINER);
+        $paramurl = array('s' => $PAGE->cm->instance, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => SURVEY_SUBMISSION_REPORT);
+        foreach ($surveyreportlist as $pluginname => $pluginpath) {
+            $paramurl['rname'] = $pluginname;
+            $reportnode->add(get_string('pluginname', 'surveyreport_'.$pluginname), new moodle_url('view.php', $paramurl), navigation_node::TYPE_SETTING, null, null, $icon);
+        }
+    }
 }
 
 // //////////////////////////////////////////////////////////////////////////////
-// CUSTOM SURVEY API                                                      //
+// CUSTOM SURVEY API                                                           //
 // //////////////////////////////////////////////////////////////////////////////
 
-/**
+/*
  * Is re-captcha enabled at site level
  *
  * @return boolean true if true
@@ -777,6 +785,11 @@ function survey_site_recaptcha_enabled() {
     return !empty($CFG->recaptchapublickey) && !empty($CFG->recaptchaprivatekey);
 }
 
+/**
+ * survey_get_plugin_list
+ * @param $plugintype=null, $includetype=false, $count=false
+ * @return
+ */
 function survey_get_plugin_list($plugintype=null, $includetype=false, $count=false) {
     $plugincount = 0;
     $field_pluginlist = array();
@@ -826,6 +839,11 @@ function survey_get_plugin_list($plugintype=null, $includetype=false, $count=fal
     }
 }
 
+/**
+ * survey_fetch_items_seeds
+ * @param $canaccessadvancedform, $searchform, $allpages=false
+ * @return
+ */
 function survey_fetch_items_seeds($canaccessadvancedform, $searchform, $allpages=false) {
     $return = 'SELECT si.*
                FROM {survey_item} si
@@ -849,20 +867,30 @@ function survey_fetch_items_seeds($canaccessadvancedform, $searchform, $allpages
         }
     }
     $return .= ' AND si.hide = 0
-            ORDER BY sortindex';
+            ORDER BY si.sortindex';
 
     return $return;
 }
 
+/**
+ * survey_get_view_actions
+ * @param
+ * @return
+ */
 function survey_get_view_actions() {
     return array('view', 'view all');
 }
 
+/**
+ * survey_get_post_actions
+ * @param
+ * @return
+ */
 function survey_get_post_actions() {
     return array('add', 'update');
 }
 
-/**
+/*
  * This gets an array with default options for the editor
  *
  * @return array the options
@@ -871,7 +899,7 @@ function survey_get_editor_options() {
     return array('trusttext' => true, 'subdirs' => false, 'maxfiles' => EDITOR_UNLIMITED_FILES);
 }
 
-/**
+/*
  * survey_reset_items_pages
  * @param $targetuser, $surveyid
  * @return
@@ -887,7 +915,7 @@ function survey_reset_items_pages($surveyid) {
     }
 }
 
-/**
+/*
  * survey_has_submissions
  * @param $findparams
  * @return
@@ -898,7 +926,7 @@ function survey_has_submissions($surveyid) {
     return $DB->count_records('survey_submissions', array('surveyid' => $surveyid));
 }
 
-/**
+/*
  * survey_get_user_style_options
  * @param none
  * @return $filemanager_options

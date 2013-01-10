@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * This is a one-line short description of the file
  *
  * You can have a rather longer description of the file as well,
@@ -72,7 +72,7 @@ $table->column_class('sharinglevel', 'sharinglevel');
 $table->column_class('timecreated', 'timecreated');
 $table->column_class('actions', 'actions');
 
-// definisco delle proprietà generali per tutta la tabella
+// general properties for the whole table
 // $table->set_attribute('cellpadding', '5');
 $table->set_attribute('id', 'managetemplates');
 $table->set_attribute('class', 'generaltable');

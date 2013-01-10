@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * This is a one-line short description of the file
  *
  * You can have a rather longer description of the file as well,
@@ -74,9 +74,7 @@ switch ($action) {
         $DB->set_field('survey_item', 'indent', $nextindent, array('id' => $itemid));
         break;
     default:
-        echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-        echo 'I have $action = '.$action.'<br />';
-        echo 'and the right "case" is missing<br />';
+        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
 }
 
 if ($userfeedback != SURVEY_NOFEEDBACK) {
@@ -136,18 +134,18 @@ $table->column_class('actions', 'actions');
 
 // $table->initialbars(true);
 
-// ometti la casella se duplica la precedente
+// hide the same info whether in two consecutive rows
 // $table->column_suppress('picture');
 // $table->column_suppress('fullname');
 
-// definisco delle proprietà generali per tutta la tabella
+// general properties for the whole table
 // $table->set_attribute('cellpadding', '5');
 $table->set_attribute('id', 'manageitems');
 $table->set_attribute('class', 'generaltable');
 // $table->set_attribute('width', '90%');
 $table->setup();
 
-/******************************************************************************/
+/*****************************************************************************/
 $edittitle = get_string('edit');
 $requiredtitle = get_string('switchrequired', 'survey');
 $optionaltitle = get_string('switchoptional', 'survey');
@@ -176,7 +174,7 @@ $sql = 'SELECT si.*, si.id as itemid, si.plugin, si.type
 if ($table->get_sql_sort()) {
     $sql .= ' ORDER BY '.$table->get_sql_sort();
 } else {
-    $sql .= ' ORDER BY sortindex';
+    $sql .= ' ORDER BY si.sortindex';
 }
 
 if (!$itemseeds = $DB->get_records_sql($sql, array('surveyid' => $survey->id), $table->get_sql_sort())) {
@@ -266,9 +264,7 @@ foreach ($itemseeds as $itemseed) {
                 $content .= '<img src="'.$OUTPUT->pix_url('t/preview').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
                 break;
             default:
-                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                echo 'I have $this->pattern = '.$item->basicform.'<br />';
-                echo 'and the right "case" is missing<br />';
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->pattern = '.$this->pattern);
         }
     }
     $tablerow[] = $content;

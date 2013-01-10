@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * This is a one-line short description of the file
  *
  * You can have a rather longer description of the file as well,
@@ -126,11 +126,20 @@ switch ($currenttab) {
         $strlabel = get_string('tabsubmissionspage5', 'survey'); // search data
         $row[] = new tabobject('idpage5', $elementurl->out(), $strlabel);
 
+        if ($currentpage == SURVEY_SUBMISSION_REPORT) {
+            if (!empty($canaccessreports)) {
+                $paramurl['pag'] = SURVEY_SUBMISSION_REPORT;
+                $elementurl = new moodle_url('/mod/survey/view.php', $paramurl);
+                $strlabel = get_string('tabsubmissionspage6', 'survey'); // search data
+                $row[] = new tabobject('idpage6', $elementurl->out(), $strlabel);
+            }
+        }
+
         if (!empty($canexportdata)) {
             $paramurl['pag'] = SURVEY_SUBMISSION_EXPORT;
             $elementurl = new moodle_url('/mod/survey/view.php', $paramurl);
-            $strlabel = get_string('tabsubmissionspage6', 'survey'); // export data
-            $row[] = new tabobject('idpage6', $elementurl->out(), $strlabel);
+            $strlabel = get_string('tabsubmissionspage7', 'survey'); // export data
+            $row[] = new tabobject('idpage7', $elementurl->out(), $strlabel);
         }
 
         $tabs[] = $row;
@@ -216,9 +225,7 @@ switch ($currenttab) {
 
         break;
     default:
-        echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-        echo 'I have $currenttab = '.$currenttab.'<br />';
-        echo 'and the right "case" is missing<br />';
+        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currenttab = '.$currenttab);
 }
 
 // echo '$tabs:';

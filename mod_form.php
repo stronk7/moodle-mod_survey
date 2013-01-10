@@ -171,7 +171,7 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $countoptions);
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-        // notifyteachers
+        // notifyrole
         $fieldname = 'notifyrole';
         $options = array();
         $context = context_course::instance($COURSE->id);
@@ -186,7 +186,7 @@ class mod_survey_mod_form extends moodleform_mod {
         $select->setMultiple(true);
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-        // notifyteachers
+        // notifymore
         $fieldname = 'notifymore';
         $mform->addElement('textarea', $fieldname, get_string($fieldname, 'survey'), array('wrap' => 'virtual', 'rows' => '10', 'cols' => '65'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');

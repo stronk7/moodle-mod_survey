@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/*
  * @package    surveytemplate
  * @subpackage surveyTemplatePluginNamePlaceholder
  * @copyright  2013 kordan <kordan@mclink.it>
@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // require_once(_LIBRARIES_);
 
-/**
+/*
  * surveytemplate_surveyTemplatePluginNamePlaceholder_add
  * @param
  * @return

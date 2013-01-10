@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * This is a one-line short description of the file
  *
  * You can have a rather longer description of the file as well,
@@ -72,18 +72,18 @@ $table->column_class('actions', 'actions');
 
 // $table->initialbars(true);
 
-// ometti la casella se duplica la precedente
+// hide the same info whether in two consecutive rows
 // $table->column_suppress('picture');
 // $table->column_suppress('fullname');
 
-// definisco delle proprietà generali per tutta la tabella
+// general properties for the whole table
 // $table->set_attribute('cellpadding', '5');
 $table->set_attribute('id', 'validaterelations');
 $table->set_attribute('class', 'generaltable');
 // $table->set_attribute('width', '90%');
 $table->setup();
 
-/******************************************************************************/
+/*****************************************************************************/
 $edittitle = get_string('edit');
 $okstring = get_string('ok');
 
@@ -93,7 +93,7 @@ $sql = 'SELECT si.*, si.id as itemid, si.plugin, si.type
 if ($table->get_sql_sort()) {
     $sql .= ' ORDER BY '.$table->get_sql_sort();
 } else {
-    $sql .= ' ORDER BY sortindex';
+    $sql .= ' ORDER BY si.sortindex';
 }
 
 $itemseeds = $DB->get_recordset_sql($sql, array('surveyid' => $survey->id), $table->get_sql_sort());

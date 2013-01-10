@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-/**
+/*
  * This is a one-line short description of the file
  *
  * You can have a rather longer description of the file as well,
@@ -245,7 +245,7 @@ class surveyitem_baseform extends moodleform {
             //     basicform == alla mia <-- ometto questo vincolo perché il survey creator può cambiare in corso d'opera la basicform dell'item corrente
             //         Mi riservo in fase di salvataggio di segnalare l'errore
 
-            // costruisci l'elenco delle sole plugin cercabili
+            // build the list only for searchable plugins
             $pluginarray = survey_get_plugin_list(SURVEY_FIELD);
             foreach ($pluginarray as $plugin) {
                 $plugintemplate = survey_get_item(null, SURVEY_FIELD, $plugin);
@@ -273,7 +273,8 @@ class surveyitem_baseform extends moodleform {
             $maxlength = 80;
             foreach ($records as $record) {
                 $star = ($record->basicform == SURVEY_NOTPRESENT) ? '(*) ' : '';
-                $thiscontent = survey_get_sid_field_content($record, 'content');
+                $thiscontent = survey_get_sid_field_content($record);
+
                 $content = $star.get_string('pluginname', 'surveyfield_'.$record->plugin).': '.strip_tags($thiscontent);
                 if (strlen($content) > $maxlength) {
                     $content = substr($content, 0, $maxlength);

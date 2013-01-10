@@ -1,10 +1,3 @@
--> at submit time (the last one, when the submission become SURVEY_CLOSED)
-       I must cleanup the submission because of this problem:
-       at t1: the user answers true to a branching question
-       at t2: the user answer the child (via true) question
-       at t3: the user returns back and choose false for the branching question
-       at t4: then answer the child (via false) question.
-       At this stage the db is not correct and needs cleanup.
 -> does it make sense the research per long text?
 -> validate the content of the XML uploaded by the user
 -> at uninstall time delete 'mod_survey' files too
@@ -19,5 +12,5 @@ button is needed. (thanks to JR)
 this module, similar to the Quiz questions manage question types, so
 that an Admin would be able to disable/enable survey question types at
 site level. (thanks to JR)
--> The Autofill question message "Content will be added at submit time " should not be displayed to the Student when taking the Survey, as it does not mean anything to him. That is a message for Teacher, not Student. (thanks to JR)
+-> The Autofill question message "Content will be added at submit time" should not be displayed to the Student when taking the Survey, as it does not mean anything to him. That is a message for Teacher, not Student. (thanks to JR)
 -> Please provide a "View non-respondents feature" (cf. Feedback plugin and Questionnaire New features version).
