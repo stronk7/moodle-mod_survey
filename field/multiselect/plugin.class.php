@@ -331,7 +331,7 @@ class surveyfield_multiselect extends surveyitem_base {
      * @return
      */
     public function userform_child_is_allowed_dynamic($child_parentcontent, $data) {
-        // TODO: questa funzione l'ho volutamente lasciata a metà perché non so cosa viene riportato
+        // TODO: I have intentionally left halfway through this function because I do not know what is reported
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
         $status = true;

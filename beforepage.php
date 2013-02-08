@@ -108,7 +108,7 @@ switch ($currenttab) {
 
                         if ($saveasnewbutton || empty($fromform->submissionid)) { // new record needed
                             // add a new record to survey_submissions
-                            // questo record è la base necessaria per dare luogo agli altri eventuali salvataggi
+                            // this record stub is the basis to build all other possible bailouts
                             $record = new stdClass();
                             $record->surveyid = $survey->id;
                             $record->userid = $USER->id;
@@ -161,10 +161,10 @@ switch ($currenttab) {
 
                     $paramurl['submissionid'] = $submissionid;
 
-                    // $fromform->formpage è la pagina della submissions form correntemente mostrata e dalla quale provengo
+                    // $fromform->formpage is the currently displayed submissions page and it is where I come from
 
-                    // se sono qui è stato fatto un submit con <<, >>, save o saveasnew
-                    // formpage ha la seguente vita:
+                    // if I am here, the form has been submitted using: <<, >>, save o saveasnew
+                    // formpage has the following life:
                     // quando la form viene caricata per la prima volta:
                     //     $formpage acquisice il valore 1 in getparam
                     //     viene messa nella form tramite set_data($prefill); alla fine di submissions.php

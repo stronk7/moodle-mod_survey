@@ -198,7 +198,7 @@ define('SURVEY_MASTERTEMPLATE', 'SURVEYPLUGIN');
  * @return int The id of the newly inserted survey record
  */
 function survey_add_instance($survey) {
-    global $DB;
+    global $CFG, $DB;
 
     $survey->timecreated = time();
 
@@ -250,7 +250,7 @@ function survey_add_instance($survey) {
  * @return boolean Success/Fail
  */
 function survey_update_instance($survey) {
-    global $DB;
+    global $CFG, $DB;
 
     $survey->timemodified = time();
     $survey->id = $survey->instance;

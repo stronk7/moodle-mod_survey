@@ -29,7 +29,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 define('SURVEY_GHEIGHT', 500);
-define('SURVEY_GWIDTH' , 600);
+define('SURVEY_GWIDTH' , 800);
 
 /*
  * survey_user_can_do_anything
@@ -128,7 +128,7 @@ function surveyreport_displaydistribution($cm, $urvey, $itemid, $submissionscoun
 
 //     echo $OUTPUT->heading('And now the distribution of the answers to the selected item');
 //
-//     $t = new html_table();survey_get_sid_field_content
+//     $t = new html_table();
 //
 //     $cell = new html_table_cell();
 //     $cell->text = ($record);

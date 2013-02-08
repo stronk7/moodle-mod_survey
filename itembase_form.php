@@ -357,7 +357,7 @@ class surveyitem_baseform extends moodleform {
 
         $errors = array();
 
-        // se default == noanswer ma è obbligatorio => errore
+        // if (default == noanswer se default == noanswer ma è obbligatorio => errorese default == noanswer ma è obbligatorio => errore the field is mandatory) => error
         if ( isset($data['defaultvalue_check']) && isset($data['required']) ) {
             $a = get_string('noanswer', 'survey');
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);

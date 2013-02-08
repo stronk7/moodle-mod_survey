@@ -450,7 +450,7 @@ class surveyfield_date extends surveyitem_base {
                         $mform->setDefault($fieldname.'_noanswer', '1');
                         break;
                     case SURVEY_LIKELASTDEFAULT:
-                        // cerca la più recente submission fatta da me
+                        // look for the most recent submission I made
                         $sql = 'userid = :userid ORDER BY timecreated DESC LIMIT 1';
                         $mylastsubmissionid = $DB->get_field_select('survey_submissions', 'id', $sql, array('userid' => $USER->id), IGNORE_MISSING);
                         if ($time = $DB->get_field('survey_userdata', 'content', array('itemid' => $this->itemid, 'submissionid' => $mylastsubmissionid), IGNORE_MISSING)) {

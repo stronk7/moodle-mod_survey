@@ -314,7 +314,7 @@ function survey_manage_item_hide($confirm, $cm, $itemid, $type) {
     global $DB, $OUTPUT;
 
     // build tohidelist
-    // qui devo selezionare tutto l'albero discendente
+    // here I must select the whole tree down
     $tohidelist = array($itemid);
     $sortindextohidelist = array();
     survey_add_tree_node($tohidelist, $sortindextohidelist);
@@ -377,7 +377,7 @@ function survey_move_regular_items($itemid, $newbasicform) {
     global $DB;
 
     // build tohidelist
-    // qui devo selezionare tutto l'albero discendente
+    // here I must select the whole tree down
     $tohidelist = array($itemid);
     $sortindextohidelist = array();
     survey_add_regular_item_node($tohidelist, $sortindextohidelist, $newbasicform);
@@ -541,7 +541,7 @@ function survey_assign_pages($canaccessadvancedform=false) {
         if ($items = $DB->get_recordset('survey_item', $conditions, 'sortindex', 'id, type, plugin, parentid, '.$pagefield.', sortindex')) {
             foreach ($items as $item) {
 
-                if ($item->plugin == 'pagebreak') { // è un page break
+                if ($item->plugin == 'pagebreak') { // it is a page break
                     if (!$lastwaspagebreak) {
                         $pagenumber++;
                     }
@@ -574,10 +574,10 @@ function survey_assign_pages($canaccessadvancedform=false) {
  */
 function survey_next_not_empty_page($surveyid, $canaccessadvancedform, $formpage, $forward, $submissionid=0, $maxformpage=0) {
     global $DB;
-    // a seguito delle risposte ottenute, nella pagina >> o << a quella che ti passo potrebbero non esserci domande da mostrare
-    // trova la prima pagina successiva CON domande
-    // nel caso peggiore otterrò 1 o $maxformpage
-    // se anche in $maxformpage non dovessi avere item da mostrare, restituisco returnpage = 0
+    // depending on user provided answer, in the previous or next page there may be no questions to display
+    // get the first page WITH questions
+    // in the worst case will get 1 or $maxformpage
+    // if even in $maxformpage I can not find items to show, return $returnpage = 0
 
     if (!empty($forward) && empty($maxformpage)) {
         throw new moodle_exception('emptymaxformpage', 'survey');
@@ -628,13 +628,13 @@ function survey_page_has_items($surveyid, $canaccessadvancedform, $formpage, $su
     }
 
     foreach ($itemseeds as $itemseed) {
-        // devo verificare che la condizione di visibilità sia verificata
+        // make sure that the visibility condition is verified
         if (survey_child_is_allowed_static($submissionid, $itemseed)) {
             return $formpage;
         }
     }
 
-    // se non sei riuscito ad uscire nelle due occasioni precedenti... dichiara la sconfitta
+    // if you're not able to get out in the two previous occasions ... declares defeat
     return 0;
 }
 
@@ -709,11 +709,12 @@ function survey_set_prefill($survey, $canaccessadvancedform, $formpage, $submiss
  *   $fieldname = survey_radio_1452_noanswer
  *   $fieldname = survey_radio_1452_text
  *
- * questa funzione svolge il seguente compito:
+ * This function performs the following task:
  * 1. raggruppa le informazioni, (eventualmente) distribuite sui vari elementi della
  *    form che fanno riferimento allo stesso itemid, nel vettore $infoperitem
+ * 1. groups informations (if any) gathered from the various elements of the form referring to the same itemid, in the array $infoperitem
  *
- *    Es.:
+ *    i.e.:
  *    $infoperitem = Array (
  *        [148] => stdClass Object (
  *            [surveyid] => 1
@@ -757,9 +758,9 @@ function survey_set_prefill($survey, $canaccessadvancedform, $formpage, $submiss
  *            )
  *        )
  * 2. once $infoperitem is onboard...
- *    aggiorno o creo il record appropriato
- *    chiedendo alla parent class di gestire l'informazione che le appartiene
- *    passandole $iteminfo->extra
+ *    I update or I create teh corresponding record
+ *    asking to the parent class to manage its own data
+ *    passing it $iteminfo->extra
  */
 function survey_save_user_data($fromform) {
     global $CFG, $DB, $OUTPUT;
@@ -828,13 +829,13 @@ function survey_save_user_data($fromform) {
     //     echo '$infoperitem = <br />';
     //     print_object($infoperitem);
     // } else {
-    //     echo 'Non ho trovato nulla<br />';
+    //     echo 'Nothing has been found<br />';
     // }
 
     // once $infoperitem is onboard...
-    //    I update or create the corresponding record
-    //    asking to parent class to manage the information it holds
-    //    passing it $iteminfo->extra
+    //    I update/create the corresponding record
+    //    asking to parent class to manage its informations
+    //    I Pass to the parent class the $iteminfo->extra
 
     foreach ($infoperitem as $iteminfo) {
         if (!$olduserdata = $DB->get_record('survey_userdata', array('submissionid' => $iteminfo->submissionid, 'itemid' => $iteminfo->itemid))) {
@@ -1102,7 +1103,7 @@ function survey_get_my_groups($cm) {
  * @return
  */
 function survey_show_thanks_page($survey, $cm) {
-    global $DB, $OUTPUT;
+    global $DB, $OUTPUT, $USER;
 
     // $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
     // $mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
@@ -1117,8 +1118,8 @@ function survey_show_thanks_page($survey, $cm) {
 
     $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABSUBMISSIONS);
     // just to save a query
-    $alreadysubmitted = empty($survey->maxentries) ? 0 : $DB->count_records('survey_submissions', array('userid' => $USER->id));
-    if (($alreadysubmitted < $survey->maxentries) || empty($survey->maxentries)) { // se può inviare una nuova survey
+    $alreadysubmitted = empty($survey->maxentries) ? 0 : $DB->count_records('survey_submissions', array('surveyid' => $survey->id, 'userid' => $USER->id));
+    if (($alreadysubmitted < $survey->maxentries) || empty($survey->maxentries)) { // if the user is allowed to submit one more survey
         $paramurl['pag'] = SURVEY_SUBMISSION_NEW;
         $buttonurl = new moodle_url('view.php', $paramurl);
         $onemore = new single_button($buttonurl, get_string('onemorerecord', 'survey'));
@@ -1129,12 +1130,10 @@ function survey_show_thanks_page($survey, $cm) {
 
         echo $OUTPUT->confirm($message, $onemore, $gotolist);
     } else {
-        echo $OUTPUT->box_start();
-        echo $message;
+        echo $OUTPUT->box($message, 'notice centerpara');
         $paramurl['pag'] = SURVEY_SUBMISSION_MANAGE;
         $buttonurl = new moodle_url('view.php', $paramurl);
-        echo $OUTPUT->single_button($buttonurl, get_string('gotolist'));
-        echo $OUTPUT->box_end();
+        echo $OUTPUT->single_button($buttonurl, get_string('gotolist', 'survey'));
     }
 }
 
@@ -1342,22 +1341,22 @@ function survey_find_submissions($findparams) {
     global $DB;
 
     foreach ($findparams as $itemid => $elementcontent) {
-        // mi interessano solo i campi della search form che contengono qualcosa ma che non contengono SURVEY_NOANSWERVALUE
+        // I am interested only to non empty fields BUT different from SURVEY_NOANSWERVALUE
         if ($elementcontent == SURVEY_NOANSWERVALUE) {
             unset($findparams[$itemid]);
         }
     }
 
-    // il processo di ricerca è complicato
-    // un procedimento è il seguente:
+    // the search process is tricky
+    // the procedure is:
     // step 1:
-    //     trova tutti gli ID delle submissions che soddisfano la prima condizione
+    //     get the set of submissions matching the first condition
     // step 2:
-    //     verifica che ogni submissionid trovata soddisfi tutte le altre condizioni
-    //     se almeno una fallisce cancella la submission id dalla collezione iniziale
-    //     altrimenti, hai trovato la submission che cerchi
+    //     check the found set for all the other conditions
+    //     if at least one condition does not match, delete the submission id from the starting set
+    //     Whatever will not be deleted, is the submission matching ALL submitted requests
 
-    // la form di ricerca è vuota: restituisci tutte le submissions
+    // if the search form is empty (has no conditions) return all the submissions
     if (!$findparams) {
         return;
     }
@@ -1366,7 +1365,6 @@ function survey_find_submissions($findparams) {
     $firstitemid = $keys[0];
     $firstcontent = $findparams[$firstitemid];
 
-    // array_shift never does what I would
     unset($findparams[$firstitemid]); // drop the first element of $findparams
 
     // should work but does not: MDL-27629
@@ -1383,7 +1381,7 @@ function survey_find_submissions($findparams) {
     }
 
     if (!$findparams) {
-        // se non ci sono altri vincoli: hai finito
+        // if no more constaints are available, the process is finished
         return $submissionidlist;
     }
 
@@ -1395,7 +1393,7 @@ function survey_find_submissions($findparams) {
         if ($submissionidlist = $DB->get_records_select('survey_userdata', $where, $params, 'submissionid', 'submissionid')) {
             $submissionidlist = array_keys($submissionidlist);
         } else {
-            // nessuna submission soddisfa le richieste
+            // not any submission meets all the constraints
             return array();
         }
     }
@@ -1456,7 +1454,7 @@ function survey_display_user_feedback($userfeedback) {
 
 /*
  * survey_plugin_build
- * @param $targetuser, $surveyid
+ * @param $data
  * @return
  */
 function survey_plugin_build($data) {
@@ -1473,10 +1471,10 @@ function survey_plugin_build($data) {
 
     foreach ($master_filelist as $master_file) {
         $master_fileinfo = pathinfo($master_file);
-        // crea la struttura nella cartella temporanea
-        // la cartella si crea SENZA il $CFG->tempdir/
+        // build the structure of the temporary folder
+        // the folder has to be created WITHOUT $CFG->tempdir/
         $temp_path = $temp_subdir.'/'.dirname($master_file);
-        make_temp_directory($temp_path); // <-- creata la cartella del file corrente
+        make_temp_directory($temp_path); // <-- just created the folder for the current plugin
 
         $temp_fullpath = $CFG->tempdir.'/'.$temp_path;
 
@@ -1492,7 +1490,7 @@ function survey_plugin_build($data) {
             continue;
         }
 
-        if ($master_fileinfo['dirname'] == 'lang/en') { // è il file di lingua. Già fatto!
+        if ($master_fileinfo['dirname'] == 'lang/en') { // it is the lang file. It has already been done!
             continue;
         }
 
@@ -1521,7 +1519,6 @@ function survey_plugin_build($data) {
             // /////////////////////////////////////////////////////////////////////////////////////
 
             // in which language the user is using Moodle?
-
             $userlang = current_language();
             $temp_path = $CFG->tempdir.'/'.$temp_subdir.'/lang/'.$userlang;
 
@@ -2393,8 +2390,8 @@ function survey_get_sharinglevel_options($cmid, $survey) {
  * @return null
  */
 function survey_get_contextstring_from_sharinglevel($contextlevel) {
-    // a secondo del livello di condivisione la component può essere:
-    // system, category, mod_survey
+    // depending on the context level the component can be:
+    // system, category, course, module, user
     switch ($contextlevel) {
         case CONTEXT_SYSTEM:
             $contextstring = 'system';

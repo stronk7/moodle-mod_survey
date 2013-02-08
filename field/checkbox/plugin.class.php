@@ -410,7 +410,7 @@ class surveyfield_checkbox extends surveyitem_base {
             $disabilitationinfo[] = $mformelementinfo;
         }
 
-        // se fra i $constraintsvalues ce ne è uno che non è fra i $valuelabel
+        // if among $constraintsvalues ​​there is one that is not among $valueLabel
         if (count($constraintsvalues)) {
             $mformelementinfo = new stdClass();
             $mformelementinfo->parentname = $fieldname.'_other';

@@ -41,8 +41,9 @@ if (!$DB->count_records_select('survey_item', $whereclause, $whereparams)) {
 // ////////////////////////////
 
 // ////////////////////////////
-// is the user allowed to add a new survey?
-if ($survey->maxentries) {
+// is the user allowed to submit one more survey?
+// do not trigger $survey->maxentries if you are submitting an already displayed form (&& !$fromform)
+if ($survey->maxentries && !$fromform) {
     $alreadysubmitted = $DB->count_records('survey_submissions', array('surveyid' => $survey->id, 'userid' => $USER->id));
     if ($alreadysubmitted >= $survey->maxentries) { // > should never be verified
         $params = array('id' => $cm->id, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => SURVEY_SUBMISSION_MANAGE);
@@ -56,7 +57,7 @@ if ($survey->maxentries) {
         die;
     }
 }
-// end of: is the user allowed to add a new survey?
+// end of: is the user allowed to submit one more survey?
 // ////////////////////////////
 
 // ////////////////////////////
