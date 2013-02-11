@@ -40,6 +40,7 @@ class survey_pluginform extends surveyitem_baseform {
         // -------------------------------------------------------------------------------
         // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
+        $hassubmissions = $this->_customdata->hassubmissions;
 
         // -------------------------------------------------------------------------------
         // comincio con la "sezione" comune della form
@@ -71,27 +72,29 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname, $item->lowerbound);
         }
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        $fieldname = 'validation';
-        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
+        if (!$hassubmissions) {
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            // here I open a new fieldset
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            $fieldname = 'validation';
+            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        // ----------------------------------------
-        // newitem::lowerbound
-        // ----------------------------------------
-        $fieldname = 'lowerbound';
-        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_shortage'), $years);
-        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_shortage');
-        $mform->setDefault($fieldname, '0');
+            // ----------------------------------------
+            // newitem::lowerbound
+            // ----------------------------------------
+            $fieldname = 'lowerbound';
+            $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_shortage'), $years);
+            $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_shortage');
+            $mform->setDefault($fieldname, '0');
 
-        // ----------------------------------------
-        // newitem::upperbound
-        // ----------------------------------------
-        $fieldname = 'upperbound';
-        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_shortage'), $years);
-        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_shortage');
-        $mform->setDefault($fieldname, $maximumshortage);
+            // ----------------------------------------
+            // newitem::upperbound
+            // ----------------------------------------
+            $fieldname = 'upperbound';
+            $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_shortage'), $years);
+            $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_shortage');
+            $mform->setDefault($fieldname, $maximumshortage);
+        }
 
         $this->add_item_buttons();
     }

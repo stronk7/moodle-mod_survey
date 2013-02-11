@@ -75,35 +75,37 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname.'_month', $item->lowerbound_month);
         }
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        $fieldname = 'validation';
-        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
+        if (!$hassubmissions) {
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            // here I open a new fieldset
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            $fieldname = 'validation';
+            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        // ----------------------------------------
-        // newitem::lowerbound
-        // ----------------------------------------
-        $fieldname = 'lowerbound';
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_age'), ' ', false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_age');
-        $mform->setDefault($fieldname.'_year', 0);
-        $mform->setDefault($fieldname.'_month', 0);
+            // ----------------------------------------
+            // newitem::lowerbound
+            // ----------------------------------------
+            $fieldname = 'lowerbound';
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
+            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_age'), ' ', false);
+            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_age');
+            $mform->setDefault($fieldname.'_year', 0);
+            $mform->setDefault($fieldname.'_month', 0);
 
-        // ----------------------------------------
-        // newitem::upperbound
-        // ----------------------------------------
-        $fieldname = 'upperbound';
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_age'), ' ', false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_age');
-        $mform->setDefault($fieldname.'_year', $maximumage);
-        $mform->setDefault($fieldname.'_month', 11);
+            // ----------------------------------------
+            // newitem::upperbound
+            // ----------------------------------------
+            $fieldname = 'upperbound';
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
+            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_age'), ' ', false);
+            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_age');
+            $mform->setDefault($fieldname.'_year', $maximumage);
+            $mform->setDefault($fieldname.'_month', 11);
+        }
 
         $this->add_item_buttons();
     }

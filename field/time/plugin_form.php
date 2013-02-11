@@ -45,6 +45,7 @@ class survey_pluginform extends surveyitem_baseform {
 
         // -------------------------------------------------------------------------------
         $mform = $this->_form;
+        $hassubmissions = $this->_customdata->hassubmissions;
 
         // -------------------------------------------------------------------------------
         $hoptions = array();
@@ -79,44 +80,47 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname.'_hour', $justadefault['hours']);
             $mform->setDefault($fieldname.'_minute', $justadefault['minutes']);
         }
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        $fieldname = 'validation';
-        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        // ----------------------------------------
-        // newitem::lowerbound
-        // ----------------------------------------
-        $fieldname = 'lowerbound';
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hoptions);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $moptions);
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_time'), ' ', false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_time');
-        $mform->setDefault($fieldname.'_hour', 0);
-        $mform->setDefault($fieldname.'_minute', 0);
+        if (!$hassubmissions) {
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            // here I open a new fieldset
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            $fieldname = 'validation';
+            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        // ----------------------------------------
-        // newitem::upperbound
-        // ----------------------------------------
-        $fieldname = 'upperbound';
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hoptions);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $moptions);
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_time'), ' ', false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_time');
-        $mform->setDefault($fieldname.'_hour', 23);
-        $mform->setDefault($fieldname.'_minute', 59);
+            // ----------------------------------------
+            // newitem::lowerbound
+            // ----------------------------------------
+            $fieldname = 'lowerbound';
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hoptions);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $moptions);
+            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_time'), ' ', false);
+            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_time');
+            $mform->setDefault($fieldname.'_hour', 0);
+            $mform->setDefault($fieldname.'_minute', 0);
 
-        // ----------------------------------------
-        // newitem::rangetype
-        // ----------------------------------------
-        $fieldname = 'rangetype';
-        $options = array(SURVEYFIELD_TIME_INTERNALRANGE => get_string('internalrange', 'surveyfield_time'), SURVEYFIELD_TIME_EXTERNALRANGE => get_string('externalrange', 'surveyfield_time'));
-        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_time'), $options);
-        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_time');
-        $mform->setType($fieldname, PARAM_INT);
+            // ----------------------------------------
+            // newitem::upperbound
+            // ----------------------------------------
+            $fieldname = 'upperbound';
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hoptions);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $moptions);
+            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_time'), ' ', false);
+            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_time');
+            $mform->setDefault($fieldname.'_hour', 23);
+            $mform->setDefault($fieldname.'_minute', 59);
+
+            // ----------------------------------------
+            // newitem::rangetype
+            // ----------------------------------------
+            $fieldname = 'rangetype';
+            $options = array(SURVEYFIELD_TIME_INTERNALRANGE => get_string('internalrange', 'surveyfield_time'), SURVEYFIELD_TIME_EXTERNALRANGE => get_string('externalrange', 'surveyfield_time'));
+            $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_time'), $options);
+            $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_time');
+            $mform->setType($fieldname, PARAM_INT);
+        }
 
         $this->add_item_buttons();
     }

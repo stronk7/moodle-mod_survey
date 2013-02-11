@@ -228,96 +228,98 @@ class surveyitem_baseform extends moodleform {
             }
         }
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        $fieldname = 'branching_fs';
-        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
-
-        // ----------------------------------------
-        // newitem::parentid
-        // ----------------------------------------
-        $fieldname = 'parentid';
-        if ($item->item_form_requires[$fieldname]) {
-            // create the list of each item with:
-            //     sortindex lower than mine (whether already exists)
-            //     item_is_matchable() == true
-            //     basicform == alla mia <-- ometto questo vincolo perché il survey creator può cambiare in corso d'opera la basicform dell'item corrente
-            //         Mi riservo in fase di salvataggio di segnalare l'errore
-
-            // build the list only for searchable plugins
-            $pluginarray = survey_get_plugin_list(SURVEY_FIELD);
-            foreach ($pluginarray as $plugin) {
-                $plugintemplate = survey_get_item(null, SURVEY_FIELD, $plugin);
-                if (!$plugintemplate->item_is_matchable()) {
-                    unset($pluginarray[$plugin]);
-                }
-            }
-            $pluginlist = '(\''.implode("','", $pluginarray).'\')';
-
-            $sql = 'SELECT *
-                    FROM {survey_item}
-                    WHERE surveyid = :surveyid';
-            $sqlparams = array('surveyid' => $survey->id);
-            if ($item->item_has_sortindex()) {
-                $sql .= ' AND sortindex < :sortindex';
-                $sqlparams['sortindex'] = $item->sortindex;
-            }
-            $sql .= ' AND plugin IN '.$pluginlist.'
-                        ORDER BY sortindex';
-            $records = $DB->get_recordset_sql($sql, $sqlparams);
-
-            $quickform = new HTML_QuickForm();
-            $select = $quickform->createElement('select', $fieldname, get_string($fieldname, 'survey'));
-            $select->addOption(get_string('choosedots'), 0);
-            $maxlength = 80;
-            foreach ($records as $record) {
-                $star = ($record->basicform == SURVEY_NOTPRESENT) ? '(*) ' : '';
-                $thiscontent = survey_get_sid_field_content($record);
-
-                $content = $star.get_string('pluginname', 'surveyfield_'.$record->plugin).': '.strip_tags($thiscontent);
-                if (strlen($content) > $maxlength) {
-                    $content = substr($content, 0, $maxlength);
-                }
-                $disabled = ($record->hide == 1) ? array('disabled' => 'disabled') : null;
-                $select->addOption($content, $record->id, $disabled);
-            }
-            $records->close();
-
-            $mform->addElement($select);
-            $mform->addHelpButton($fieldname, $fieldname, 'survey');
-            $mform->setType($fieldname, PARAM_INT);
-        }
-
-        // ----------------------------------------
-        // newitem::parentcontent
-        // ----------------------------------------
-        $fieldname = 'parentcontent';
-        if ($item->item_form_requires[$fieldname]) {
-            $mform->addElement('textarea', $fieldname, get_string($fieldname, 'survey'), array('wrap' => 'virtual', 'rows' => '5', 'cols' => '45'));
-            $mform->addHelpButton($fieldname, $fieldname, 'survey');
-            $mform->setType($fieldname, PARAM_RAW);
+        if (!$hassubmissions) {
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            // here I open a new fieldset
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            $fieldname = 'branching_fs';
+            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
             // ----------------------------------------
-            // newitem::parentformat
+            // newitem::parentid
             // ----------------------------------------
-            $fieldname = 'parentformat';
-            $a = '<ul>';
-            foreach ($pluginarray as $plugin) {
-                $a .= '<li><div>';
-                $a .= '<div class="pluginname">'.get_string('pluginname', 'surveyfield_'.$plugin).': </div>';
-                $a .= '<div class="inputformat">'.get_string('parentformat', 'surveyfield_'.$plugin).'</div>';
-                $a .= '</div></li>'."\n";
-            }
-            $a .= '</ul>';
-            $mform->addElement('static', $fieldname, get_string('note', 'survey'), get_string($fieldname, 'survey', $a));
-        }
+            $fieldname = 'parentid';
+            if ($item->item_form_requires[$fieldname]) {
+                // create the list of each item with:
+                //     sortindex lower than mine (whether already exists)
+                //     item_is_matchable() == true
+                //     basicform == alla mia <-- ometto questo vincolo perché il survey creator può cambiare in corso d'opera la basicform dell'item corrente
+                //         Mi riservo in fase di salvataggio di segnalare l'errore
 
-        // ----------------------------------------
-        // newitem::parentvalue
-        // ----------------------------------------
-        // $fieldname = 'parentvalue';
-        // $mform->addElement('hidden', $fieldname, '');
+                // build the list only for searchable plugins
+                $pluginarray = survey_get_plugin_list(SURVEY_FIELD);
+                foreach ($pluginarray as $plugin) {
+                    $plugintemplate = survey_get_item(null, SURVEY_FIELD, $plugin);
+                    if (!$plugintemplate->item_is_matchable()) {
+                        unset($pluginarray[$plugin]);
+                    }
+                }
+                $pluginlist = '(\''.implode("','", $pluginarray).'\')';
+
+                $sql = 'SELECT *
+                        FROM {survey_item}
+                        WHERE surveyid = :surveyid';
+                $sqlparams = array('surveyid' => $survey->id);
+                if ($item->item_has_sortindex()) {
+                    $sql .= ' AND sortindex < :sortindex';
+                    $sqlparams['sortindex'] = $item->sortindex;
+                }
+                $sql .= ' AND plugin IN '.$pluginlist.'
+                            ORDER BY sortindex';
+                $records = $DB->get_recordset_sql($sql, $sqlparams);
+
+                $quickform = new HTML_QuickForm();
+                $select = $quickform->createElement('select', $fieldname, get_string($fieldname, 'survey'));
+                $select->addOption(get_string('choosedots'), 0);
+                $maxlength = 80;
+                foreach ($records as $record) {
+                    $star = ($record->basicform == SURVEY_NOTPRESENT) ? '(*) ' : '';
+                    $thiscontent = survey_get_sid_field_content($record);
+
+                    $content = $star.get_string('pluginname', 'surveyfield_'.$record->plugin).': '.strip_tags($thiscontent);
+                    if (strlen($content) > $maxlength) {
+                        $content = substr($content, 0, $maxlength);
+                    }
+                    $disabled = ($record->hide == 1) ? array('disabled' => 'disabled') : null;
+                    $select->addOption($content, $record->id, $disabled);
+                }
+                $records->close();
+
+                $mform->addElement($select);
+                $mform->addHelpButton($fieldname, $fieldname, 'survey');
+                $mform->setType($fieldname, PARAM_INT);
+            }
+
+            // ----------------------------------------
+            // newitem::parentcontent
+            // ----------------------------------------
+            $fieldname = 'parentcontent';
+            if ($item->item_form_requires[$fieldname]) {
+                $mform->addElement('textarea', $fieldname, get_string($fieldname, 'survey'), array('wrap' => 'virtual', 'rows' => '5', 'cols' => '45'));
+                $mform->addHelpButton($fieldname, $fieldname, 'survey');
+                $mform->setType($fieldname, PARAM_RAW);
+
+                // ----------------------------------------
+                // newitem::parentformat
+                // ----------------------------------------
+                $fieldname = 'parentformat';
+                $a = '<ul>';
+                foreach ($pluginarray as $plugin) {
+                    $a .= '<li><div>';
+                    $a .= '<div class="pluginname">'.get_string('pluginname', 'surveyfield_'.$plugin).': </div>';
+                    $a .= '<div class="inputformat">'.get_string('parentformat', 'surveyfield_'.$plugin).'</div>';
+                    $a .= '</div></li>'."\n";
+                }
+                $a .= '</ul>';
+                $mform->addElement('static', $fieldname, get_string('note', 'survey'), get_string($fieldname, 'survey', $a));
+            }
+
+            // ----------------------------------------
+            // newitem::parentvalue
+            // ----------------------------------------
+            // $fieldname = 'parentvalue';
+            // $mform->addElement('hidden', $fieldname, '');
+        }
 
         if ($item->item_get_type() == SURVEY_FIELD) {
             // /////////////////////////////////////////////////////////////////////////////////////////////////

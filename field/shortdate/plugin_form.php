@@ -45,6 +45,7 @@ class survey_pluginform extends surveyitem_baseform {
 
         // -------------------------------------------------------------------------------
         $mform = $this->_form;
+        $hassubmissions = $this->_customdata->hassubmissions;
 
         // -------------------------------------------------------------------------------
         $startyear = $this->_customdata->survey->startyear;
@@ -83,35 +84,37 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname.'_year', $justadefault['year']);
         }
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        $fieldname = 'validation';
-        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
+        if (!$hassubmissions) {
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            // here I open a new fieldset
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            $fieldname = 'validation';
+            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        // ----------------------------------------
-        // newitem::lowerbound
-        // ----------------------------------------
-        $fieldname = 'lowerbound';
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_shortdate'), ' ', false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_shortdate');
-        $mform->setDefault($fieldname.'_month', 1);
-        $mform->setDefault($fieldname.'_year', $startyear);
+            // ----------------------------------------
+            // newitem::lowerbound
+            // ----------------------------------------
+            $fieldname = 'lowerbound';
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
+            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_shortdate'), ' ', false);
+            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_shortdate');
+            $mform->setDefault($fieldname.'_month', 1);
+            $mform->setDefault($fieldname.'_year', $startyear);
 
-        // ----------------------------------------
-        // newitem::upperbound
-        // ----------------------------------------
-        $fieldname = 'upperbound';
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_shortdate'), ' ', false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_shortdate');
-        $mform->setDefault($fieldname.'_month', 12);
-        $mform->setDefault($fieldname.'_year', $stopyear);
+            // ----------------------------------------
+            // newitem::upperbound
+            // ----------------------------------------
+            $fieldname = 'upperbound';
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
+            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_shortdate'), ' ', false);
+            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_shortdate');
+            $mform->setDefault($fieldname.'_month', 12);
+            $mform->setDefault($fieldname.'_year', $stopyear);
+        }
 
         $this->add_item_buttons();
     }

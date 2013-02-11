@@ -43,18 +43,20 @@ if (!$DB->count_records_select('survey_item', $whereclause, $whereparams)) {
 // ////////////////////////////
 // is the user allowed to submit one more survey?
 // do not trigger $survey->maxentries if you are submitting an already displayed form (&& !$fromform)
-if ($survey->maxentries && !$fromform) {
-    $alreadysubmitted = $DB->count_records('survey_submissions', array('surveyid' => $survey->id, 'userid' => $USER->id));
-    if ($alreadysubmitted >= $survey->maxentries) { // > should never be verified
-        $params = array('id' => $cm->id, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => SURVEY_SUBMISSION_MANAGE);
-        $redirecturl = new moodle_url('view.php', $params);
+if ($currentpage == SURVEY_SUBMISSION_NEW) {
+    if ($survey->maxentries && !$fromform) {
+        $alreadysubmitted = $DB->count_records('survey_submissions', array('surveyid' => $survey->id, 'userid' => $USER->id));
+        if ($alreadysubmitted >= $survey->maxentries) { // > should never be verified
+            $params = array('id' => $cm->id, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => SURVEY_SUBMISSION_MANAGE);
+            $redirecturl = new moodle_url('view.php', $params);
 
-        echo $OUTPUT->box_start();
-        echo get_string('nomorerecordsallowed', 'survey', $survey->maxentries);
-        echo $OUTPUT->single_button($redirecturl, get_string('continue'));
-        echo $OUTPUT->box_end();
-        echo $OUTPUT->footer();
-        die;
+            echo $OUTPUT->box_start();
+            echo get_string('nomorerecordsallowed', 'survey', $survey->maxentries);
+            echo $OUTPUT->single_button($redirecturl, get_string('continue'));
+            echo $OUTPUT->box_end();
+            echo $OUTPUT->footer();
+            die;
+        }
     }
 }
 // end of: is the user allowed to submit one more survey?

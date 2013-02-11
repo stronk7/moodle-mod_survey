@@ -45,6 +45,7 @@ class survey_pluginform extends surveyitem_baseform {
 
         // -------------------------------------------------------------------------------
         $mform = $this->_form;
+        $hassubmissions = $this->_customdata->hassubmissions;
 
         // -------------------------------------------------------------------------------
         $startyear = $this->_customdata->survey->startyear;
@@ -90,47 +91,49 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname.'_minute', $justadefault['minutes']);
         }
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        $fieldname = 'validation';
-        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
+        if (!$hassubmissions) {
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            // here I open a new fieldset
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            $fieldname = 'validation';
+            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        // ----------------------------------------
-        // newitem::lowerbound
-        // ----------------------------------------
-        $fieldname = 'lowerbound';
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_day', '', $days);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hours);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $minutes);
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_datetime'), ' ', false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_datetime');
-        $mform->setDefault($fieldname.'_year', $startyear);
-        $mform->setDefault($fieldname.'_month', '1');
-        $mform->setDefault($fieldname.'_day', '1');
-        $mform->setDefault($fieldname.'_hour', '0');
-        $mform->setDefault($fieldname.'_minute', '0');
+            // ----------------------------------------
+            // newitem::lowerbound
+            // ----------------------------------------
+            $fieldname = 'lowerbound';
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_day', '', $days);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hours);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $minutes);
+            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_datetime'), ' ', false);
+            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_datetime');
+            $mform->setDefault($fieldname.'_year', $startyear);
+            $mform->setDefault($fieldname.'_month', '1');
+            $mform->setDefault($fieldname.'_day', '1');
+            $mform->setDefault($fieldname.'_hour', '0');
+            $mform->setDefault($fieldname.'_minute', '0');
 
-        // ----------------------------------------
-        // newitem::upperbound
-        // ----------------------------------------
-        $fieldname = 'upperbound';
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_day', '', $days);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hours);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $minutes);
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_datetime'), ' ', false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_datetime');
-        $mform->setDefault($fieldname.'_year', $stopyear);
-        $mform->setDefault($fieldname.'_month', '12');
-        $mform->setDefault($fieldname.'_day', '31');
-        $mform->setDefault($fieldname.'_hour', '23');
-        $mform->setDefault($fieldname.'_minute', '59');
+            // ----------------------------------------
+            // newitem::upperbound
+            // ----------------------------------------
+            $fieldname = 'upperbound';
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_day', '', $days);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hours);
+            $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $minutes);
+            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_datetime'), ' ', false);
+            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_datetime');
+            $mform->setDefault($fieldname.'_year', $stopyear);
+            $mform->setDefault($fieldname.'_month', '12');
+            $mform->setDefault($fieldname.'_day', '31');
+            $mform->setDefault($fieldname.'_hour', '23');
+            $mform->setDefault($fieldname.'_minute', '59');
+        }
 
         $this->add_item_buttons();
     }

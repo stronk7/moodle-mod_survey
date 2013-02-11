@@ -38,6 +38,7 @@ class survey_pluginform extends surveyitem_baseform {
         // -------------------------------------------------------------------------------
         // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
+        $hassubmissions = $this->_customdata->hassubmissions;
 
         // -------------------------------------------------------------------------------
         // comincio con la "sezione" comune della form
@@ -54,61 +55,63 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
         $mform->setType($fieldname, PARAM_TEXT); // maybe I use ',' as decimal separator so it is not a INT and not a FLOAT
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        $fieldname = 'validation';
-        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
+        if (!$hassubmissions) {
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            // here I open a new fieldset
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            $fieldname = 'validation';
+            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        // ----------------------------------------
-        // newitem::signed
-        // ----------------------------------------
-        $fieldname = 'signed';
-        $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'surveyfield_numeric'));
-        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
-        $mform->setType($fieldname, PARAM_INT);
+            // ----------------------------------------
+            // newitem::signed
+            // ----------------------------------------
+            $fieldname = 'signed';
+            $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'surveyfield_numeric'));
+            $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
+            $mform->setType($fieldname, PARAM_INT);
 
-        // ----------------------------------------
-        // newitem::decimals
-        // ----------------------------------------
-        $fieldname = 'decimals';
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('text', $fieldname, '');
-        $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_check', '', get_string('free', 'survey'));
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_numeric'), ' ', false);
-        $mform->disabledIf($fieldname.'_group', $fieldname.'_check', 'checked');
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_numeric');
-        // $mform->setDefault($fieldname, 2);
-        // $mform->setDefault($fieldname.'_check', 1);
-        $mform->setType($fieldname, PARAM_INT);
+            // ----------------------------------------
+            // newitem::decimals
+            // ----------------------------------------
+            $fieldname = 'decimals';
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('text', $fieldname, '');
+            $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_check', '', get_string('free', 'survey'));
+            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_numeric'), ' ', false);
+            $mform->disabledIf($fieldname.'_group', $fieldname.'_check', 'checked');
+            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_numeric');
+            // $mform->setDefault($fieldname, 2);
+            // $mform->setDefault($fieldname.'_check', 1);
+            $mform->setType($fieldname, PARAM_INT);
 
-        // ----------------------------------------
-        // newitem::lowerbound
-        // ----------------------------------------
-        $fieldname = 'lowerbound';
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('text', $fieldname, '');
-        $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_check', '', get_string('free', 'survey'));
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_numeric'), ' ', false);
-        $mform->disabledIf($fieldname.'_group', $fieldname.'_check', 'checked');
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_numeric');
-        // $mform->setDefault($fieldname, 0);
-        $mform->setDefault($fieldname.'_check', 1);
-        $mform->setType($fieldname, PARAM_INT);
+            // ----------------------------------------
+            // newitem::lowerbound
+            // ----------------------------------------
+            $fieldname = 'lowerbound';
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('text', $fieldname, '');
+            $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_check', '', get_string('free', 'survey'));
+            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_numeric'), ' ', false);
+            $mform->disabledIf($fieldname.'_group', $fieldname.'_check', 'checked');
+            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_numeric');
+            // $mform->setDefault($fieldname, 0);
+            $mform->setDefault($fieldname.'_check', 1);
+            $mform->setType($fieldname, PARAM_INT);
 
-        // ----------------------------------------
-        // newitem::upperbound
-        // ----------------------------------------
-        $fieldname = 'upperbound';
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('text', $fieldname, '');
-        $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_check', '', get_string('free', 'survey'));
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_numeric'), ' ', false);
-        $mform->disabledIf($fieldname.'_group', $fieldname.'_check', 'checked');
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_numeric');
-        // $mform->setDefault($fieldname, 99);
-        $mform->setDefault($fieldname.'_check', 1);
-        $mform->setType($fieldname, PARAM_INT);
+            // ----------------------------------------
+            // newitem::upperbound
+            // ----------------------------------------
+            $fieldname = 'upperbound';
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('text', $fieldname, '');
+            $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_check', '', get_string('free', 'survey'));
+            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_numeric'), ' ', false);
+            $mform->disabledIf($fieldname.'_group', $fieldname.'_check', 'checked');
+            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_numeric');
+            // $mform->setDefault($fieldname, 99);
+            $mform->setDefault($fieldname.'_check', 1);
+            $mform->setType($fieldname, PARAM_INT);
+        }
 
         $this->add_item_buttons();
     }

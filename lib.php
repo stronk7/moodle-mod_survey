@@ -49,7 +49,8 @@ define('SURVEY_REFERRALMONTH'      , 0);
 // TAB NUMBERS ALIAS COUNT OF THE TABS IN THE TAB BAR
 // to change tabs order, just exchange numbers if the following lines
 
-$i=1; define('SURVEY_TABSUBMISSIONS', $i);
+$i = 0;
+$i++; define('SURVEY_TABSUBMISSIONS', $i);
 $i++; define('SURVEY_TABITEMS'      , $i);
 $i++; define('SURVEY_TABTEMPLATES'  , $i);
 $i++; define('SURVEY_TABPLUGINS'    , $i);

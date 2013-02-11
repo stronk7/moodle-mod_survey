@@ -168,6 +168,10 @@ $paramurl_move['itm'] = $itemtomove;
 // end of $paramurl_move definition
 // /////////////////////////////////////////////////
 
+if ($hassubmissions) {
+    echo $OUTPUT->box(get_string('hassubmissions', 'survey'));
+}
+
 $sql = 'SELECT si.*, si.id as itemid, si.plugin, si.type
         FROM {survey_item} si
         WHERE si.surveyid = :surveyid';
