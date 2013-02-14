@@ -81,9 +81,9 @@ define('SURVEY_TAB'.SURVEY_TABPLUGINS.'NAME', get_string('tabpluginsname', 'surv
     define('SURVEY_ITEMS_VALIDATE'     , 6);
 
     // TEMPLATES PAGES
-    define('SURVEY_TEMPLATES_MANAGE'     , 1);
-    define('SURVEY_TEMPLATES_BUILD'      , 2);
-    define('SURVEY_TEMPLATES_IMPORT'     , 3);
+    define('SURVEY_TEMPLATES_MANAGE'   , 1);
+    define('SURVEY_TEMPLATES_BUILD'    , 2);
+    define('SURVEY_TEMPLATES_IMPORT'   , 3);
 
     // PLUGINS PAGES
     define('SURVEY_PLUGINS_BUILD'      , 1);
@@ -199,14 +199,26 @@ define('SURVEY_MASTERTEMPLATE', 'SURVEYPLUGIN');
  * @return int The id of the newly inserted survey record
  */
 function survey_add_instance($survey) {
-    global $CFG, $DB;
+    global $CFG, $DB, $COURSE;
 
     $survey->timecreated = time();
 
     // You may have to add extra stuff in here
     if ($CFG->survey_useadvancedpermissions) {
         list($survey->readaccess, $survey->editaccess, $survey->deleteaccess) = explode('.', $survey->accessrights);
-    } // else a corresponding hidden field has been provided
+    } else {
+        // since $cm->groupmode will be updated once this method is over, I here use $survey->groupmode instead of $cm->groupmode to get $groupmode
+        $groupmode = empty($COURSE->groupmodeforce) ? $survey->groupmode : $COURSE->groupmode;
+        if ($groupmode) {
+            $survey->readaccess = SURVEY_GROUP;
+            $survey->editaccess = SURVEY_GROUP;
+            $survey->deleteaccess = SURVEY_OWNER;
+        } else {
+            $survey->readaccess = SURVEY_OWNER;
+            $survey->editaccess = SURVEY_OWNER;
+            $survey->deleteaccess = SURVEY_OWNER;
+        }
+    }
 
     $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers');
     foreach ($checkboxes as $checkbox) {
@@ -251,14 +263,26 @@ function survey_add_instance($survey) {
  * @return boolean Success/Fail
  */
 function survey_update_instance($survey) {
-    global $CFG, $DB;
+    global $CFG, $DB, $COURSE;
 
     $survey->timemodified = time();
     $survey->id = $survey->instance;
 
     if ($CFG->survey_useadvancedpermissions) {
         list($survey->readaccess, $survey->editaccess, $survey->deleteaccess) = explode('.', $survey->accessrights);
-    } // else a corresponding hidden field has been provided
+    } else {
+        // since $cm->groupmode will be updated once this method is over, I here use $survey->groupmode instead of $cm->groupmode to get $groupmode
+        $groupmode = empty($COURSE->groupmodeforce) ? $survey->groupmode : $COURSE->groupmode;
+        if ($groupmode) {
+            $survey->readaccess = SURVEY_GROUP;
+            $survey->editaccess = SURVEY_GROUP;
+            $survey->deleteaccess = SURVEY_OWNER;
+        } else {
+            $survey->readaccess = SURVEY_OWNER;
+            $survey->editaccess = SURVEY_OWNER;
+            $survey->deleteaccess = SURVEY_OWNER;
+        }
+    }
 
     $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers');
     foreach ($checkboxes as $checkbox) {
@@ -281,8 +305,9 @@ function survey_update_instance($survey) {
                 $survey->id, $editoroptions, $survey->thankshtml_editor['text']);
         $survey->thankshtmlformat = $survey->thankshtml_editor['format'];
     }
-
-    $DB->update_record('survey', $survey);
+echo '$survey->readaccess = '.$survey->readaccess.'<br />';
+echo '$survey->editaccess = '.$survey->editaccess.'<br />';
+echo '$survey->deleteaccess = '.$survey->deleteaccess.'<br />';
 
     return $DB->update_record('survey', $survey);
 }

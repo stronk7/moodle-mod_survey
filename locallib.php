@@ -878,7 +878,7 @@ function survey_i_can_read($survey, $mygroup, $ownerid) {
             break;
         case SURVEY_GROUP:
             $return = false;
-            // $ownergroupid the group ID of the owner of the submitted survey record
+            // $ownergroupid is the group ID of the owner of the submitted survey record
             $ownergroup = groups_get_user_groups($COURSE->id, $ownerid);
             foreach ($ownergroup[0] as $ownergroupid) { // [0] is for all groupings combined
                 if (in_array($ownergroupid, $mygroup)) {

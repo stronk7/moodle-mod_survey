@@ -52,24 +52,23 @@ class mod_survey_mod_form extends moodleform_mod {
         $fieldname = 'timeclose';
         $mform->addElement('date_time_selector', $fieldname, get_string($fieldname, 'survey'), array('optional' => true));
 
-        // -------------------------------------------------------------------------------
-        $fieldname = 'access';
-        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
-
-        // note about access rights
-        $fieldname = 'accessrightsnote';
         $groupmode = isset($cm) ? groups_get_activity_groupmode($cm, $COURSE) : 0;
-        if (!empty($groupmode)) {
-            $mform->addElement('static', $fieldname, 'Note:', get_string($fieldname.'_group', 'survey'));
-        // prepare access right
-            $subjects = array('none', 'owner', 'group', 'all');
-        } else {
-            $mform->addElement('static', $fieldname, get_string('note', 'survey'), get_string($fieldname.'_nogroup', 'survey'));
-        // prepare access right
-            $subjects = array('none', 'owner', 'all');
-        }
-
         if ($CFG->survey_useadvancedpermissions) {
+            // -------------------------------------------------------------------------------
+            $fieldname = 'access';
+            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
+
+            // note about access rights
+            $fieldname = 'accessrightsnote';
+            // prepare access right
+            if (!empty($groupmode)) {
+                $mform->addElement('static', $fieldname, 'Note:', get_string($fieldname.'_group', 'survey'));
+                $subjects = array('none', 'owner', 'group', 'all');
+            } else {
+                $mform->addElement('static', $fieldname, get_string('note', 'survey'), get_string($fieldname.'_nogroup', 'survey'));
+                $subjects = array('none', 'owner', 'all');
+            }
+
             // access right
             $ro_label = get_string('readonly', 'survey');
             $rw_label = get_string('readwrite', 'survey');
@@ -95,20 +94,6 @@ class mod_survey_mod_form extends moodleform_mod {
             $fieldname = 'accessrights';
             $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $accessrights);
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
-        } else {
-            $subject = ($groupmode) ? SURVEY_GROUP : SURVEY_OWNER;
-
-            // readaccess
-            $fieldname = 'readaccess';
-            $mform->addElement('hidden', $fieldname, $subject);
-
-            // editaccess
-            $fieldname = 'editaccess';
-            $mform->addElement('hidden', $fieldname, $subject);
-
-            // deleteaccess
-            $fieldname = 'deleteaccess';
-            $mform->addElement('hidden', $fieldname, SURVEY_OWNER);
         }
 
         // -------------------------------------------------------------------------------

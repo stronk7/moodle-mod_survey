@@ -187,7 +187,6 @@ if ($submissions->valid()) {
 
     $mygroups = survey_get_my_groups($cm);
     foreach ($submissions as $submission) {
-
         if (!$canreadallsubmissions && !survey_i_can_read($survey, $mygroups, $submission->userid)) {
             continue;
         }
