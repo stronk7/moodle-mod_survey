@@ -65,11 +65,13 @@ if ($currentpage == SURVEY_SUBMISSION_NEW) {
 // ////////////////////////////
 // manage the thanks page
 // for the thanks page, you MUST be here because you need $PAGE before
-$savebutton = (isset($fromform->savebutton) && ($fromform->savebutton));
-if ($savebutton) {
-    survey_show_thanks_page($survey, $cm);
-    echo $OUTPUT->footer();
-    die;
+if ($currentpage == SURVEY_SUBMISSION_NEW) {
+    $savebutton = (isset($fromform->savebutton) && ($fromform->savebutton));
+    if ($savebutton) {
+        survey_show_thanks_page($survey, $cm);
+        echo $OUTPUT->footer();
+        die;
+    }
 }
 // end of: manage the thanks page
 // ////////////////////////////
