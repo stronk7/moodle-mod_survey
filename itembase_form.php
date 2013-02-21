@@ -335,6 +335,7 @@ class surveyitem_baseform extends moodleform {
         $mform = $this->_form;
 
         $item = $this->_customdata->item;
+        $survey = $this->_customdata->survey;
         $hassubmissions = $this->_customdata->hassubmissions;
 
         // -------------------------------------------------------------------------------
@@ -357,6 +358,10 @@ class surveyitem_baseform extends moodleform {
     function validation($data, $files) {
         global $CFG, $DB;
 
+        $item = $this->_customdata->item;
+        $survey = $this->_customdata->survey;
+        $hassubmissions = $this->_customdata->hassubmissions;
+
         $errors = array();
 
         // if (default == noanswer se default == noanswer ma è obbligatorio => errorese default == noanswer ma è obbligatorio => errore the field is mandatory) => error
@@ -365,16 +370,18 @@ class surveyitem_baseform extends moodleform {
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);
         }
 
-        // you choosed a parentid but you are missing the parentcontent
-        if (empty($data['parentid']) && ($data['parentcontent'] != '')) { // $data['parentcontent'] can be = 0
-            $a = get_string('parentcontent', 'survey');
-            $errors['parentcontent'] = get_string('missingparentid_err', 'survey', $a);
-        }
+        if (!$hassubmissions) {
+            // you choosed a parentid but you are missing the parentcontent
+            if (empty($data['parentid']) && ($data['parentcontent'] != '')) { // $data['parentcontent'] can be = 0
+                $a = get_string('parentcontent', 'survey');
+                $errors['parentcontent'] = get_string('missingparentid_err', 'survey', $a);
+            }
 
-        // you did not choose a parent item but you entered an answer
-        if (!empty($data['parentid']) && ($data['parentcontent'] == '')) { // $data['parentcontent'] can be = 0
-            $a = get_string('parentid', 'survey');
-            $errors['parentid'] = get_string('missingparentcontent_err', 'survey', $a);
+            // you did not choose a parent item but you entered an answer
+            if (!empty($data['parentid']) && ($data['parentcontent'] == '')) { // $data['parentcontent'] can be = 0
+                $a = get_string('parentid', 'survey');
+                $errors['parentid'] = get_string('missingparentcontent_err', 'survey', $a);
+            }
         }
 
         // adesso verifico la coerenza fra il formato di quest'item e quello dell'item padre.

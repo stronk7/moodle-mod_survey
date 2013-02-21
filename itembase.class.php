@@ -292,7 +292,7 @@ class surveyitem_base {
         }
 
         // encode $fromform->parentcontent to $item->parentvalue on the basis of the parentplugin specified in $record->parentid
-        if ($record->parentid) { // I am sure parentcontent is here too
+        if (isset($record->parentid) && $record->parentid) { // I am sure parentcontent is here too
             $parentplugin = $DB->get_field('survey_item', 'plugin', array('id' => $record->parentid));
             require_once($CFG->dirroot.'/mod/survey/field/'.$parentplugin.'/plugin.class.php');
             $itemclass = 'surveyfield_'.$parentplugin;
