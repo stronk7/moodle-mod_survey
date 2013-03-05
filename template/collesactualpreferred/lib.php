@@ -157,33 +157,36 @@ function surveytemplate_collesactualpreferred_add() {
         $DB->insert_record('survey_label', array_combine($label_fields, $values), false);
 
         // ////////////////////////////////////////////////////////////////////////////////////////////
-        // COLLESACTUALPREFERRED - item #4, 5, 6, 7,     #10, 11, 12, 13, #16, 17, 18, 19,
-        //                              #22, 23, 24, 25, #28, 29, 30, 31, #34, 35, 36, 37 - 4 radiobuttons
+        // COLLESACTUALPREFERRED - item # 4,  5,  6,  7,  8,  9, 10, 11 - 8 radiobuttons
+        //                              #14, 15, 16, 17, 18, 19, 20, 21 - 8 radiobuttons
+        //                              #24, 25, 26, 27, 28, 29, 30, 31 - 8 radiobuttons
+        //                              #34, 35, 36, 37, 38, 39, 40, 41 - 8 radiobuttons
         // ////////////////////////////////////////////////////////////////////////////////////////////
         for ($j = 1; $j <= 4; $j++) {
+            for ($k = 1; $k <= 2; $k++) {
+                $sortindex++; // <--- new item is going to be added
 
-            $sortindex++; // <--- new item is going to be added
+                // survey_item
+                /*------------------------------------------------*/
+                $content_sid++;
+                $values = array(0, SURVEY_FIELD, 'radiobutton', $externalname,
+                                $content_sid, null, FORMAT_HTML, null,
+                                0, '', SURVEY_REQUIREDITEM, null,
+                                0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
+                                $sortindex, 1, 1, null,
+                                null, null, $timenow, null);
+                $itemid = $DB->insert_record('survey_item', array_combine($si_fields, $values));
 
-            // survey_item
-            /*------------------------------------------------*/
-            $content_sid++;
-            $values = array(0, SURVEY_FIELD, 'radiobutton', $externalname,
-                            $content_sid, null, FORMAT_HTML, null,
-                            0, '', SURVEY_REQUIREDITEM, null,
-                            0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
-                            $sortindex, 1, 1, null,
-                            null, null, $timenow, null);
-            $itemid = $DB->insert_record('survey_item', array_combine($si_fields, $values));
-
-            // survey_radiobutton
-            /*------------------------------------------------*/
-            // $radio_options_sid++;      // it never changes from 1
-            // $radio_labelother_sid++;   // it never changes from 0
-            // $radio_defaultvalue_sid++; // it never changes from 0
-            $values = array(0, $itemid, $radio_options_sid, null,
-                            $radio_labelother_sid, null, SURVEY_INVITATIONDEFAULT,
-                            $radio_defaultvalue_sid, null, SURVEY_HORIZONTAL);
-            $DB->insert_record('survey_radiobutton', array_combine($radiobutton_fields, $values), false);
+                // survey_radiobutton
+                /*------------------------------------------------*/
+                // $radio_options_sid++;      // it never changes from 1
+                // $radio_labelother_sid++;   // it never changes from 0
+                // $radio_defaultvalue_sid++; // it never changes from 0
+                $values = array(0, $itemid, $radio_options_sid, null,
+                                $radio_labelother_sid, null, SURVEY_INVITATIONDEFAULT,
+                                $radio_defaultvalue_sid, null, SURVEY_HORIZONTAL);
+                $DB->insert_record('survey_radiobutton', array_combine($radiobutton_fields, $values), false);
+            }
         }
     }
 
