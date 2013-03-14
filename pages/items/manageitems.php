@@ -244,22 +244,22 @@ foreach ($itemseeds as $itemseed) {
     // *************************************** user availability
     if ($item->hide) {
         $message = get_string('usernoedit', 'survey');
-        $content = '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+        $content = '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
         $message = get_string('usernosearch', 'survey');
-        $content .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
+        $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
     } else {
         switch ($item->basicform) {
             case SURVEY_NOTPRESENT:
                 $message = get_string('usernoedit', 'survey');
-                $content = '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+                $content = '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
                 $message = get_string('usernosearch', 'survey');
-                $content .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
+                $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
                 break;
             case SURVEY_FILLONLY:
                 $message = get_string('useredit', 'survey');
                 $content = '<img src="'.$OUTPUT->pix_url('i/grades').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
                 $message = get_string('usernosearch', 'survey');
-                $content .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+                $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
                 break;
             case SURVEY_FILLANDSEARCH:
                 $message = get_string('useredit', 'survey');
@@ -276,9 +276,9 @@ foreach ($itemseeds as $itemseed) {
     // *************************************** advanced availability
     if ($item->hide) {
         $message = get_string('advancednoedit', 'survey');
-        $content = '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+        $content = '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
         $message = get_string('advancednosearch', 'survey');
-        $content .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
+        $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
     } else {
         $message = get_string('advancededit', 'survey');
         $content = '<img src="'.$OUTPUT->pix_url('i/grades').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
@@ -287,7 +287,7 @@ foreach ($itemseeds as $itemseed) {
             $content .= '<img src="'.$OUTPUT->pix_url('t/preview').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
         } else {
             $message = get_string('advancednosearch', 'survey');
-            $content .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+            $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
         }
     }
     $tablerow[] = $content;
