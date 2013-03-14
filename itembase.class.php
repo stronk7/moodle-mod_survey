@@ -811,7 +811,7 @@ class surveyitem_base {
      * @return
      */
     public function item_is_matchable() {
-        return $this->flag->ismatchable;
+        return $this->flag->couldbeparent;
     }
 
     /*

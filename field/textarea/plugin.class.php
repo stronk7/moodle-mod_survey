@@ -109,7 +109,7 @@ class surveyfield_textarea extends surveyitem_base {
 
         $this->flag = new stdclass();
         $this->flag->issearchable = true;
-        $this->flag->ismatchable = false;
+        $this->flag->couldbeparent = false;
         $this->flag->useplugintable = true;
 
         // if the item is constructed at survey instance creation
@@ -222,7 +222,7 @@ class surveyfield_textarea extends surveyitem_base {
      * @return
      */
     public function item_parent_content_format_validation($parentcontent) {
-        // $this->flag->ismatchable = false
+        // $this->flag->couldbeparent = false
         // this method is never called
     }
 
@@ -233,7 +233,7 @@ class surveyfield_textarea extends surveyitem_base {
      * @return
      */
     public function item_parent_content_content_validation($parentcontent) {
-        // $this->flag->ismatchable = false
+        // $this->flag->couldbeparent = false
         // this method is never called
     }
 
@@ -246,7 +246,7 @@ class surveyfield_textarea extends surveyitem_base {
      * @return
      */
     public function item_parent_content_encode_value($parentcontent) {
-        // $this->flag->ismatchable = false
+        // $this->flag->couldbeparent = false
         // this method is never called
     }
 
@@ -375,7 +375,7 @@ class surveyfield_textarea extends surveyitem_base {
      * @return
      */
     public function userform_get_parent_disabilitation_info($child_parentcontent) {
-        // $this->flag->ismatchable = false
+        // $this->flag->couldbeparent = false
         // this method is never called
     }
 
@@ -394,7 +394,7 @@ class surveyfield_textarea extends surveyitem_base {
      * @return
      */
     public function userform_child_is_allowed_dynamic($child_parentcontent, $data) {
-        // $this->flag->ismatchable = false
+        // $this->flag->couldbeparent = false
         // this method is never called
     }
 
@@ -459,7 +459,7 @@ class surveyfield_textarea extends surveyitem_base {
      * @return
      */
     public function userform_mform_element_is_group() {
-        // $this->flag->ismatchable = false
+        // $this->flag->couldbeparent = false
         // this method is never called
     }
 }

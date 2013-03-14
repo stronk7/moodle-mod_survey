@@ -34,7 +34,7 @@ switch ($currenttab) {
         $defaultpage = SURVEY_PLUGINS_BUILD;
         break;
     default:
-        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currentpage = '.$currentpage);
+        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currenttab = '.$currenttab);
 }
 $currentpage = optional_param('pag', $defaultpage, PARAM_INT);
 

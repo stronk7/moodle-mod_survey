@@ -156,7 +156,7 @@ class survey_pluginform extends surveyitem_baseform {
                         }
                         break;
                     default:
-                        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $data[\'pattern_text\'] = '.$data[\'pattern_text\']);
+                        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $data[\'pattern\'] = '.$data['pattern']);
                 }
             }
         }

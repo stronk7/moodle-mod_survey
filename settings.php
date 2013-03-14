@@ -42,45 +42,45 @@ if ($ADMIN->fulltree) {
                        get_string('useadvancedpermissions_descr', 'survey'), 0));
 
     // include  settings of field subplugins
-    $fields = get_plugin_list('surveyfield');
-    foreach ($fields as $field => $path) {
-        $settingsfile = $path . '/settings.php';
+    $surveyplugin = get_plugin_list('surveyfield');
+    foreach ($surveyplugin as $field => $path) {
+        $settingsfile = $path.'/settings.php';
         if (file_exists($settingsfile)) {
             $settings->add(new admin_setting_heading('surveytemplate_'.$field,
-                    get_string('fieldplugin', 'survey') . ' - ' . get_string('pluginname', 'surveyfield_' . $field), ''));
+                    get_string('fieldplugin', 'survey').' - '.get_string('pluginname', 'surveyfield_'.$field), ''));
             include($settingsfile);
         }
     }
 
     // include settings of format subplugins
-    $surveys = get_plugin_list('surveyformat');
-    foreach ($surveys as $survey => $path) {
-        $settingsfile = $path . '/settings.php';
+    $surveyplugin = get_plugin_list('surveyformat');
+    foreach ($surveyplugin as $survey => $path) {
+        $settingsfile = $path.'/settings.php';
         if (file_exists($settingsfile)) {
             $settings->add(new admin_setting_heading('surveytemplate_'.$survey,
-                    get_string('formatplugin', 'survey') . ' - ' . get_string('pluginname', 'surveyformat_' . $survey), ''));
+                    get_string('formatplugin', 'survey').' - '.get_string('pluginname', 'surveyformat_'.$survey), ''));
             include($settingsfile);
         }
     }
 
     // include settings of template subplugins
-    $surveys = get_plugin_list('surveytemplate');
-    foreach ($surveys as $survey => $path) {
-        $settingsfile = $path . '/settings.php';
+    $surveyplugin = get_plugin_list('surveytemplate');
+    foreach ($surveyplugin as $survey => $path) {
+        $settingsfile = $path.'/settings.php';
         if (file_exists($settingsfile)) {
             $settings->add(new admin_setting_heading('surveytemplate_'.$survey,
-                    get_string('templateplugin', 'survey') . ' - ' . get_string('pluginname', 'surveytemplate_' . $survey), ''));
+                    get_string('templateplugin', 'survey').' - '.get_string('pluginname', 'surveytemplate_'.$survey), ''));
             include($settingsfile);
         }
     }
 
     // include settings of report subplugins
-    $surveys = get_plugin_list('surveyreport');
-    foreach ($surveys as $survey => $path) {
-        $settingsfile = $path . '/settings.php';
+    $surveyplugin = get_plugin_list('surveyreport');
+    foreach ($surveyplugin as $survey => $path) {
+        $settingsfile = $path.'/settings.php';
         if (file_exists($settingsfile)) {
             $settings->add(new admin_setting_heading('surveytemplate_'.$survey,
-                    get_string('reportplugin', 'survey') . ' - ' . get_string('pluginname', 'surveyreport_' . $survey), ''));
+                    get_string('reportplugin', 'survey').' - '.get_string('pluginname', 'surveyreport_'.$survey), ''));
             include($settingsfile);
         }
     }

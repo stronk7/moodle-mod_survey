@@ -93,7 +93,7 @@ class surveyfield_age extends surveyitem_base {
 
         $this->flag = new stdclass();
         $this->flag->issearchable = true;
-        $this->flag->ismatchable = true;
+        $this->flag->couldbeparent = true;
         $this->flag->useplugintable = true;
 
         if (!empty($itemid)) {

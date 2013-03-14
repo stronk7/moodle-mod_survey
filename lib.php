@@ -745,7 +745,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     if ($canmanageitems) {
         $navref->add(SURVEY_TAB2NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => 2)));
     }
-        $navref->add(SURVEY_TAB3NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => 3)));
+    $navref->add(SURVEY_TAB3NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => 3)));
     if ($canmanageplugin) {
         $navref->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => 4)));
     }
@@ -784,6 +784,14 @@ function survey_user_can_manage_plugin($cm) {
  */
 function survey_extend_settings_navigation(settings_navigation $settings, navigation_node $surveynode) {
     global $PAGE;
+
+//     $cm = $PAGE->cm;
+//     if (!$cm) {
+//         return;
+//     }
+//
+//     $link = new moodle_url('/mod/survey/view.php', array('id' => $cm->id, 'action'=>'grading'));
+//     $surveynode->add(get_string('report'), $link, navigation_node::TYPE_SETTING);
 
     if ($surveyreportlist = get_plugin_list('surveyreport')) {
         $icon = new pix_icon('i/report', '', 'moodle', array('class'=>'icon'));

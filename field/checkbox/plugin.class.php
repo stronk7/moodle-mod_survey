@@ -100,7 +100,7 @@ class surveyfield_checkbox extends surveyitem_base {
 
         $this->flag = new stdclass();
         $this->flag->issearchable = true;
-        $this->flag->ismatchable = true;
+        $this->flag->couldbeparent = true;
         $this->flag->useplugintable = true;
 
         if (!empty($itemid)) {
@@ -389,7 +389,7 @@ class surveyfield_checkbox extends surveyitem_base {
 
         $disabilitationinfo = array();
 
-        // devo sapere come si chiamano gli mfrom element che corrispondono al contenuto di $child_parentcontent
+        // I need to know the names of mfrom element corresponding to the content of $child_parentcontent
         $valuelabel = $this->item_get_value_label_array('options');
         $valuelabel = array_keys($valuelabel);
 

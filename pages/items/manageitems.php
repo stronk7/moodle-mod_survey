@@ -257,18 +257,18 @@ foreach ($itemseeds as $itemseed) {
                 break;
             case SURVEY_FILLONLY:
                 $message = get_string('useredit', 'survey');
-                $content = '<img src="'.$OUTPUT->pix_url('edit', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
+                $content = '<img src="'.$OUTPUT->pix_url('i/grades').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
                 $message = get_string('usernosearch', 'survey');
                 $content .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
                 break;
             case SURVEY_FILLANDSEARCH:
                 $message = get_string('useredit', 'survey');
-                $content = '<img src="'.$OUTPUT->pix_url('edit', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
+                $content = '<img src="'.$OUTPUT->pix_url('i/grades').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
                 $message = get_string('usersearch', 'survey');
                 $content .= '<img src="'.$OUTPUT->pix_url('t/preview').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
                 break;
             default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->pattern = '.$this->pattern);
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->basicform = '.$this->basicform);
         }
     }
     $tablerow[] = $content;
@@ -281,7 +281,7 @@ foreach ($itemseeds as $itemseed) {
         $content .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
     } else {
         $message = get_string('advancededit', 'survey');
-        $content = '<img src="'.$OUTPUT->pix_url('edit', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
+        $content = '<img src="'.$OUTPUT->pix_url('i/grades').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
         if ($item->advancedsearch == SURVEY_ADVFILLANDSEARCH) {
             $message = get_string('advancedsearch', 'survey');
             $content .= '<img src="'.$OUTPUT->pix_url('t/preview').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';

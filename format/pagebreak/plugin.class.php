@@ -73,7 +73,7 @@ class surveyformat_pagebreak extends surveyitem_base {
 
         $this->flag = new stdclass();
         $this->flag->issearchable = false;
-        $this->flag->ismatchable = false;
+        $this->flag->couldbeparent = false;
         $this->flag->useplugintable = false;
 
         // list of fields I do not want to have in the item definition form
@@ -124,7 +124,7 @@ class surveyformat_pagebreak extends surveyitem_base {
      * @return
      */
     public function item_parent_content_format_validation($parentcontent) {
-        // $this->flag->ismatchable = false
+        // $this->flag->couldbeparent = false
         // this method is never called
     }
 
@@ -135,7 +135,7 @@ class surveyformat_pagebreak extends surveyitem_base {
      * @return
      */
     public function item_parent_content_content_validation($parentcontent) {
-        // $this->flag->ismatchable = false
+        // $this->flag->couldbeparent = false
         // this method is never called
     }
 
@@ -148,7 +148,7 @@ class surveyformat_pagebreak extends surveyitem_base {
      * @return
      */
     public function item_parent_content_encode_value($parentcontent) {
-        // $this->flag->ismatchable = false
+        // $this->flag->couldbeparent = false
         // this method is never called
     }
 
