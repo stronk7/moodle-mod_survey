@@ -15,10 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Functions used by some stages of shortage plugin upgrade
+ * This file replaces the legacy STATEMENTS section in db/install.xml,
+ * lib.php/modulename_install() post installation hook and partially defaults.php
  *
  * @package    surveyitem
- * @subpackage shortage
+ * @subpackage integer
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+/*
+ * Post installation procedure
+ */
+function xmldb_surveyfield_integer_install() {
+    // global $CFG, $DB;
+    // require_once(dirname(__FILE__) . '/upgradelib.php');
+}
+
+/*
+ * Post installation procedure recovery
+ */
+function xmldb_surveyfield_integer_install_recovery() {
+    // global $CFG, $DB;
+    // require_once(dirname(__FILE__) . '/upgradelib.php');
+}

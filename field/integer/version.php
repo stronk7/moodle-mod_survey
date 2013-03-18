@@ -15,24 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Keeps track of upgrades to the surveyitem shortage
+ * Defines the version of survey integer subplugin
+ *
+ * This code fragment is called by moodle_needs_upgrading() and
+ * /admin/index.php
  *
  * @package    surveyitem
- * @subpackage shortage
+ * @subpackage integer
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/*
- * Performs upgrade of the database structure and data
- *
- * @param int $oldversion the version we are upgrading from
- * @return bool true
- */
-function xmldb_surveyfield_shortage_upgrade($oldversion) {
-    global $DB;
+defined('MOODLE_INTERNAL') || die();
 
-    $dbman = $DB->get_manager();
-
-    return true;
-}
+$plugin->version = 2012062301;
+$plugin->requires = 2010091600;  // Requires this Moodle version

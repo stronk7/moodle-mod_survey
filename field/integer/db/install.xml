@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="survey_shortage" COMMENT="shortage type surveyfield">
+    <TABLE NAME="survey_integer" COMMENT="integer type surveyfield">
       <FIELDS>
         <FIELD NAME="id"            TYPE="int" LENGTH="10" NOTNULL="true"  UNSIGNED="true"              SEQUENCE="true"                           NEXT="surveyid"/>
         <FIELD NAME="surveyid"      TYPE="int" LENGTH="10" NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="id"            NEXT="itemid"/>

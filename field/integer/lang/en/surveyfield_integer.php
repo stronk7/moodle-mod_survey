@@ -15,30 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Strings for component 'field_shortage', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'field_integer', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    survey
- * @subpackage item_shortage
+ * @subpackage integer
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Short age';
-$string['userfriendlypluginname'] = 'Age (short) [yy]';
-$string['defaultvalue_help'] = 'This is the short age the remote user will find answered by default. The default for this type of question is mandatory.';
+$string['pluginname'] = 'Integer';
+$string['userfriendlypluginname'] = 'Integer [yy]';
+$string['defaultvalue_help'] = 'This is the integer the remote user will find answered by default. The default for this type of question is mandatory.';
 $string['defaultvalue'] = 'Default';
-$string['lowerbound_help'] = 'The lower age the user will be allowed to enter';
+$string['lowerbound_help'] = 'The lower integer the user will be allowed to enter';
 $string['lowerbound'] = 'Lower bound';
-$string['upperbound_help'] = 'The upper age the user will be allowed to enter';
+$string['upperbound_help'] = 'The upper integer the user will be allowed to enter';
 $string['upperbound'] = 'Upper bound';
 $string['outofrangedefault'] = 'Default does not fall within the specified range';
 $string['and'] = ' and ';
 $string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a}';
 $string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
 $string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
-$string['uerr_lowerthanminimum'] = 'Provided age is too small';
-$string['uerr_greaterthanmaximum'] = 'Provided age is too high';
-$string['maximumshortage'] = 'Maximum short age';
-$string['maximumshortage_desc'] = 'The maximun short age this software will allow to ever enter';
+$string['uerr_lowerthanminimum'] = 'Provided integer is too small';
+$string['uerr_greaterthanmaximum'] = 'Provided integer is too big';
+$string['maximuminteger'] = 'Maximum integer';
+$string['maximuminteger_desc'] = 'The maximun integer this software will allow to ever enter';
 $string['customdefault'] = 'Custom';
-$string['uerr_yearnotset'] = 'Please choose a year';
+$string['uerr_integernotset'] = 'Please choose a integer';

@@ -15,27 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * This file replaces the legacy STATEMENTS section in db/install.xml,
- * lib.php/modulename_install() post installation hook and partially defaults.php
+ * Keeps track of upgrades to the surveyitem integer
  *
  * @package    surveyitem
- * @subpackage shortage
+ * @subpackage integer
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /*
- * Post installation procedure
+ * Performs upgrade of the database structure and data
+ *
+ * @param int $oldversion the version we are upgrading from
+ * @return bool true
  */
-function xmldb_surveyfield_shortage_install() {
-    // global $CFG, $DB;
-    // require_once(dirname(__FILE__) . '/upgradelib.php');
-}
+function xmldb_surveyfield_integer_upgrade($oldversion) {
+    global $DB;
 
-/*
- * Post installation procedure recovery
- */
-function xmldb_surveyfield_shortage_install_recovery() {
-    // global $CFG, $DB;
-    // require_once(dirname(__FILE__) . '/upgradelib.php');
+    $dbman = $DB->get_manager();
+
+    return true;
 }

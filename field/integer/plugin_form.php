@@ -30,12 +30,12 @@ defined('MOODLE_INTERNAL') OR die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 require_once($CFG->dirroot.'/mod/survey/itembase_form.php');
-require_once($CFG->dirroot.'/mod/survey/field/shortage/lib.php');
+require_once($CFG->dirroot.'/mod/survey/field/integer/lib.php');
 
 class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
-        $maximumshortage = get_config('surveyfield_shortage', 'maximumshortage');
+        $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
 
         // -------------------------------------------------------------------------------
         // acquisisco i valori per pre-definire i campi della form
@@ -50,22 +50,20 @@ class survey_pluginform extends surveyitem_baseform {
         $mform = $this->_form;
 
         // -------------------------------------------------------------------------------
-        $format = get_string('strftimemonthyear', 'langconfig');
-
-        $years = array_combine(range(0, $maximumshortage), range(0, $maximumshortage));
+        $integers = array_combine(range(0, $maximuminteger), range(0, $maximuminteger));
 
         // ----------------------------------------
         // newitem::defaultvalue
         // ----------------------------------------
         $fieldname = 'defaultvalue';
         $elementgroup = array();
-        $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_shortage'), SURVEY_CUSTOMDEFAULT);
+        $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_integer'), SURVEY_CUSTOMDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('invitationdefault', 'survey'), SURVEY_INVITATIONDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('noanswer', 'survey'), SURVEY_NOANSWERDEFAULT);
-        $elementgroup[] = $mform->createElement('select', $fieldname, '', $years);
+        $elementgroup[] = $mform->createElement('select', $fieldname, '', $integers);
         $separator = array(' ', ' ', '<br />');
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_shortage'), $separator, false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_shortage');
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_integer'), $separator, false);
+        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_integer');
         $mform->setDefault('defaultoption', SURVEY_INVITATIONDEFAULT);
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
         if (is_null($item->{$fieldname}) || ($item->{$fieldname} == SURVEY_INVITATIONDEFAULT)) {
@@ -83,17 +81,17 @@ class survey_pluginform extends surveyitem_baseform {
             // newitem::lowerbound
             // ----------------------------------------
             $fieldname = 'lowerbound';
-            $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_shortage'), $years);
-            $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_shortage');
+            $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_integer'), $integers);
+            $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_integer');
             $mform->setDefault($fieldname, '0');
 
             // ----------------------------------------
             // newitem::upperbound
             // ----------------------------------------
             $fieldname = 'upperbound';
-            $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_shortage'), $years);
-            $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_shortage');
-            $mform->setDefault($fieldname, $maximumshortage);
+            $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_integer'), $integers);
+            $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_integer');
+            $mform->setDefault($fieldname, $maximuminteger);
         }
 
         $this->add_item_buttons();
@@ -105,7 +103,7 @@ class survey_pluginform extends surveyitem_baseform {
         // constrain default between boundaries
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
             if ( ($data['defaultvalue'] < $data['lowerbound']) || ($data['defaultvalue'] > $data['upperbound']) ) {
-                $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_shortage');
+                $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_integer');
             }
         }
 

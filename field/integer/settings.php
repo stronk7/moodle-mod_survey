@@ -16,11 +16,18 @@
 
 /*
  * @package    surveyitem
- * @subpackage checkbox
+ * @subpackage integer
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/locallib.php');
+require_once(dirname(__FILE__) . '/lib.php');
+
+// $settings->add(new admin_setting_heading('surveyfield_numeric_settings', get_string('header_left', 'surveyfield_numeric'),
+//     get_string('header_right', 'surveyfield_numeric')));
+
+$settings->add(new admin_setting_configtext('surveyfield_integer/maximuminteger',
+    get_string('maximuminteger', 'surveyfield_integer'),
+    get_string('maximuminteger_desc', 'surveyfield_integer'), 105, PARAM_INT));

@@ -15,18 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Defines the version of survey shortage subplugin
- *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
+ * Functions used by some stages of integer plugin upgrade
  *
  * @package    surveyitem
- * @subpackage shortage
+ * @subpackage integer
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version = 2012062301;
-$plugin->requires = 2010091600;  // Requires this Moodle version

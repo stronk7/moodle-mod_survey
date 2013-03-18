@@ -29,9 +29,9 @@
 defined('MOODLE_INTERNAL') OR die();
 
 require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
-require_once($CFG->dirroot.'/mod/survey/field/shortage/lib.php');
+require_once($CFG->dirroot.'/mod/survey/field/integer/lib.php');
 
-class surveyfield_shortage extends surveyitem_base {
+class surveyfield_integer extends surveyitem_base {
 
     /*
      * $surveyid = the id of the survey
@@ -44,7 +44,7 @@ class surveyfield_shortage extends surveyitem_base {
     // public $itemid = 0;
 
     /*
-     * $pluginid = the ID of the survey_shortage record
+     * $pluginid = the ID of the survey_integer record
      */
     public $pluginid = 0;
 
@@ -61,12 +61,12 @@ class surveyfield_shortage extends surveyitem_base {
     public $defaultvalue = 0;
 
     /*
-     * $lowerbound = the minimum allowed short age
+     * $lowerbound = the minimum allowed integer
      */
     public $lowerbound = 0;
 
     /*
-     * $upperbound = the maximum allowed short age
+     * $upperbound = the maximum allowed integer
      */
     public $upperbound = 0;
 
@@ -91,10 +91,10 @@ class surveyfield_shortage extends surveyitem_base {
      */
     public function __construct($itemid=0) {
         $this->type = SURVEY_FIELD;
-        $this->plugin = 'shortage';
+        $this->plugin = 'integer';
 
-        $maximumshortage = get_config('surveyfield_shortage', 'maximumshortage');
-        $this->upperbound = $maximumshortage;
+        $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
+        $this->upperbound = $maximuminteger;
 
         $this->flag = new stdclass();
         $this->flag->issearchable = true;
@@ -169,7 +169,7 @@ class surveyfield_shortage extends surveyitem_base {
 
     /*
      * item_custom_fields_to_db
-     * sets record field to store the correct value to db for the age custom item
+     * sets record field to store the correct value to db for the integer custom item
      * @param $record
      * @return
      */
@@ -194,7 +194,7 @@ class surveyfield_shortage extends surveyitem_base {
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $record->defaultoption = '.$record->defaultoption);
         }
-        unset($record->defaultvalue_year);
+        unset($record->defaultvalue_integer);
     }
 
     /*
@@ -217,12 +217,10 @@ class surveyfield_shortage extends surveyitem_base {
      */
     public function item_get_hard_info() {
 
-        $maximumshortage = get_config('surveyfield_shortage', 'maximumshortage');
+        $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
 
         $haslowerbound = ($this->lowerbound != 0);
-        $hasupperbound = ($this->upperbound != $maximumshortage);
-
-        $stryears = ' '.get_string('years');
+        $hasupperbound = ($this->upperbound != $maximuminteger);
 
         $a = '';
         $lowerbound = $this->lowerbound;
@@ -230,29 +228,29 @@ class surveyfield_shortage extends surveyitem_base {
 
         if ($haslowerbound) {
             if (!empty($this->lowerbound)) {
-                $a .= $this->lowerbound.$stryears;
+                $a .= $this->lowerbound;
             }
         }
 
         if ($haslowerbound && $hasupperbound) {
-            $a .= get_string('and', 'surveyfield_shortage');
+            $a .= get_string('and', 'surveyfield_integer');
         }
 
         if ($hasupperbound) {
             if (!empty($this->upperbound)) {
-                $a .= $this->upperbound.$stryears;
+                $a .= $this->upperbound;
             }
         }
 
         if ($haslowerbound && $hasupperbound) {
-            $hardinfo = get_string('restriction_lowerupper', 'surveyfield_shortage', $a);
+            $hardinfo = get_string('restriction_lowerupper', 'surveyfield_integer', $a);
         } else {
             $hardinfo = '';
             if ($haslowerbound) {
-                $hardinfo = get_string('restriction_lower', 'surveyfield_shortage', $a);
+                $hardinfo = get_string('restriction_lower', 'surveyfield_integer', $a);
             }
             if ($hasupperbound) {
-                $hardinfo = get_string('restriction_upper', 'surveyfield_shortage', $a);
+                $hardinfo = get_string('restriction_upper', 'surveyfield_integer', $a);
             }
         }
 
@@ -266,8 +264,8 @@ class surveyfield_shortage extends surveyitem_base {
      */
     public function item_list_constraints() {
         $constraints = array();
-        $constraints[] = get_string('lowerbound', 'surveyfield_age').': '.$this->lowerbound;
-        $constraints[] = get_string('upperbound', 'surveyfield_age').': '.$this->upperbound;
+        $constraints[] = get_string('lowerbound', 'surveyfield_integer').': '.$this->lowerbound;
+        $constraints[] = get_string('upperbound', 'surveyfield_integer').': '.$this->upperbound;
 
         return implode($constraints, '<br />');
     }
@@ -314,18 +312,18 @@ class surveyfield_shortage extends surveyitem_base {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
-        $years = array();
+        $integers = array();
         if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
-            $years[SURVEY_INVITATIONVALUE] = get_string('choosedots');
+            $integers[SURVEY_INVITATIONVALUE] = get_string('choosedots');
         }
-        $years += array_combine(range($this->lowerbound, $this->upperbound), range($this->lowerbound, $this->upperbound));
+        $integers += array_combine(range($this->lowerbound, $this->upperbound), range($this->lowerbound, $this->upperbound));
 
         if ( (!$this->required) || $searchform ) {
             $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-            $years += array(SURVEY_NOANSWERVALUE => $check_label);
+            $integers += array(SURVEY_NOANSWERVALUE => $check_label);
         }
 
-        $mform->addElement('select', $fieldname, $elementlabel, $years, array('class' => 'indent-'.$this->indent));
+        $mform->addElement('select', $fieldname, $elementlabel, $integers, array('class' => 'indent-'.$this->indent));
 
         $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
         if ( $this->required && (!$searchform) && (!$maybedisabled)) {
@@ -341,13 +339,13 @@ class surveyfield_shortage extends surveyitem_base {
             } else {
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
-                        $defaultshortage = $this->defaultvalue;
+                        $defaultinteger = $this->defaultvalue;
                         break;
                     case SURVEY_NOANSWERDEFAULT:
-                        $defaultshortage = SURVEY_NOANSWERVALUE;
+                        $defaultinteger = SURVEY_NOANSWERVALUE;
                         break;
                 }
-                $mform->setDefault($fieldname, $defaultshortage);
+                $mform->setDefault($fieldname, $defaultinteger);
             }
         } else {
             $mform->setDefault($fieldname, SURVEY_NOANSWERVALUE);
@@ -360,18 +358,18 @@ class surveyfield_shortage extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $maximumshortage = get_config('surveyfield_shortage', 'maximumshortage');
+        $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
 
         $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
         // I need to check value is different from SURVEY_INVITATIONVALUE even if it is not required
         if ($data[$fieldname] == SURVEY_INVITATIONVALUE) {
-            $errors[$fieldname] = get_string('uerr_yearnotset', 'surveyfield_shortage');
+            $errors[$fieldname] = get_string('uerr_integernotset', 'surveyfield_integer');
             return;
         }
 
         $haslowerbound = ($this->lowerbound != 0);
-        $hasupperbound = ($this->upperbound != $maximumshortage);
+        $hasupperbound = ($this->upperbound != $maximuminteger);
 
         $userinput = $data[$fieldname];
 
@@ -379,10 +377,10 @@ class surveyfield_shortage extends surveyitem_base {
             return;
         }
         if ($haslowerbound && ($userinput < $this->lowerbound)) {
-            $errors[$fieldname] = get_string('uerr_lowerthanminimum', 'surveyfield_shortage');
+            $errors[$fieldname] = get_string('uerr_lowerthanminimum', 'surveyfield_integer');
         }
         if ($hasupperbound && ($userinput > $this->upperbound)) {
-            $errors[$fieldname] = get_string('uerr_greaterthanmaximum', 'surveyfield_shortage');
+            $errors[$fieldname] = get_string('uerr_greaterthanmaximum', 'surveyfield_integer');
         }
     }
 
