@@ -18,7 +18,7 @@
  * Strings for component 'format_label', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    survey
- * @subpackage item_label
+ * @subpackage label
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

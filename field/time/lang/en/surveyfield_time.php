@@ -18,14 +18,11 @@
  * Strings for component 'field_time', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    survey
- * @subpackage item_time
+ * @subpackage time
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');
-
-$string['parentformat'] = SURVEYFIELD_TIME_FORMAT;
 $string['parentcontentinvalidtime_err'] = 'Provided data is not a regular time';
 $string['parentcontentdateoutofrange_err'] = 'Provided time is out of the range requested to the choosen item';
 $string['pluginname'] = 'Time';
@@ -43,10 +40,10 @@ $string['internalrange'] = 'internal range';
 $string['externalrange'] = 'external range';
 $string['outofrangedefault'] = 'Default does not fall within the specified range';
 $string['and'] = ' and ';
-$string['restriction_lowerupper_internal'] = 'Time is supposed to fit between {$a}';
-$string['restriction_lowerupper_external'] = 'Time is supposed to be lower than {$a->lowerbound} or greater than {$a->upperbound}';
-$string['restriction_lower'] = 'Time is supposed to be greater than {$a}';
-$string['restriction_upper'] = 'Time is supposed to be lower than {$a}';
+$string['restriction_lowerupper_internal'] = 'Answer is supposed to fit between {$a}';
+$string['restriction_lowerupper_external'] = 'Answer is supposed to be lower than {$a->lowerbound} or greater than {$a->upperbound}';
+$string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
+$string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
 $string['uerr_lowerthanminimum'] = 'Provided time is too small';
 $string['uerr_greaterthanmaximum'] = 'Provided time is too high';
 $string['customdefault'] = 'Custom';

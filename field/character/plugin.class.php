@@ -96,7 +96,7 @@ class surveyfield_character extends surveyitem_base {
 
         $this->flag = new stdclass();
         $this->flag->issearchable = true;
-        $this->flag->couldbeparent = true;
+        $this->flag->couldbeparent = false;
         $this->flag->useplugintable = true;
 
         if (!empty($itemid)) {
@@ -233,27 +233,6 @@ class surveyfield_character extends surveyitem_base {
     }
 
     /*
-     * item_parent_content_format_validation
-     * checks whether the user input format in the "parentcontent" field is correct
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_format_validation($parentcontent) {
-        // '[an_alphanum_string]'; alias, whatever you write is correct
-    }
-
-    /*
-     * item_parent_content_content_validation
-     * checks whether the user input content in the "parentcontent" field is correct
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_content_validation($parentcontent) {
-        // I am not supposed to add more strict checks here
-        // because they are useless until I can still change the parent item
-    }
-
-    /*
      * item_parent_content_encode_value
      * starting from the user input, this function stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
@@ -262,7 +241,8 @@ class surveyfield_character extends surveyitem_base {
      * @return
      */
     public function item_parent_content_encode_value($parentcontent) {
-        return $parentcontent;
+        // $this->flag->couldbeparent = false
+        // this method is never called
     }
 
     /*
@@ -470,17 +450,8 @@ class surveyfield_character extends surveyitem_base {
      * @return
      */
     public function userform_get_parent_disabilitation_info($child_parentcontent) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        $disabilitationinfo = array();
-
-        $mformelementinfo = new stdClass();
-        $mformelementinfo->parentname = $fieldname;
-        $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $child_parentcontent;
-        $disabilitationinfo[] = $mformelementinfo;
-
-        return $disabilitationinfo;
+        // $this->flag->couldbeparent = false
+        // this method is never called
     }
 
     /*

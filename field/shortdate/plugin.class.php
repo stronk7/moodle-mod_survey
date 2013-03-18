@@ -97,7 +97,7 @@ class surveyfield_shortdate extends surveyitem_base {
 
         $this->flag = new stdclass();
         $this->flag->issearchable = true;
-        $this->flag->couldbeparent = true;
+        $this->flag->couldbeparent = false;
         $this->flag->useplugintable = true;
 
         // override properties depending from $survey settings
@@ -229,51 +229,6 @@ class surveyfield_shortdate extends surveyitem_base {
     }
 
     /*
-     * item_parent_content_format_validation
-     * checks whether the user input format in the "parentcontent" field is correct
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_format_validation($parentcontent) {
-        $format = SURVEYFIELD_SHORTDATE_FORMAT; // '[mm/yyyy]'
-
-        $matches = $this->item_atomize_parent_content($parentcontent);
-
-        if (!empty($matches)) {
-            if ($matches[1] > 12) {
-                return (get_string('err_exceedingmonth', 'surveyfield_shortdate'));
-            }
-        } else {
-            return (get_string('invalidformat_err', 'survey', $format));
-        }
-    }
-
-    /*
-     * item_parent_content_content_validation
-     * checks whether the user input content in the "parentcontent" field is correct
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_content_validation($parentcontent) {
-        $format = SURVEYFIELD_SHORTDATE_FORMAT; // '[mm/yyyy]'
-
-        $matches = $this->item_atomize_parent_content($parentcontent);
-
-        if (!empty($matches)) {
-            if ($matches[1] > 12) {
-                throw new moodle_exception('Unexpected invalid format for shortdate item: id: '.$this->itemid.', type '.$this->type.', plugin: '.$this->plugin);
-            }
-            // write whatever you like as $matches[1], if it is wrong the next check will reveal it
-            $inputshortdate = $this->item_shortdate_to_unix_time($matches[1], $matches[2]);
-            if ( ($inputshortdate < $this->lowerbound) || ($inputshortdate > $this->upperbound)) {
-                return (get_string('parentcontentdateoutofrange_err', 'surveyfield_shortdate'));
-            }
-        } else {
-            throw new moodle_exception('Unexpected invalid format for shortdate item: id: '.$this->itemid.', type '.$this->type.', plugin: '.$this->plugin);
-        }
-    }
-
-    /*
      * item_parent_content_encode_value
      * starting from the user input, this function stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
@@ -282,9 +237,8 @@ class surveyfield_shortdate extends surveyitem_base {
      * @return
      */
     public function item_parent_content_encode_value($parentcontent) {
-        $matches = $this->item_atomize_parent_content($parentcontent);
-
-        return $this->item_shortdate_to_unix_time($matches[1], $matches[2]);
+        // $this->flag->couldbeparent = false
+        // this method is never called
     }
 
     /*
@@ -515,62 +469,8 @@ class surveyfield_shortdate extends surveyitem_base {
      * @return
      */
     public function userform_get_parent_disabilitation_info($child_parentcontent) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        $matches = $this->item_atomize_parent_content($child_parentcontent);
-
-        $disabilitationinfo = array();
-
-        $mformelementinfo = new stdClass();
-        $mformelementinfo->parentname = $fieldname.'_month';
-        $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $matches[1];
-        $disabilitationinfo[] = $mformelementinfo;
-
-        $mformelementinfo = new stdClass();
-        $mformelementinfo->parentname = $fieldname.'_year';
-        $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $matches[2];
-        $disabilitationinfo[] = $mformelementinfo;
-
-        if (!$this->required) {
-            $mformelementinfo = new stdClass();
-            $mformelementinfo->parentname = $fieldname.'_noanswer';
-            $mformelementinfo->operator = 'eq';
-            $mformelementinfo->content = '1';
-            $disabilitationinfo[] = $mformelementinfo;
-        }
-
-        return $disabilitationinfo;
-    }
-
-    /*
-     * userform_child_is_allowed_dynamic
-     * from parentcontent defines whether an item is supposed to be active (not disabled) in the form so needs validation
-     * ----------------------------------------------------------------------
-     * this function is called when $survey->newpageforchild == false
-     * that is the current survey lives in just one single web page
-     * ----------------------------------------------------------------------
-     * Am I geting submitted data from $fromform or from table 'survey_userdata'?
-     *     - if I get it from $fromform or from $data[] I need to use userform_child_is_allowed_dynamic
-     *     - if I get it from table 'survey_userdata'   I need to use survey_child_is_allowed_static
-     * ----------------------------------------------------------------------
-     * @param: $parentcontent, $parentsubmitted
-     * @return
-     */
-    public function userform_child_is_allowed_dynamic($child_parentcontent, $data) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        $matches = $this->item_atomize_parent_content($child_parentcontent);
-
-        $status = true;
-        $status = $status && ($data[$fieldname.'_month'] == $matches[1]);
-        $status = $status && ($data[$fieldname.'_year'] == $matches[2]);
-        if (isset($data[$fieldname.'_noanswer'])) {
-            $status = $status && ($data[$fieldname.'_noanswer'] != '1');
-        }
-
-        return $status;
+        // $this->flag->couldbeparent = false
+        // this method is never called
     }
 
     /*

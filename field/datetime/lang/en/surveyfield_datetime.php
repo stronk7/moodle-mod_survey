@@ -18,14 +18,11 @@
  * Strings for component 'field_datetime', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    survey
- * @subpackage item_datetime
+ * @subpackage datetime
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');
-
-$string['parentformat'] = SURVEYFIELD_DATETIME_FORMAT;
 $string['parentcontentinvaliddate_err'] = 'Provided data is not a regular date';
 $string['parentcontentinvalidtime_err'] = 'Provided data is not a regular time';
 $string['parentcontentdateoutofrange_err'] = 'Provided date anf time is out of the range requested to the choosen item';
@@ -40,9 +37,9 @@ $string['upperbound_help'] = 'The upper date and time the user will be allowed t
 $string['upperbound'] = 'Upper bound';
 $string['outofrangedefault'] = 'Default does not fall within the specified range';
 $string['and'] = ' and ';
-$string['restriction_lowerupper'] = 'Date and time are supposed to fit between {$a}';
-$string['restriction_lower'] = 'Date and time are supposed to be greater than {$a}';
-$string['restriction_upper'] = 'Date and time are supposed to be lower than {$a}';
+$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a}';
+$string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
+$string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
 $string['uerr_lowerthanminimum'] = 'Provided date and time is too small';
 $string['uerr_greaterthanmaximum'] = 'Provided date and time is too high';
 $string['customdefault'] = 'Custom';

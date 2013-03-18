@@ -18,12 +18,11 @@
  * Strings for component 'field_autofill', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    survey
- * @subpackage item_character
+ * @subpackage autofill
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['parentformat'] = '[an_alphanum_string]';
 $string['pluginname'] = 'Autofill';
 $string['userfriendlypluginname'] = 'Autofill';
 $string['submissiontime'] = 'submission time';

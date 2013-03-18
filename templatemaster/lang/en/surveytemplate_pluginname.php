@@ -17,8 +17,8 @@
 /*
  * Strings for component 'survey_surveyTemplatePluginNamePlaceholder', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    survey
- * @subpackage survey_surveyTemplatePluginNamePlaceholder
+ * @package    surveytemplate
+ * @subpackage surveyTemplatePluginNamePlaceholder
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['parentformat'] = '[yy]';
 $string['pluginname'] = 'Short age';
 $string['userfriendlypluginname'] = 'Age (short) [yy]';
 $string['defaultvalue_help'] = 'This is the short age the remote user will find answered by default. The default for this type of question is mandatory.';
@@ -34,9 +33,9 @@ $string['upperbound_help'] = 'The upper age the user will be allowed to enter';
 $string['upperbound'] = 'Upper bound';
 $string['outofrangedefault'] = 'Default does not fall within the specified range';
 $string['and'] = ' and ';
-$string['restriction_lowerupper'] = 'Age is supposed to fit between {$a}';
-$string['restriction_lower'] = 'Age is supposed to be greater than {$a}';
-$string['restriction_upper'] = 'Age is supposed to be lower than {$a}';
+$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a}';
+$string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
+$string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
 $string['uerr_lowerthanminimum'] = 'Provided age is too small';
 $string['uerr_greaterthanmaximum'] = 'Provided age is too high';
 $string['maximumshortage'] = 'Maximum short age';

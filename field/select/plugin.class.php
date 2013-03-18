@@ -207,35 +207,6 @@ class surveyfield_select extends surveyitem_base {
     }
 
     /*
-     * item_parent_content_format_validation
-     * checks whether the user input format in the "parentcontent" field is correct
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_format_validation($parentcontent) {
-    }
-
-    /*
-     * item_parent_content_content_validation
-     * checks whether the user input content in the "parentcontent" field is correct
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_content_validation($parentcontent) {
-        // $format = get_string('parentformat', 'surveyfield_boolean'); // '[label]'
-        $options = $this->item_complete_option_array();
-        // clean parentcontent
-        $parentcontent = trim($parentcontent);
-
-        if (!array_key_exists($parentcontent, $options)) {
-            // a missing $value is allowed only if the "other" option is foreseen
-            if (!$this->labelother) {
-                return (get_string('parentcontent_err', 'surveyfield_select', $parentcontent));
-            }
-        }
-    }
-
-    /*
      * item_parent_content_encode_value
      * starting from the user input, this function stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent

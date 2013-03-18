@@ -18,14 +18,11 @@
  * Strings for component 'field_age', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    survey
- * @subpackage item_age
+ * @subpackage age
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');
-
-$string['parentformat'] = SURVEYFIELD_AGE_FORMAT;
 $string['pluginname'] = 'Age';
 $string['userfriendlypluginname'] = 'Age [yy/mm]';
 $string['defaultvalue_help'] = 'This is the age the remote user will find answered by default. The default for this type of question is mandatory.';
@@ -36,9 +33,9 @@ $string['upperbound_help'] = 'The upper age the user will be allowed to enter';
 $string['upperbound'] = 'Upper bound';
 $string['outofrangedefault'] = 'Default does not fall within the specified range';
 $string['and'] = ' and ';
-$string['restriction_lowerupper'] = 'Age is supposed to fit between {$a}';
-$string['restriction_lower'] = 'Age is supposed to be greater than {$a}';
-$string['restriction_upper'] = 'Age is supposed to be lower than {$a}';
+$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a}';
+$string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
+$string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
 $string['months'] = 'months';
 $string['err_exceedingmonth'] = 'Month has to be between 00 and 12';
 $string['uerr_lowerthanminimum'] = 'Provided age is too small';

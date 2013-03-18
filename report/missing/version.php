@@ -20,8 +20,8 @@
  * This code fragment is called by moodle_needs_upgrading() and
  * /admin/index.php
  *
- * @package    surveyitem
- * @subpackage autofill
+ * @package    surveyreport
+ * @subpackage missing
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

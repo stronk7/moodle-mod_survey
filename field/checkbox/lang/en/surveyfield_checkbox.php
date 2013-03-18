@@ -18,7 +18,7 @@
  * Strings for component 'field_checkbox', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    survey
- * @subpackage item_checkbox
+ * @subpackage checkbox
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

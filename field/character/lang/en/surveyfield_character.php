@@ -18,12 +18,11 @@
  * Strings for component 'item_character', language 'en', branch 'MOODLE_23_STABLE'
  *
  * @package    survey
- * @subpackage item_character
+ * @subpackage character
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['parentformat'] = '[an_alphanum_string]';
 $string['pluginname'] = 'Character';
 $string['userfriendlypluginname'] = 'Short text';
 $string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';

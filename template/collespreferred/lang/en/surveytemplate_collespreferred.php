@@ -17,8 +17,8 @@
 /*
  * Strings for component 'survey_collespreferred', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    survey
- * @subpackage survey_collespreferred
+ * @package    surveytemplate
+ * @subpackage collespreferred
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

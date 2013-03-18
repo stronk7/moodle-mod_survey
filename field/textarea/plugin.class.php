@@ -216,28 +216,6 @@ class surveyfield_textarea extends surveyitem_base {
     }
 
     /*
-     * item_parent_content_format_validation
-     * checks whether the user input format in the "parentcontent" field is correct
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_format_validation($parentcontent) {
-        // $this->flag->couldbeparent = false
-        // this method is never called
-    }
-
-    /*
-     * item_parent_content_content_validation
-     * checks whether the user input content in the "parentcontent" field is correct
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_content_validation($parentcontent) {
-        // $this->flag->couldbeparent = false
-        // this method is never called
-    }
-
-    /*
      * item_parent_content_encode_value
      * starting from the user input, this function stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
@@ -375,25 +353,6 @@ class surveyfield_textarea extends surveyitem_base {
      * @return
      */
     public function userform_get_parent_disabilitation_info($child_parentcontent) {
-        // $this->flag->couldbeparent = false
-        // this method is never called
-    }
-
-    /*
-     * userform_child_is_allowed_dynamic
-     * from parentcontent defines whether an item is supposed to be active (not disabled) in the form so needs validation
-     * ----------------------------------------------------------------------
-     * this function is called when $survey->newpageforchild == false
-     * that is the current survey lives in just one single web page
-     * ----------------------------------------------------------------------
-     * Am I geting submitted data from $fromform or from table 'survey_userdata'?
-     *     - if I get it from $fromform or from $data[] I need to use userform_child_is_allowed_dynamic
-     *     - if I get it from table 'survey_userdata'   I need to use survey_child_is_allowed_static
-     * ----------------------------------------------------------------------
-     * @param: $parentcontent, $parentsubmitted
-     * @return
-     */
-    public function userform_child_is_allowed_dynamic($child_parentcontent, $data) {
         // $this->flag->couldbeparent = false
         // this method is never called
     }

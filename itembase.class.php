@@ -770,6 +770,26 @@ class surveyitem_base {
     }
 
     /*
+     * item_parentcontent_format_validation
+     * checks whether the format of the "parentcontent" content is correct
+     *
+     * I loaded this class as the class of the parent item.
+     * My final goal is to check whether the content of the "parentcontent" field (of the child item) is correct
+     * At first it may seem I may need to validate format and content both. This is not true because...
+     * I only need to validate the format because the content does not matter.
+     * The content does not matter because it has to match the allowed answers of a different question.
+     * Even if I successfull check for the content match (between the "parentcontent" here and the allowed answers in the parent question)...
+     * ... I can still edit the parent question later and change the list of allowed answers. So the content validation is useless, here.
+     * I will perform it in the "Validate branching" age only whether requested.
+     * @param $parentcontent
+     * @return
+     */
+    public function item_parentcontent_format_validation($parentcontent) {
+        // whether not overridden by specific class method, return false
+        return false; // no format validation error has been found
+    }
+
+    /*
      * item_get_type
      * @param
      * @return
@@ -803,15 +823,6 @@ class surveyitem_base {
      */
     public function item_is_searchable() {
         return $this->flag->issearchable;
-    }
-
-    /*
-     * item_is_matchable
-     * @param
-     * @return
-     */
-    public function item_is_matchable() {
-        return $this->flag->couldbeparent;
     }
 
     /*

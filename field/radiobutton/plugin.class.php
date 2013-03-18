@@ -197,7 +197,7 @@ class surveyfield_radiobutton extends surveyitem_base {
      * @return
      */
     public function item_generate_standard_default() {
-        $optionarray = survey_textarea_to_array($this->options);
+        $option = survey_textarea_to_array($this->options);
         $firstoption = reset($optionarray);
 
         if (preg_match('/^(.*)'.SURVEY_VALUELABELSEPARATOR.'(.*)$/', $firstoption, $match)) { // do not warn: it can never be equal to zero
@@ -208,35 +208,6 @@ class surveyfield_radiobutton extends surveyitem_base {
         }
 
         return $default;
-    }
-
-    /*
-     * item_parent_content_format_validation
-     * checks whether the user input format in the "parentcontent" field is correct
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_format_validation($parentcontent) {
-    }
-
-    /*
-     * item_parent_content_content_validation
-     * checks whether the user input content in the "parentcontent" field is correct
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_content_validation($parentcontent) {
-        // $format = get_string('parentformat', 'surveyfield_boolean'); // '[label]'
-        $options = $this->item_complete_option_array();
-        // clean parentcontent
-        $parentcontent = trim($parentcontent);
-
-        if (!array_key_exists($parentcontent, $options)) {
-            // a missing $value is allowed only if the "other" option is foreseen
-            if (!$this->labelother) {
-                return (get_string('parentcontent_err', 'surveyfield_radiobutton', $parentcontent));
-            }
-        }
     }
 
     /*
@@ -433,7 +404,7 @@ class surveyfield_radiobutton extends surveyitem_base {
      * this function is called when $survey->newpageforchild == false
      * that is the current survey lives in just one single web page
      * ----------------------------------------------------------------------
-     * Am I geting submitted data from $fromform or from table 'survey_userdata'?
+     * Am I getting submitted data from $fromform or from table 'survey_userdata'?
      *     - if I get it from $fromform or from $data[] I need to use userform_child_is_allowed_dynamic
      *     - if I get it from table 'survey_userdata'   I need to use survey_child_is_allowed_static
      * ----------------------------------------------------------------------

@@ -18,14 +18,11 @@
  * Strings for component 'field_shortdate', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    survey
- * @subpackage item_shortdate
+ * @subpackage shortdate
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');
-
-$string['parentformat'] = SURVEYFIELD_SHORTDATE_FORMAT;
 $string['err_exceedingmonth'] = 'Specified month can not be greater than 12';
 $string['parentcontentdateoutofrange_err'] = 'Provided short date is out of the range requested to the choosen item';
 $string['pluginname'] = 'Short date';
@@ -40,9 +37,9 @@ $string['upperbound'] = 'Upper bound';
 $string['ierr_outofrangedefault'] = 'Default does not fall within the specified range';
 $string['ierr_invertupperlowerbounds'] = 'Upper bound must be greater than lower bound';
 $string['and'] = ' and ';
-$string['restriction_lowerupper'] = 'Date is supposed to fit between {$a}';
-$string['restriction_lower'] = 'Date is supposed to be greater than {$a}';
-$string['restriction_upper'] = 'Date is supposed to be lower than {$a}';
+$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a}';
+$string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
+$string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
 $string['uerr_lowerthanminimum'] = 'Provided short date is too small';
 $string['uerr_greaterthanmaximum'] = 'Provided short date is too high';
 $string['customdefault'] = 'Custom';

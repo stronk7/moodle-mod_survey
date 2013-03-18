@@ -18,12 +18,11 @@
  * Strings for component 'field_numeric', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    survey
- * @subpackage item_numeric
+ * @subpackage numeric
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['parentformat'] = '[12345.67 or 12345,67]';
 $string['parentformatdecimal'] = '[12345{$a}67]';
 $string['pluginname'] = 'Numeric';
 $string['userfriendlypluginname'] = 'Numeric';

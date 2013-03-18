@@ -242,15 +242,15 @@ class surveyitem_baseform extends moodleform {
             if ($item->item_form_requires[$fieldname]) {
                 // create the list of each item with:
                 //     sortindex lower than mine (whether already exists)
-                //     item_is_matchable() == true
-                //     basicform == alla mia <-- ometto questo vincolo perché il survey creator può cambiare in corso d'opera la basicform dell'item corrente
-                //         Mi riservo in fase di salvataggio di segnalare l'errore
+                //     $plugintemplate->flag->couldbeparent == true
+                //     basicform == my one <-- I jump this verification because the survey creator can, at every time, change the basicform of the current item
+                //         So I shify the verification of the holding form at the form verification time.
 
                 // build the list only for searchable plugins
                 $pluginarray = survey_get_plugin_list(SURVEY_FIELD);
                 foreach ($pluginarray as $plugin) {
                     $plugintemplate = survey_get_item(null, SURVEY_FIELD, $plugin);
-                    if (!$plugintemplate->item_is_matchable()) {
+                    if (!$plugintemplate->flag->couldbeparent) {
                         unset($pluginarray[$plugin]);
                     }
                 }
@@ -384,8 +384,7 @@ class surveyitem_baseform extends moodleform {
             }
         }
 
-        // adesso verifico la coerenza fra il formato di quest'item e quello dell'item padre.
-        // la coerenza con la form degli eventuali figli la verifico dopo il save su itembase.class.php
+        // now validate the format of the "parentcontent" fields against the format of the parent item
         if (!empty($data['parentid']) && ($data['parentcontent'] != '')) { // $data['parentcontent'] can be = 0
             // $data['parentid'] == 148
             // $type = 'field' for sure
@@ -393,11 +392,11 @@ class surveyitem_baseform extends moodleform {
             require_once($CFG->dirroot.'/mod/survey/field/'.$plugin.'/plugin.class.php');
             $itemclass = 'surveyfield_'.$plugin;
             $parentitem = new $itemclass($data['parentid']);
-            if ($errormessage = $parentitem->item_parent_content_format_validation($data['parentcontent'])) {
+            if ($errormessage = $parentitem->item_parentcontent_format_validation($data['parentcontent'])) {
                 $errors['parentcontent'] = $errormessage;
             }
 
-            // verify $parentitem is in the same basicform of this item
+            // verify $parentitem is in the basicform as of this item
             $childbasicform = $data['basicform'];
             $parentbasicform = $parentitem->basicform;
             if ( (($parentbasicform == SURVEY_NOTPRESENT) && ($childbasicform != SURVEY_NOTPRESENT)) ||

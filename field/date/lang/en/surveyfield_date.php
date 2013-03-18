@@ -18,14 +18,11 @@
  * Strings for component 'field_date', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    survey
- * @subpackage item_date
+ * @subpackage date
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');
-
-$string['parentformat'] = SURVEYFIELD_DATE_FORMAT;
 $string['parentcontentinvaliddate_err'] = 'Provided data is not a regular date';
 $string['parentcontentdateoutofrange_err'] = 'Provided date is out of the range requested to the choosen item';
 $string['pluginname'] = 'Date';
@@ -39,9 +36,9 @@ $string['upperbound_help'] = 'The upper date the user will be allowed to enter';
 $string['upperbound'] = 'Upper bound';
 $string['outofrangedefault'] = 'Default does not fall within the specified range';
 $string['and'] = ' and ';
-$string['restriction_lowerupper'] = 'Date is supposed to fit between {$a}';
-$string['restriction_lower'] = 'Date is supposed to be greater than {$a}';
-$string['restriction_upper'] = 'Date is supposed to be lower than {$a}';
+$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a}';
+$string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
+$string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
 $string['uerr_lowerthanminimum'] = 'Provided date is too small';
 $string['uerr_greaterthanmaximum'] = 'Provided date is too high';
 $string['customdefault'] = 'Custom';

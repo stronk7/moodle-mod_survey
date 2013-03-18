@@ -645,7 +645,7 @@ function survey_page_has_items($surveyid, $canaccessadvancedform, $formpage, $su
  * this function is called when $survey->newpageforchild == false
  * that is the current survey lives in just one single web page
  * ----------------------------------------------------------------------
- * Am I geting submitted data from $fromform or from table 'survey_userdata'?
+ * Am I getting submitted data from $fromform or from table 'survey_userdata'?
  *     - if I get it from $fromform or from $data[] I need to use userform_child_is_allowed_dynamic
  *     - if I get it from table 'survey_userdata'   I need to use survey_child_is_allowed_static
  * ----------------------------------------------------------------------
@@ -1961,7 +1961,7 @@ function survey_drop_unexpected_values(&$fromform) {
         if ($parentinsamepage) { // if parent is in this same page
             // tell parentitem what child needs in order to be displayed and compare it with what was answered to parentitem ($dirtydata)
             $expectedvalue = $parentitem->userform_child_is_allowed_dynamic($childitem->parentcontent, $dirtydata);
-            // parentitem, knowing its plugin, compare compara quello che vuole e risponde
+            // parentitem, knowing itself, compare what is needed and provide an answer
 
             if (!$expectedvalue) {
                 $disposelist[] = $childitem->itemid;
