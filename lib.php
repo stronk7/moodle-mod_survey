@@ -736,18 +736,59 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
 
     $canmanageitems = survey_user_can_manage_items($cm);
     $canmanageplugin = survey_user_can_manage_plugin($cm);
+    $canexportdata = survey_user_can_export_data($cm);
+    $hassubmissions = survey_has_submissions($cm->instance);
 
     $survey = $DB->get_record('survey', array('id' => $cm->instance));
     // $currentgroup = groups_get_activity_group($cm);
     // $groupmode = groups_get_activity_groupmode($cm);
 
-    $navref->add(SURVEY_TAB1NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => 1)));
-    if ($canmanageitems) {
-        $navref->add(SURVEY_TAB2NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => 2)));
+    $paramurl = array('s' => $cm->instance, 'tab' => SURVEY_TABSUBMISSIONS);
+    $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_CONTAINER);
+
+    $paramurl['pag'] = SURVEY_SUBMISSION_NEW;
+    $navnode->add(get_string('tabsubmissionspage1', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+    $paramurl['pag'] = SURVEY_SUBMISSION_MANAGE;
+    $navnode->add(get_string('tabsubmissionspage4', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+    $paramurl['pag'] = SURVEY_SUBMISSION_SEARCH;
+    $navnode->add(get_string('tabsubmissionspage5', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+    if (!empty($canexportdata)) {
+        $paramurl['pag'] = SURVEY_SUBMISSION_EXPORT;
+        $navnode->add(get_string('tabsubmissionspage7', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
     }
-    $navref->add(SURVEY_TAB3NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => 3)));
+    //$navref->add(SURVEY_TAB1NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => SURVEY_TABSUBMISSIONS)));
+
+    if ($canmanageitems) {
+        $paramurl = array('s' => $cm->instance, 'tab' => SURVEY_TABITEMS);
+        $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_CONTAINER);
+
+        $paramurl['pag'] = SURVEY_ITEMS_MANAGE;
+        $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+        if (!$hassubmissions) {
+            $paramurl['pag'] = SURVEY_ITEMS_ADD;
+            $navnode->add(get_string('tabitemspage3', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+            $paramurl['pag'] = SURVEY_ITEMS_ADDSET;
+            $navnode->add(get_string('tabitemspage5', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+        }
+        $paramurl['pag'] = SURVEY_ITEMS_VALIDATE;
+        $navnode->add(get_string('tabitemspage6', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+        //$navref->add(SURVEY_TAB2NAME, new moodle_url('/mod/survey/view.php', $paramurl));
+    }
+
+    $paramurl = array('s' => $cm->instance, 'tab' => SURVEY_TABTEMPLATES);
+    $navnode = $navref->add(SURVEY_TAB3NAME,  new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_CONTAINER);
+
+    $paramurl['pag'] = SURVEY_TEMPLATES_MANAGE;
+    $navnode->add(get_string('tabtemplatepage1', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+    $paramurl['pag'] = SURVEY_TEMPLATES_BUILD;
+    $navnode->add(get_string('tabtemplatepage2', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+    $paramurl['pag'] = SURVEY_TEMPLATES_IMPORT;
+    $navnode->add(get_string('tabtemplatepage3', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+    // $navref->add(SURVEY_TAB3NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => SURVEY_TABTEMPLATES)));
+
     if ($canmanageplugin) {
-        $navref->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => 4)));
+        $paramurl = array('s' => $cm->instance, 'tab' => SURVEY_TABPLUGINS);
+        $navref->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/view.php', $paramurl));
     }
 }
 
