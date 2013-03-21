@@ -108,7 +108,7 @@ if (!empty($submissionid)) {
     // $icanedit = ($icanedit || survey_user_can_edit_all_submissions($cm));
     // $icanedit = ($icanedit && ($action != SURVEY_VIEWSURVEY));
 }
-$prefill['formpage'] = $formpage; // go to populate the hidden field of the form
+$prefill['formpage'] = empty($formpage) ? $lastformpage : $formpage; // go to populate the hidden field of the form
 
 $mform->set_data($prefill);
 $mform->display();

@@ -52,7 +52,6 @@ switch ($currenttab) {
             case SURVEY_SUBMISSION_NEW: // new
             case SURVEY_SUBMISSION_EDIT: // edit
             case SURVEY_SUBMISSION_READONLY: // read only
-
                 survey_add_custom_css($survey->id, $cm->id);
 
                 // whether it comes from the form or from the redirect in GET, $submissionid is fetched here
@@ -96,6 +95,7 @@ switch ($currenttab) {
 
                 if ($fromform = $mform->get_data()) {
 
+                    // start by saving unless the "previous" button has been pressed
                     if (!isset($fromform->prevbutton)) {
 
                         if (!$survey->newpageforchild) {
@@ -142,7 +142,7 @@ switch ($currenttab) {
 
                         survey_save_user_data($fromform);
 
-                        // now, I just saved
+                        // now, I saved
 
                         // BEGIN: send email whether requested
                         if ($record->status = SURVEY_STATUSCLOSED) {
@@ -153,45 +153,45 @@ switch ($currenttab) {
                         // END: send email whether requested
                     }
 
-                    $pausebutton = (isset($fromform->pausebutton) && ($fromform->pausebutton));
-                    if ($pausebutton) {
-                        $redirecturl = new moodle_url('view.php', $paramurl);
-                        redirect($redirecturl); // -> go somewhere
-                    }
-
-                    $paramurl['submissionid'] = $submissionid;
-
                     // $fromform->formpage is the currently displayed submissions page and it is where I come from
 
                     // if I am here, the form has been submitted using: <<, >>, save o saveasnew
                     // formpage has the following life:
                     // quando la form viene caricata per la prima volta:
-                    //     $formpage acquisice il valore 1 in getparam
-                    //     viene messa nella form tramite set_data($prefill); alla fine di submissions.php
-                    // se proviene dalla form che viene inviata con un << o >>:
-                    //     viene valorizzata in getparam (inutilmente)
-                    //     viene acquisita qui dalla form
-                    //     viene usata per calcolare la sua succeditrice
-                    //     viene utilizzata come parametro in GET nell'url del redirect
-                    //     viene valorizzata in getparam
-                    //     viene messa nella form tramite set_data($prefill); alla fine di submissions.php
+                    //     $formpage get the default value "1" in getparam
+                    //     it is stored in the form through set_data($prefill); at the end of the submissions.php file
+                    // if execution comes from the submission of the form through << o >>:
+                    //     $formpage get a the old $formpage value in getparam (steals it from the form)
+                    //     it is used to build the old form to execute the validation form routine (called as child process of $mform->get_data())
+                    //     $fromform->formpage is used to get the next available page
+                    //     the next available page is used as a GET param in the url for the redirect
+                    //     $formpage get this value in getparam
+                    //     it is stored in the form through set_data($prefill); at the end of the submissions.php file
 
-                    // la gestione della pressione dei bottoni previous/next DEVE essere fatta qui perché DEVE essere preceduta dal salvataggio dei dati
-                    $prevbutton = (isset($fromform->prevbutton) && ($fromform->prevbutton));
-                    if ($prevbutton) {
-                        // $fromform->formpage nella peggiore delle ipotesi diventa 1
-                        $fromform->formpage = survey_next_not_empty_page($survey->id, $canaccessadvancedform, $fromform->formpage, false, $submissionid);
-                        $paramurl['formpage'] = $fromform->formpage;
-                        redirect(new moodle_url('view.php', $paramurl)); // -> go to the previous page of the form
+                    // the management of the "pause/previous/next" buttons MUST BE DONE HERE because MUST BE preceded by data save
+                    // if "pause" button has been pressed, redirect
+                    $pausebutton = (isset($fromform->pausebutton) && ($fromform->pausebutton));
+                    if ($pausebutton) {
+                        $redirecturl = new moodle_url('view.php', $paramurl);
+                        redirect($redirecturl); // -> go somewhere
                         die; // <-- never reached
                     }
+
+                    $paramurl['submissionid'] = $submissionid;
+
+                    $prevbutton = (isset($fromform->prevbutton) && ($fromform->prevbutton));
+                    if ($prevbutton) {
+                        // $fromform->formpage in the worst case becomes 1
+                        $paramurl['formpage'] = survey_next_not_empty_page($survey->id, $canaccessadvancedform, $fromform->formpage, false, $submissionid);
+                        redirect(new moodle_url('view.php', $paramurl)); // -> go to the first non empty previous page of the form
+                        die; // <-- never reached
+                    }
+
                     $nextbutton = (isset($fromform->nextbutton) && ($fromform->nextbutton));
                     if ($nextbutton) {
-                        // $fromform->formpage potrebbe diventare lastformpage
-                        // se non ci sono campi da mostrare in nessuna delle successive pagine, devo segnalarlo nella form
-                        $fromform->formpage = survey_next_not_empty_page($survey->id, $canaccessadvancedform, $fromform->formpage, true, $submissionid, $lastformpage);
-                        $paramurl['formpage'] = $fromform->formpage;
-                        redirect(new moodle_url('view.php', $paramurl)); // -> go to the next page of the form
+                        // $fromform->formpage in the worst case could become $lastformpage such as 0
+                        $paramurl['formpage'] = survey_next_not_empty_page($survey->id, $canaccessadvancedform, $fromform->formpage, true, $submissionid, $lastformpage);
+                        redirect(new moodle_url('view.php', $paramurl)); // -> go to the first non empty next page of the form
                         die; // <-- never reached
                     }
                 }

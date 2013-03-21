@@ -573,23 +573,24 @@ function survey_assign_pages($canaccessadvancedform=false) {
  * @return
  */
 function survey_next_not_empty_page($surveyid, $canaccessadvancedform, $formpage, $forward, $submissionid=0, $maxformpage=0) {
-    global $DB;
     // depending on user provided answer, in the previous or next page there may be no questions to display
     // get the first page WITH questions
     // in the worst case will get 1 or $maxformpage
+    // @ page 1 I will ALWAYS find items to show
+    // @ page $maxformpage I may not find items to show.
     // if even in $maxformpage I can not find items to show, return $returnpage = 0
 
     if (!empty($forward) && empty($maxformpage)) {
         throw new moodle_exception('emptymaxformpage', 'survey');
     }
 
-    // mi trovo in $formpage
+    // $formpage is the page where I come from
     if ($forward) {
         $i = ++$formpage;
-        $lastpage = $maxformpage+1; // maxpage = $maxformpage, but I have to add      1 because of ($i != $lastpage)
+        $overflowpage = $maxformpage + 1; // maxpage = $maxformpage, but I have to add      1 because of ($i != $overflowpage)
     } else {
         $i = --$formpage;
-        $lastpage = 0;              // minpage = 1,            but I have to subtract 1 because of ($i != $lastpage)
+        $overflowpage = 0;              // minpage = 1,            but I have to subtract 1 because of ($i != $overflowpage)
     }
 
     do {
@@ -597,7 +598,7 @@ function survey_next_not_empty_page($surveyid, $canaccessadvancedform, $formpage
             break;
         }
         $i = ($forward) ? ++$i : --$i;
-    } while ($i != $lastpage);
+    } while ($i != $overflowpage);
 
     return $returnpage;
 }

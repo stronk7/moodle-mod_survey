@@ -24,7 +24,7 @@
  */
 
 $string['pluginname'] = 'Integer';
-$string['userfriendlypluginname'] = 'Integer [yy]';
+$string['userfriendlypluginname'] = 'Integer';
 $string['defaultvalue_help'] = 'This is the integer the remote user will find answered by default. The default for this type of question is mandatory.';
 $string['defaultvalue'] = 'Default';
 $string['lowerbound_help'] = 'The lower integer the user will be allowed to enter';

@@ -305,9 +305,9 @@ function survey_update_instance($survey) {
                 $survey->id, $editoroptions, $survey->thankshtml_editor['text']);
         $survey->thankshtmlformat = $survey->thankshtml_editor['format'];
     }
-echo '$survey->readaccess = '.$survey->readaccess.'<br />';
-echo '$survey->editaccess = '.$survey->editaccess.'<br />';
-echo '$survey->deleteaccess = '.$survey->deleteaccess.'<br />';
+// echo '$survey->readaccess = '.$survey->readaccess.'<br />';
+// echo '$survey->editaccess = '.$survey->editaccess.'<br />';
+// echo '$survey->deleteaccess = '.$survey->deleteaccess.'<br />';
 
     return $DB->update_record('survey', $survey);
 }

@@ -197,7 +197,7 @@ class surveyfield_radiobutton extends surveyitem_base {
      * @return
      */
     public function item_generate_standard_default() {
-        $option = survey_textarea_to_array($this->options);
+        $optionarray = survey_textarea_to_array($this->options);
         $firstoption = reset($optionarray);
 
         if (preg_match('/^(.*)'.SURVEY_VALUELABELSEPARATOR.'(.*)$/', $firstoption, $match)) { // do not warn: it can never be equal to zero
