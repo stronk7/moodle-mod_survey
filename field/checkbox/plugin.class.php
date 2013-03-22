@@ -291,8 +291,12 @@ class surveyfield_checkbox extends surveyitem_base {
         }
 
         if ($this->adjustment == SURVEY_VERTICAL) {
-            $separator = array_fill(0, count($valuelabel), '<br />');
-            $separator[] = ' ';
+            if (!empty($this->labelother)) {
+                $separator = array_fill(0, count($elementgroup)-2, '<br />');
+                $separator[] = ' ';
+            } else {
+                $separator = '<br />';
+            }
         } else { // SURVEY_HORIZONTAL
             $separator = ' ';
         }
@@ -312,12 +316,15 @@ class surveyfield_checkbox extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
+        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
+
         if ($this->required) {
             // $mform->addRule validaition was not permitted
             // so, here, I need to manually look after the 'required' rule
             $valuelabel = $this->item_get_value_label_array('options');
 
             $missinganswer = true;
+            $i = 0;
             foreach ($valuelabel as $value => $label) {
                 $uniqueid = $fieldname.'_'.$i;
 

@@ -25,7 +25,7 @@
 
 $string['parentformat'] = '[0] or [1]';
 $string['pluginname'] = 'Boolean';
-$string['userfriendlypluginname'] = 'Yes/No';
+$string['userfriendlypluginname'] = 'Boolean';
 $string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';
 $string['defaultvalue_help'] = 'This is the value the remote user will find answered by default. The default for this type of question is mandatory.';
 $string['defaultvalue'] = 'Default';

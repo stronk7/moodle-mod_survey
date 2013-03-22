@@ -316,13 +316,30 @@ class surveyfield_radiobutton extends surveyitem_base {
 
         if ($this->adjustment == SURVEY_VERTICAL) {
             if (!empty($this->labelother)) {
-                // il -3 è dato da:
-                //     -1 perché se ho n elementi, devo contare (n-1) separatori
-                //     -1 perché il primo ha indice 0
-                //     -1 perché l'ultimo lo aggiungo a mano dopo
-                $separator = array_fill(0, count($elementgroup)-3, '<br />');
+                // I take 2 <br /> out because:
+                //     having n elements, I only need (n-2) separators
+                // for instance:
+                // $elementgroup =
+                //   0 => (radio) 'Italy'
+                //   1 => (radio) 'Spain'
+                //   2 => (radio) 'Greece'
+                //   3 => (label) 'Other (please specify a nationality)'
+                //   4 => (editfield) 'Great Britain'
+
+                // $elementgroup =
+                //   0 => (radio) 'Italy'
+                //   1 => (radio) 'Spain'
+                //   2 => (radio) 'Greece'
+                //   3 => (label) 'Other (please specify a nationality)'
+                //   4 => (editfield) 'Great Britain'
+                //   5 => (radio) '__n0__Answer__'
+
+                $separatorcount = $this->required ? count($elementgroup)-2 : count($elementgroup)-3;
+                $separator = array_fill(0, $separatorcount, '<br />');
                 $separator[] = ' ';
-                $separator[] = '<br />';
+                if (!$this->required) {
+                    $separator[] = '<br />';
+                }
             } else {
                 $separator = '<br />';
             }

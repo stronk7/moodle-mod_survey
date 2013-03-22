@@ -57,7 +57,8 @@ class survey_submissionform extends moodleform {
             // if !$formpage then I am at the END of the survey otherwise, $formpage == 1 at least
             // no more pages have fields to show
             // let's display final message
-            $mform->addElement('static', 'nomoreitems', get_string('note', 'survey'), get_string('nomoreitems', 'survey'));
+            $a = $survey->saveresume ? get_string('revieworpause', 'survey') : get_string('onlyreview', 'survey');
+            $mform->addElement('static', 'nomoreitems', get_string('note', 'survey'), get_string('nomoreitems', 'survey', $a));
         } else {
             $params = array('surveyid' => $survey->id, 'formpage' => $formpage);
             $allpages = ($currentpage == SURVEY_SUBMISSION_READONLY);
