@@ -243,28 +243,28 @@ foreach ($itemseeds as $itemseed) {
 
     // *************************************** user availability
     if ($item->hide) {
-        $message = get_string('usernoedit', 'survey');
+        $message = get_string('basicnoedit', 'survey');
         $content = '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
-        $message = get_string('usernosearch', 'survey');
+        $message = get_string('basicnosearch', 'survey');
         $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
     } else {
         switch ($item->basicform) {
             case SURVEY_NOTPRESENT:
-                $message = get_string('usernoedit', 'survey');
+                $message = get_string('basicnoedit', 'survey');
                 $content = '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
-                $message = get_string('usernosearch', 'survey');
+                $message = get_string('basicnosearch', 'survey');
                 $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
                 break;
             case SURVEY_FILLONLY:
-                $message = get_string('useredit', 'survey');
+                $message = get_string('basicedit', 'survey');
                 $content = '<img src="'.$OUTPUT->pix_url('i/grades').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
-                $message = get_string('usernosearch', 'survey');
+                $message = get_string('basicnosearch', 'survey');
                 $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
                 break;
             case SURVEY_FILLANDSEARCH:
-                $message = get_string('useredit', 'survey');
+                $message = get_string('basicedit', 'survey');
                 $content = '<img src="'.$OUTPUT->pix_url('i/grades').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
-                $message = get_string('usersearch', 'survey');
+                $message = get_string('basicsearch', 'survey');
                 $content .= '<img src="'.$OUTPUT->pix_url('t/preview').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
                 break;
             default:

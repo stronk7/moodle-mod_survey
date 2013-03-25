@@ -793,28 +793,6 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
 }
 
 /*
- * survey_user_can_manage_items
- * @param $cm
- * @return
- */
-function survey_user_can_manage_items($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:manageitems', $context, null, true));
-}
-
-/*
- * survey_user_can_manage_plugin
- * @param $cm
- * @return
- */
-function survey_user_can_manage_plugin($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:manageplugin', $context, null, true));
-}
-
-/*
  * Extends the settings navigation with the survey settings
  *
  * This function is called when the context for the page is a survey module. This is not called by AJAX
@@ -843,6 +821,39 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
             $reportnode->add(get_string('pluginname', 'surveyreport_'.$pluginname), new moodle_url('view.php', $paramurl), navigation_node::TYPE_SETTING, null, null, $icon);
         }
     }
+}
+
+/*
+ * survey_user_can_manage_items
+ * @param $cm
+ * @return
+ */
+function survey_user_can_manage_items($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:manageitems', $context, null, true));
+}
+
+/*
+ * survey_user_can_manage_plugin
+ * @param $cm
+ * @return
+ */
+function survey_user_can_manage_plugin($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:manageplugin', $context, null, true));
+}
+
+/*
+ * survey_user_can_export_data
+ * @param $cm
+ * @return
+ */
+function survey_user_can_export_data($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:exportdata', $context, null, true));
 }
 
 // //////////////////////////////////////////////////////////////////////////////

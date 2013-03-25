@@ -64,17 +64,6 @@ function survey_user_can_access_reports($cm) {
 }
 
 /*
- * survey_user_can_export_data
- * @param $cm
- * @return
- */
-function survey_user_can_export_data($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:exportdata', $context, null, true));
-}
-
-/*
  * survey_user_can_read_all_submissions
  * @param $cm
  * @return
@@ -1172,9 +1161,9 @@ function survey_export($cm, $fromform, $survey) {
         die;
     }
 
-    // echo '$fieldidlist:';
-    // var_dump($fieldidlist);
-    // die;
+// echo '$fieldidlist:';
+// var_dump($fieldidlist);
+// die;
 
     $richsubmissionssql = 'SELECT s.id, s.status, s.timecreated, s.timemodified, ';
     if (empty($survey->anonymous)) {
@@ -1230,7 +1219,6 @@ function survey_export($cm, $fromform, $survey) {
         $canreadallsubmissions = survey_user_can_read_all_submissions($cm);
 
         $oldrichsubmissionid = 0;
-        $fieldscount = count($fieldidlist);
 
         foreach ($richsubmissions as $richsubmission) {
             if (!$canreadallsubmissions && !survey_i_can_read($survey, $mygroups, $richsubmission->userid)) {
