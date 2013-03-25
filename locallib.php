@@ -1212,13 +1212,18 @@ function survey_export($cm, $fromform, $survey) {
             $workbook->send($filename);
 
             $worksheet = array();
-            $worksheet[0] =& $workbook->add_worksheet(get_string('survey', 'survey'));
+            $worksheet[0] = $workbook->add_worksheet(get_string('survey', 'survey'));
         }
 
         survey_export_print_header($survey, $fieldidlist, $fromform, $worksheet);
 
         // reduce the weight of $fieldidlist storing no longer relevant infos
-        $fieldidlist = array_flip(array_keys($fieldidlist));
+        $fieldidlistkeys = array_keys($fieldidlist);
+        $notsetstring = get_string('notanswereditem', 'survey');
+        $placeholders = array_fill_keys($fieldidlistkeys, $notsetstring);
+
+        // echo '$placeholders:';
+        // var_dump($placeholders);
 
         // get user group (to filter survey to download)
         $mygroups = survey_get_my_groups($cm);
@@ -1228,7 +1233,6 @@ function survey_export($cm, $fromform, $survey) {
         $fieldscount = count($fieldidlist);
 
         foreach ($richsubmissions as $richsubmission) {
-
             if (!$canreadallsubmissions && !survey_i_can_read($survey, $mygroups, $richsubmission->userid)) {
                 continue;
             }
@@ -1248,7 +1252,10 @@ function survey_export($cm, $fromform, $survey) {
                     $recordtoexport['firstname'] = $richsubmission->firstname;
                     $recordtoexport['lastname'] = $richsubmission->lastname;
                 }
-                $recordtoexport += $fieldidlist;
+                // I add to my almost empy associative array a dummy array of empty values.
+                // I do this only to fix the order of elements in the array.
+                $recordtoexport += $placeholders;
+
                 $recordtoexport['timecreated'] = userdate($richsubmission->timecreated);
                 $recordtoexport['timemodified'] = userdate($richsubmission->timemodified);
                 $recordtoexport[$richsubmission->itemid] = survey_decode_content($richsubmission);
@@ -1308,7 +1315,8 @@ function survey_decode_content($richsubmission) {
     $content = $richsubmission->content;
     $item = survey_get_item($itemid, SURVEY_FIELD, $plugin);
 
-    $return = empty($content) ? '' : $item->userform_db_to_export($richsubmission);
+    $return = isset($content) ? $item->userform_db_to_export($richsubmission) : '';
+
     return $return;
 }
 

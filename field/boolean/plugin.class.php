@@ -432,6 +432,7 @@ class surveyfield_boolean extends surveyitem_base {
     public function userform_db_to_export($itemvalue) {
         $content = $itemvalue->content;
         $return = ($content) ? 'true' : 'false';
+
         return $return;
     }
 
