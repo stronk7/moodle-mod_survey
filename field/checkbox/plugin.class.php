@@ -251,8 +251,6 @@ class surveyfield_checkbox extends surveyitem_base {
      * @return
      */
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
@@ -263,7 +261,7 @@ class surveyfield_checkbox extends surveyitem_base {
         $i = 0;
         $class = '';
         foreach ($valuelabel as $value => $label) {
-            $uniqueid = $fieldname.'_'.$i;
+            $uniqueid = $this->itemname.'_'.$i;
             $class = ( ($this->adjustment == SURVEY_VERTICAL) || (!$class) ) ? array('class' => 'indent-'.$this->indent) : '';
             $elementgroup[] = $mform->createElement('checkbox', $uniqueid, '', $label, $class);
 
@@ -278,16 +276,16 @@ class surveyfield_checkbox extends surveyitem_base {
             list($othervalue, $otherlabel) = $this->item_get_other();
 
             $class = ($this->adjustment == SURVEY_VERTICAL) ? array('class' => 'indent-'.$this->indent) : '';
-            $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_other', '', $otherlabel, $class);
-            $elementgroup[] = $mform->createElement('text', $fieldname.'_text', '');
+            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_other', '', $otherlabel, $class);
+            $elementgroup[] = $mform->createElement('text', $this->itemname.'_text', '');
 
             if (!$searchform) {
-                $mform->setDefault($fieldname.'_text', $othervalue);
+                $mform->setDefault($this->itemname.'_text', $othervalue);
                 if (($othervalue) && in_array($othervalue, $defaults)) {
-                    $mform->setDefault($fieldname.'_other', '1');
+                    $mform->setDefault($this->itemname.'_other', '1');
                 }
             }
-            $mform->disabledIf($fieldname.'_text', $fieldname.'_other', 'notchecked');
+            $mform->disabledIf($this->itemname.'_text', $this->itemname.'_other', 'notchecked');
         }
 
         if ($this->adjustment == SURVEY_VERTICAL) {
@@ -300,13 +298,13 @@ class surveyfield_checkbox extends surveyitem_base {
         } else { // SURVEY_HORIZONTAL
             $separator = ' ';
         }
-        $mform->addGroup($elementgroup, $fieldname.'_group', $elementlabel, $separator, false);
+        $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
 
         $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
         if ($this->required && (!$searchform) && (!$maybedisabled)) {
-            // $mform->addRule($fieldname.'_group', get_string('required'), 'required', null, 'client');
-            $mform->addRule($fieldname.'_group', get_string('required'), 'nonempty_rule', $mform);
-            $mform->_required[] = $fieldname.'_group';
+            // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
+            $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
+            $mform->_required[] = $this->itemname.'_group';
         }
     }
 
@@ -316,8 +314,6 @@ class surveyfield_checkbox extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         if ($this->required) {
             // $mform->addRule validaition was not permitted
             // so, here, I need to manually look after the 'required' rule
@@ -326,7 +322,7 @@ class surveyfield_checkbox extends surveyitem_base {
             $missinganswer = true;
             $i = 0;
             foreach ($valuelabel as $value => $label) {
-                $uniqueid = $fieldname.'_'.$i;
+                $uniqueid = $this->itemname.'_'.$i;
 
                 if (!empty($data[$uniqueid])) {
                     $missinganswer = false;
@@ -336,13 +332,13 @@ class surveyfield_checkbox extends surveyitem_base {
             }
 
             if (!empty($this->labelother)) {
-                if ((!empty($data[$fieldname.'_other'])) && (!empty($data[$fieldname.'_text']))) {
+                if ((!empty($data[$this->itemname.'_other'])) && (!empty($data[$this->itemname.'_text']))) {
                     $missinganswer = false;
                 }
             }
 
             if ($missinganswer) {
-                $errors[$fieldname] = get_string('required');
+                $errors[$this->itemname] = get_string('required');
                 return;
             }
         }
@@ -355,8 +351,6 @@ class surveyfield_checkbox extends surveyitem_base {
      * @return
      */
     public function userform_get_parent_disabilitation_info($child_parentcontent) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $disabilitationinfo = array();
 
         // I need to know the names of mfrom element corresponding to the content of $child_parentcontent
@@ -368,7 +362,7 @@ class surveyfield_checkbox extends surveyitem_base {
         foreach ($valuelabel as $index => $value) { // index and value because I issued: array_keys
             $mformelementinfo = new stdClass();
 
-            $mformelementinfo->parentname = $fieldname.'_'.$index;
+            $mformelementinfo->parentname = $this->itemname.'_'.$index;
             $mformelementinfo->operator = 'eq';
             $constrainindex = array_search($value, $constraintsvalues);
             if ($constrainindex === false) {
@@ -383,13 +377,13 @@ class surveyfield_checkbox extends surveyitem_base {
         // if among $constraintsvalues ​​there is one that is not among $valueLabel
         if (count($constraintsvalues)) {
             $mformelementinfo = new stdClass();
-            $mformelementinfo->parentname = $fieldname.'_other';
+            $mformelementinfo->parentname = $this->itemname.'_other';
             $mformelementinfo->operator = 'eq';
             $mformelementinfo->content = '0';
             $disabilitationinfo[] = $mformelementinfo;
 
             $mformelementinfo = new stdClass();
-            $mformelementinfo->parentname = $fieldname.'_text';
+            $mformelementinfo->parentname = $this->itemname.'_text';
             $mformelementinfo->operator = 'neq';
             $mformelementinfo->content = reset($constraintsvalues);
             $disabilitationinfo[] = $mformelementinfo;
@@ -413,8 +407,6 @@ class surveyfield_checkbox extends surveyitem_base {
      * @return
      */
     public function userform_child_is_allowed_dynamic($child_parentcontent, $data) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         // devo sapere come si chiamano gli mfrom element che corrispondono al contenuto di $child_parentcontent
         $valuelabel = $this->item_get_value_label_array('options');
         $valuelabel = array_keys($valuelabel);
@@ -424,12 +416,12 @@ class surveyfield_checkbox extends surveyitem_base {
         $status = true;
         foreach ($constraintsvalues as $constraintsvalue) {
             if ($index = array_search($constraintsvalue, $valuelabel)) {
-                $status = $status && ($data[$fieldname.'_'.$index] == 1);
+                $status = $status && ($data[$this->itemname.'_'.$index] == 1);
             } else {
                 // $constraintsvalue has not been found
                 // it is the other value
-                $status = $status && ($data[$fieldname.'_other'] == 1);
-                $status = $status && ($data[$fieldname.'_text'] == $constraintsvalue);
+                $status = $status && ($data[$this->itemname.'_other'] == 1);
+                $status = $status && ($data[$this->itemname.'_text'] == $constraintsvalue);
             }
         }
 
@@ -478,7 +470,6 @@ class surveyfield_checkbox extends surveyitem_base {
 
         // parto da un elenco separato da virgole
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
             $valuelabel = array_keys($this->item_get_value_label_array('options'));
             if (!empty($olduserdata->content)) { // I did not unselect each checkbox
                 // something was set
@@ -486,23 +477,23 @@ class surveyfield_checkbox extends surveyitem_base {
                 foreach ($answers as $answer) {
                     $checkboxindex = array_search($answer, $valuelabel);
                     if ($checkboxindex !== false) {
-                        $uniqueid = $fieldname.'_'.$checkboxindex;
+                        $uniqueid = $this->itemname.'_'.$checkboxindex;
                         $prefill[$uniqueid] = 1;
                     } else {
-                        $prefill[$fieldname.'_other'] = 1;
-                        $prefill[$fieldname.'_text'] = $answer;
+                        $prefill[$this->itemname.'_other'] = 1;
+                        $prefill[$this->itemname.'_text'] = $answer;
                     }
                 }
             } else {
                 // nothing was set
                 // do not accept defaults but overwrite them
                 foreach ($valuelabel as $checkboxindex => $label) {
-                    $uniqueid = $fieldname.'_'.$checkboxindex;
+                    $uniqueid = $this->itemname.'_'.$checkboxindex;
                     $prefill[$uniqueid] = 0;
                 }
                 if ($this->labelother) {
-                    $prefill[$fieldname.'_other'] = 0;
-                    $prefill[$fieldname.'_text'] = '';
+                    $prefill[$this->itemname.'_other'] = 0;
+                    $prefill[$this->itemname.'_text'] = '';
                 }
             }
         } // else use item defaults

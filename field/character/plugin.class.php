@@ -253,7 +253,24 @@ class surveyfield_character extends surveyitem_base {
     public function item_get_hard_info() {
 
         if (is_null($this->pattern)) {
-            $hardinfo = '';
+            if ($this->minlength) {
+                if ($this->maxlength) {
+                    $a = new stdClass();
+                    $a->minlength = $this->minlength;
+                    $a->maxlength = $this->maxlength;
+                    $hardinfo = get_string('restrictions_minmax', 'surveyfield_character', $a);
+                } else {
+                    $a = $this->minlength;
+                    $hardinfo = get_string('restrictions_min', 'surveyfield_character', $a);
+                }
+            } else {
+                if ($this->maxlength) {
+                    $a = $this->maxlength;
+                    $hardinfo = get_string('restrictions_max', 'surveyfield_character', $a);
+                } else {
+                    $hardinfo = '';
+                }
+            }
         } else {
             switch ($this->pattern) {
                 case SURVEYFIELD_CHARACTER_EMAILPATTERN:
@@ -370,20 +387,18 @@ class surveyfield_character extends surveyitem_base {
      * @return
      */
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
-        $mform->addElement('text', $fieldname, $elementlabel, array('class' => 'indent-'.$this->indent));
-        $mform->setType($fieldname, PARAM_RAW);
+        $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent));
+        $mform->setType($this->itemname, PARAM_RAW);
         if (!$searchform) {
-            $mform->setDefault($fieldname, $this->defaultvalue);
+            $mform->setDefault($this->itemname, $this->defaultvalue);
             $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
             if ($this->required && (!$maybedisabled)) {
-                // $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
-                $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
-                $mform->_required[] = $fieldname;
+                // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'client');
+                $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
+                $mform->_required[] = $this->itemname;
             }
         }
     }
@@ -394,32 +409,30 @@ class surveyfield_character extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        // useless: empty values are checked in Server Side Validation in submissions_form.php
-        // if (empty($data[$fieldname])) {
-        //     $errors[$fieldname] = get_string('required');
+        // useless: empty values are checked in Server Side Validation in attempt_form.php
+        // if (empty($data[$this->itemname])) {
+        //     $errors[$this->itemname] = get_string('required');
         //     return;
         // }
 
-        $fieldlength = strlen($data[$fieldname]);
+        $fieldlength = strlen($data[$this->itemname]);
         if ($fieldlength > $this->maxlength) {
-            $errors[$fieldname] = get_string('uerr_texttoolong', 'surveyfield_character');
+            $errors[$this->itemname] = get_string('uerr_texttoolong', 'surveyfield_character');
         }
         if ($fieldlength < $this->minlength) {
-            $errors[$fieldname] = get_string('uerr_texttooshort', 'surveyfield_character');
+            $errors[$this->itemname] = get_string('uerr_texttooshort', 'surveyfield_character');
         }
-        if (!empty($data[$fieldname]) && !empty($this->pattern)) {
+        if (!empty($data[$this->itemname]) && !empty($this->pattern)) {
             switch ($this->pattern) {
                 case SURVEYFIELD_CHARACTER_EMAILPATTERN:
-                    if (!validate_email($data[$fieldname])) {
-                        $errors[$fieldname] = get_string('uerr_invalidemail', 'surveyfield_character');
+                    if (!validate_email($data[$this->itemname])) {
+                        $errors[$this->itemname] = get_string('uerr_invalidemail', 'surveyfield_character');
                     }
                     break;
                 case SURVEYFIELD_CHARACTER_URLPATTERN:
-                    // if (!preg_match('~^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$~i', $data[$fieldname])) {
-                    if (!survey_character_is_valid_url($data[$fieldname])) {
-                        $errors[$fieldname] = get_string('uerr_invalidurl', 'surveyfield_character');
+                    // if (!preg_match('~^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$~i', $data[$this->itemname])) {
+                    if (!survey_character_is_valid_url($data[$this->itemname])) {
+                        $errors[$this->itemname] = get_string('uerr_invalidurl', 'surveyfield_character');
                     }
                     break;
                 case SURVEYFIELD_CHARACTER_CUSTOMPATTERN: // it is a custom pattern done with "A", "a", "*" and "0"
@@ -429,11 +442,11 @@ class surveyfield_character extends surveyitem_base {
                     // "0" numbers
 
                     if ($fieldlength != strlen($this->pattern_text)) {
-                        $errors[$fieldname] = get_string('uerr_badlength', 'surveyfield_character');
+                        $errors[$this->itemname] = get_string('uerr_badlength', 'surveyfield_character');
                     }
 
-                    if (!survey_character_text_match_pattern($data[$fieldname], $this->pattern_text)) {
-                        $errors[$fieldname] = get_string('uerr_nopatternmatch', 'surveyfield_character');
+                    if (!survey_character_text_match_pattern($data[$this->itemname], $this->pattern_text)) {
+                        $errors[$this->itemname] = get_string('uerr_nopatternmatch', 'surveyfield_character');
                     }
                     break;
                 default:
@@ -487,8 +500,7 @@ class surveyfield_character extends surveyitem_base {
         $prefill = array();
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-            $prefill[$fieldname] = $olduserdata->content;
+            $prefill[$this->itemname] = $olduserdata->content;
         } // else use item defaults
 
         return $prefill;

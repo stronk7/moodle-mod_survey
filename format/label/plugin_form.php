@@ -54,6 +54,7 @@ class survey_pluginform extends surveyitem_baseform {
         // ----------------------------------------
         $fieldname = 'labelintro_sid';
         $mform->addElement('hidden', $fieldname, '');
+        $mform->setType($fieldname, PARAM_RAW);
 
         // ----------------------------------------
         // newitem::labelintro

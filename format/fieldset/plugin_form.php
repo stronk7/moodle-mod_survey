@@ -63,6 +63,7 @@ class survey_pluginform extends surveyitem_baseform {
         // ----------------------------------------
         $fieldname = 'contentformat';
         $mform->addElement('hidden', $fieldname, PARAM_CLEANHTML);
+        $mform->setType($fieldname, PARAM_RAW);
 
         // -------------------------------------------------------------------------------
         // I close with the common section of the form

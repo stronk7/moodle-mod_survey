@@ -107,6 +107,6 @@ class survey_addsetform extends moodleform {
 
         // -------------------------------------------------------------------------------
         // buttons
-        $this->add_action_buttons(false, get_string('continue'));
+        $this->add_action_buttons(true, get_string('continue'));
     }
 }

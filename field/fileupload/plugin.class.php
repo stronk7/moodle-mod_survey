@@ -217,7 +217,7 @@ class surveyfield_fileupload extends surveyitem_base {
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid.'_filemanager';
+        $fieldname = $this->itemname.'_filemanager';
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
@@ -239,7 +239,9 @@ class surveyfield_fileupload extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        // useless: empty values are checked in Server Side Validation in submissions_form.php
+        // $fieldname = $this->itemname.'_filemanager';
+
+        // useless: empty values are checked in Server Side Validation in attempt_form.php
         // if (empty($data[$fieldname])) {
         //     $errors[$fieldname] = get_string('required');
         //     return;
@@ -269,8 +271,8 @@ class surveyfield_fileupload extends surveyitem_base {
 // echo '$olduserdata:';
 // var_dump($olduserdata);
         if (!empty($itemdetail)) {
-            $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-            $olduserdata->{$fieldname.'_filemanager'} = $itemdetail['filemanager']; // needed for the mform element
+            $fieldname = $this->itemname.'_filemanager';
+            $olduserdata->{$fieldname} = $itemdetail['filemanager']; // needed for the mform element
             $olduserdata->content = $itemdetail['filemanager'];                     // needed for the saving process
 
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
@@ -299,12 +301,12 @@ class surveyfield_fileupload extends surveyitem_base {
         $prefill = array();
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
+            $fieldname = $this->itemname.'_filemanager';
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
 
             $olduserdata = file_prepare_standard_filemanager($olduserdata, $fieldname, $attachmentoptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
 
-            $prefill[$fieldname.'_filemanager'] = $olduserdata->{$fieldname.'_filemanager'};
+            $prefill[$fieldname] = $olduserdata->{$fieldname};
         } // else use item defaults
 
 // echo 'I modified $olduserdata as here displayed<br />';

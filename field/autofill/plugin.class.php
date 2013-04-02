@@ -313,8 +313,6 @@ class surveyfield_autofill extends surveyitem_base {
      * @return
      */
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
@@ -328,12 +326,13 @@ class surveyfield_autofill extends surveyitem_base {
             if ($this->showfield) {
                 // class doesn't work for this mform element
                 // $mform->addElement('static', 'dummyfieldname', $elementlabel, $label, array('class' => 'indent-'.$this->indent));
-                $mform->addElement('static', $fieldname.'_static', $elementlabel, $label);
+                $mform->addElement('static', $this->itemname.'_static', $elementlabel, $label);
             }
-            $mform->addElement('hidden', $fieldname, $label);
+            $mform->addElement('hidden', $this->itemname, $label);
+            $mform->setType($this->itemname, PARAM_RAW);
         } else {
-            // $mform->addElement('text', $fieldname, $elementlabel, array('class' => 'indent-'.$this->indent));
-            $mform->addElement('text', $fieldname, $elementlabel);
+            // $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent));
+            $mform->addElement('text', $this->itemname, $elementlabel);
         }
     }
 
@@ -435,8 +434,7 @@ class surveyfield_autofill extends surveyitem_base {
         $prefill = array();
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-            $prefill[$fieldname] = $olduserdata->content;
+            $prefill[$this->itemname] = $olduserdata->content;
         } // else use item defaults
 
         return $prefill;

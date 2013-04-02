@@ -278,8 +278,6 @@ class surveyfield_select extends surveyitem_base {
      * @return
      */
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
@@ -294,72 +292,72 @@ class surveyfield_select extends surveyitem_base {
         }
 
         if (!$this->labelother) {
-            $mform->addElement('select', $fieldname, $elementlabel, $valuelabel, array('class' => 'indent-'.$this->indent));
+            $mform->addElement('select', $this->itemname, $elementlabel, $valuelabel, array('class' => 'indent-'.$this->indent));
 
             if (!$searchform) {
                 $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
                 if ($this->required && (!$maybedisabled)) {
-                    // $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
-                    $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
-                    $mform->_required[] = $fieldname;
+                    // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'client');
+                    $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
+                    $mform->_required[] = $this->itemname;
                 }
 
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
-                        $mform->setDefault($fieldname, $this->defaultvalue);
+                        $mform->setDefault($this->itemname, $this->defaultvalue);
                         break;
                     case SURVEY_INVITATIONDEFAULT:
-                        $mform->setDefault($fieldname, SURVEY_INVITATIONVALUE);
+                        $mform->setDefault($this->itemname, SURVEY_INVITATIONVALUE);
                         break;
                     case SURVEY_NOANSWERDEFAULT:
-                        $mform->setDefault($fieldname, SURVEY_NOANSWERVALUE);
+                        $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE);
                         break;
                     default:
                         debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
                 }
             } else {
-                $mform->setDefault($fieldname, SURVEY_NOANSWERVALUE);
+                $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE);
             }
         } else {
             list($othervalue, $otherlabel) = $this->item_get_other();
             $valuelabel['other'] = $otherlabel;
 
             $elementgroup = array();
-            $elementgroup[] = $mform->createElement('select', $fieldname, '', $valuelabel, array('class' => 'indent-'.$this->indent));
-            $elementgroup[] = $mform->createElement('text', $fieldname.'_text', '');
-            $mform->addGroup($elementgroup, $fieldname.'_group', $elementlabel, ' ', false);
+            $elementgroup[] = $mform->createElement('select', $this->itemname, '', $valuelabel, array('class' => 'indent-'.$this->indent));
+            $elementgroup[] = $mform->createElement('text', $this->itemname.'_text', '');
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
 
             if (!$searchform) {
                 $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
                 if ($this->required && (!$maybedisabled)) {
-                    // $mform->addRule($fieldname.'_group', get_string('required'), 'required', null, 'client');
-                    $mform->addRule($fieldname.'_group', get_string('required'), 'nonempty_rule', $mform);
-                    $mform->_required[] = $fieldname.'_group';
+                    // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
+                    $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
+                    $mform->_required[] = $this->itemname.'_group';
                 }
 
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
                         if (array_key_exists($this->defaultvalue, $valuelabel)) {
-                            $mform->setDefault($fieldname, $this->defaultvalue);
+                            $mform->setDefault($this->itemname, $this->defaultvalue);
                         } else {
-                            $mform->setDefault($fieldname, 'other');
+                            $mform->setDefault($this->itemname, 'other');
                         }
                         break;
                     case SURVEY_INVITATIONDEFAULT:
-                        $mform->setDefault($fieldname, SURVEY_INVITATIONVALUE);
+                        $mform->setDefault($this->itemname, SURVEY_INVITATIONVALUE);
                         break;
                     case SURVEY_NOANSWERDEFAULT:
-                        $mform->setDefault($fieldname, SURVEY_NOANSWERVALUE);
+                        $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE);
                         break;
                     default:
                         debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
                 }
-                $mform->setDefault($fieldname.'_text', $othervalue);
+                $mform->setDefault($this->itemname.'_text', $othervalue);
             } else {
-                $mform->setDefault($fieldname, SURVEY_NOANSWERVALUE);
+                $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE);
             }
 
-            $mform->disabledIf($fieldname.'_text', $fieldname, 'neq', 'other');
+            $mform->disabledIf($this->itemname.'_text', $this->itemname, 'neq', 'other');
         }
     }
 
@@ -369,14 +367,12 @@ class surveyfield_select extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         // I need to check value is different from SURVEY_INVITATIONVALUE even if it is not required
-        if ($data[$fieldname] == SURVEY_INVITATIONVALUE) {
+        if ($data[$this->itemname] == SURVEY_INVITATIONVALUE) {
             if (!$this->labelother) {
-                $errors[$fieldname] = get_string('uerr_optionnotset', 'surveyfield_radiobutton');
+                $errors[$this->itemname] = get_string('uerr_optionnotset', 'surveyfield_radiobutton');
             } else {
-                $errors[$fieldname.'_group'] = get_string('uerr_optionnotset', 'surveyfield_radiobutton');
+                $errors[$this->itemname.'_group'] = get_string('uerr_optionnotset', 'surveyfield_radiobutton');
             }
             return;
         }
@@ -389,12 +385,10 @@ class surveyfield_select extends surveyitem_base {
      * @return
      */
     public function userform_get_parent_disabilitation_info($child_parentcontent) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $disabilitationinfo = array();
 
         $mformelementinfo = new stdClass();
-        $mformelementinfo->parentname = $fieldname;
+        $mformelementinfo->parentname = $this->itemname;
         $mformelementinfo->operator = 'neq';
         $mformelementinfo->content = $child_parentcontent;
         $disabilitationinfo[] = $mformelementinfo;
@@ -433,23 +427,21 @@ class surveyfield_select extends surveyitem_base {
     public function userform_set_prefill($olduserdata) {
         $prefill = array();
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (!empty($olduserdata->content)) {
                 $valuelabel = $this->item_get_value_label_array('options');
                 if (array_key_exists($olduserdata->content, $valuelabel)) {
-                    $prefill[$fieldname] = $olduserdata->content;
+                    $prefill[$this->itemname] = $olduserdata->content;
                 } else {
                     // deve per forza essere il valore di "other"
-                    $prefill[$fieldname] = 'other';
-                    $prefill[$fieldname.'_text'] = $olduserdata->content;
+                    $prefill[$this->itemname] = 'other';
+                    $prefill[$this->itemname.'_text'] = $olduserdata->content;
                 }
             } else {
                 // nothing was set
                 // do not accept defaults but overwrite them
                 // Ma se questa è una select, come può essere empty($olduserdata->content)? Ho selezionato la voce "Not answering"
-                $prefill[$fieldname] = '';
+                $prefill[$this->itemname] = '';
             }
         } // else use item defaults
 

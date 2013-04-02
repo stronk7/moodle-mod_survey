@@ -296,12 +296,12 @@ class surveyfield_textarea extends surveyitem_base {
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
         if (!empty($this->useeditor)) {
-            $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid.'_editor';
+            $fieldname = $this->itemname.'_editor';
             $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES);
             $mform->addElement('editor', $fieldname, $elementlabel, null, $editoroptions);
             $mform->setType($fieldname, PARAM_CLEANHTML);
         } else {
-            $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
+            $fieldname = $this->itemname;
             $textareaoptions = array('maxfiles' => 0, 'maxbytes' => 0, 'trusttext' => false);
             $mform->addElement('textarea', $fieldname, $this->content, array('wrap' => 'virtual', 'rows' => $this->arearows, 'cols' => $this->areacols, 'class' => 'smalltext'));
             $mform->setType($fieldname, PARAM_TEXT);
@@ -339,7 +339,12 @@ class surveyfield_textarea extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        // useless: empty values are checked in Server Side Validation in submissions_form.php
+        // useless: empty values are checked in Server Side Validation in attempt_form.php
+        // if (!empty($this->useeditor)) {
+        //     $fieldname = $this->itemname.'_editor';
+        // } else {
+        //     $fieldname = $this->itemname;
+        // }
         // if (empty($data[$fieldname])) {
         //     $errors[$fieldname] = get_string('required');
         //     return;
@@ -365,14 +370,12 @@ class surveyfield_textarea extends surveyitem_base {
      * @return
      */
     public function userform_save($itemdetail, $olduserdata) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         if (!empty($this->useeditor)) {
-            $olduserdata->{$fieldname.'_editor'} = $itemdetail['editor'];
+            $olduserdata->{$this->itemname.'_editor'} = $itemdetail['editor'];
 
             $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $this->context);
-            $olduserdata = file_postupdate_standard_editor($olduserdata, $fieldname, $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
-            $olduserdata->content = $olduserdata->{$fieldname};
+            $olduserdata = file_postupdate_standard_editor($olduserdata, $this->itemname, $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
+            $olduserdata->content = $olduserdata->{$this->itemname};
         } else {
             $olduserdata->content = null;
         }
@@ -391,16 +394,14 @@ class surveyfield_textarea extends surveyitem_base {
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (!empty($olduserdata->content)) {
-                $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
                 if (!empty($this->useeditor)) {
                     $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'context' => $this->context);
                     $olduserdata->contentformat = FORMAT_HTML;
                     $olduserdata = file_prepare_standard_editor($olduserdata, 'content', $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
 
-                    $prefill[$fieldname.'_editor'] = $olduserdata->content_editor;
+                    $prefill[$this->itemname.'_editor'] = $olduserdata->content_editor;
                 } else {
-                    $prefill[$fieldname] = $olduserdata->content;
+                    $prefill[$this->itemname] = $olduserdata->content;
                 }
             // } else {
                 // nothing was set

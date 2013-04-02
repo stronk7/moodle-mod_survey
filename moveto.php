@@ -21,10 +21,10 @@ switch ($currenttab) {
     case SURVEY_TABSUBMISSIONS:
         switch ($currentpage) {
             case SURVEY_SUBMISSION_NEW: // new
-                include_once($CFG->dirroot.'/mod/survey/pages/submissions/submissions.php');
+                include_once($CFG->dirroot.'/mod/survey/pages/submissions/attempt.php');
                 break;
             case SURVEY_SUBMISSION_EDIT: // edit
-                include_once($CFG->dirroot.'/mod/survey/pages/submissions/submissions.php');
+                include_once($CFG->dirroot.'/mod/survey/pages/submissions/attempt.php');
                 break;
             case SURVEY_SUBMISSION_READONLY: // readonly
                 include_once($CFG->dirroot.'/mod/survey/pages/submissions/readonly.php');

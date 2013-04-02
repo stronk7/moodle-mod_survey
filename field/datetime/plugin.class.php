@@ -359,8 +359,6 @@ class surveyfield_datetime extends surveyitem_base {
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
         global $DB, $USER;
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
@@ -390,37 +388,37 @@ class surveyfield_datetime extends surveyitem_base {
         }
 
         $elementgroup = array();
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_day', '', $days, array('class' => 'indent-'.$this->indent));
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hours);
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $minutes);
+        $elementgroup[] = $mform->createElement('select', $this->itemname.'_day', '', $days, array('class' => 'indent-'.$this->indent));
+        $elementgroup[] = $mform->createElement('select', $this->itemname.'_month', '', $months);
+        $elementgroup[] = $mform->createElement('select', $this->itemname.'_year', '', $years);
+        $elementgroup[] = $mform->createElement('select', $this->itemname.'_hour', '', $hours);
+        $elementgroup[] = $mform->createElement('select', $this->itemname.'_minute', '', $minutes);
 
         $separator = array(' ', ' ', ' ', ':');
         if ($this->required && !$searchform) {
-            $mform->addGroup($elementgroup, $fieldname.'_group', $elementlabel, $separator, false);
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
             $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
             if ($maybedisabled) {
-                // $mform->addRule($fieldname.'_group', get_string('required'), 'required', null, 'client');
-                $mform->addRule($fieldname.'_group', get_string('required'), 'nonempty_rule', $mform);
-                $mform->_required[] = $fieldname.'_group';
+                // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
+                $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
+                $mform->_required[] = $this->itemname.'_group';
             }
         } else {
             $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-            $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_noanswer', '', $check_label);
+            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', $check_label);
             $separator[] = ' ';
-            $mform->addGroup($elementgroup, $fieldname.'_group', $elementlabel, $separator, false);
-            $mform->disabledIf($fieldname.'_group', $fieldname.'_noanswer', 'checked');
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
+            $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
         }
 
         // default section
         if (!$searchform) {
             if ($this->defaultoption == SURVEY_INVITATIONDEFAULT) {
-                $mform->setDefault($fieldname.'_day', SURVEY_INVITATIONVALUE);
-                $mform->setDefault($fieldname.'_month', SURVEY_INVITATIONVALUE);
-                $mform->setDefault($fieldname.'_year', SURVEY_INVITATIONVALUE);
-                $mform->setDefault($fieldname.'_hour', SURVEY_INVITATIONVALUE);
-                $mform->setDefault($fieldname.'_minute', SURVEY_INVITATIONVALUE);
+                $mform->setDefault($this->itemname.'_day', SURVEY_INVITATIONVALUE);
+                $mform->setDefault($this->itemname.'_month', SURVEY_INVITATIONVALUE);
+                $mform->setDefault($this->itemname.'_year', SURVEY_INVITATIONVALUE);
+                $mform->setDefault($this->itemname.'_hour', SURVEY_INVITATIONVALUE);
+                $mform->setDefault($this->itemname.'_minute', SURVEY_INVITATIONVALUE);
             } else {
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
@@ -431,7 +429,7 @@ class surveyfield_datetime extends surveyitem_base {
                         break;
                     case SURVEY_NOANSWERDEFAULT:
                         $datetimearray = $this->item_split_unix_time($this->lowerbound, true);
-                        $mform->setDefault($fieldname.'_noanswer', '1');
+                        $mform->setDefault($this->itemname.'_noanswer', '1');
                         break;
                     case SURVEY_LIKELASTDEFAULT:
                         // look for my last submission
@@ -446,20 +444,20 @@ class surveyfield_datetime extends surveyitem_base {
                     default:
                         debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
                 }
-                $mform->setDefault($fieldname.'_day', $datetimearray['mday']);
-                $mform->setDefault($fieldname.'_month', $datetimearray['mon']);
-                $mform->setDefault($fieldname.'_year', $datetimearray['year']);
-                $mform->setDefault($fieldname.'_hour', $datetimearray['hours']);
-                $mform->setDefault($fieldname.'_minute', $datetimearray['minutes']);
+                $mform->setDefault($this->itemname.'_day', $datetimearray['mday']);
+                $mform->setDefault($this->itemname.'_month', $datetimearray['mon']);
+                $mform->setDefault($this->itemname.'_year', $datetimearray['year']);
+                $mform->setDefault($this->itemname.'_hour', $datetimearray['hours']);
+                $mform->setDefault($this->itemname.'_minute', $datetimearray['minutes']);
             }
         } else {
             $datetimearray = $this->item_split_unix_time($this->lowerbound);
-            $mform->setDefault($fieldname.'_day', $datetimearray['mday']);
-            $mform->setDefault($fieldname.'_month', $datetimearray['mon']);
-            $mform->setDefault($fieldname.'_year', $datetimearray['year']);
-            $mform->setDefault($fieldname.'_hour', $datetimearray['hours']);
-            $mform->setDefault($fieldname.'_minute', $datetimearray['minutes']);
-            $mform->setDefault($fieldname.'_noanswer', '1');
+            $mform->setDefault($this->itemname.'_day', $datetimearray['mday']);
+            $mform->setDefault($this->itemname.'_month', $datetimearray['mon']);
+            $mform->setDefault($this->itemname.'_year', $datetimearray['year']);
+            $mform->setDefault($this->itemname.'_hour', $datetimearray['hours']);
+            $mform->setDefault($this->itemname.'_minute', $datetimearray['minutes']);
+            $mform->setDefault($this->itemname.'_noanswer', '1');
         }
     }
 
@@ -469,42 +467,40 @@ class surveyfield_datetime extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        if (isset($data[$fieldname.'_noanswer'])) {
+        if (isset($data[$this->itemname.'_noanswer'])) {
             return; // nothing to validate
         }
-        if ($data[$fieldname.'_day'] == SURVEY_INVITATIONVALUE) {
-            $errors[$fieldname.'_group'] = get_string('uerr_daynotset', 'surveyfield_datetime');
+        if ($data[$this->itemname.'_day'] == SURVEY_INVITATIONVALUE) {
+            $errors[$this->itemname.'_group'] = get_string('uerr_daynotset', 'surveyfield_datetime');
             return;
         }
-        if ($data[$fieldname.'_month'] == SURVEY_INVITATIONVALUE) {
-            $errors[$fieldname.'_group'] = get_string('uerr_monthnotset', 'surveyfield_datetime');
+        if ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) {
+            $errors[$this->itemname.'_group'] = get_string('uerr_monthnotset', 'surveyfield_datetime');
             return;
         }
-        if ($data[$fieldname.'_year'] == SURVEY_INVITATIONVALUE) {
-            $errors[$fieldname.'_group'] = get_string('uerr_yearnotset', 'surveyfield_datetime');
+        if ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) {
+            $errors[$this->itemname.'_group'] = get_string('uerr_yearnotset', 'surveyfield_datetime');
             return;
         }
-        if ($data[$fieldname.'_hour'] == SURVEY_INVITATIONVALUE) {
-            $errors[$fieldname.'_group'] = get_string('uerr_hournotset', 'surveyfield_datetime');
+        if ($data[$this->itemname.'_hour'] == SURVEY_INVITATIONVALUE) {
+            $errors[$this->itemname.'_group'] = get_string('uerr_hournotset', 'surveyfield_datetime');
             return;
         }
-        if ($data[$fieldname.'_minute'] == SURVEY_INVITATIONVALUE) {
-            $errors[$fieldname.'_group'] = get_string('uerr_minutenotset', 'surveyfield_datetime');
+        if ($data[$this->itemname.'_minute'] == SURVEY_INVITATIONVALUE) {
+            $errors[$this->itemname.'_group'] = get_string('uerr_minutenotset', 'surveyfield_datetime');
             return;
         }
 
         $haslowerbound = ($this->lowerbound != $this->item_datetime_to_unix_time($survey->startyear, 1, 1, 0, 0));
         $hasupperbound = ($this->upperbound != $this->item_datetime_to_unix_time($survey->stopyear, 12, 31, 23, 59));
 
-        $userinput = $this->item_datetime_to_unix_time($data[$fieldname.'_year'], $data[$fieldname.'_month'], $data[$fieldname.'_day'], $data[$fieldname.'_hour'], $data[$fieldname.'_minute']);
+        $userinput = $this->item_datetime_to_unix_time($data[$this->itemname.'_year'], $data[$this->itemname.'_month'], $data[$this->itemname.'_day'], $data[$this->itemname.'_hour'], $data[$this->itemname.'_minute']);
 
         if ($haslowerbound && ($userinput < $this->lowerbound)) {
-            $errors[$fieldname.'_group'] = get_string('uerr_lowerthanminimum', 'surveyfield_datetime');
+            $errors[$this->itemname.'_group'] = get_string('uerr_lowerthanminimum', 'surveyfield_datetime');
         }
         if ($hasupperbound && ($userinput > $this->upperbound)) {
-            $errors[$fieldname.'_group'] = get_string('uerr_greaterthanmaximum', 'surveyfield_datetime');
+            $errors[$this->itemname.'_group'] = get_string('uerr_greaterthanmaximum', 'surveyfield_datetime');
         }
     }
 
@@ -545,19 +541,17 @@ class surveyfield_datetime extends surveyitem_base {
     public function userform_set_prefill($olduserdata) {
         $prefill = array();
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (!empty($olduserdata->content)) {
                 if ($olduserdata->content == SURVEY_NOANSWERVALUE) {
-                    $prefill[$fieldname.'_noanswer'] = 1;
+                    $prefill[$this->itemname.'_noanswer'] = 1;
                 } else {
                     $datetimearray = $this->item_split_unix_time($olduserdata->content);
-                    $prefill[$fieldname.'_day'] = $datetimearray['mday'];
-                    $prefill[$fieldname.'_month'] = $datetimearray['mon'];
-                    $prefill[$fieldname.'_year'] = $datetimearray['year'];
-                    $prefill[$fieldname.'_hour'] = $datetimearray['hours'];
-                    $prefill[$fieldname.'_minute'] = $datetimearray['minutes'];
+                    $prefill[$this->itemname.'_day'] = $datetimearray['mday'];
+                    $prefill[$this->itemname.'_month'] = $datetimearray['mon'];
+                    $prefill[$this->itemname.'_year'] = $datetimearray['year'];
+                    $prefill[$this->itemname.'_hour'] = $datetimearray['hours'];
+                    $prefill[$this->itemname.'_minute'] = $datetimearray['minutes'];
                 }
             // } else {
                 // nothing was set
@@ -565,8 +559,8 @@ class surveyfield_datetime extends surveyitem_base {
             }
 
             // _noanswer
-            if (!$this->required) { // if this item foresaw the $fieldname.'_noanswer'
-                $prefill[$fieldname.'_noanswer'] = is_null($olduserdata->content) ? 1 : 0;
+            if (!$this->required) { // if this item foresaw the $this->itemname.'_noanswer'
+                $prefill[$this->itemname.'_noanswer'] = is_null($olduserdata->content) ? 1 : 0;
             }
         } // else use item defaults
 

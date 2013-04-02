@@ -307,8 +307,6 @@ class surveyfield_integer extends surveyitem_base {
      * @return
      */
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
@@ -323,19 +321,19 @@ class surveyfield_integer extends surveyitem_base {
             $integers += array(SURVEY_NOANSWERVALUE => $check_label);
         }
 
-        $mform->addElement('select', $fieldname, $elementlabel, $integers, array('class' => 'indent-'.$this->indent));
+        $mform->addElement('select', $this->itemname, $elementlabel, $integers, array('class' => 'indent-'.$this->indent));
 
         $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
         if ( $this->required && (!$searchform) && (!$maybedisabled)) {
-            // $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
-            $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
-            $mform->_required[] = $fieldname;
+            // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'client');
+            $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
+            $mform->_required[] = $this->itemname;
         }
 
         // default section
         if (!$searchform) {
             if ($this->defaultoption == SURVEY_INVITATIONDEFAULT) {
-                $mform->setDefault($fieldname, SURVEY_INVITATIONVALUE);
+                $mform->setDefault($this->itemname, SURVEY_INVITATIONVALUE);
             } else {
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
@@ -345,10 +343,10 @@ class surveyfield_integer extends surveyitem_base {
                         $defaultinteger = SURVEY_NOANSWERVALUE;
                         break;
                 }
-                $mform->setDefault($fieldname, $defaultinteger);
+                $mform->setDefault($this->itemname, $defaultinteger);
             }
         } else {
-            $mform->setDefault($fieldname, SURVEY_NOANSWERVALUE);
+            $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE);
         }
     }
 
@@ -360,27 +358,25 @@ class surveyfield_integer extends surveyitem_base {
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         // I need to check value is different from SURVEY_INVITATIONVALUE even if it is not required
-        if ($data[$fieldname] == SURVEY_INVITATIONVALUE) {
-            $errors[$fieldname] = get_string('uerr_integernotset', 'surveyfield_integer');
+        if ($data[$this->itemname] == SURVEY_INVITATIONVALUE) {
+            $errors[$this->itemname] = get_string('uerr_integernotset', 'surveyfield_integer');
             return;
         }
 
         $haslowerbound = ($this->lowerbound != 0);
         $hasupperbound = ($this->upperbound != $maximuminteger);
 
-        $userinput = $data[$fieldname];
+        $userinput = $data[$this->itemname];
 
         if ($userinput == SURVEY_NOANSWERVALUE) {
             return;
         }
         if ($haslowerbound && ($userinput < $this->lowerbound)) {
-            $errors[$fieldname] = get_string('uerr_lowerthanminimum', 'surveyfield_integer');
+            $errors[$this->itemname] = get_string('uerr_lowerthanminimum', 'surveyfield_integer');
         }
         if ($hasupperbound && ($userinput > $this->upperbound)) {
-            $errors[$fieldname] = get_string('uerr_greaterthanmaximum', 'surveyfield_integer');
+            $errors[$this->itemname] = get_string('uerr_greaterthanmaximum', 'surveyfield_integer');
         }
     }
 
@@ -421,11 +417,9 @@ class surveyfield_integer extends surveyitem_base {
     public function userform_set_prefill($olduserdata) {
         $prefill = array();
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (!empty($olduserdata->content)) {
-                $prefill[$fieldname] = $olduserdata->content;
+                $prefill[$this->itemname] = $olduserdata->content;
             // } else {
                 // nothing was set
                 // do not accept defaults but overwrite them

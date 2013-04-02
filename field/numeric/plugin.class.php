@@ -376,21 +376,19 @@ class surveyfield_numeric extends surveyitem_base {
      * @return
      */
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
-        $mform->addElement('text', $fieldname, $elementlabel, array('class' => 'indent-'.$this->indent, 'itemid' => $this->itemid));
-        $mform->setType($fieldname, PARAM_RAW); // see: moodlelib.php lines 133+
+        $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent, 'itemid' => $this->itemid));
+        $mform->setType($this->itemname, PARAM_RAW); // see: moodlelib.php lines 133+
         if (!$searchform) {
             $decimalseparator = get_string('decsep', 'langconfig');
-            $mform->setDefault($fieldname, number_format((double)$this->defaultvalue, $this->decimals, $decimalseparator, ''));
+            $mform->setDefault($this->itemname, number_format((double)$this->defaultvalue, $this->decimals, $decimalseparator, ''));
             $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
             if ($this->required && (!$maybedisabled)) {
-                // $mform->addRule($fieldname, get_string('required'), 'required', null, 'server');
-                $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
-                $mform->_required[] = $fieldname;
+                // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'server');
+                $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
+                $mform->_required[] = $this->itemname;
             }
         }
     }
@@ -403,40 +401,38 @@ class surveyfield_numeric extends surveyitem_base {
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         $decimalseparator = get_string('decsep', 'langconfig');
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        // useless: SURVEY_INVITATIONVALUE is checked in Server Side Validation in submissions_form.php
-        // if (empty($data[$fieldname])) {
-        //     $errors[$fieldname] = get_string('required');
+        // useless: SURVEY_INVITATIONVALUE is checked in Server Side Validation in attempt_form.php
+        // if (empty($data[$this->itemname])) {
+        //     $errors[$this->itemname] = get_string('required');
         //     return;
         // }
 
-        if (!isset($data[$fieldname])) {
+        if (!isset($data[$this->itemname])) {
             return;
         }
 
         // if it is not a number, shouts
         $pattern = '~^\s*([0-9]+)'.get_string('decsep', 'langconfig').'?([0-9]*)\s*$~';
-        if (!preg_match($pattern, $data[$fieldname], $matches)) {
-            $errors[$fieldname] = get_string('uerr_notanumber', 'surveyfield_numeric');
+        if (!preg_match($pattern, $data[$this->itemname], $matches)) {
+            $errors[$this->itemname] = get_string('uerr_notanumber', 'surveyfield_numeric');
         } else {
             $thenumber = $matches[1].'.'.$matches[2];
             // if it is < 0 but has been defined as unsigned, shouts
             if (!$this->signed && ($thenumber < 0)) {
-                $errors[$fieldname] = get_string('uerr_negative', 'surveyfield_numeric');
+                $errors[$this->itemname] = get_string('uerr_negative', 'surveyfield_numeric');
             }
             // if it is < $this->lowerbound, shouts
             if (isset($this->lowerbound) && ($thenumber < $this->lowerbound)) {
-                $errors[$fieldname] = get_string('uerr_lowerthanminimum', 'surveyfield_numeric');
+                $errors[$this->itemname] = get_string('uerr_lowerthanminimum', 'surveyfield_numeric');
             }
             // if it is > $this->upperbound, shouts
             if (isset($this->upperbound) && ($thenumber > $this->upperbound)) {
-                $errors[$fieldname] = get_string('uerr_greaterthanmaximum', 'surveyfield_numeric');
+                $errors[$this->itemname] = get_string('uerr_greaterthanmaximum', 'surveyfield_numeric');
             }
             // if it has decimal but has been defined as integer, shouts
             $is_integer = (bool)(strval(intval($thenumber)) == strval($thenumber));
             if (($this->decimals == 0) && (!$is_integer)) {
-                $errors[$fieldname] = get_string('uerr_notinteger', 'surveyfield_numeric');
+                $errors[$this->itemname] = get_string('uerr_notinteger', 'surveyfield_numeric');
             }
         }
     }
@@ -488,12 +484,11 @@ class surveyfield_numeric extends surveyitem_base {
      */
     public function userform_set_prefill($olduserdata) {
         $prefill = array();
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (!empty($olduserdata->content)) {
                 $decimalseparator = get_string('decsep', 'langconfig');
-                $prefill[$fieldname] = number_format((double)$olduserdata->content, $this->decimals, $decimalseparator, '');
+                $prefill[$this->itemname] = number_format((double)$olduserdata->content, $this->decimals, $decimalseparator, '');
             // } else {
                 // nothing was set
                 // do not accept defaults but overwrite them

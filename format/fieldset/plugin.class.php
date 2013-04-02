@@ -177,9 +177,7 @@ class surveyformat_fieldset extends surveyitem_base {
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        $mform->addElement('header', $fieldname, $this->fslabel);
+        $mform->addElement('header', $this->itemname, $this->fslabel);
     }
 
     /*

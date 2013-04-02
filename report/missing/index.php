@@ -73,13 +73,13 @@ $roles = get_roles_used_in_context($context);
 // }
 $role = array_keys($roles);
 $sql = 'SELECT DISTINCT u.id, u.picture, u.imagealt, u.firstname, u.lastname, u.email, s.attempts
-        FROM m20_user u
+        FROM {user} u
 		JOIN (SELECT *
-                FROM m20_role_assignments
+                FROM {role_assignments}
                 WHERE contextid = '.$context->id.'
                   AND roleid IN ('.implode($role).')) ra ON u.id = ra.userid
 		LEFT JOIN (SELECT *, count(s.id) as attempts
-			         FROM m20_survey_submissions s
+			         FROM {survey_submissions} s
 			         WHERE s.surveyid = :surveyid
 			         GROUP BY s.userid) s ON s.userid = u.id
 		WHERE ISNULL(s.id)';

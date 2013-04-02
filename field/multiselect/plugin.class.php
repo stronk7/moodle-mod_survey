@@ -223,15 +223,13 @@ class surveyfield_multiselect extends surveyitem_base {
      * @return
      */
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
         $valuelabel = $this->item_get_value_label_array('options');
         $defaults = $this->item_get_one_word_per_row('defaultvalue');
 
-        $select = $mform->addElement('select', $fieldname, $elementlabel, $valuelabel);
+        $select = $mform->addElement('select', $this->itemname, $elementlabel, $valuelabel);
         $select->setMultiple(true);
         if ($defaults) {
             $select->setSelected(implode(',', $defaults));
@@ -239,9 +237,9 @@ class surveyfield_multiselect extends surveyitem_base {
 
         $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
         if ($this->required && (!$searchform) && (!$maybedisabled)) {
-            // $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
-            $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
-            $mform->_required[] = $fieldname;
+            // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'client');
+            $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
+            $mform->_required[] = $this->itemname;
         }
     }
 
@@ -251,9 +249,9 @@ class surveyfield_multiselect extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        // useless: empty values are checked in Server Side Validation in submissions_form.php
-        // if (empty($data[$fieldname])) {
-        //     $errors[$fieldname] = get_string('required');
+        // useless: empty values are checked in Server Side Validation in attempt_form.php
+        // if (empty($data[$this->itemname])) {
+        //     $errors[$this->itemname] = get_string('required');
         //     return;
         // }
     }
@@ -266,17 +264,16 @@ class surveyfield_multiselect extends surveyitem_base {
      */
     public function userform_get_parent_disabilitation_info($child_parentcontent) {
         // TODO: this function is a draft because I don't know what is returned
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
         $disabilitationinfo = array();
 
         // I need to know how to call mfrom element corresponding to the content of $child_parentcontent
         // $valuelabel = $this->item_get_value_label_array('options');
         // $constraintsvalues = survey_textarea_to_array($child_parentcontent);
-        // it is needed to order $constraintsvalues as $fieldname is ordered
+        // it is needed to order $constraintsvalues as $this->itemname is ordered
 
         $mformelementinfo = new stdClass();
-        $mformelementinfo->parentname = $fieldname;
+        $mformelementinfo->parentname = $this->itemname;
         $mformelementinfo->operator = 'neq';
         $mformelementinfo->content = $child_parentcontent;
         $disabilitationinfo[] = $mformelementinfo;
@@ -300,7 +297,6 @@ class surveyfield_multiselect extends surveyitem_base {
      */
     public function userform_child_is_allowed_dynamic($child_parentcontent, $data) {
         // TODO: I have intentionally left halfway through this function because I do not know what is reported
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
         $status = true;
 
@@ -344,7 +340,6 @@ class surveyfield_multiselect extends surveyitem_base {
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (!empty($olduserdata->content)) {
                 $preset = array();
-                $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
                 $valuelabel = $this->item_get_value_label_array('options');
                 foreach ($valuelabel as $value => $label) {
                     if (strpos($olduserdata->content, $value) !== false) {
@@ -352,7 +347,7 @@ class surveyfield_multiselect extends surveyitem_base {
                     }
                 }
                 $presetstr = implode(',', $preset);
-                $prefill[$fieldname] = $presetstr;
+                $prefill[$this->itemname] = $presetstr;
             // } else {
                 // nothing was set
                 // do not accept defaults but overwrite them

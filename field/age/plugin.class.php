@@ -397,8 +397,6 @@ class surveyfield_age extends surveyitem_base {
      * @return
      */
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
         $years = array();
@@ -411,30 +409,30 @@ class surveyfield_age extends surveyitem_base {
         $months += array_combine(range(0, 11), range(0, 11));
 
         $elementgroup = array();
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years, array('class' => 'indent-'.$this->indent));
+        $elementgroup[] = $mform->createElement('select', $this->itemname.'_year', '', $years, array('class' => 'indent-'.$this->indent));
         // $elementgroup[] = $mform->createElement('static', 'yearlabel_'.$this->itemid, null, get_string('years'));
-        $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
+        $elementgroup[] = $mform->createElement('select', $this->itemname.'_month', '', $months);
         // $elementgroup[] = $mform->createElement('static', 'monthlabel_'.$this->itemid, null, get_string('months', 'survey'));
 
         if ($this->required && (!$searchform)) {
-            $mform->addGroup($elementgroup, $fieldname.'_group', $elementlabel, ' ', false);
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
             if (!$this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem)) {
-                // $mform->addRule($fieldname.'_group', get_string('required'), 'required', null, 'client');
-                $mform->addRule($fieldname.'_group', get_string('required'), 'nonempty_rule', $mform);
-                $mform->_required[] = $fieldname.'_group';
+                // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
+                $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
+                $mform->_required[] = $this->itemname.'_group';
             }
         } else {
             $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-            $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_noanswer', '', $check_label);
-            $mform->addGroup($elementgroup, $fieldname.'_group', $elementlabel, ' ', false);
-            $mform->disabledIf($fieldname.'_group', $fieldname.'_noanswer', 'checked');
+            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', $check_label);
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
+            $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
         }
 
         // default section
         if (!$searchform) {
             if ($this->defaultoption == SURVEY_INVITATIONDEFAULT) {
-                $mform->setDefault($fieldname.'_year', SURVEY_INVITATIONVALUE);
-                $mform->setDefault($fieldname.'_month', SURVEY_INVITATIONVALUE);
+                $mform->setDefault($this->itemname.'_year', SURVEY_INVITATIONVALUE);
+                $mform->setDefault($this->itemname.'_month', SURVEY_INVITATIONVALUE);
             } else {
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
@@ -442,17 +440,17 @@ class surveyfield_age extends surveyitem_base {
                         break;
                     case SURVEY_NOANSWERDEFAULT:
                         $agearray = $this->item_split_unix_time($this->lowerbound);
-                        $mform->setDefault($fieldname.'_noanswer', '1');
+                        $mform->setDefault($this->itemname.'_noanswer', '1');
                         break;
                 }
-                $mform->setDefault($fieldname.'_year', $agearray['year']);
-                $mform->setDefault($fieldname.'_month', $agearray['mon']);
+                $mform->setDefault($this->itemname.'_year', $agearray['year']);
+                $mform->setDefault($this->itemname.'_month', $agearray['mon']);
             }
         } else {
             $agearray = $this->item_split_unix_time($this->lowerbound);
-            $mform->setDefault($fieldname.'_year', $agearray['year']);
-            $mform->setDefault($fieldname.'_month', $agearray['mon']);
-            $mform->setDefault($fieldname.'_noanswer', '1');
+            $mform->setDefault($this->itemname.'_year', $agearray['year']);
+            $mform->setDefault($this->itemname.'_month', $agearray['mon']);
+            $mform->setDefault($this->itemname.'_noanswer', '1');
         }
     }
 
@@ -464,31 +462,29 @@ class surveyfield_age extends surveyitem_base {
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         $maximumage = get_config('surveyfield_age', 'maximumage');
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        if (isset($data[$fieldname.'_noanswer'])) {
+        if (isset($data[$this->itemname.'_noanswer'])) {
             return; // nothing to validate
         }
 
-        if ($data[$fieldname.'_year'] == SURVEY_INVITATIONVALUE) {
-            $errors[$fieldname.'_group'] = get_string('uerr_yearnotset', 'surveyfield_age');
+        if ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) {
+            $errors[$this->itemname.'_group'] = get_string('uerr_yearnotset', 'surveyfield_age');
             return;
         }
-        if ($data[$fieldname.'_month'] == SURVEY_INVITATIONVALUE) {
-            $errors[$fieldname.'_group'] = get_string('uerr_monthnotset', 'surveyfield_age');
+        if ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) {
+            $errors[$this->itemname.'_group'] = get_string('uerr_monthnotset', 'surveyfield_age');
             return;
         }
 
         $haslowerbound = ($this->lowerbound != $this->item_age_to_unix_time(0, 0));
         $hasupperbound = ($this->upperbound != $this->item_age_to_unix_time($maximumage, 11));
 
-        $userinput = $this->item_age_to_unix_time($data[$fieldname.'_year'], $data[$fieldname.'_month']);
+        $userinput = $this->item_age_to_unix_time($data[$this->itemname.'_year'], $data[$this->itemname.'_month']);
 
         if ($haslowerbound && ($userinput < $this->lowerbound)) {
-            $errors[$fieldname.'_group'] = get_string('uerr_lowerthanminimum', 'surveyfield_age');
+            $errors[$this->itemname.'_group'] = get_string('uerr_lowerthanminimum', 'surveyfield_age');
         }
         if ($hasupperbound && ($userinput > $this->upperbound)) {
-            $errors[$fieldname.'_group'] = get_string('uerr_greaterthanmaximum', 'surveyfield_age');
+            $errors[$this->itemname.'_group'] = get_string('uerr_greaterthanmaximum', 'surveyfield_age');
         }
     }
 
@@ -529,16 +525,14 @@ class surveyfield_age extends surveyitem_base {
     public function userform_set_prefill($olduserdata) {
         $prefill = array();
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (!empty($olduserdata->content)) {
                 if ($olduserdata->content == SURVEY_NOANSWERVALUE) {
-                    $prefill[$fieldname.'_noanswer'] = 1;
+                    $prefill[$this->itemname.'_noanswer'] = 1;
                 } else {
                     $datearray = $this->item_split_unix_time($olduserdata->content);
-                    $prefill[$fieldname.'_month'] = $datearray['mon'];
-                    $prefill[$fieldname.'_year'] = $datearray['year'];
+                    $prefill[$this->itemname.'_month'] = $datearray['mon'];
+                    $prefill[$this->itemname.'_year'] = $datearray['year'];
                 }
             // } else {
                 // nothing was set
@@ -546,8 +540,8 @@ class surveyfield_age extends surveyitem_base {
             }
 
             // _noanswer
-            if (!$this->required) { // if this item foresaw the $fieldname.'_noanswer'
-                $prefill[$fieldname.'_noanswer'] = is_null($olduserdata->content) ? 1 : 0;
+            if (!$this->required) { // if this item foresaw the $this->itemname.'_noanswer'
+                $prefill[$this->itemname.'_noanswer'] = is_null($olduserdata->content) ? 1 : 0;
             }
         } // else use item defaults
 

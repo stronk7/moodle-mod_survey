@@ -74,7 +74,7 @@ switch ($currenttab) {
                 $formparams->formpage = $formpage;
                 $formparams->currentpage = $currentpage;
 
-                require_once($CFG->dirroot.'/mod/survey/pages/submissions/submissions_form.php');
+                require_once($CFG->dirroot.'/mod/survey/pages/submissions/attempt_form.php');
                 $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => $currentpage);
                 $formurl = new moodle_url('view.php', $paramurl);
                 if ($currentpage == SURVEY_SUBMISSION_READONLY) {
@@ -153,20 +153,20 @@ switch ($currenttab) {
                         // END: send email whether requested
                     }
 
-                    // $fromform->formpage is the currently displayed submissions page and it is where I come from
+                    // $fromform->formpage is the currently displayed attempt page and it is where I come from
 
                     // if I am here, the form has been submitted using: <<, >>, save o saveasnew
                     // formpage has the following life:
                     // quando la form viene caricata per la prima volta:
                     //     $formpage get the default value "1" in getparam
-                    //     it is stored in the form through set_data($prefill); at the end of the submissions.php file
+                    //     it is stored in the form through set_data($prefill); at the end of the attempt.php file
                     // if execution comes from the submission of the form through << o >>:
                     //     $formpage get a the old $formpage value in getparam (steals it from the form)
                     //     it is used to build the old form to execute the validation form routine (called as child process of $mform->get_data())
                     //     $fromform->formpage is used to get the next available page
                     //     the next available page is used as a GET param in the url for the redirect
                     //     $formpage get this value in getparam
-                    //     it is stored in the form through set_data($prefill); at the end of the submissions.php file
+                    //     it is stored in the form through set_data($prefill); at the end of the attempt.php file
 
                     // the management of the "pause/previous/next" buttons MUST BE DONE HERE because MUST BE preceded by data save
                     // if "pause" button has been pressed, redirect
@@ -211,6 +211,7 @@ switch ($currenttab) {
                     $sqlparams['basicform'] = SURVEY_FILLANDSEARCH;
                 }
 
+                // if no items are available, stop the intervention here
                 if (!$DB->count_records('survey_item', $sqlparams)) {
                     break;
                 }
@@ -367,7 +368,9 @@ switch ($currenttab) {
                     $paramurl['pag'] = SURVEY_ITEMS_MANAGE;
                     $returnurl = new moodle_url('view.php', $paramurl);
                     redirect($returnurl);
-                } else if ($fromform = $mform->get_data()) {
+                }
+
+                if ($fromform = $mform->get_data()) {
                     // has this submission been forced to be new?
                     if (!empty($saveasnew)) {
                         $fromform->itemid = 0;
@@ -391,6 +394,12 @@ switch ($currenttab) {
                 $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABITEMS, 'pag' => SURVEY_ITEMS_ADDSET);
                 $formurl = new moodle_url('view.php', $paramurl);
                 $mform = new survey_addsetform($formurl, $formparams);
+
+                if ($mform->is_cancelled()) {
+                    $paramurl['pag'] = SURVEY_ITEMS_ADD;
+                    $returnurl = new moodle_url('view.php', $paramurl);
+                    redirect($returnurl);
+                }
 
                 if ($formdata = $mform->get_data()) {
                     $dbman = $DB->get_manager();

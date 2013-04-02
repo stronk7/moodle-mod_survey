@@ -42,6 +42,9 @@ $string['custompattern'] = 'custom';
 $string['restrictions_custom'] = 'Text is supposed to fit the following pattern: "{$a}"';
 $string['restrictions_email'] = 'Email is expected here';
 $string['restrictions_url'] = 'URL is expected here';
+$string['restrictions_max'] = 'Text is supposed to be shorter than {$a} characters';
+$string['restrictions_min'] = 'Text is supposed to be longer than {$a} characters';
+$string['restrictions_minmax'] = 'Text length is supposed to range between {$a->minlength} and {$a->maxlength} characters';
 
 $string['uerr_texttoolong'] = 'Text is too long';
 $string['uerr_invalidemail'] = 'Text is not a valid email';

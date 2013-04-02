@@ -47,24 +47,28 @@ class surveyitem_baseform extends moodleform {
         // ----------------------------------------
         $fieldname = 'itemid';
         $mform->addElement('hidden', $fieldname, '');
+        $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------
         // newitem::pluginid
         // ----------------------------------------
         $fieldname = 'pluginid';
         $mform->addElement('hidden', $fieldname, '');
+        $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------
         // newitem::type
         // ----------------------------------------
         $fieldname = 'type';
         $mform->addElement('hidden', $fieldname, 'bloodytype');
+        $mform->setType($fieldname, PARAM_RAW);
 
         // ----------------------------------------
         // newitem::plugin
         // ----------------------------------------
         $fieldname = 'plugin';
         $mform->addElement('hidden', $fieldname, 'bloodyplugin');
+        $mform->setType($fieldname, PARAM_RAW);
 
         // /////////////////////////////////////////////////////////////////////////////////////////////////
         // here I open a new fieldset
@@ -79,12 +83,14 @@ class surveyitem_baseform extends moodleform {
         // ----------------------------------------
         $fieldname = 'externalname';
         $mform->addElement('hidden', $fieldname, '');
+        $mform->setType($fieldname, PARAM_RAW);
 
         // ----------------------------------------
         // newitem::content_sid
         // ----------------------------------------
         $fieldname = 'content_sid';
         $mform->addElement('hidden', $fieldname, '');
+        $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------
         // newitem::content & contentformat
@@ -173,7 +179,7 @@ class surveyitem_baseform extends moodleform {
         // /////////////////////////////////////////////////////////////////////////////////////////////////
         // here I open a new fieldset
         // /////////////////////////////////////////////////////////////////////////////////////////////////
-        $fieldname = 'basicform_fs';
+        $fieldname = 'availability_fs';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
         // ----------------------------------------
@@ -313,12 +319,6 @@ class surveyitem_baseform extends moodleform {
                 $a .= '</ul>';
                 $mform->addElement('static', $fieldname, get_string('note', 'survey'), get_string($fieldname, 'survey', $a));
             }
-
-            // ----------------------------------------
-            // newitem::parentvalue
-            // ----------------------------------------
-            // $fieldname = 'parentvalue';
-            // $mform->addElement('hidden', $fieldname, '');
         }
 
         if ($item->item_get_type() == SURVEY_FIELD) {

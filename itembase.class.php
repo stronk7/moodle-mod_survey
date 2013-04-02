@@ -58,6 +58,11 @@ class surveyitem_base {
     public $plugin = '';
 
     /*
+     * $itemname = the name of the field as it is in the attempt_form
+     */
+    public $itemname = '';
+
+    /*
      * $externalname = a string specifing the origin of the item.
      * empty: user made it
      * non empty: belong to a built-in survey
@@ -114,19 +119,19 @@ class surveyitem_base {
     public $indent = 0;
 
     /*
-     * $basicform = will this item be part of users edit/search forms?
+     * $basicform = will this item be part of basic edit/search forms?
      * SURVEY_NOTPRESENT   : no
      * SURVEY_FILLONLY     : yes, only in the "edit" form
      * SURVEY_FILLANDSEARCH: yes, in the "edit" and in the "search" form too
      */
-    public $basicform = 1;
+    public $basicform = SURVEY_FILLANDSEARCH;
 
     /*
      * $advancedsearch = will this item be part of the advanced search form?
      * SURVEY_ADVFILLONLY     : no, it will not be part
      * SURVEY_ADVFILLANDSEARCH: yes, it will be part of the advanced search form
      */
-    public $advancedsearch = 0;
+    public $advancedsearch = SURVEY_ADVFILLANDSEARCH;
 
     /*
      * $hide = is this field going to be shown in the form?
@@ -233,6 +238,7 @@ class surveyitem_base {
                 $this->{$option} = $value;
             }
             unset($this->id); // I do not care it. I already heave: itemid and pluginid
+            $this->itemname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
         } else {
             debugging('Something was wrong at line '.__LINE__.' of file '.__FILE__.'!<br />I can not find the survey_item ID = '.$itemid.' using:<br />'.$sql);
         }
@@ -1301,9 +1307,7 @@ class surveyitem_base {
      * @return
      */
     public function userform_child_is_allowed_dynamic($child_parentcontent, $data) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
-        return ($data[$fieldname] == $child_parentcontent);
+        return ($data[$this->itemname] == $child_parentcontent);
     }
 
     /*
@@ -1323,9 +1327,10 @@ class surveyitem_base {
             return;
         }
 
-        $childname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
         if ($this->userform_mform_element_is_group()) {
-            $childname .= '_group';
+            $fieldname = $this->itemname.'_group';
+        } else {
+            $fieldname = $this->itemname;
         }
 
         $parentseeds = array();
@@ -1341,13 +1346,13 @@ class surveyitem_base {
         // $parentseeds must have at least one item
         foreach ($parentseeds as $childcontent => $parentid) {
             $parentitem = survey_get_item($parentid);
-            // ask to parent item which mform element stores relevant informations ($fieldname? $fieldname.'_month'?)
+            // ask to parent item which mform element stores relevant informations ($this->itemname? $this->itemname.'_month'?)
             $disabilitationinfo = $parentitem->userform_get_parent_disabilitation_info($childcontent);
 
             // write disableIf
             foreach ($disabilitationinfo as $parentinfo) {
-                $mform->disabledIf($childname, $parentinfo->parentname, $parentinfo->operator, $parentinfo->content);
-                // echo '$mform->disabledIf(\''.$childname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->operator.'\', \''.$parentinfo->content.'\');<br />';
+                $mform->disabledIf($fieldname, $parentinfo->parentname, $parentinfo->operator, $parentinfo->content);
+                // echo '$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->operator.'\', \''.$parentinfo->content.'\');<br />';
             }
         }
     }

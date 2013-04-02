@@ -287,8 +287,6 @@ class surveyfield_boolean extends surveyitem_base {
      * @return
      */
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
@@ -303,11 +301,11 @@ class surveyfield_boolean extends surveyitem_base {
                 $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
                 $options += array(SURVEY_NOANSWERVALUE => $check_label);
             }
-            $mform->addElement('select', $fieldname, $elementlabel, $options, array('class' => 'indent-'.$this->indent));
+            $mform->addElement('select', $this->itemname, $elementlabel, $options, array('class' => 'indent-'.$this->indent));
             if ($this->required && (!$searchform)) {
-                // $mform->addRule($fieldname.'_group', get_string('required'), 'required', null, 'client');
-                $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
-                $mform->_required[] = $fieldname;
+                // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
+                $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
+                $mform->_required[] = $this->itemname;
             }
         } else { // SURVEYFIELD_BOOLEAN_USERADIOV or SURVEYFIELD_BOOLEAN_USERADIOH
             $class = '';
@@ -315,45 +313,45 @@ class surveyfield_boolean extends surveyitem_base {
             $elementgroup = array();
 
             if ( ($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform) ) {
-                $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('choosedots'), SURVEY_INVITATIONVALUE, array('class' => 'indent-'.$this->indent));
+                $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('choosedots'), SURVEY_INVITATIONVALUE, array('class' => 'indent-'.$this->indent));
                 $class = ($this->style == SURVEYFIELD_BOOLEAN_USERADIOV) ? array('class' => 'indent-'.$this->indent) : '';
             } else {
                 $class = array('class' => 'indent-'.$this->indent);
             }
-            $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('yes'), '1', $class);
+            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('yes'), '1', $class);
             $class = ($this->style == SURVEYFIELD_BOOLEAN_USERADIOV) ? array('class' => 'indent-'.$this->indent) : '';
-            $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('no'), '0', $class);
+            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('no'), '0', $class);
 
             if ( $this->required && (!$searchform) ) {
-                $mform->addGroup($elementgroup, $fieldname.'_group', $elementlabel, $separator, false);
+                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
 
-                // $mform->addRule($fieldname.'_group', get_string('required'), 'required', null, 'client');
-                $mform->addRule($fieldname.'_group', get_string('required'), 'nonempty_rule', $mform);
-                $mform->_required[] = $fieldname.'_group';
+                // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
+                $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
+                $mform->_required[] = $this->itemname.'_group';
             } else {
                 $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-                $elementgroup[] = $mform->createElement('radio', $fieldname, '', $check_label, SURVEY_NOANSWERVALUE, $class);
+                $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $check_label, SURVEY_NOANSWERVALUE, $class);
 
-                $mform->addGroup($elementgroup, $fieldname.'_group', $elementlabel, $separator, false);
+                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
             }
         }
 
         // default section
         if (!$searchform) {
             if ($this->defaultoption == SURVEY_INVITATIONDEFAULT) {
-                $mform->setDefault($fieldname, SURVEY_INVITATIONVALUE);
+                $mform->setDefault($this->itemname, SURVEY_INVITATIONVALUE);
             } else {
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
-                        $mform->setDefault($fieldname, $this->defaultvalue);
+                        $mform->setDefault($this->itemname, $this->defaultvalue);
                         break;
                     case SURVEY_NOANSWERDEFAULT:
-                        $mform->setDefault($fieldname, SURVEY_NOANSWERVALUE);
+                        $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE);
                         break;
                 }
             }
         } else {
-            $mform->setDefault($fieldname, SURVEY_NOANSWERVALUE); // free
+            $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE); // free
         }
     }
 
@@ -363,11 +361,9 @@ class surveyfield_boolean extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         // I need to check value is different from SURVEY_INVITATIONVALUE even if it is not required
-        if ($data[$fieldname] == SURVEY_INVITATIONVALUE) {
-            $errors[$fieldname] = get_string('uerr_booleannotset', 'surveyfield_boolean');
+        if ($data[$this->itemname] == SURVEY_INVITATIONVALUE) {
+            $errors[$this->itemname] = get_string('uerr_booleannotset', 'surveyfield_boolean');
             return;
         }
     }
@@ -379,12 +375,10 @@ class surveyfield_boolean extends surveyitem_base {
      * @return
      */
     public function userform_get_parent_disabilitation_info($child_parentcontent) {
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $disabilitationinfo = array();
 
         $mformelementinfo = new stdClass();
-        $mformelementinfo->parentname = $fieldname;
+        $mformelementinfo->parentname = $this->itemname;
         $mformelementinfo->operator = 'neq';
         $mformelementinfo->content = $child_parentcontent;
         $disabilitationinfo[] = $mformelementinfo;
@@ -414,10 +408,8 @@ class surveyfield_boolean extends surveyitem_base {
     public function userform_set_prefill($olduserdata) {
         $prefill = array();
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            $prefill[$fieldname] = $olduserdata->content;
+            $prefill[$this->itemname] = $olduserdata->content;
         } // else use item defaults
 
         return $prefill;

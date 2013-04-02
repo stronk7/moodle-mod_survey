@@ -346,8 +346,6 @@ class surveyfield_rate extends surveyitem_base {
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         $options = $this->item_get_one_word_per_row('options');
         $valuelabel = $this->item_get_value_label_array('rates');
         if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
@@ -362,7 +360,7 @@ class surveyfield_rate extends surveyitem_base {
         $optionindex = 0;
         if ($this->style == SURVEYFIELD_RATE_USERADIO) {
             foreach ($options as $option) {
-                $uniquename = $fieldname.'_'.$optionindex;
+                $uniquename = $this->itemname.'_'.$optionindex;
                 $elementgroup = array();
                 foreach ($valuelabel as $value => $label) {
                     $elementgroup[] = $mform->createElement('radio', $uniquename, '', $label, $value);
@@ -371,8 +369,8 @@ class surveyfield_rate extends surveyitem_base {
                 $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
                 if ($this->required && (!$searchform) && (!$maybedisabled)) {
                     // $mform->addRule($uniquename.'_group', get_string('required'), 'required', null, 'client');
-                    $mform->addRule($fieldname.'_group', get_string('required'), 'nonempty_rule', $mform);
-                    $mform->_required[] = $fieldname.'_group';
+                    $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
+                    $mform->_required[] = $this->itemname.'_group';
                 }
 
                 if (!$searchform) {
@@ -390,20 +388,20 @@ class surveyfield_rate extends surveyitem_base {
                             debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
                     }
                 } else {
-                    $mform->setDefault($fieldname, SURVEY_NOANSWERVALUE); // free
+                    $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE); // free
                 }
 
                 $optionindex++;
             }
         } else { // SURVEYFIELD_RATE_USESELECT
             foreach ($options as $option) {
-                $uniquename = $fieldname.'_'.$optionindex;
+                $uniquename = $this->itemname.'_'.$optionindex;
                 $mform->addElement('select', $uniquename, $option, $valuelabel, array('class' => 'indent-'.$this->indent));
                 $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
                 if ($this->required && (!$searchform) && (!$maybedisabled)) {
                     // $mform->addRule($uniquename, get_string('required'), 'required', null, 'client');
-                    $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
-                    $mform->_required[] = $fieldname;
+                    $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
+                    $mform->_required[] = $this->itemname;
                 }
 
                 if (!$searchform) {
@@ -421,7 +419,7 @@ class surveyfield_rate extends surveyitem_base {
                             debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
                     }
                 } else {
-                    $mform->setDefault($fieldname, SURVEY_NOANSWERVALUE); // free
+                    $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE); // free
                 }
 
                 $optionindex++;
@@ -429,20 +427,20 @@ class surveyfield_rate extends surveyitem_base {
         }
 
         if (!$this->required) {
-            $mform->addElement('checkbox', $fieldname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
+            $mform->addElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
             $optionindex = 0;
             foreach ($options as $option) {
                 if ($this->style == SURVEYFIELD_RATE_USERADIO) {
-                    $uniquename = $fieldname.'_'.$optionindex.'_group';
+                    $uniquename = $this->itemname.'_'.$optionindex.'_group';
                 } else {
-                    $uniquename = $fieldname.'_'.$optionindex;
+                    $uniquename = $this->itemname.'_'.$optionindex;
                 }
 
-                $mform->disabledIf($uniquename, $fieldname.'_noanswer', 'checked');
+                $mform->disabledIf($uniquename, $this->itemname.'_noanswer', 'checked');
                 $optionindex++;
             }
             if ($this->defaultoption == SURVEY_NOANSWERDEFAULT) {
-                $mform->setDefault($fieldname.'_noanswer', 1);
+                $mform->setDefault($this->itemname.'_noanswer', 1);
             }
         }
     }
@@ -454,18 +452,17 @@ class surveyfield_rate extends surveyitem_base {
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         // if different rates were requested, it is time to verify this
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
 
         $options = $this->item_get_one_word_per_row('options');
 
-        if (isset($data[$fieldname.'_noanswer'])) {
+        if (isset($data[$this->itemname.'_noanswer'])) {
             return; // nothing to validate
         }
 
         $optionindex = 0;
         $return = false;
         foreach ($options as $option) {
-            $uniquename = $fieldname.'_'.$optionindex;
+            $uniquename = $this->itemname.'_'.$optionindex;
             if ($data[$uniquename] == SURVEY_INVITATIONVALUE) {
                 if ($this->style == SURVEYFIELD_RATE_USERADIO) {
                     $elementname = $uniquename.'_group';
@@ -485,7 +482,7 @@ class surveyfield_rate extends surveyitem_base {
             $optionscount = count($this->item_get_value_label_array('options'));
             $rates = array();
             for ( $i = 0; $i < $optionscount; $i++) {
-                $rates[] = $data[$fieldname.'_'.$i];
+                $rates[] = $data[$this->itemname.'_'.$i];
             }
 
             $uniquerates = array_unique($rates);
@@ -493,9 +490,9 @@ class surveyfield_rate extends surveyitem_base {
 
             foreach ($duplicaterates as $k => $v) {
                 if ($this->style == SURVEYFIELD_RATE_USERADIO) {
-                    $elementname = $fieldname.'_'.$k.'_group';
+                    $elementname = $this->itemname.'_'.$k.'_group';
                 } else {
-                    $elementname = $fieldname.'_'.$k;
+                    $elementname = $this->itemname.'_'.$k;
                 }
                 $errors[$elementname] = get_string('uerr_duplicaterate', 'surveyfield_rate');
             }
@@ -557,17 +554,15 @@ class surveyfield_rate extends surveyitem_base {
 
         $prefill = array();
 
-        $fieldname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (!empty($olduserdata->content)) {
                 if ($olduserdata->content == SURVEY_NOANSWERVALUE) {
-                    $prefill[$fieldname.'_noanswer'] = 1;
+                    $prefill[$this->itemname.'_noanswer'] = 1;
                 } else {
                     $valueindex = 0;
                     $values = explode(',', $olduserdata->content);
                     foreach ($values as $rowvalue) {
-                        $uniquename = $fieldname.'_'.$valueindex;
+                        $uniquename = $this->itemname.'_'.$valueindex;
                         $rowvalue = trim($rowvalue); // Example: italiano: 3
                         $value = explode(SURVEYFIELD_RATE_VALUERATE_SEPARATOR, $rowvalue); // 3
                         $prefill[$uniquename] = $value[1];
@@ -580,8 +575,8 @@ class surveyfield_rate extends surveyitem_base {
             }
 
             // _noanswer
-            if (!$this->required) { // if this item foresaw the $fieldname.'_noanswer'
-                $prefill[$fieldname.'_noanswer'] = is_null($olduserdata->content) ? 1 : 0;
+            if (!$this->required) { // if this item foresaw the $this->itemname.'_noanswer'
+                $prefill[$this->itemname.'_noanswer'] = is_null($olduserdata->content) ? 1 : 0;
             }
         } // else use item defaults
 

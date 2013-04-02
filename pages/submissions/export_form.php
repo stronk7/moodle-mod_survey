@@ -37,6 +37,7 @@ class survey_exportform extends moodleform {
             $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
         } else {
             $mform->addElement('hidden', $fieldname, SURVEY_STATUSCLOSED);
+            $mform->setType($fieldname, PARAM_INT);
         }
 
         // ----------------------------------------
@@ -49,6 +50,7 @@ class survey_exportform extends moodleform {
             $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
         } else {
             $mform->addElement('hidden', $fieldname, SURVEY_FILLONLY);
+            $mform->setType($fieldname, PARAM_INT);
         }
 
         // ----------------------------------------

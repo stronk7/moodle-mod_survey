@@ -43,6 +43,7 @@ class survey_templatebuildform extends moodleform {
         // ----------------------------------------
         $fieldname = 'surveyid';
         $mform->addElement('hidden', $fieldname, 0);
+        $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------
         // templatebuild::templatename
