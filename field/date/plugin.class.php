@@ -377,6 +377,11 @@ class surveyfield_date extends surveyitem_base {
 
         if ( $this->required && (!$searchform) ) {
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
+            if (!$this->userform_has_parent($survey, $canaccessadvancedform, $parentitem)) {
+                // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
+                $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
+                $mform->_required[] = $this->itemname.'_group';
+            }
         } else {
             $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
             $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', $check_label);
@@ -437,16 +442,16 @@ class surveyfield_date extends surveyitem_base {
         if (isset($data[$this->itemname.'_noanswer'])) {
             return; // nothing to validate
         }
-        if ($data[$this->itemname.'_day'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_daynotset', 'surveyfield_date');
-            return;
-        }
-        if ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_monthnotset', 'surveyfield_date');
-            return;
-        }
-        if ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_yearnotset', 'surveyfield_date');
+
+        if ( ($data[$this->itemname.'_day'] == SURVEY_INVITATIONVALUE) ||
+             ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) ||
+             ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) ) {
+            if ($this->required) {
+                $errors[$this->itemname.'_group'] = get_string('uerr_datenotsetrequired', 'surveyfield_date');
+            } else {
+                $a = get_string('noanswer', 'survey');
+                $errors[$this->itemname.'_group'] = get_string('uerr_datenotset', 'surveyfield_date', $a);
+            }
             return;
         }
 

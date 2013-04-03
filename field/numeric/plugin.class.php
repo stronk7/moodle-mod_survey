@@ -384,11 +384,11 @@ class surveyfield_numeric extends surveyitem_base {
         if (!$searchform) {
             $decimalseparator = get_string('decsep', 'langconfig');
             $mform->setDefault($this->itemname, number_format((double)$this->defaultvalue, $this->decimals, $decimalseparator, ''));
-            $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+            $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
             if ($this->required && (!$maybedisabled)) {
                 // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'server');
                 $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
-                $mform->_required[] = $this->itemname;
+                $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
             }
         }
     }

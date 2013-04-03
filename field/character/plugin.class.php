@@ -394,11 +394,11 @@ class surveyfield_character extends surveyitem_base {
         $mform->setType($this->itemname, PARAM_RAW);
         if (!$searchform) {
             $mform->setDefault($this->itemname, $this->defaultvalue);
-            $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+            $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
             if ($this->required && (!$maybedisabled)) {
                 // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'client');
                 $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
-                $mform->_required[] = $this->itemname;
+                $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
             }
         }
     }
@@ -409,48 +409,52 @@ class surveyfield_character extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        // useless: empty values are checked in Server Side Validation in attempt_form.php
+        // useless: empty values are checked in Server Side Validation in attempt_form.php (search for: $mform->registerRule('nonempty_rule', null, $this->surveynonemptyrule))
         // if (empty($data[$this->itemname])) {
         //     $errors[$this->itemname] = get_string('required');
         //     return;
         // }
 
-        $fieldlength = strlen($data[$this->itemname]);
-        if ($fieldlength > $this->maxlength) {
-            $errors[$this->itemname] = get_string('uerr_texttoolong', 'surveyfield_character');
-        }
-        if ($fieldlength < $this->minlength) {
-            $errors[$this->itemname] = get_string('uerr_texttooshort', 'surveyfield_character');
-        }
-        if (!empty($data[$this->itemname]) && !empty($this->pattern)) {
-            switch ($this->pattern) {
-                case SURVEYFIELD_CHARACTER_EMAILPATTERN:
-                    if (!validate_email($data[$this->itemname])) {
-                        $errors[$this->itemname] = get_string('uerr_invalidemail', 'surveyfield_character');
-                    }
-                    break;
-                case SURVEYFIELD_CHARACTER_URLPATTERN:
-                    // if (!preg_match('~^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$~i', $data[$this->itemname])) {
-                    if (!survey_character_is_valid_url($data[$this->itemname])) {
-                        $errors[$this->itemname] = get_string('uerr_invalidurl', 'surveyfield_character');
-                    }
-                    break;
-                case SURVEYFIELD_CHARACTER_CUSTOMPATTERN: // it is a custom pattern done with "A", "a", "*" and "0"
-                    // "A" UPPER CASE CHARACTERS
-                    // "a" lower case characters
-                    // "*" UPPER case, LOWER case or any special characters like '@', ',', '%', '5', ' ' or whatever
-                    // "0" numbers
+        // if the item is not mandatory, it can be empty
+        // otherwise, its fullness is checked by server side validation
+        if (!empty($data[$this->itemname])) {
+            $fieldlength = strlen($data[$this->itemname]);
+            if ($fieldlength > $this->maxlength) {
+                $errors[$this->itemname] = get_string('uerr_texttoolong', 'surveyfield_character');
+            }
+            if ($fieldlength < $this->minlength) {
+                $errors[$this->itemname] = get_string('uerr_texttooshort', 'surveyfield_character');
+            }
+            if (!empty($data[$this->itemname]) && !empty($this->pattern)) {
+                switch ($this->pattern) {
+                    case SURVEYFIELD_CHARACTER_EMAILPATTERN:
+                        if (!validate_email($data[$this->itemname])) {
+                            $errors[$this->itemname] = get_string('uerr_invalidemail', 'surveyfield_character');
+                        }
+                        break;
+                    case SURVEYFIELD_CHARACTER_URLPATTERN:
+                        // if (!preg_match('~^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$~i', $data[$this->itemname])) {
+                        if (!survey_character_is_valid_url($data[$this->itemname])) {
+                            $errors[$this->itemname] = get_string('uerr_invalidurl', 'surveyfield_character');
+                        }
+                        break;
+                    case SURVEYFIELD_CHARACTER_CUSTOMPATTERN: // it is a custom pattern done with "A", "a", "*" and "0"
+                        // "A" UPPER CASE CHARACTERS
+                        // "a" lower case characters
+                        // "*" UPPER case, LOWER case or any special characters like '@', ',', '%', '5', ' ' or whatever
+                        // "0" numbers
 
-                    if ($fieldlength != strlen($this->pattern_text)) {
-                        $errors[$this->itemname] = get_string('uerr_badlength', 'surveyfield_character');
-                    }
+                        if ($fieldlength != strlen($this->pattern_text)) {
+                            $errors[$this->itemname] = get_string('uerr_badlength', 'surveyfield_character');
+                        }
 
-                    if (!survey_character_text_match_pattern($data[$this->itemname], $this->pattern_text)) {
-                        $errors[$this->itemname] = get_string('uerr_nopatternmatch', 'surveyfield_character');
-                    }
-                    break;
-                default:
-                    debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->pattern = '.$this->pattern);
+                        if (!survey_character_text_match_pattern($data[$this->itemname], $this->pattern_text)) {
+                            $errors[$this->itemname] = get_string('uerr_nopatternmatch', 'surveyfield_character');
+                        }
+                        break;
+                    default:
+                        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->pattern = '.$this->pattern);
+                }
             }
         }
         // return $errors; is not needed because $errors is passed by reference

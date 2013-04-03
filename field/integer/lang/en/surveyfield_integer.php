@@ -41,4 +41,5 @@ $string['uerr_greaterthanmaximum'] = 'Provided integer is too big';
 $string['maximuminteger'] = 'Maximum integer';
 $string['maximuminteger_desc'] = 'The maximun integer this software will allow to ever enter';
 $string['customdefault'] = 'Custom';
-$string['uerr_integernotset'] = 'Please choose a integer';
+$string['uerr_integernotset'] = 'Please choose an integer or the last item: "{$a}"';
+$string['uerr_integernotsetrequired'] = 'Please choose an integer';

@@ -372,7 +372,7 @@ class surveyfield_shortdate extends surveyitem_base {
 
         if ($this->required && !$searchform) {
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
-            $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+            $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
             if ($maybedisabled) {
                 // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
                 $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
@@ -436,12 +436,14 @@ class surveyfield_shortdate extends surveyitem_base {
             return; // nothing to validate
         }
 
-        if ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_monthnotset', 'surveyfield_shortdate');
-            return;
-        }
-        if ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_yearnotset', 'surveyfield_shortdate');
+        if ( ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) ||
+             ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) ) {
+            if ($this->required) {
+                $errors[$this->itemname.'_group'] = get_string('uerr_shortnotsetrequired', 'surveyfield_shortdate');
+            } else {
+                $a = get_string('noanswer', 'survey');
+                $errors[$this->itemname.'_group'] = get_string('uerr_shortdatenotset', 'surveyfield_shortdate', $a);
+            }
             return;
         }
 

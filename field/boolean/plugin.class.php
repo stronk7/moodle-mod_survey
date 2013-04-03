@@ -305,7 +305,7 @@ class surveyfield_boolean extends surveyitem_base {
             if ($this->required && (!$searchform)) {
                 // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
                 $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
-                $mform->_required[] = $this->itemname;
+                $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
             }
         } else { // SURVEYFIELD_BOOLEAN_USERADIOV or SURVEYFIELD_BOOLEAN_USERADIOH
             $class = '';

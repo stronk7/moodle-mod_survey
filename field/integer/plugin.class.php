@@ -323,11 +323,11 @@ class surveyfield_integer extends surveyitem_base {
 
         $mform->addElement('select', $this->itemname, $elementlabel, $integers, array('class' => 'indent-'.$this->indent));
 
-        $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
         if ( $this->required && (!$searchform) && (!$maybedisabled)) {
             // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'client');
             $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
-            $mform->_required[] = $this->itemname;
+            $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
         }
 
         // default section
@@ -360,7 +360,12 @@ class surveyfield_integer extends surveyitem_base {
 
         // I need to check value is different from SURVEY_INVITATIONVALUE even if it is not required
         if ($data[$this->itemname] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname] = get_string('uerr_integernotset', 'surveyfield_integer');
+            if ($this->required) {
+                $errors[$this->itemname] = get_string('uerr_integernotsetrequired', 'surveyfield_integer');
+            } else {
+                $a = get_string('noanswer', 'survey');
+                $errors[$this->itemname] = get_string('uerr_integernotset', 'surveyfield_integer', $a);
+            }
             return;
         }
 

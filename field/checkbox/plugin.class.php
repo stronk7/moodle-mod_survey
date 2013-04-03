@@ -300,7 +300,7 @@ class surveyfield_checkbox extends surveyitem_base {
         }
         $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
 
-        $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
         if ($this->required && (!$searchform) && (!$maybedisabled)) {
             // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
             $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);

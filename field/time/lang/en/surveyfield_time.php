@@ -51,5 +51,5 @@ $string['customdefault'] = 'Custom';
 $string['currenttimedefault'] = 'Current time';
 $string['invitationhour'] = 'Choose an hour';
 $string['invitationminute'] = 'Choose a minute';
-$string['uerr_hournotset'] = 'Please choose an hour';
-$string['uerr_minutenotset'] = 'Please choose a minute';
+$string['uerr_timenotsetrequired'] = 'Please define a time or select the "{$a}" checkbox';
+$string['uerr_timenotset'] = 'Please define a time required';

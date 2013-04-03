@@ -225,7 +225,7 @@ class surveyfield_fileupload extends surveyitem_base {
         $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
         $mform->addElement('filemanager', $fieldname, $elementlabel, null, $attachmentoptions);
 
-        $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
         if ($this->required && (!$searchform) && (!$maybedisabled)) {
             // $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
             $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
@@ -241,7 +241,7 @@ class surveyfield_fileupload extends surveyitem_base {
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         // $fieldname = $this->itemname.'_filemanager';
 
-        // useless: empty values are checked in Server Side Validation in attempt_form.php
+        // useless: empty values are checked in Server Side Validation in attempt_form.php (search for: $mform->registerRule('nonempty_rule', null, $this->surveynonemptyrule))
         // if (empty($data[$fieldname])) {
         //     $errors[$fieldname] = get_string('required');
         //     return;

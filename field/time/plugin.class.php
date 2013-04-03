@@ -382,7 +382,7 @@ class surveyfield_time extends surveyitem_base {
         $separator = array(':');
         if ($this->required && !$searchform) {
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
-            $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+            $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
             if ($maybedisabled) {
                 // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
                 $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
@@ -446,12 +446,14 @@ class surveyfield_time extends surveyitem_base {
         if (isset($data[$this->itemname.'_noanswer'])) {
             return; // nothing to validate
         }
-        if ($data[$this->itemname.'_hour'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_hournotset', 'surveyfield_time');
-            return;
-        }
-        if ($data[$this->itemname.'_minute'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_minutenotset', 'surveyfield_time');
+        if ( ($data[$this->itemname.'_hour'] == SURVEY_INVITATIONVALUE) ||
+             ($data[$this->itemname.'_minute'] == SURVEY_INVITATIONVALUE) ) {
+            if ($this->required) {
+                $errors[$this->itemname.'_group'] = get_string('uerr_timenotsetrequired', 'surveyfield_time');
+            } else {
+                $a = get_string('noanswer', 'survey');
+                $errors[$this->itemname.'_group'] = get_string('uerr_timenotset', 'surveyfield_time', $a);
+            }
             return;
         }
 

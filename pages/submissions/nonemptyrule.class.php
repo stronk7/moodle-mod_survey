@@ -31,16 +31,27 @@ defined('MOODLE_INTERNAL') OR die();
 require_once($CFG->dirroot.'/lib/pear/HTML/QuickForm/element.php');
 
 class survey_nonempty_rule extends HTML_QuickForm_Rule {
+    /*
+     * this server side validation is called ONLY WHRETHER the item is mandatory
+     * The reason why I use the server side validation follows:
+     * Let's say I have two items: item01 and item02
+     * item01 is the parent of item02
+     * item02 is mandatory
+     * Let's suppose that item02 is in the same page of item01
+     * AND
+     * the condition enabling item02 DOES NOT MATCH.
+     * At submit time item02 MUST NOT be checked EVEN IF IT IS MANDATORY
+     */
     function validate($value, $mform = null) {
 
         $submission = $mform->getSubmitValues();
 
         // Now, check
         if (array_key_exists('prevbutton', $submission)) {
-            // echo 'I omit the validation<br />';
+            // Omit the validation if previous button was pressed
             $valid = true;
         } else {
-            // echo 'I perform the validation<br />';
+            // Perform the server side validation
             // I need to verify that:
             // --> text fields are not empty
             // --> select is not set to SURVEY_INVITATIONVALUE

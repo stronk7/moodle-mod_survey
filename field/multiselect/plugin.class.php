@@ -235,11 +235,11 @@ class surveyfield_multiselect extends surveyitem_base {
             $select->setSelected(implode(',', $defaults));
         } // else do not make a selection [workaround to MDL-]
 
-        $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
         if ($this->required && (!$searchform) && (!$maybedisabled)) {
             // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'client');
             $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
-            $mform->_required[] = $this->itemname;
+            $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
         }
     }
 
@@ -249,7 +249,7 @@ class surveyfield_multiselect extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        // useless: empty values are checked in Server Side Validation in attempt_form.php
+        // useless: empty values are checked in Server Side Validation in attempt_form.php (search for: $mform->registerRule('nonempty_rule', null, $this->surveynonemptyrule))
         // if (empty($data[$this->itemname])) {
         //     $errors[$this->itemname] = get_string('required');
         //     return;

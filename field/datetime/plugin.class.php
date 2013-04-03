@@ -397,7 +397,7 @@ class surveyfield_datetime extends surveyitem_base {
         $separator = array(' ', ' ', ' ', ':');
         if ($this->required && !$searchform) {
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
-            $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+            $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
             if ($maybedisabled) {
                 // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
                 $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
@@ -470,24 +470,19 @@ class surveyfield_datetime extends surveyitem_base {
         if (isset($data[$this->itemname.'_noanswer'])) {
             return; // nothing to validate
         }
-        if ($data[$this->itemname.'_day'] == SURVEY_INVITATIONVALUE) {
+
+        if ( ($data[$this->itemname.'_day'] == SURVEY_INVITATIONVALUE) ||
+             ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) ||
+             ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) ||
+             ($data[$this->itemname.'_hour'] == SURVEY_INVITATIONVALUE) ||
+             ($data[$this->itemname.'_minute'] == SURVEY_INVITATIONVALUE) ) {
+            if ($this->required) {
+                $errors[$this->itemname.'_group'] = get_string('uerr_datetimenotsetrequired', 'surveyfield_datetime');
+            } else {
+                $a = get_string('noanswer', 'survey');
+                $errors[$this->itemname.'_group'] = get_string('uerr_datetimenotset', 'surveyfield_datetime', $a);
+            }
             $errors[$this->itemname.'_group'] = get_string('uerr_daynotset', 'surveyfield_datetime');
-            return;
-        }
-        if ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_monthnotset', 'surveyfield_datetime');
-            return;
-        }
-        if ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_yearnotset', 'surveyfield_datetime');
-            return;
-        }
-        if ($data[$this->itemname.'_hour'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_hournotset', 'surveyfield_datetime');
-            return;
-        }
-        if ($data[$this->itemname.'_minute'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_minutenotset', 'surveyfield_datetime');
             return;
         }
 

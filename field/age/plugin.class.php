@@ -416,7 +416,7 @@ class surveyfield_age extends surveyitem_base {
 
         if ($this->required && (!$searchform)) {
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
-            if (!$this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem)) {
+            if (!$this->userform_has_parent($survey, $canaccessadvancedform, $parentitem)) {
                 // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
                 $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
                 $mform->_required[] = $this->itemname.'_group';
@@ -466,12 +466,14 @@ class surveyfield_age extends surveyitem_base {
             return; // nothing to validate
         }
 
-        if ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_yearnotset', 'surveyfield_age');
-            return;
-        }
-        if ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_monthnotset', 'surveyfield_age');
+        if ( ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) ||
+             ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) ) {
+            if ($this->required) {
+                $errors[$this->itemname.'_group'] = get_string('uerr_agenotsetrequired', 'surveyfield_age');
+            } else {
+                $a = get_string('noanswer', 'survey');
+                $errors[$this->itemname.'_group'] = get_string('uerr_agenotset', 'surveyfield_age', $a);
+            }
             return;
         }
 

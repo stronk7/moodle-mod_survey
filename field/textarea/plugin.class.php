@@ -307,7 +307,7 @@ class surveyfield_textarea extends surveyitem_base {
             $mform->setType($fieldname, PARAM_TEXT);
         }
 
-        $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
         if ($this->required && (!$searchform) && (!$maybedisabled)) {
             // $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
             $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
@@ -339,7 +339,7 @@ class surveyfield_textarea extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        // useless: empty values are checked in Server Side Validation in attempt_form.php
+        // useless: empty values are checked in Server Side Validation in attempt_form.php (search for: $mform->registerRule('nonempty_rule', null, $this->surveynonemptyrule))
         // if (!empty($this->useeditor)) {
         //     $fieldname = $this->itemname.'_editor';
         // } else {

@@ -47,5 +47,5 @@ $string['customdefault'] = 'Custom';
 $string['currentshortdatedefault'] = 'Current short date';
 $string['invitationmonth'] = 'Choose a month';
 $string['invitationyear'] = 'Choose a year';
-$string['uerr_monthnotset'] = 'Please choose a month';
-$string['uerr_yearnotset'] = 'Please choose a year';
+$string['uerr_shortdatenotset'] = 'Please choose a month or select "{$a}" checkbox';
+$string['uerr_shortdatenotsetrequired'] = 'Please choose a year';

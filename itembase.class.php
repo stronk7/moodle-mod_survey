@@ -1243,11 +1243,11 @@ class surveyitem_base {
     }
 
     /*
-     * userform_can_be_disabled
+     * userform_has_parent
      * @param
      * @return
      */
-    public function userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem=null) {
+    public function userform_has_parent($survey, $canaccessadvancedform, $parentitem=null) {
         global $DB;
 
         if ($survey->newpageforchild) {

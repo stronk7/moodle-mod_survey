@@ -366,7 +366,7 @@ class surveyfield_rate extends surveyitem_base {
                     $elementgroup[] = $mform->createElement('radio', $uniquename, '', $label, $value);
                 }
                 $mform->addGroup($elementgroup, $uniquename.'_group', $option, ' ', false);
-                $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+                $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
                 if ($this->required && (!$searchform) && (!$maybedisabled)) {
                     // $mform->addRule($uniquename.'_group', get_string('required'), 'required', null, 'client');
                     $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
@@ -397,11 +397,11 @@ class surveyfield_rate extends surveyitem_base {
             foreach ($options as $option) {
                 $uniquename = $this->itemname.'_'.$optionindex;
                 $mform->addElement('select', $uniquename, $option, $valuelabel, array('class' => 'indent-'.$this->indent));
-                $maybedisabled = $this->userform_can_be_disabled($survey, $canaccessadvancedform, $parentitem);
+                $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
                 if ($this->required && (!$searchform) && (!$maybedisabled)) {
                     // $mform->addRule($uniquename, get_string('required'), 'required', null, 'client');
                     $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
-                    $mform->_required[] = $this->itemname;
+                    $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
                 }
 
                 if (!$searchform) {
