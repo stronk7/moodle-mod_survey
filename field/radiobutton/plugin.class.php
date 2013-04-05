@@ -399,11 +399,26 @@ class surveyfield_radiobutton extends surveyitem_base {
     public function userform_get_parent_disabilitation_info($child_parentcontent) {
         $disabilitationinfo = array();
 
-        $mformelementinfo = new stdClass();
-        $mformelementinfo->parentname = $this->itemname;
-        $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $child_parentcontent;
-        $disabilitationinfo[] = $mformelementinfo;
+        $valuelabel = $this->item_get_value_label_array('options');
+        if (in_array($child_parentcontent, $valuelabel)) {
+            $mformelementinfo = new stdClass();
+            $mformelementinfo->parentname = $this->itemname;
+            $mformelementinfo->operator = 'neq';
+            $mformelementinfo->content = $child_parentcontent;
+            $disabilitationinfo[] = $mformelementinfo;
+        } else {
+            $mformelementinfo = new stdClass();
+            $mformelementinfo->parentname = $this->itemname;
+            $mformelementinfo->operator = 'neq';
+            $mformelementinfo->content = 'other';
+            $disabilitationinfo[] = $mformelementinfo;
+
+            $mformelementinfo = new stdClass();
+            $mformelementinfo->parentname = $this->itemname.'_text';
+            $mformelementinfo->operator = 'neq';
+            $mformelementinfo->content = $child_parentcontent;
+            $disabilitationinfo[] = $mformelementinfo;
+        }
 
         return $disabilitationinfo;
     }
@@ -413,7 +428,7 @@ class surveyfield_radiobutton extends surveyitem_base {
      * from parentcontent defines whether an item is supposed to be active (not disabled) in the form so needs validation
      * ----------------------------------------------------------------------
      * this function is called when $survey->newpageforchild == false
-     * that is the current survey lives in just one single web page
+     * so the current survey lives in just one single web page (unless page break is manually added)
      * ----------------------------------------------------------------------
      * Am I getting submitted data from $fromform or from table 'survey_userdata'?
      *     - if I get it from $fromform or from $data[] I need to use userform_child_is_allowed_dynamic
@@ -423,7 +438,6 @@ class surveyfield_radiobutton extends surveyitem_base {
      * @return
      */
     public function userform_child_is_allowed_dynamic($child_parentcontent, $data) {
-        // devo sapere come si chiamano gli mfrom element che corrispondono al contenuto di $child_parentcontent
         $valuelabel = $this->item_get_value_label_array('options');
         $valuelabel = array_keys($valuelabel);
 

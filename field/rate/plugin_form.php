@@ -142,7 +142,7 @@ class survey_pluginform extends surveyitem_baseform {
                 }
             }
 
-            // gli elementi nel campo default devono essere tutti contenuti fra i rates
+            // values in the default field must all be among rates ($values)
             foreach ($clean_defaultvalue as $default) {
                 if (!in_array($default, $values)) {
                     $errors['defaultvalue_group'] = get_string('default_notamongrates', 'surveyfield_rate', $default);
@@ -151,7 +151,7 @@ class survey_pluginform extends surveyitem_baseform {
             }
         }
 
-        // if (default == noanswer se default == noanswer ma è obbligatorio => errorese default == noanswer ma è obbligatorio => errore the field is mandatory) => error
+        // if (default == noanswer) but item is required => error
         if ( ($data['defaultoption'] == SURVEY_NOANSWERDEFAULT) && isset($data['required']) ) {
             $a = get_string('noanswer', 'survey');
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);
@@ -160,13 +160,13 @@ class survey_pluginform extends surveyitem_baseform {
         // SE è richiesto forcedifferentrates
         // il numero dei numero delle opzioni DEVE essere >= al numero degli elementi da valutare
         if (isset($data['forcedifferentrates'])) {
-            // se pretendo different rates, devo metterne a disposizione un numero sufficiente
+            // if I claim for different rates, I must provide a sufficient number of rates
             if (count($clean_options) > count($clean_rates)) {
                 $errors['rates'] = get_string('notenoughrares', 'surveyfield_rate');
             }
 
             if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
-                // se pretendo different rates, devo rispettare il vincolo nel default
+                // if I claim for different rates, I have to respect the constraint in the default
                 if (count($clean_defaultvalue) > count(array_unique($clean_defaultvalue))) {
                     $errors['defaultvalue_group'] = get_string('deafultsnotunique', 'surveyfield_rate');
                 }

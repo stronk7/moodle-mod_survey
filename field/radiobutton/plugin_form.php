@@ -131,7 +131,7 @@ class survey_pluginform extends surveyitem_baseform {
             }
         }
 
-        // if (default == noanswer se default == noanswer ma è obbligatorio => errorese default == noanswer ma è obbligatorio => errore the field is mandatory) => error
+        // if (default == noanswer) but item is required => error
         if ( ($data['defaultoption'] == SURVEY_NOANSWERDEFAULT) && isset($data['required']) ) {
             $a = get_string('noanswer', 'survey');
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);

@@ -57,11 +57,11 @@ switch ($action) {
         survey_manage_item_deletion($confirm, $cm, $itemid, $type, $plugin, $itemtomove, $survey->id);
         break;
     case SURVEY_CHANGEORDERASK:
-        // è stato richiesto di spostare l'item $itemid
-        // echo 'devo spostare l\'item con sortindex = '.$itemtomove; // sortindex of the item to move
+        // it was required to move the item $itemid
+        // echo 'I Need to modve item with sortindex = '.$itemtomove; // sortindex of the item to move
         break;
     case SURVEY_CHANGEORDER:
-        // è stato richiesto di spostare l'item $itemid
+        // it was required to move the item $itemid
         survey_reorder_items($itemtomove, $lastitembefore, $survey->id);
         break;
     case SURVEY_REQUIREDON:

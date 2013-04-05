@@ -286,7 +286,7 @@ class surveyfield_multiselect extends surveyitem_base {
      * from parentcontent defines whether an item is supposed to be active (not disabled) in the form so needs validation
      * ----------------------------------------------------------------------
      * this function is called when $survey->newpageforchild == false
-     * that is the current survey lives in just one single web page
+     * so the current survey lives in just one single web page (unless page break is manually added)
      * ----------------------------------------------------------------------
      * Am I getting submitted data from $fromform or from table 'survey_userdata'?
      *     - if I get it from $fromform or from $data[] I need to use userform_child_is_allowed_dynamic
