@@ -1351,8 +1351,19 @@ class surveyitem_base {
 
             // write disableIf
             foreach ($disabilitationinfo as $parentinfo) {
-                $mform->disabledIf($fieldname, $parentinfo->parentname, $parentinfo->operator, $parentinfo->content);
-                // echo '$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->operator.'\', \''.$parentinfo->content.'\');<br />';
+                if (isset($parentinfo->operator)) {
+                    $mform->disabledIf($fieldname, $parentinfo->parentname, $parentinfo->operator, $parentinfo->content);
+                } else {
+                    $mform->disabledIf($fieldname, $parentinfo->parentname, $parentinfo->content);
+                }
+                $displaydebuginfo = false;
+                if ($displaydebuginfo) {
+                    if (isset($parentinfo->operator)) {
+                        echo '$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->operator.'\', \''.$parentinfo->content.'\');<br />';
+                    } else {
+                        echo '$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->content.'\');<br />';
+                    }
+                }
             }
         }
     }

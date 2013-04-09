@@ -49,9 +49,23 @@ class survey_submissionform extends moodleform {
 
         $mform->registerRule('nonempty_rule', null, $this->surveynonemptyrule);
 
+        // ----------------------------------------
+        // newitem::s
+        // ----------------------------------------
         $mform->addElement('hidden', 's', $survey->id);
+        $mform->setType('s', PARAM_INT);
+
+        // ----------------------------------------
+        // newitem::submissionid
+        // ----------------------------------------
         $mform->addElement('hidden', 'submissionid', 0);
-        $mform->addElement('hidden', 'formpage', 0); // <-- this value comes from default just set before $mform->display(); in submissions.php
+        $mform->setType('submissionid', PARAM_INT);
+
+        // ----------------------------------------
+        // newitem::formpage
+        // ----------------------------------------
+        $mform->addElement('hidden', 'formpage', 0); // <-- this value comes from default just set before $mform->display(); in attempt.php
+        $mform->setType('formpage', PARAM_INT);
 
         if (!$formpage) {
             // if !$formpage then I am at the END of the survey otherwise, $formpage == 1 at least
@@ -65,7 +79,7 @@ class survey_submissionform extends moodleform {
             $sql = survey_fetch_items_seeds($canaccessadvancedform, false, $allpages);
             $itemseeds = $DB->get_recordset_sql($sql, $params);
             // I do not need to be sure items are found because I already know this
-            // In submissions.php if items are not found I display a message and execution is stopped
+            // In attempt.php if items are not found I display a message and execution is stopped
 
             $context = context_module::instance($cmid);
 
@@ -107,8 +121,8 @@ class survey_submissionform extends moodleform {
                         $elementnumber = $item->customnumber ? $item->customnumber.':' : '';
 
                         $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
-//echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
-//die;
+                        //echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
+                        //die;
                         $mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
                     }
 

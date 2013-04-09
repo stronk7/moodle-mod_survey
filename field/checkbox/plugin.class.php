@@ -363,13 +363,12 @@ class surveyfield_checkbox extends surveyitem_base {
             $mformelementinfo = new stdClass();
 
             $mformelementinfo->parentname = $this->itemname.'_'.$index;
-            $mformelementinfo->operator = 'eq';
             $constrainindex = array_search($value, $constraintsvalues);
-            if ($constrainindex === false) {
-                $mformelementinfo->content = '1';
-            } else {
+            if ($constrainindex !== false) { // 0 or a different value
                 unset($constraintsvalues[$constrainindex]);
-                $mformelementinfo->content = '0';
+                $mformelementinfo->content = 'notchecked';
+            } else {
+                $mformelementinfo->content = 'checked';
             }
             $disabilitationinfo[] = $mformelementinfo;
         }
@@ -378,8 +377,7 @@ class surveyfield_checkbox extends surveyitem_base {
         if (count($constraintsvalues)) {
             $mformelementinfo = new stdClass();
             $mformelementinfo->parentname = $this->itemname.'_other';
-            $mformelementinfo->operator = 'eq';
-            $mformelementinfo->content = '0';
+            $mformelementinfo->content = 'notchecked';
             $disabilitationinfo[] = $mformelementinfo;
 
             $mformelementinfo = new stdClass();

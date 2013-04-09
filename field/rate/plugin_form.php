@@ -142,7 +142,7 @@ class survey_pluginform extends surveyitem_baseform {
                 }
             }
 
-            // values in the default field must all be among rates ($values)
+            // values in the default field must all be hold among rates ($values)
             foreach ($clean_defaultvalue as $default) {
                 if (!in_array($default, $values)) {
                     $errors['defaultvalue_group'] = get_string('default_notamongrates', 'surveyfield_rate', $default);
