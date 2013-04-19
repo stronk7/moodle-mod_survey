@@ -29,6 +29,7 @@
 defined('MOODLE_INTERNAL') OR die();
 
 require_once($CFG->libdir.'/tablelib.php');
+
 $context = context_module::instance($cm->id);
 
 $table = new flexible_table('itemslist');
@@ -143,7 +144,7 @@ foreach ($itemseeds as $itemseed) {
         $message = get_string('parentid', 'survey');
         $content = $parentitem->sortindex;
         $content .= '&nbsp;<img src="'.$OUTPUT->pix_url('link', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
-        $content .= $item->parentcontent;
+        $content .= survey_multiline_to_condition_union($item->parentcontent);
     } else {
         $content = '';
     }

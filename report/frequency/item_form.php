@@ -45,11 +45,11 @@ class survey_chooseitemform extends moodleform {
         $itemssql = 'SELECT si.id, si.fieldname, si.plugin, si.content
                         FROM {survey_item} si
                         WHERE si.surveyid = :surveyid
-                            AND si.type = "'.SURVEY_FIELD.'"
+                            AND si.type = "'.SURVEY_TYPEFIELD.'"
                             AND si.basicform <> '.SURVEY_NOTPRESENT.'
                             AND si.hide = 0
                         ORDER BY si.sortindex';
-        // $sqlparams = array('surveyid' => $survey->id, 'type' => SURVEY_FIELD, 'basicform' => SURVEY_NOTPRESENT, 'hide' => 0);
+        // $sqlparams = array('surveyid' => $survey->id, 'type' => SURVEY_TYPEFIELD, 'basicform' => SURVEY_NOTPRESENT, 'hide' => 0);
         $sqlparams = array('surveyid' => $survey->id);
 
         // I need get_records_sql instead of get_records because of '<> SURVEY_NOTPRESENT'

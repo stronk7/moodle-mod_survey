@@ -29,7 +29,6 @@
 defined('MOODLE_INTERNAL') OR die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot.'/mod/survey/pages/submissions/nonemptyrule.class.php');
 
 class survey_submissionform extends moodleform {
 
@@ -37,7 +36,6 @@ class survey_submissionform extends moodleform {
         global $DB, $CFG;
 
         $mform = $this->_form;
-        $this->surveynonemptyrule = new survey_nonempty_rule();
 
         $cmid = $this->_customdata->cmid;
         $lastformpage = $this->_customdata->lastformpage;
@@ -46,8 +44,6 @@ class survey_submissionform extends moodleform {
         $formpage = $this->_customdata->formpage;
         $canaccessadvancedform = $this->_customdata->canaccessadvancedform;
         $currentpage = $this->_customdata->currentpage;
-
-        $mform->registerRule('nonempty_rule', null, $this->surveynonemptyrule);
 
         // ----------------------------------------
         // newitem::s
@@ -84,11 +80,11 @@ class survey_submissionform extends moodleform {
             $context = context_module::instance($cmid);
 
             foreach ($itemseeds as $itemseed) {
-                // echo '$itemseed->basicformpage):';
+                // echo '$itemseed->basicformpage:';
                 // var_dump($itemseed->basicformpage);
 
                 // Show the item only if:
-                //     - all has to going to the same page
+                //     - all has to go to the same page
                 //       OR
                 //     - the current item matches the parent value
                 if ($itemseed->parentid) {
@@ -105,7 +101,10 @@ class survey_submissionform extends moodleform {
                     // display the current item
                     $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
                     if ($parentitem->{$pagefield} < $formpage) {
-                        $itemaschildisallowed = survey_child_is_allowed_static($submissionid, $itemseed);
+                        require_once($CFG->dirroot.'/mod/survey/'.$itemseed->type.'/'.$itemseed->plugin.'/plugin.class.php');
+
+                        $itemaschildisallowed = $parentitem->userform_child_item_allowed_static($submissionid, $itemseed);
+                        //$itemaschildisallowed = userform_child_item_allowed_static($submissionid, $itemseed);
                     } else {
                         $itemaschildisallowed = true;
                     }
@@ -133,7 +132,7 @@ class survey_submissionform extends moodleform {
                     }
 
                     if (!$survey->newpageforchild) {
-                        $item->userform_disable_element($mform);
+                        $item->userform_disable_element($mform, $canaccessadvancedform);
                     }
                 }
             }
@@ -200,25 +199,33 @@ class survey_submissionform extends moodleform {
 
                 $item = survey_get_item($itemid, $type, $plugin);
                 if ($survey->newpageforchild) {
-                    $itemallowed = true;
+                    $itemisenabled = true; // if it is displayed, it is enabled
                     $parentitem = null;
                 } else {
                     if (empty($item->parentid)) {
-                        $itemallowed = true;
+                        $itemisenabled = true;
                         $parentitem = null;
                     } else {
                         // call its parent
                         $parentitem = survey_get_item($item->parentid);
-                        // tell parent that his child has as parentcontent 12/4/1968
-                        $itemallowed = $parentitem->userform_child_is_allowed_dynamic($item->parentcontent, $data);
+                        // tell parent that his child has parentcontent = 12/4/1968
+                        $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
+                        if ($parentitem->{$pagefield} == $item->{$pagefield}) {
+                            $itemisenabled = $parentitem->userform_child_item_allowed_dynamic($item->parentcontent, $data);
+                        } else {
+                            // If ($parentitem is in a previous page) && ($item is displayed because it was found) {
+                            //     $item IS ENABLED FOR SURE
+                            // }
+                            $itemisenabled = true;
+                        }
                         // parent item, knowing how itself exactly is, compare what is needed and provide an answer
                     }
                 }
 
-                if ($itemallowed) {
+                if ($itemisenabled) {
                     $item->userform_mform_validation($data, $errors, $survey, $canaccessadvancedform, $parentitem);
                 // } else {
-                    // echo 'parent item didn't allow the validation of the child item '.$item->itemid.', plugin = '.$item->plugin.'<br />';
+                    // echo 'parent item didn\'t allow the validation of the child item '.$item->itemid.', plugin = '.$item->plugin.'('.$item->content.')<br />';
                 }
             }
         }

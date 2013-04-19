@@ -36,10 +36,8 @@ They all have a long list of features to verify the content provided by the user
 There are two different forms. The basic and the advanced.
 Survey foreseen conditional branching, sort of fields during export, item indentation, custom number, groups with related permissions, mandatory/optional items
 
-Last note: multiselect mform doesn't work! MDL-30940 GRRRRR
+Last note: multiselect mform doesn't work! MDL-30940 Fixed by Frédéric Massart on April 19, 2013
 I am in trouble assigning syles to some mform element. MDL-28194 GRRRRR
-How disable fields upon checkboxes sets? MDL-34760
+How disable fields upon checkboxes sets? MDL-34760, MDL-38975 Fixed by Eloy Lafuente on April 8, 2013
 $mform->disabledIf doesn't work for 'filemanager' mform elements. MDL-31796
-$mform->disabledIf doesn't work for 'label' mform elements
 Disabled mform items need to be skipped during validation (and more): MDL-34815
-what's happens if inside a survey with newpageforchild = 0 I manually add a page break?

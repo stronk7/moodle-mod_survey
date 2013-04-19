@@ -70,6 +70,15 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_multiselect');
         $mform->setType($fieldname, PARAM_TEXT);
 
+        // ----------------------------------------
+        // newitem::shownrows
+        // ----------------------------------------
+        $fieldname = 'shownrows';
+        $options = array_combine(range(3, 12), range(3, 12));
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_multiselect'), $options);
+        $mform->setDefault($fieldname, 4);
+        $mform->setType($fieldname, PARAM_INT);
+
         $this->add_item_buttons();
     }
 

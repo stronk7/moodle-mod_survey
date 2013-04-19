@@ -234,7 +234,7 @@ switch ($currenttab) {
                 if ($fromform = $mform->get_data()) { // $mform, here, is the search form
                     // in questa routine non eseguo una vera e propria ricerca
                     // mi limito a definire la stringa di parametri per la chiamata a SURVEY_SUBMISSION_MANAGE
-                    $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_FIELD.'|'.SURVEY_FORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
+                    $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
 
                     $infoperitem = array();
                     foreach ($fromform as $elementname => $content) {
@@ -323,11 +323,11 @@ switch ($currenttab) {
         $itemid = optional_param('itemid', 0, PARAM_INT);
         $plugin = optional_param('plugin', null, PARAM_TEXT);
 
-        $hassubmissions = survey_has_submissions($survey->id);
+        $hassubmissions = survey_has_submissions($survey->id, SURVEY_STATUSCLOSED);
 
         switch ($currentpage) {
             case SURVEY_ITEMS_CONFIGURE:
-                if (preg_match('~^('.SURVEY_FIELD.'|'.SURVEY_FORMAT.')_(\w+)$~', $plugin, $match)) {
+                if (preg_match('~^('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_(\w+)$~', $plugin, $match)) {
                     // execution comes from /pages/items/itemtype.php
                     $type = $match[1]; // field or format
                     $plugin = $match[2]; // boolean or char ... or fieldset ...

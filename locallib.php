@@ -129,7 +129,7 @@ function survey_get_item($itemid=0, $type='', $plugin='') {
  * @return
  */
 function survey_non_empty_only($arrayelement) {
-    return strlen(trim($arrayelement)); // returns 0 if the arrayelement is empty
+    return strlen(trim($arrayelement)); // returns 0 if the array element is empty
 }
 
 /*
@@ -598,7 +598,7 @@ function survey_next_not_empty_page($surveyid, $canaccessadvancedform, $formpage
  * @return
  */
 function survey_page_has_items($surveyid, $canaccessadvancedform, $formpage, $submissionid) {
-    global $DB;
+    global $CFG, $DB;
 
     $sql = survey_fetch_items_seeds($canaccessadvancedform, false);
     $params = array('surveyid' => $surveyid, 'formpage' => $formpage);
@@ -607,7 +607,7 @@ function survey_page_has_items($surveyid, $canaccessadvancedform, $formpage, $su
     // start looking ONLY at empty($item->parentid) because it doesn't involve extra queries
     foreach ($itemseeds as $itemseed) {
         // if it is a format element, it is not valid. Neglect it.
-        if ($itemseed->type == SURVEY_FORMAT) {
+        if ($itemseed->type == SURVEY_TYPEFORMAT) {
             continue;
         }
 
@@ -619,39 +619,24 @@ function survey_page_has_items($surveyid, $canaccessadvancedform, $formpage, $su
 
     foreach ($itemseeds as $itemseed) {
         // make sure that the visibility condition is verified
-        if (survey_child_is_allowed_static($submissionid, $itemseed)) {
+        if ($itemseed->type == SURVEY_TYPEFORMAT) {
+            continue;
+        }
+
+        $parentplugin = $DB->get_field('survey_item', 'plugin', array('id' => $itemseed->parentid));
+        require_once($CFG->dirroot.'/mod/survey/field/'.$parentplugin.'/plugin.class.php');
+
+        $itemclass = 'surveyfield_'.$parentplugin;
+        $parentitem = new $itemclass($itemseed->parentid);
+
+        if ($parentitem->userform_child_item_allowed_static($submissionid, $itemseed)) {
+        //if (userform_child_item_allowed_static($submissionid, $itemseed)) {
             return $formpage;
         }
     }
 
     // if you're not able to get out in the two previous occasions ... declares defeat
     return 0;
-}
-
-/*
- * survey_child_is_allowed_static
- * from parentcontent defines whether an item is supposed to be active (not disabled) in the form so needs validation
- * ----------------------------------------------------------------------
- * this function is called when $survey->newpageforchild == false
- * so the current survey lives in just one single web page (unless page break is manually added)
- * ----------------------------------------------------------------------
- * Am I getting submitted data from $fromform or from table 'survey_userdata'?
- *     - if I get it from $fromform or from $data[] I need to use userform_child_is_allowed_dynamic
- *     - if I get it from table 'survey_userdata'   I need to use survey_child_is_allowed_static
- * ----------------------------------------------------------------------
- * @param: $parentcontent, $parentsubmitted
- * @return
- */
-function survey_child_is_allowed_static($submissionid, $itemrecord) {
-    global $DB;
-
-    if (!$itemrecord->parentid) {
-        return true;
-    }
-
-    $where = array('submissionid' => $submissionid, 'itemid' => $itemrecord->parentid);
-    $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
-    return ($givenanswer === $itemrecord->parentvalue);
 }
 
 /*
@@ -674,6 +659,7 @@ function survey_set_prefill($survey, $canaccessadvancedform, $formpage, $submiss
         }
         $itemseeds->close();
     }
+
     return $prefill;
 }
 
@@ -755,7 +741,7 @@ function survey_set_prefill($survey, $canaccessadvancedform, $formpage, $submiss
 function survey_save_user_data($fromform) {
     global $CFG, $DB, $OUTPUT;
 
-    $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_FIELD.'|'.SURVEY_FORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
+    $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
 
     $infoperitem = array();
     foreach ($fromform as $itemname => $content) {
@@ -1017,18 +1003,18 @@ function survey_manage_submission_deletion($cm, $confirm, $submissionid) {
 }
 
 /*
- * survey_manage_all_surveys_deletion
+ * survey_manage_all_responses_deletion
  * @param $cm, $confirm, $submissionid
  * @return
  */
-function survey_manage_all_surveys_deletion($confirm, $surveyid) {
+function survey_manage_all_responses_deletion($confirm, $surveyid) {
     global $DB, $OUTPUT;
 
     if (!$confirm) {
         // ask for confirmation
         $message = get_string('askdeleteallsurveys', 'survey');
 
-        $optionbase = array('s' => $surveyid, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => SURVEY_SUBMISSION_MANAGE, 'surveyid' => $surveyid, 'act' => SURVEY_DELETEALLSURVEYS);
+        $optionbase = array('s' => $surveyid, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => SURVEY_SUBMISSION_MANAGE, 'surveyid' => $surveyid, 'act' => SURVEY_DELETEALLRESPONSES);
 
         $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRM);
         $urlyes = new moodle_url('view.php', $optionsyes);
@@ -1144,7 +1130,7 @@ function survey_export($cm, $fromform, $survey) {
     $itemlistsql = 'SELECT si.id, si.fieldname, si.plugin
                     FROM {survey_item} si
                     WHERE si.surveyid = :surveyid
-                        AND si.type = "'.SURVEY_FIELD.'"'; // <-- ONLY FIELDS hold data, COLELCTION_FORMAT items do not hold data
+                        AND si.type = "'.SURVEY_TYPEFIELD.'"'; // <-- ONLY FIELDS hold data, COLELCTION_FORMAT items do not hold data
     if ($fromform->basicform == SURVEY_FILLONLY) {
         // I need records with:
         //     basicform == SURVEY_FILLONLY OR basicform == SURVEY_FILLANDSEARCH
@@ -1301,7 +1287,7 @@ function survey_decode_content($richsubmission) {
     $plugin = $richsubmission->plugin;
     $itemid = $richsubmission->itemid;
     $content = $richsubmission->content;
-    $item = survey_get_item($itemid, SURVEY_FIELD, $plugin);
+    $item = survey_get_item($itemid, SURVEY_TYPEFIELD, $plugin);
 
     $return = isset($content) ? $item->userform_db_to_export($richsubmission) : '';
 
@@ -1841,6 +1827,18 @@ function survey_wlib_write_plugin_values(&$libcontent, $values, $tablename, $cur
 }
 
 /*
+ * survey_wlib_write_plugin_values
+ * @param &$libcontent, $values, $tablename, $currentplugin
+ * @return
+ */
+function survey_multiline_to_condition_union($parentcontent) {
+    $constarains = str_replace("\r", '', $parentcontent);
+    $constarains = explode("\n", $constarains);
+
+    return implode(' & ', $constarains);
+}
+
+/*
  * survey_wrap_line
  * @param $values, $lineindent=20
  * @return
@@ -1917,7 +1915,7 @@ function survey_drop_unexpected_values(&$fromform) {
 
     $disposelist = array();
     $olditemid = 0;
-    $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_FIELD.'|'.SURVEY_FORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
+    $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
     foreach ($indexes as $itemname) {
         if (!preg_match($regexp, $itemname, $matches)) { // if it starts with SURVEY_ITEMPREFIX_
             continue;
@@ -1957,7 +1955,7 @@ function survey_drop_unexpected_values(&$fromform) {
 
         if ($parentinsamepage) { // if parent is in this same page
             // tell parentitem what child needs in order to be displayed and compare it with what was answered to parentitem ($dirtydata)
-            $expectedvalue = $parentitem->userform_child_is_allowed_dynamic($childitem->parentcontent, $dirtydata);
+            $expectedvalue = $parentitem->userform_child_item_allowed_dynamic($childitem->parentcontent, $dirtydata);
             // parentitem, knowing itself, compare what is needed and provide an answer
 
             if (!$expectedvalue) {
@@ -1969,7 +1967,7 @@ function survey_drop_unexpected_values(&$fromform) {
 
     // if not expected items are here...
     if (count($disposelist)) {
-        $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_FIELD.'|'.SURVEY_FORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
+        $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
         foreach ($indexes as $itemname) {
             if (preg_match($regexp, $itemname, $matches)) {
                 // $type = $matches[1]; // item type

@@ -66,6 +66,11 @@ class surveyfield_multiselect extends surveyitem_base {
     public $defaultvalue = '';
 
     /*
+     * $shownrows = the height of the multiselect in rows
+     */
+    public $shownrows = 3;
+
+    /*
      * $flag = features describing the object
      */
     public $flag;
@@ -85,7 +90,7 @@ class surveyfield_multiselect extends surveyitem_base {
      * @param int $itemid. Optional survey_item ID
      */
     public function __construct($itemid=0) {
-        $this->type = SURVEY_FIELD;
+        $this->type = SURVEY_TYPEFIELD;
         $this->plugin = 'multiselect';
 
         $this->flag = new stdclass();
@@ -229,16 +234,21 @@ class surveyfield_multiselect extends surveyitem_base {
         $valuelabel = $this->item_get_value_label_array('options');
         $defaults = $this->item_get_one_word_per_row('defaultvalue');
 
-        $select = $mform->addElement('select', $this->itemname, $elementlabel, $valuelabel);
+        $select = $mform->addElement('select', $this->itemname, $elementlabel, $valuelabel, array('size' => $this->shownrows));
         $select->setMultiple(true);
         if ($defaults) {
-            $select->setSelected(implode(',', $defaults));
-        } // else do not make a selection [workaround to MDL-]
+            $mform->setDefault($this->itemname, $defaults);
+        }
 
-        $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$searchform) && (!$maybedisabled)) {
+        $couldbedisabled = $this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        if ($this->required && (!$searchform) && (!$couldbedisabled)) {
+            // even if the item is required I CAN NOT ADD ANY RULE HERE because:
+            // -> I do not want JS form validation if the page is submitted trough the "previous" button
+            // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+            // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+
             // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'client');
-            $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
+            // $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
             $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
         }
     }
@@ -249,11 +259,17 @@ class surveyfield_multiselect extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        // useless: empty values are checked in Server Side Validation in attempt_form.php (search for: $mform->registerRule('nonempty_rule', null, $this->surveynonemptyrule))
-        // if (empty($data[$this->itemname])) {
-        //     $errors[$this->itemname] = get_string('required');
-        //     return;
-        // }
+        if ($this->required) {
+           /* The item is required
+            * but this is not enough to assume that server side validation was joined to the item.
+            * server side validation is added ONLY if ((!$searchform) && $this->required && (!$couldbedisabled)) {
+            * so, to be sure an issue is rised if this field is empty, I execute the validation again.
+            */
+            if (empty($data[$this->itemname])) {
+                $errors[$this->itemname] = get_string('required');
+                return;
+            }
+        }
     }
 
     /*
@@ -282,20 +298,20 @@ class surveyfield_multiselect extends surveyitem_base {
     }
 
     /*
-     * userform_child_is_allowed_dynamic
-     * from parentcontent defines whether an item is supposed to be active (not disabled) in the form so needs validation
+     * userform_child_item_allowed_dynamic
+     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
      * ----------------------------------------------------------------------
      * this function is called when $survey->newpageforchild == false
      * so the current survey lives in just one single web page (unless page break is manually added)
      * ----------------------------------------------------------------------
      * Am I getting submitted data from $fromform or from table 'survey_userdata'?
-     *     - if I get it from $fromform or from $data[] I need to use userform_child_is_allowed_dynamic
-     *     - if I get it from table 'survey_userdata'   I need to use survey_child_is_allowed_static
+     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
+     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
      * ----------------------------------------------------------------------
      * @param: $parentcontent, $parentsubmitted
      * @return
      */
-    public function userform_child_is_allowed_dynamic($child_parentcontent, $data) {
+    public function userform_child_item_allowed_dynamic($child_parentcontent, $data) {
         // TODO: I have intentionally left halfway through this function because I do not know what is reported
 
         $status = true;
@@ -316,7 +332,7 @@ class surveyfield_multiselect extends surveyitem_base {
         // the mform element return defaults instead of an empty answer
         // MDL-30940
         if (!is_null($itemdetail['mainelement'])) {
-            $olduserdata->content = implode(', ', $itemdetail['mainelement']);
+            $olduserdata->content = implode(SURVEYFIELD_MULTISELECT_VALUESEPARATOR, $itemdetail['mainelement']);
         } else {
             $olduserdata->content = null;
         }
@@ -339,18 +355,8 @@ class surveyfield_multiselect extends surveyitem_base {
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (!empty($olduserdata->content)) {
-                $preset = array();
-                $valuelabel = $this->item_get_value_label_array('options');
-                foreach ($valuelabel as $value => $label) {
-                    if (strpos($olduserdata->content, $value) !== false) {
-                        $preset[] = $value;
-                    }
-                }
-                $presetstr = implode(',', $preset);
-                $prefill[$this->itemname] = $presetstr;
-            // } else {
-                // nothing was set
-                // do not accept defaults but overwrite them
+                $preset = explode(SURVEYFIELD_MULTISELECT_VALUESEPARATOR, $olduserdata->content);
+                $prefill[$this->itemname] = $preset;
             }
         } // else use item defaults
 

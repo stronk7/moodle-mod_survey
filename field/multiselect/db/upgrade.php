@@ -34,11 +34,20 @@ function xmldb_surveyfield_multiselect_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // if ($oldversion < 2012101103) {
+    if ($oldversion < 2013041901) {
 
-        // survey savepoint reached
-    //    upgrade_plugin_savepoint(true, 2012062560, 'surveyfield_multiselect', 'survey');
-    // }
+        // Define field shownrows to be added to survey_multiselect.
+        $table = new xmldb_table('survey_multiselect');
+        $field = new xmldb_field('shownrows', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');
+
+        // Conditionally launch add field shownrows.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013041901, 'surveyfield_multiselect', 'survey');
+    }
 
     return true;
 }

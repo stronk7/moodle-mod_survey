@@ -78,7 +78,7 @@ function surveytemplate_attls_add() {
     // survey_item
     /*------------------------------------------------*/
     $content_sid++;
-    $values = array(0, SURVEY_FORMAT, 'label', $externalname,
+    $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
                     0, '', null, '',
                     0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
@@ -101,7 +101,7 @@ function surveytemplate_attls_add() {
     // survey_item
     /*------------------------------------------------*/
     // $content_sid++; content_sid is not supposed to grow for fieldset
-    $values = array(0, SURVEY_FORMAT, 'fieldset', $externalname,
+    $values = array(0, SURVEY_TYPEFORMAT, 'fieldset', $externalname,
                     null, null, FORMAT_HTML, null,
                     0, '', null, null,
                     0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
@@ -126,7 +126,7 @@ function surveytemplate_attls_add() {
         // survey_item
         /*------------------------------------------------*/
         $content_sid++;
-        $values = array(0, SURVEY_FIELD, 'radiobutton', $externalname,
+        $values = array(0, SURVEY_TYPEFIELD, 'radiobutton', $externalname,
                         $content_sid, null, FORMAT_HTML, null,
                         0, '', SURVEY_REQUIREDITEM, null,
                         0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,

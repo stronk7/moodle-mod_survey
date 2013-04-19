@@ -97,7 +97,7 @@ $prefill = array();
 
 // if sumission already exists
 if (!empty($submissionid)) {
-    $submission = $DB->get_record('survey_submissions', array('id' => $submissionid));
+    // $submission = $DB->get_record('survey_submissions', array('id' => $submissionid));
 
     $prefill = survey_set_prefill($survey, $canaccessadvancedform, $formpage, $submissionid, false);
 

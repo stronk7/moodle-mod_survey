@@ -28,8 +28,8 @@ switch ($action) {
     case SURVEY_DELETESURVEY:
         survey_manage_submission_deletion($cm, $confirm, $submissionid);
         break;
-    case SURVEY_DELETEALLSURVEYS:
-        survey_manage_all_surveys_deletion($confirm, $survey->id);
+    case SURVEY_DELETEALLRESPONSES:
+        survey_manage_all_responses_deletion($confirm, $survey->id);
         break;
     default:
         debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
@@ -179,7 +179,7 @@ if ($submissions->valid()) {
         $paramurl['s'] = $survey->id;
         $paramurl['tab'] = SURVEY_TABSUBMISSIONS;
         $paramurl['pag'] = SURVEY_SUBMISSION_MANAGE;
-        $paramurl['act'] = SURVEY_DELETEALLSURVEYS;
+        $paramurl['act'] = SURVEY_DELETEALLRESPONSES;
         $url = new moodle_url('/mod/survey/view.php', $paramurl);
         $caption = get_string('deleteallsubmissions', 'survey');
         echo $OUTPUT->single_button($url, $caption, 'get');

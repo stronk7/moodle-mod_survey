@@ -168,7 +168,7 @@ class surveyitem_baseform extends moodleform {
         // ----------------------------------------
         // newitem::fieldname
         // ----------------------------------------
-        // for SURVEY_FIELD only
+        // for SURVEY_TYPEFIELD only
         $fieldname = 'fieldname';
         if ($item->item_form_requires[$fieldname]) {
             $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'), array('class' => 'longfield'));
@@ -204,14 +204,14 @@ class surveyitem_baseform extends moodleform {
                 if ($item->{$fieldname} != SURVEY_NOTPRESENT) {
                     // if the item is NOT_PRESENT you can not add it when survey $hassubmissions
                     $options[SURVEY_FILLONLY] = get_string('usercanfill', 'survey');
-                    if ($item->flag->issearchable || ($item->type == SURVEY_FORMAT)) {
+                    if ($item->flag->issearchable || ($item->type == SURVEY_TYPEFORMAT)) {
                         $options[SURVEY_FILLANDSEARCH] = get_string('usercansearch', 'survey');
                     }
                 }
             } else {
                 $options[SURVEY_NOTPRESENT] = get_string('notinbasicform', 'survey');
                 $options[SURVEY_FILLONLY] = get_string('usercanfill', 'survey');
-                if ($item->flag->issearchable || ($item->type == SURVEY_FORMAT)) {
+                if ($item->flag->issearchable || ($item->type == SURVEY_TYPEFORMAT)) {
                     $options[SURVEY_FILLANDSEARCH] = get_string('usercansearch', 'survey');
                 }
             }
@@ -226,7 +226,7 @@ class surveyitem_baseform extends moodleform {
         // ----------------------------------------
         $fieldname = 'advancedsearch';
         if ($item->item_form_requires[$fieldname]) {
-            if ($item->flag->issearchable) {
+            if ($item->flag->issearchable || ($item->type == SURVEY_TYPEFORMAT)) {
                 $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
                 $mform->addHelpButton($fieldname, $fieldname, 'survey');
                 $mform->setType($fieldname, PARAM_INT);
@@ -253,9 +253,9 @@ class surveyitem_baseform extends moodleform {
                 //         So I shify the verification of the holding form at the form verification time.
 
                 // build the list only for searchable plugins
-                $pluginarray = survey_get_plugin_list(SURVEY_FIELD);
+                $pluginarray = survey_get_plugin_list(SURVEY_TYPEFIELD);
                 foreach ($pluginarray as $plugin) {
-                    $plugintemplate = survey_get_item(null, SURVEY_FIELD, $plugin);
+                    $plugintemplate = survey_get_item(null, SURVEY_TYPEFIELD, $plugin);
                     if (!$plugintemplate->flag->couldbeparent) {
                         unset($pluginarray[$plugin]);
                     }
@@ -321,7 +321,7 @@ class surveyitem_baseform extends moodleform {
             }
         }
 
-        if ($item->item_get_type() == SURVEY_FIELD) {
+        if ($item->item_get_type() == SURVEY_TYPEFIELD) {
             // /////////////////////////////////////////////////////////////////////////////////////////////////
             // here I open a new fieldset
             // /////////////////////////////////////////////////////////////////////////////////////////////////

@@ -23,16 +23,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['parentformat'] = '[0] or [1]';
-$string['pluginname'] = 'Boolean';
-$string['userfriendlypluginname'] = 'Boolean';
+$string['customdefault'] = 'Custom';
 $string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';
 $string['defaultvalue_help'] = 'This is the value the remote user will find answered by default. The default for this type of question is mandatory.';
 $string['defaultvalue'] = 'Default';
-$string['style'] = 'Boolean style';
+$string['option'] = 'Option';
+$string['parentformat'] = '[0] or [1]';
+$string['pluginname'] = 'Boolean';
 $string['style_help'] = 'The style of the field';
+$string['style'] = 'Boolean style';
+$string['uerr_booleannotset'] = 'Please choose a value';
 $string['usemenu'] = 'dropdown menu';
 $string['useradioh'] = 'horizontal radio buttons';
 $string['useradiov'] = 'vertical radio buttons';
-$string['customdefault'] = 'Custom';
-$string['uerr_booleannotset'] = 'Please choose a value';
+$string['userfriendlypluginname'] = 'Boolean';

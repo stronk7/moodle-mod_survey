@@ -90,7 +90,7 @@ class surveyfield_integer extends surveyitem_base {
      * @param int $itemid. Optional survey_item ID
      */
     public function __construct($itemid=0) {
-        $this->type = SURVEY_FIELD;
+        $this->type = SURVEY_TYPEFIELD;
         $this->plugin = 'integer';
 
         $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
@@ -323,10 +323,15 @@ class surveyfield_integer extends surveyitem_base {
 
         $mform->addElement('select', $this->itemname, $elementlabel, $integers, array('class' => 'indent-'.$this->indent));
 
-        $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
-        if ( $this->required && (!$searchform) && (!$maybedisabled)) {
+        $couldbedisabled = $this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        if ( $this->required && (!$searchform) && (!$couldbedisabled)) {
+            // even if the item is required I CAN NOT ADD ANY RULE HERE because:
+            // -> I do not want JS form validation if the page is submitted trough the "previous" button
+            // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+            // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+
             // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'client');
-            $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
+            // $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
             $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
         }
 
@@ -356,6 +361,9 @@ class surveyfield_integer extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
+        // this plugin displays as dropdown menu. It will never return empty values.
+        // if ($this->required) { if (empty($data[$this->itemname])) { is useless
+
         $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
 
         // I need to check value is different from SURVEY_INVITATIONVALUE even if it is not required

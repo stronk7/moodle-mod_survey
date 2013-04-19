@@ -85,7 +85,7 @@ class surveyfield_age extends surveyitem_base {
      * @param int $itemid. Optional survey_item ID
      */
     public function __construct($itemid=0) {
-        $this->type = SURVEY_FIELD;
+        $this->type = SURVEY_TYPEFIELD;
         $this->plugin = 'age';
 
         $maximumage = get_config('surveyfield_age', 'maximumage');
@@ -416,9 +416,14 @@ class surveyfield_age extends surveyitem_base {
 
         if ($this->required && (!$searchform)) {
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
-            if (!$this->userform_has_parent($survey, $canaccessadvancedform, $parentitem)) {
+            if (!$this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem)) {
+                // even if the item is required I CAN NOT ADD ANY RULE HERE because:
+                // -> I do not want JS form validation if the page is submitted trough the "previous" button
+                // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+                // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+
                 // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
-                $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
+                // $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
                 $mform->_required[] = $this->itemname.'_group';
             }
         } else {
@@ -460,6 +465,9 @@ class surveyfield_age extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
+        // this plugin displays as dropdown menu. It will never return empty values.
+        // if ($this->required) { if (empty($data[$this->itemname])) { is useless
+
         $maximumage = get_config('surveyfield_age', 'maximumage');
 
         if (isset($data[$this->itemname.'_noanswer'])) {

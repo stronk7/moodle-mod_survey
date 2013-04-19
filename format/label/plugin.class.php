@@ -99,7 +99,7 @@ class surveyformat_label extends surveyitem_base {
 
         $cm = $PAGE->cm;
 
-        $this->type = SURVEY_FORMAT;
+        $this->type = SURVEY_TYPEFORMAT;
         $this->plugin = 'label';
 
         $this->flag = new stdclass();

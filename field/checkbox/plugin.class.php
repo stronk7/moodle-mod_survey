@@ -95,7 +95,7 @@ class surveyfield_checkbox extends surveyitem_base {
      * @param int $itemid. Optional survey_item ID
      */
     public function __construct($itemid=0) {
-        $this->type = SURVEY_FIELD;
+        $this->type = SURVEY_TYPEFIELD;
         $this->plugin = 'checkbox';
 
         $this->flag = new stdclass();
@@ -300,10 +300,15 @@ class surveyfield_checkbox extends surveyitem_base {
         }
         $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
 
-        $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$searchform) && (!$maybedisabled)) {
+        $couldbedisabled = $this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        if ($this->required && (!$searchform) && (!$couldbedisabled)) {
+            // even if the item is required I CAN NOT ADD ANY RULE HERE because:
+            // -> I do not want JS form validation if the page is submitted trough the "previous" button
+            // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+            // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+
             // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
-            $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
+            // $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
             $mform->_required[] = $this->itemname.'_group';
         }
     }
@@ -315,8 +320,6 @@ class surveyfield_checkbox extends surveyitem_base {
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         if ($this->required) {
-            // $mform->addRule validaition was not permitted
-            // so, here, I need to manually look after the 'required' rule
             $valuelabel = $this->item_get_value_label_array('options');
 
             $missinganswer = true;
@@ -391,20 +394,51 @@ class surveyfield_checkbox extends surveyitem_base {
     }
 
     /*
-     * userform_child_is_allowed_dynamic
-     * from parentcontent defines whether an item is supposed to be active (not disabled) in the form so needs validation
+     * userform_child_item_allowed_static
+     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
      * ----------------------------------------------------------------------
      * this function is called when $survey->newpageforchild == false
      * so the current survey lives in just one single web page (unless page break is manually added)
      * ----------------------------------------------------------------------
      * Am I getting submitted data from $fromform or from table 'survey_userdata'?
-     *     - if I get it from $fromform or from $data[] I need to use userform_child_is_allowed_dynamic
-     *     - if I get it from table 'survey_userdata'   I need to use survey_child_is_allowed_static
+     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
+     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
      * ----------------------------------------------------------------------
      * @param: $parentcontent, $parentsubmitted
      * @return
      */
-    public function userform_child_is_allowed_dynamic($child_parentcontent, $data) {
+    function userform_child_item_allowed_static($submissionid, $childitemrecord) {
+        global $DB;
+
+        if (!$childitemrecord->parentid) {
+            return true;
+        }
+
+        $where = array('submissionid' => $submissionid, 'itemid' => $this->itemid);
+        $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
+
+        $cleanvalue = explode("\n", $childitemrecord->parentvalue);
+        $cleanvalue = implode(SURVEYFIELD_CHECKBOX_VALUESEPARATOR, $cleanvalue);
+
+        return ($givenanswer === $cleanvalue);
+    }
+
+    /*
+     * userform_child_item_allowed_dynamic
+     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
+     * ----------------------------------------------------------------------
+     * this function is called when $survey->newpageforchild == false
+     * so the current survey lives in just one single web page (unless page break is manually added)
+     * ----------------------------------------------------------------------
+     * Am I getting submitted data from $fromform or from table 'survey_userdata'?
+     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
+     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
+     * ----------------------------------------------------------------------
+     * @param: $parentcontent, $parentsubmitted
+     * @return
+     */
+    public function userform_child_item_allowed_dynamic($child_parentcontent, $data) {
+
         // I need to verify (checkbox per checkbox) if they hold the same value the user entered
         $valuelabel = $this->item_get_value_label_array('options');
         $valuelabel = array_keys($valuelabel);
@@ -418,7 +452,7 @@ class surveyfield_checkbox extends surveyitem_base {
             } else {
                 // $constraintsvalue has not been found
                 // it is the other value
-                $status = $status && ($data[$this->itemname.'_other'] == 1);
+                $status = $status && isset($data[$this->itemname.'_other']);
                 $status = $status && ($data[$this->itemname.'_text'] == $constraintsvalue);
             }
         }
@@ -466,12 +500,23 @@ class surveyfield_checkbox extends surveyitem_base {
     public function userform_set_prefill($olduserdata) {
         $prefill = array();
 
-        // parto da un elenco separato da virgole
+        // I start from a list of comma separated values
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             $valuelabel = array_keys($this->item_get_value_label_array('options'));
+            // initialize $prefill array
+            foreach ($valuelabel as $checkboxindex => $label) {
+                $uniqueid = $this->itemname.'_'.$checkboxindex;
+                $prefill[$uniqueid] = 0;
+            }
+            if ($this->labelother) {
+                $prefill[$this->itemname.'_other'] = 0;
+                $prefill[$this->itemname.'_text'] = '';
+            }
+
             if (!empty($olduserdata->content)) { // I did not unselect each checkbox
                 // something was set
                 $answers = explode(SURVEYFIELD_CHECKBOX_VALUESEPARATOR, $olduserdata->content);
+
                 foreach ($answers as $answer) {
                     $checkboxindex = array_search($answer, $valuelabel);
                     if ($checkboxindex !== false) {
@@ -482,19 +527,8 @@ class surveyfield_checkbox extends surveyitem_base {
                         $prefill[$this->itemname.'_text'] = $answer;
                     }
                 }
-            } else {
-                // nothing was set
-                // do not accept defaults but overwrite them
-                foreach ($valuelabel as $checkboxindex => $label) {
-                    $uniqueid = $this->itemname.'_'.$checkboxindex;
-                    $prefill[$uniqueid] = 0;
-                }
-                if ($this->labelother) {
-                    $prefill[$this->itemname.'_other'] = 0;
-                    $prefill[$this->itemname.'_text'] = '';
-                }
             }
-        } // else use item defaults
+        }
 
         return $prefill;
     }

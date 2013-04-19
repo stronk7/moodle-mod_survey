@@ -70,7 +70,7 @@ function surveytemplate_criticalincidents_add() {
     // survey_item
     /*------------------------------------------------*/
     $content_sid++;
-    $values = array(0, SURVEY_FORMAT, 'label', $externalname,
+    $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
                     0, '', null, null,
                     0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
@@ -94,7 +94,7 @@ function surveytemplate_criticalincidents_add() {
         // survey_item
         /*------------------------------------------------*/
         $content_sid++;
-        $values = array(0, SURVEY_FIELD, 'textarea', $externalname,
+        $values = array(0, SURVEY_TYPEFIELD, 'textarea', $externalname,
                         $content_sid, null, FORMAT_HTML, null,
                         0, '', SURVEY_REQUIREDITEM, null,
                         0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,

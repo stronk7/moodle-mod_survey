@@ -105,7 +105,7 @@ class surveyfield_autofill extends surveyitem_base {
      * @param int $itemid. Optional survey_item ID
      */
     public function __construct($itemid=0) {
-        $this->type = SURVEY_FIELD;
+        $this->type = SURVEY_TYPEFIELD;
         $this->plugin = 'autofill';
 
         $this->flag = new stdclass();

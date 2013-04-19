@@ -72,7 +72,7 @@ switch ($currenttab) {
                 include_once($CFG->dirroot.'/mod/survey/pages/items/addset.php');
                 break;
             case SURVEY_ITEMS_VALIDATE: // Check
-                include_once($CFG->dirroot.'/mod/survey/pages/items/validation.php');
+                include_once($CFG->dirroot.'/mod/survey/pages/items/validate.php');
                 break;
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currentpage = '.$currentpage);

@@ -80,7 +80,7 @@ class surveyformat_fieldset extends surveyitem_base {
      * @param int $itemid. Optional survey_item ID
      */
     public function __construct($itemid=0) {
-        $this->type = SURVEY_FORMAT;
+        $this->type = SURVEY_TYPEFORMAT;
         $this->plugin = 'fieldset';
 
         $this->flag = new stdclass();

@@ -104,7 +104,7 @@ class surveyfield_textarea extends surveyitem_base {
 
         $cm = $PAGE->cm;
 
-        $this->type = SURVEY_FIELD;
+        $this->type = SURVEY_TYPEFIELD;
         $this->plugin = 'textarea';
 
         $this->flag = new stdclass();
@@ -307,10 +307,15 @@ class surveyfield_textarea extends surveyitem_base {
             $mform->setType($fieldname, PARAM_TEXT);
         }
 
-        $maybedisabled = $this->userform_has_parent($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$searchform) && (!$maybedisabled)) {
+        $couldbedisabled = $this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem);
+        if ($this->required && (!$searchform) && (!$couldbedisabled)) {
+            // even if the item is required I CAN NOT ADD ANY RULE HERE because:
+            // -> I do not want JS form validation if the page is submitted trough the "previous" button
+            // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+            // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+
             // $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
-            $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
+            // $mform->addRule($fieldname, get_string('required'), 'nonempty_rule', $mform);
             $mform->_required[] = $fieldname;
         }
     }
@@ -339,16 +344,22 @@ class surveyfield_textarea extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        // useless: empty values are checked in Server Side Validation in attempt_form.php (search for: $mform->registerRule('nonempty_rule', null, $this->surveynonemptyrule))
-        // if (!empty($this->useeditor)) {
-        //     $fieldname = $this->itemname.'_editor';
-        // } else {
-        //     $fieldname = $this->itemname;
-        // }
-        // if (empty($data[$fieldname])) {
-        //     $errors[$fieldname] = get_string('required');
-        //     return;
-        // }
+        if ($this->required) {
+           /* The item is required
+            * but this is not enough to assume that server side validation was joined to the item.
+            * server side validation is added ONLY if ((!$searchform) && $this->required && (!$couldbedisabled)) {
+            * so, to be sure an issue is rised if this field is empty, I execute the validation again.
+            */
+            if (!empty($this->useeditor)) {
+                $fieldname = $this->itemname.'_editor';
+            } else {
+                $fieldname = $this->itemname;
+            }
+            if (empty($data[$fieldname])) {
+                $errors[$fieldname] = get_string('required');
+                return;
+            }
+        }
     }
 
     /*

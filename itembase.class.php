@@ -48,7 +48,7 @@ class surveyitem_base {
     public $surveyid = 0;
 
     /*
-     * $type = the type of the item. It can only be: SURVEY_FIELD or SURVEY_FORMAT
+     * $type = the type of the item. It can only be: SURVEY_TYPEFIELD or SURVEY_TYPEFORMAT
      */
     public $type = '';
 
@@ -952,16 +952,7 @@ class surveyitem_base {
 
         // override: $value['type']
         /*------------------------------------------------*/
-        switch ($this->type) {
-            case SURVEY_FIELD:
-                $values['type'] = 'SURVEY_FIELD';
-                break;
-            case SURVEY_FORMAT:
-                $values['type'] = 'SURVEY_FORMAT';
-                break;
-            default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->type = '.$this->type);
-        }
+        $values['type'] = $this->type;
 
         // update: $this->plugin
         /*------------------------------------------------*/
@@ -1243,11 +1234,50 @@ class surveyitem_base {
     }
 
     /*
-     * userform_has_parent
+     * userform_child_item_allowed_static
+     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
+     * ----------------------------------------------------------------------
+     * this function is called when $survey->newpageforchild == false
+     * so the current survey lives in just one single web page (unless page break is manually added)
+     * ----------------------------------------------------------------------
+     * Am I getting submitted data from $fromform or from table 'survey_userdata'?
+     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
+     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
+     * ----------------------------------------------------------------------
+     * @param: $parentcontent, $parentsubmitted
+     * @return
+     */
+    function userform_child_item_allowed_static($submissionid, $childitemrecord) {
+        global $DB;
+
+        if (!$childitemrecord->parentid) {
+            return true;
+        }
+
+        $where = array('submissionid' => $submissionid, 'itemid' => $this->itemid);
+        $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
+
+        return ($givenanswer === $childitemrecord->parentvalue);
+    }
+
+    /*
+     * userform_could_be_disabled
+     * This function returns true if an item can be disabled because of the answer to the parent item
+     * The rationale is:
+     * if ($survey->newpageforchild) { then the parent is in a previous page so:
+     *     if its condition was satisfied, the child item ($this) is displayed
+     *     if its condition was NOT satisfied, the child item ($this) is NOT displayed
+     *     in both cases the child item ($this) will never be disabled
+     *
+     * if (empty($parentitem))
+     *     the child item ($this) will never be disabled because of the parent
+     *
+     * if no pagebreaks were added between parent and child (alias, if they are displayed in the same page)
+     *     the child item ($this) can be disabled
      * @param
      * @return
      */
-    public function userform_has_parent($survey, $canaccessadvancedform, $parentitem=null) {
+    public function userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem=null) {
         global $DB;
 
         if ($survey->newpageforchild) {
@@ -1277,7 +1307,7 @@ class surveyitem_base {
         if (!$survey->newpageforchild) { // all in the same page (if page breaks are not added manually)
             // parent item is probably in this same page BUT CAN even be in a previous page
             foreach ($data as $itemname => $itemvalue) {
-                if (preg_match('~^(\w+)_('.SURVEY_FIELD.'|'.SURVEY_FORMAT.')_(\w+)_([0-9]+)$~', $itemname, $match)) {
+                if (preg_match('~^(\w+)_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_(\w+)_([0-9]+)$~', $itemname, $match)) {
                     if ($match[4] == $this->parentid) { // parent item has been found in this page
                         return ($data[$itemname] == $this->parentcontent);
                     }
@@ -1293,37 +1323,36 @@ class surveyitem_base {
     }
 
     /*
-     * userform_child_is_allowed_dynamic
-     * as parentitem defines whether a child item is supposed to be active (not disabled) in the form so needs validation
+     * userform_child_item_allowed_dynamic
+     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
      * ----------------------------------------------------------------------
      * this function is called when $survey->newpageforchild == false
      * so the current survey lives in just one single web page (unless page break is manually added)
      * ----------------------------------------------------------------------
      * Am I geting submitted data from $fromform or from table 'survey_userdata'?
-     *     - if I get it from $fromform or from $data[] I need to use userform_child_is_allowed_dynamic
-     *     - if I get it from table 'survey_userdata'   I need to use survey_child_is_allowed_static
+     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
+     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
      * ----------------------------------------------------------------------
      * @param: $parentcontent, $parentsubmitted
      * @return
      */
-    public function userform_child_is_allowed_dynamic($child_parentcontent, $data) {
+    public function userform_child_item_allowed_dynamic($child_parentcontent, $data) {
         return ($data[$this->itemname] == $child_parentcontent);
     }
 
     /*
      * userform_disable_element
      * this function is used ONLY if $survey->newpageforchild == true
-     * it disables items where parent condition does not match
+     * it adds as much as needed $mform->disabledIf to disable items when parent condition does not match
+     * This method is used by the child item
+     * In the frame of this method the parent item is calculated and is requested to provide the disabledif conditions to disable its child item
      * @param
      * @return
      */
-    public function userform_disable_element($mform, $searchform=false) {
+    public function userform_disable_element($mform, $canaccessadvancedform) {
         global $DB;
 
-        if ($searchform) {
-            return;
-        }
-        if (!$this->parentid || ($this->type == SURVEY_FORMAT)) {
+        if (!$this->parentid || ($this->type == SURVEY_TYPEFORMAT)) {
             return;
         }
 
@@ -1333,21 +1362,45 @@ class surveyitem_base {
             $fieldname = $this->itemname;
         }
 
-        $parentseeds = array();
+        $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
+        $parentrestrictions = array();
         $parentrecord = $this;
         do {
-            $parentid = $parentrecord->parentid;
-            $parentcontent = $parentrecord->parentcontent;
-            $parentseeds[$parentcontent] = $parentid; // L'item ID = $parentid come vincolo ha: $parentcontent
+            /*
+             * Take care.
+             * Even if (!$survey->newpageforchild) I can have all my ancestors into previous pages because I added pagebreak manually
+             * Because of this, I need to chech page numbers
+             */
+            $parentpage = $DB->get_field('survey_item', $pagefield, array('id' => $parentrecord->parentid));
+            if ($parentpage == $this->{$pagefield}) {
+                $parentid = $parentrecord->parentid;
+                $parentcontent = $parentrecord->parentcontent;
+                $parentrestrictions[$parentid] = $parentcontent; // Item ID $parentid has as constain $parentcontent
+            } else {
+                // my parent is in a page before mine
+                // no need to investigate more for older ancestors
+                break;
+            }
 
             $parentrecord = $DB->get_record('survey_item', array('id' => $parentid), 'parentid, parentcontent');
         } while (!empty($parentrecord->parentid));
+        // $parentrecord is an associative array
+        // In the array key is the ID of the parent item, the corresponding value is the constrain that $this has to be submitted to
 
-        // $parentseeds must have at least one item
-        foreach ($parentseeds as $childcontent => $parentid) {
+        foreach ($parentrestrictions as $parentid => $childconstrain) {
             $parentitem = survey_get_item($parentid);
-            // ask to parent item which mform element stores relevant informations ($this->itemname? $this->itemname.'_month'?)
-            $disabilitationinfo = $parentitem->userform_get_parent_disabilitation_info($childcontent);
+            $disabilitationinfo = $parentitem->userform_get_parent_disabilitation_info($childconstrain);
+
+            $displaydebuginfo = false;
+            if ($displaydebuginfo) {
+                foreach ($disabilitationinfo as $parentinfo) {
+                    if (isset($parentinfo->operator)) {
+                        echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->operator.'\', \''.$parentinfo->content.'\');</span><br />';
+                    } else {
+                        echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->content.'\');</span><br />';
+                    }
+                }
+            }
 
             // write disableIf
             foreach ($disabilitationinfo as $parentinfo) {
@@ -1355,14 +1408,6 @@ class surveyitem_base {
                     $mform->disabledIf($fieldname, $parentinfo->parentname, $parentinfo->operator, $parentinfo->content);
                 } else {
                     $mform->disabledIf($fieldname, $parentinfo->parentname, $parentinfo->content);
-                }
-                $displaydebuginfo = false;
-                if ($displaydebuginfo) {
-                    if (isset($parentinfo->operator)) {
-                        echo '$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->operator.'\', \''.$parentinfo->content.'\');<br />';
-                    } else {
-                        echo '$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->content.'\');<br />';
-                    }
                 }
             }
         }

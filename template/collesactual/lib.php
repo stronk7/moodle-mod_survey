@@ -90,7 +90,7 @@ function surveytemplate_collesactual_add() {
     // survey_item
     /*------------------------------------------------*/
     $content_sid++;
-    $values = array(0, SURVEY_FORMAT, 'label', $externalname,
+    $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
                     0, '', null, null,
                     0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
@@ -118,7 +118,7 @@ function surveytemplate_collesactual_add() {
         // survey_item
         /*------------------------------------------------*/
         // $content_sid++; content_sid is not supposed to grow for fieldset
-        $values = array(0, SURVEY_FORMAT, 'fieldset', $externalname,
+        $values = array(0, SURVEY_TYPEFORMAT, 'fieldset', $externalname,
                         null, null, FORMAT_HTML, null,
                         0, '', null, null,
                         0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
@@ -142,7 +142,7 @@ function surveytemplate_collesactual_add() {
         /*------------------------------------------------*/
         // $content_sid++; do not increase here because contnt of label does not change during the survey
         //                 and I gat the string for label always from content00
-        $values = array(0, SURVEY_FORMAT, 'label', $externalname,
+        $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
                         0, null, FORMAT_HTML, null,
                         0, '', null, null,
                         0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
@@ -167,7 +167,7 @@ function surveytemplate_collesactual_add() {
             // survey_item
             /*------------------------------------------------*/
             $content_sid++;
-            $values = array(0, SURVEY_FIELD, 'radiobutton', $externalname,
+            $values = array(0, SURVEY_TYPEFIELD, 'radiobutton', $externalname,
                             $content_sid, null, FORMAT_HTML, null,
                             0, '', SURVEY_REQUIREDITEM, null,
                             0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
@@ -196,7 +196,7 @@ function surveytemplate_collesactual_add() {
     // survey_item
     /*------------------------------------------------*/
     $content_sid++;
-    $values = array(0, SURVEY_FIELD, 'select', $externalname,
+    $values = array(0, SURVEY_TYPEFIELD, 'select', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
                     0, '', SURVEY_REQUIREDITEM, null,
                     0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
@@ -223,7 +223,7 @@ function surveytemplate_collesactual_add() {
     // survey_item
     /*------------------------------------------------*/
     $content_sid++;
-    $values = array(0, SURVEY_FIELD, 'textarea', $externalname,
+    $values = array(0, SURVEY_TYPEFIELD, 'textarea', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
                     0, '', SURVEY_OPTIONALITEM, null,
                     0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,

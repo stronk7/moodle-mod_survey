@@ -89,28 +89,28 @@ define('SURVEY_TAB'.SURVEY_TABPLUGINS.'NAME', get_string('tabpluginsname', 'surv
     define('SURVEY_PLUGINS_BUILD'      , 1);
 
 // ITEM TYPES
-define('SURVEY_FIELD' , 'field');
-define('SURVEY_FORMAT', 'format');
+define('SURVEY_TYPEFIELD' , 'field');
+define('SURVEY_TYPEFORMAT', 'format');
 
 // ACTIONS
-define('SURVEY_NOACTION'         , '0');
-define('SURVEY_CHOOSEFTYPE'      , '1');
-define('SURVEY_EDITITEM'         , '2');
-define('SURVEY_HIDEITEM'         , '3');
-define('SURVEY_SHOWITEM'         , '4');
-define('SURVEY_DELETEITEM'       , '5');
-define('SURVEY_CHANGEORDERASK'   , '6');
-define('SURVEY_CHANGEORDER'      , '7');
-define('SURVEY_REQUIREDOFF'      , '8');
-define('SURVEY_REQUIREDON'       , '9');
-define('SURVEY_CHANGEINDENT'     , '10');
-define('SURVEY_EDITSURVEY'       , '11');
-define('SURVEY_VIEWSURVEY'       , '12');
-define('SURVEY_DELETESURVEY'     , '13');
-define('SURVEY_DELETEALLSURVEYS' , '14');
-define('SURVEY_VALIDATE'         , '15');
-define('SURVEY_DELETETEMPLATE'   , '16');
-define('SURVEY_EXPORTTEMPLATE'   , '17');
+define('SURVEY_NOACTION'           , '0');
+define('SURVEY_CHOOSEFTYPE'        , '1');
+define('SURVEY_EDITITEM'           , '2');
+define('SURVEY_HIDEITEM'           , '3');
+define('SURVEY_SHOWITEM'           , '4');
+define('SURVEY_DELETEITEM'         , '5');
+define('SURVEY_CHANGEORDERASK'     , '6');
+define('SURVEY_CHANGEORDER'        , '7');
+define('SURVEY_REQUIREDOFF'        , '8');
+define('SURVEY_REQUIREDON'         , '9');
+define('SURVEY_CHANGEINDENT'       , '10');
+define('SURVEY_EDITSURVEY'         , '11');
+define('SURVEY_VIEWSURVEY'         , '12');
+define('SURVEY_DELETESURVEY'       , '13');
+define('SURVEY_DELETEALLRESPONSES' , '14');
+define('SURVEY_VALIDATE'           , '15');
+define('SURVEY_DELETETEMPLATE'     , '16');
+define('SURVEY_EXPORTTEMPLATE'     , '17');
 
 // SAVESTATUS
 define('SURVEY_NOFEEDBACK', 0);
@@ -881,14 +881,14 @@ function survey_get_plugin_list($plugintype=null, $includetype=false, $count=fal
     $field_pluginlist = array();
     $format_pluginlist = array();
 
-    if ($plugintype == SURVEY_FIELD || is_null($plugintype)) {
+    if ($plugintype == SURVEY_TYPEFIELD || is_null($plugintype)) {
         if ($count) {
-            $plugincount += count(get_plugin_list('survey'.SURVEY_FIELD));
+            $plugincount += count(get_plugin_list('survey'.SURVEY_TYPEFIELD));
         } else {
-            $field_pluginlist = get_plugin_list('survey'.SURVEY_FIELD);
+            $field_pluginlist = get_plugin_list('survey'.SURVEY_TYPEFIELD);
             if (!empty($includetype)) {
                 foreach ($field_pluginlist as $k => $v) {
-                    $field_pluginlist[$k] = SURVEY_FIELD.'_'.$k;
+                    $field_pluginlist[$k] = SURVEY_TYPEFIELD.'_'.$k;
                 }
                 $field_pluginlist = array_flip($field_pluginlist);
             } else {
@@ -898,14 +898,14 @@ function survey_get_plugin_list($plugintype=null, $includetype=false, $count=fal
             }
         }
     }
-    if ($plugintype == SURVEY_FORMAT || is_null($plugintype)) {
+    if ($plugintype == SURVEY_TYPEFORMAT || is_null($plugintype)) {
         if ($count) {
-            $plugincount += count(get_plugin_list('survey'.SURVEY_FORMAT));
+            $plugincount += count(get_plugin_list('survey'.SURVEY_TYPEFORMAT));
         } else {
             if (!empty($includetype)) {
-                $format_pluginlist = get_plugin_list('survey'.SURVEY_FORMAT);
+                $format_pluginlist = get_plugin_list('survey'.SURVEY_TYPEFORMAT);
                 foreach ($format_pluginlist as $k => $v) {
-                    $format_pluginlist[$k] = SURVEY_FORMAT.'_'.$k;
+                    $format_pluginlist[$k] = SURVEY_TYPEFORMAT.'_'.$k;
                 }
                 $format_pluginlist = array_flip($format_pluginlist);
             } else {
@@ -1006,10 +1006,15 @@ function survey_reset_items_pages($surveyid) {
  * @param $findparams
  * @return
  */
-function survey_has_submissions($surveyid) {
+function survey_has_submissions($surveyid, $status=SURVEY_STATUSBOTH) {
     global $DB;
 
-    return $DB->count_records('survey_submissions', array('surveyid' => $surveyid));
+    $params = array('surveyid' => $surveyid);
+    if ($status != SURVEY_STATUSBOTH) {
+        $params['status'] = $status;
+    }
+
+    return $DB->count_records('survey_submissions', $params);
 }
 
 /*
