@@ -414,21 +414,22 @@ class surveyfield_age extends surveyitem_base {
         $elementgroup[] = $mform->createElement('select', $this->itemname.'_month', '', $months);
         // $elementgroup[] = $mform->createElement('static', 'monthlabel_'.$this->itemid, null, get_string('months', 'survey'));
 
-        if ($this->required && (!$searchform)) {
-            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
-            if (!$this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem)) {
+        if (!$searchform) {
+            if ($this->required) {
+                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
+
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                 // -> I do not want JS form validation if the page is submitted trough the "previous" button
                 // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-
-                // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
-                // $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
                 $mform->_required[] = $this->itemname.'_group';
+            } else {
+                $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'));
+                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
+                $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
             }
         } else {
-            $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', $check_label);
+            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('star', 'survey'));
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
             $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
         }
@@ -468,19 +469,25 @@ class surveyfield_age extends surveyitem_base {
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
-        $maximumage = get_config('surveyfield_age', 'maximumage');
-
         if (isset($data[$this->itemname.'_noanswer'])) {
             return; // nothing to validate
+        }
+
+        $maximumage = get_config('surveyfield_age', 'maximumage');
+
+        if ($this->extrarow) {
+            $errorkey = $this->type.'_'.$this->itemid.'_extrarow';
+        } else {
+            $errorkey = $this->itemname.'_group';
         }
 
         if ( ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) ||
              ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) ) {
             if ($this->required) {
-                $errors[$this->itemname.'_group'] = get_string('uerr_agenotsetrequired', 'surveyfield_age');
+                $errors[$errorkey] = get_string('uerr_agenotsetrequired', 'surveyfield_age');
             } else {
                 $a = get_string('noanswer', 'survey');
-                $errors[$this->itemname.'_group'] = get_string('uerr_agenotset', 'surveyfield_age', $a);
+                $errors[$errorkey] = get_string('uerr_agenotset', 'surveyfield_age', $a);
             }
             return;
         }
@@ -491,10 +498,10 @@ class surveyfield_age extends surveyitem_base {
         $userinput = $this->item_age_to_unix_time($data[$this->itemname.'_year'], $data[$this->itemname.'_month']);
 
         if ($haslowerbound && ($userinput < $this->lowerbound)) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_lowerthanminimum', 'surveyfield_age');
+            $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_age');
         }
         if ($hasupperbound && ($userinput > $this->upperbound)) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_greaterthanmaximum', 'surveyfield_age');
+            $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_age');
         }
     }
 
@@ -510,13 +517,13 @@ class surveyfield_age extends surveyitem_base {
     }
 
     /*
-     * userform_save
+     * userform_prepare_data_to_save
      * starting from the info set by the user in the form
      * I define the info to store in the db
-     * @param $itemdetail, $olduserdata
+     * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_save($itemdetail, $olduserdata) {
+    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
         if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
         } else {

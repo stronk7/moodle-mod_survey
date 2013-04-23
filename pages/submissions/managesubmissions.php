@@ -131,9 +131,10 @@ if ($searchfields_get) {
     // there is a restriction to records to show
     $longformfield = array();
     // $fieldarray = explode('&amp;', $searchfields_get);
-    $fieldarray = explode(SURVEY_URLPARAMSEPARATOR, $searchfields_get);
+    $fieldarray = explode(SURVEY_URLPARAMSEPARATOR, urldecode($searchfields_get));
     foreach ($fieldarray as $valuefield) {
         $element = explode(SURVEY_URLVALUESEPARATOR, $valuefield);
+
         $index = $element[1];
         $longformfield[$index] = $element[0];
     }

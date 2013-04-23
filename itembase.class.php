@@ -1260,17 +1260,20 @@ class surveyitem_base {
         return ($givenanswer === $childitemrecord->parentvalue);
     }
 
-    /*
+    /* *****************************
+     * THIS METHOD IS NO LONGER USED
+     * *****************************
+     *
      * userform_could_be_disabled
      * This function returns true if an item can be disabled because of the answer to the parent item
      * The rationale is:
      * if ($survey->newpageforchild) { then the parent is in a previous page so:
      *     if its condition was satisfied, the child item ($this) is displayed
      *     if its condition was NOT satisfied, the child item ($this) is NOT displayed
-     *     in both cases the child item ($this) will never be disabled
+     *     in both cases the child item ($this) will always be enabled
      *
      * if (empty($parentitem))
-     *     the child item ($this) will never be disabled because of the parent
+     *     the child item ($this) will always be enabled because the parent does not exist
      *
      * if no pagebreaks were added between parent and child (alias, if they are displayed in the same page)
      *     the child item ($this) can be disabled

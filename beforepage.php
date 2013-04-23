@@ -205,11 +205,7 @@ switch ($currenttab) {
                 break;
             case SURVEY_SUBMISSION_SEARCH:       // display the submission search form
                 $sqlparams = array('surveyid' => $survey->id, 'hide' => 0);
-                if ($canaccessadvancedform) {
-                    $sqlparams['advancedsearch'] = SURVEY_ADVFILLANDSEARCH;
-                } else {
-                    $sqlparams['basicform'] = SURVEY_FILLANDSEARCH;
-                }
+                $sqlparams['advancedsearch'] = ($canaccessadvancedform) ? SURVEY_ADVFILLANDSEARCH : SURVEY_FILLANDSEARCH;
 
                 // if no items are available, stop the intervention here
                 if (!$DB->count_records('survey_item', $sqlparams)) {
@@ -241,10 +237,10 @@ switch ($currenttab) {
                         // echo '$elementname = '.$elementname.'<br />';
                         // echo '$content = '.$content.'<br />';
                         // TODO: this routine needs more testing
-                        // mi interessano solo i campi della search form che contengono qualcosa ma che non contengono SURVEY_NOANSWERVALUE
+                        // I am interested only in the fields in the search form that contain something but do not contain SURVEY_NOANSWERVALUE
                         if (isset($content) && ($content != SURVEY_NOANSWERVALUE)) {
                             if (preg_match($regexp, $elementname, $matches)) {
-                                $itemid = $matches[3]; // itemid dell'elemento della form (o della famiglia di elementi della form)
+                                $itemid = $matches[3]; // itemid of the mform element (or of the mform family element)
                                 if (!isset($infoperitem[$itemid])) {
                                     $infoperitem[$itemid] = new stdClass();
                                     $infoperitem[$itemid]->type = $matches[1];
@@ -275,10 +271,11 @@ switch ($currenttab) {
                         $item = survey_get_item($iteminfo->itemid, $iteminfo->type, $iteminfo->plugin);
 
                         $userdata = new stdClass();
-                        $item->userform_save($iteminfo->extra, $userdata);
+                        $item->userform_prepare_data_to_save($iteminfo->extra, $userdata, false);
 
                         $searchfields[] = $userdata->content.SURVEY_URLVALUESEPARATOR.$iteminfo->itemid;
                     }
+                    // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
                     // echo '$searchfields:';
                     // var_dump($searchfields);
                     // define searchfields_get to let it carry all the information to the next URL

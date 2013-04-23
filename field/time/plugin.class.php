@@ -380,22 +380,23 @@ class surveyfield_time extends surveyitem_base {
         $elementgroup[] = $mform->createElement('select', $this->itemname.'_minute', '', $minutes);
 
         $separator = array(':');
-        if ($this->required && !$searchform) {
-            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
-            $couldbedisabled = $this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem);
-            if ($couldbedisabled) {
+        if (!$searchform) {
+            if ($this->required) {
+                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
+
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                 // -> I do not want JS form validation if the page is submitted trough the "previous" button
                 // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-
-                // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
-                // $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
                 $mform->_required[] = $this->itemname.'_group';
+            } else {
+                $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'));
+                $separator[] = ' ';
+                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
+                $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
             }
         } else {
-            $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', $check_label);
+            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('star', 'survey'));
             $separator[] = ' ';
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
             $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
@@ -454,13 +455,20 @@ class surveyfield_time extends surveyitem_base {
         if (isset($data[$this->itemname.'_noanswer'])) {
             return; // nothing to validate
         }
+
+        if ($this->extrarow) {
+            $errorkey = $this->type.'_'.$this->itemid.'_extrarow';
+        } else {
+            $errorkey = $this->itemname.'_group';
+        }
+
         if ( ($data[$this->itemname.'_hour'] == SURVEY_INVITATIONVALUE) ||
              ($data[$this->itemname.'_minute'] == SURVEY_INVITATIONVALUE) ) {
             if ($this->required) {
-                $errors[$this->itemname.'_group'] = get_string('uerr_timenotsetrequired', 'surveyfield_time');
+                $errors[$errorkey] = get_string('uerr_timenotsetrequired', 'surveyfield_time');
             } else {
                 $a = get_string('noanswer', 'survey');
-                $errors[$this->itemname.'_group'] = get_string('uerr_timenotset', 'surveyfield_time', $a);
+                $errors[$errorkey] = get_string('uerr_timenotset', 'surveyfield_time', $a);
             }
             return;
         }
@@ -471,10 +479,10 @@ class surveyfield_time extends surveyitem_base {
         $userinput = $this->item_time_to_unix_time($data[$this->itemname.'_hour'], $data[$this->itemname.'_minute']);
 
         if ($haslowerbound && ($userinput < $this->lowerbound)) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_lowerthanminimum', 'surveyfield_time');
+            $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_time');
         }
         if ($hasupperbound && ($userinput > $this->upperbound)) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_greaterthanmaximum', 'surveyfield_time');
+            $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_time');
         }
     }
 
@@ -490,13 +498,13 @@ class surveyfield_time extends surveyitem_base {
     }
 
     /*
-     * userform_save
+     * userform_prepare_data_to_save
      * starting from the info set by the user in the form
      * I define the info to store in the db
-     * @param $itemdetail, $olduserdata
+     * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_save($itemdetail, $olduserdata) {
+    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
         if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
         } else {

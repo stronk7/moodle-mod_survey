@@ -53,7 +53,7 @@ class survey_searchform extends moodleform {
             // is the current item matching the parent value?
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
-            if (isset($item->extrarow) && $item->extrarow) {
+            if ($item->extrarow) {
                 $elementnumber = $item->customnumber ? $item->customnumber.':' : '';
 
                 $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);

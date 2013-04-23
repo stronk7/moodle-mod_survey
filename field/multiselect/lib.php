@@ -25,4 +25,4 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 
-define('SURVEYFIELD_MULTISELECT_VALUESEPARATOR' , ', ');
+define('SURVEYFIELD_MULTISELECT_PLACEHOLDER', 1);

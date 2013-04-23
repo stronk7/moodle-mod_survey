@@ -295,15 +295,11 @@ class surveyfield_select extends surveyitem_base {
             $mform->addElement('select', $this->itemname, $elementlabel, $valuelabel, array('class' => 'indent-'.$this->indent));
 
             if (!$searchform) {
-                $couldbedisabled = $this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem);
-                if ($this->required && (!$couldbedisabled)) {
+                if ($this->required) {
                     // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                     // -> I do not want JS form validation if the page is submitted trough the "previous" button
                     // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
                     // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-
-                    // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'client');
-                    // $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
                     $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
                 }
 
@@ -333,15 +329,11 @@ class surveyfield_select extends surveyitem_base {
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
 
             if (!$searchform) {
-                $couldbedisabled = $this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem);
-                if ($this->required && (!$couldbedisabled)) {
+                if ($this->required) {
                     // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                     // -> I do not want JS form validation if the page is submitted trough the "previous" button
                     // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
                     // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-
-                    // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
-                    // $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
                     $mform->_required[] = $this->itemname.'_group';
                 }
 
@@ -380,11 +372,21 @@ class surveyfield_select extends surveyitem_base {
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
+        if ($this->extrarow) {
+            $errorkey = $this->type.'_'.$this->itemid.'_extrarow';
+        } else {
+            if (!$this->labelother) {
+                $errorkey = $this->itemname;
+            } else {
+                $errorkey = $this->itemname.'_group';
+            }
+        }
+
         if ($data[$this->itemname] == SURVEY_INVITATIONVALUE) {
             if (!$this->labelother) {
-                $errors[$this->itemname] = get_string('uerr_optionnotset', 'surveyfield_radiobutton');
+                $errors[$errorkey] = get_string('uerr_optionnotset', 'surveyfield_radiobutton');
             } else {
-                $errors[$this->itemname.'_group'] = get_string('uerr_optionnotset', 'surveyfield_radiobutton');
+                $errors[$errorkey] = get_string('uerr_optionnotset', 'surveyfield_radiobutton');
             }
         }
     }
@@ -408,13 +410,13 @@ class surveyfield_select extends surveyitem_base {
     }
 
     /*
-     * userform_save
+     * userform_prepare_data_to_save
      * starting from the info set by the user in the form
      * I define the info to store in the db
-     * @param $itemdetail, $olduserdata
+     * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_save($itemdetail, $olduserdata) {
+    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
         if (isset($itemdetail['mainelement'])) {
             if ($itemdetail['mainelement'] == 'other') {
                 $olduserdata->content = $itemdetail['text'];

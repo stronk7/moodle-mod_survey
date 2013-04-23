@@ -104,7 +104,6 @@ class survey_submissionform extends moodleform {
                         require_once($CFG->dirroot.'/mod/survey/'.$itemseed->type.'/'.$itemseed->plugin.'/plugin.class.php');
 
                         $itemaschildisallowed = $parentitem->userform_child_item_allowed_static($submissionid, $itemseed);
-                        //$itemaschildisallowed = userform_child_item_allowed_static($submissionid, $itemseed);
                     } else {
                         $itemaschildisallowed = true;
                     }

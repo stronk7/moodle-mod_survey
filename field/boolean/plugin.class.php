@@ -295,7 +295,6 @@ class surveyfield_boolean extends surveyitem_base {
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
-        $couldbedisabled = $this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem);
 
         if ($this->style == SURVEYFIELD_BOOLEAN_USESELECT) {
             $options = array();
@@ -309,15 +308,14 @@ class surveyfield_boolean extends surveyitem_base {
                 $options += array(SURVEY_NOANSWERVALUE => $check_label);
             }
             $mform->addElement('select', $this->itemname, $elementlabel, $options, array('class' => 'indent-'.$this->indent));
-            if ($this->required && (!$searchform) && (!$couldbedisabled)) {
-                // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                // -> I do not want JS form validation if the page is submitted trough the "previous" button
-                // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
-                // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-
-                // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
-                // $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
-                $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
+            if (!$searchform) {
+                if ($this->required) {
+                    // even if the item is required I CAN NOT ADD ANY RULE HERE because:
+                    // -> I do not want JS form validation if the page is submitted trough the "previous" button
+                    // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+                    // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+                    $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
+                }
             }
         } else { // SURVEYFIELD_BOOLEAN_USERADIOV or SURVEYFIELD_BOOLEAN_USERADIOH
             $class = '';
@@ -334,21 +332,21 @@ class surveyfield_boolean extends surveyitem_base {
             $class = ($this->style == SURVEYFIELD_BOOLEAN_USERADIOV) ? array('class' => 'indent-'.$this->indent) : '';
             $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('no'), '0', $class);
 
-            if ($this->required && (!$searchform) && (!$couldbedisabled)) {
-                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
+            if (!$searchform) {
+                if ($this->required) {
+                    $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
 
-                // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                // -> I do not want JS form validation if the page is submitted trough the "previous" button
-                // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
-                // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-
-                // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
-                // $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
-                $mform->_required[] = $this->itemname.'_group';
+                    // even if the item is required I CAN NOT ADD ANY RULE HERE because:
+                    // -> I do not want JS form validation if the page is submitted trough the "previous" button
+                    // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+                    // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+                    $mform->_required[] = $this->itemname.'_group';
+                } else {
+                    $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('noanswer', 'survey'), SURVEY_NOANSWERVALUE, $class);
+                    $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
+                }
             } else {
-                $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-                $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $check_label, SURVEY_NOANSWERVALUE, $class);
-
+                $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('star', 'survey'), SURVEY_NOANSWERVALUE, $class);
                 $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
             }
         }
@@ -378,17 +376,22 @@ class surveyfield_boolean extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        // this plugin displays as dropdown menu. It will never return empty values.
+        // this plugin displays as dropdown menu or a radio buttons set. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
+
+        if ($this->extrarow) {
+            $errorkey = $this->type.'_'.$this->itemid.'_extrarow';
+        } else {
+            if ($this->userform_mform_element_is_group()) {
+                $errorkey = $this->itemname.'_group';
+            } else {
+                $errorkey = $this->itemname;
+            }
+        }
 
         // I need to check value is different from SURVEY_INVITATIONVALUE even if it is not required
         if ($data[$this->itemname] == SURVEY_INVITATIONVALUE) {
-            if ($this->userform_mform_element_is_group()) {
-                $fieldname = $this->itemname.'_group';
-            } else {
-                $fieldname = $this->itemname;
-            }
-            $errors[$fieldname] = get_string('uerr_booleannotset', 'surveyfield_boolean');
+            $errors[$errorkey] = get_string('uerr_booleannotset', 'surveyfield_boolean');
             return;
         }
     }
@@ -412,13 +415,13 @@ class surveyfield_boolean extends surveyitem_base {
     }
 
     /*
-     * userform_save
+     * userform_prepare_data_to_save
      * starting from the info set by the user in the form
      * I define the info to store in the db
-     * @param $itemdetail, $olduserdata
+     * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_save($itemdetail, $olduserdata) {
+    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
         $olduserdata->content = $itemdetail['mainelement'];
     }
 

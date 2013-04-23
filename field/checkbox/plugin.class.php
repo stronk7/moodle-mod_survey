@@ -292,6 +292,7 @@ class surveyfield_checkbox extends surveyitem_base {
             if (!empty($this->labelother)) {
                 $separator = array_fill(0, count($elementgroup)-2, '<br />');
                 $separator[] = ' ';
+                $separator[] = '<br />';
             } else {
                 $separator = '<br />';
             }
@@ -300,16 +301,30 @@ class surveyfield_checkbox extends surveyitem_base {
         }
         $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
 
-        $couldbedisabled = $this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem);
-        if ($this->required && (!$searchform) && (!$couldbedisabled)) {
-            // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-            // -> I do not want JS form validation if the page is submitted trough the "previous" button
-            // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
-            // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+        /* this last item is needed because:
+         * the JS validation MAY BE missing even if the field is required
+         * (JS validation is never added because I do not want it when the "previous" button is pressed and when an item is disabled even if mandatory)
+         * so the check for the non empty field is performed in the validation routine.
+         * The validation routine is executed ONLY ON ITEM that are really submitted.
+         * For checkboxes, nothing is submitted if no box is checked
+         * so, if the user neglects the mandatory checkboxes item AT ALL, it is not submitted and, as conseguence, not validated.
+         * TO ALWAYS SUBMIT A CHECKNBOXES SET I add a dummy hidden item.
+         *
+         * TAKE CARE: I choose a name for this item that IS UNIQUE BUT is missing the SURVEY_ITEMPREFIX.'_'
+         *            In this way I am sure the item will never be saved in the database
+         */
+        $placeholderitemname = $this->type.'_'.$this->plugin.'_'.$this->itemid.'_placeholder';
+        $mform->addElement('hidden', $placeholderitemname, SURVEYFIELD_CHECKBOX_PLACEHOLDER);
+        $mform->setType($placeholderitemname, PARAM_INT);
 
-            // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
-            // $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
-            $mform->_required[] = $this->itemname.'_group';
+        if (!$searchform) {
+            if ($this->required) {
+                // even if the item is required I CAN NOT ADD ANY RULE HERE because:
+                // -> I do not want JS form validation if the page is submitted trough the "previous" button
+                // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+                // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+                $mform->_required[] = $this->itemname.'_group';
+            }
         }
     }
 
@@ -322,27 +337,33 @@ class surveyfield_checkbox extends surveyitem_base {
         if ($this->required) {
             $valuelabel = $this->item_get_value_label_array('options');
 
+            if ($this->extrarow) {
+                $errorkey = $this->type.'_'.$this->itemid.'_extrarow';
+            } else {
+                $errorkey = $this->itemname.'_group';
+            }
+
             $missinganswer = true;
             $i = 0;
             foreach ($valuelabel as $value => $label) {
                 $uniqueid = $this->itemname.'_'.$i;
-
-                if (!empty($data[$uniqueid])) {
+                if (isset($data[$uniqueid])) { // if the checkbox was not selected, $data[$uniqueid] does not even exist
                     $missinganswer = false;
                     break;
                 }
                 $i++;
             }
 
-            if (!empty($this->labelother)) {
-                if ((!empty($data[$this->itemname.'_other'])) && (!empty($data[$this->itemname.'_text']))) {
-                    $missinganswer = false;
+            if ($missinganswer) {
+                if (!empty($this->labelother)) {
+                    if ((!empty($data[$this->itemname.'_other'])) && (!empty($data[$this->itemname.'_text']))) {
+                        $missinganswer = false;
+                    }
                 }
             }
 
             if ($missinganswer) {
-                $errors[$this->itemname] = get_string('required');
-                return;
+                $errors[$errorkey] = get_string('required');
             }
         }
     }
@@ -418,7 +439,7 @@ class surveyfield_checkbox extends surveyitem_base {
         $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
 
         $cleanvalue = explode("\n", $childitemrecord->parentvalue);
-        $cleanvalue = implode(SURVEYFIELD_CHECKBOX_VALUESEPARATOR, $cleanvalue);
+        $cleanvalue = implode(SURVEY_DBMULTIVALUESEPARATOR, $cleanvalue);
 
         return ($givenanswer === $cleanvalue);
     }
@@ -461,16 +482,17 @@ class surveyfield_checkbox extends surveyitem_base {
     }
 
     /*
-     * userform_save
+     * userform_prepare_data_to_save
      * starting from the info set by the user in the form
      * I define the info to store in the db
-     * @param $itemdetail, $olduserdata
+     * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_save($itemdetail, $olduserdata) {
+    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
         $i = 0;
         $return = array();
         $options = $this->item_complete_option_array();
+
         foreach ($options as $value => $label) {
             if (isset($itemdetail["$i"])) {
                 $return[] = $value;
@@ -482,10 +504,13 @@ class surveyfield_checkbox extends surveyitem_base {
         }
 
         if (empty($return)) {
-            // $return[] = get_string('missinganswer', 'survey');
             $olduserdata->content = null;
         } else {
-            $olduserdata->content = implode(SURVEYFIELD_CHECKBOX_VALUESEPARATOR, $return);
+            if ($saving) {
+                $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $return);
+            } else { // searching
+                $olduserdata->content = urlencode( implode(SURVEY_URLMULTIVALUESEPARATOR, $return) );
+            }
         }
     }
 
@@ -515,7 +540,7 @@ class surveyfield_checkbox extends surveyitem_base {
 
             if (!empty($olduserdata->content)) { // I did not unselect each checkbox
                 // something was set
-                $answers = explode(SURVEYFIELD_CHECKBOX_VALUESEPARATOR, $olduserdata->content);
+                $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $olduserdata->content);
 
                 foreach ($answers as $answer) {
                     $checkboxindex = array_search($answer, $valuelabel);

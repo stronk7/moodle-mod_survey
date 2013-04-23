@@ -347,15 +347,11 @@ class surveyfield_radiobutton extends surveyitem_base {
         $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
 
         if (!$searchform) {
-            $couldbedisabled = $this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem);
-            if ($this->required && (!$couldbedisabled)) {
+            if ($this->required) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                 // -> I do not want JS form validation if the page is submitted trough the "previous" button
                 // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-
-                // $mform->addRule($this->itemname.'_group', get_string('required'), 'required', null, 'client');
-                // $mform->addRule($this->itemname.'_group', get_string('required'), 'nonempty_rule', $mform);
                 $mform->_required[] = $this->itemname.'_group';
             }
 
@@ -386,6 +382,12 @@ class surveyfield_radiobutton extends surveyitem_base {
         // this plugin displays as a set of radio buttons. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
+        if ($this->extrarow) {
+            $errorkey = $this->type.'_'.$this->itemid.'_extrarow';
+        } else {
+            $errorkey = $this->itemname.'_group';
+        }
+
         if ( ($data[$this->itemname] == 'other') && empty($data[$this->itemname.'_text']) ) {
             $errors[$this->itemname.'_text'] = get_string('required');
             return;
@@ -393,7 +395,7 @@ class surveyfield_radiobutton extends surveyitem_base {
 
         // I need to check value is different from SURVEY_INVITATIONVALUE even if it is not required
         if ($data[$this->itemname] == SURVEY_INVITATIONVALUE) {
-            $errors[$this->itemname.'_group'] = get_string('uerr_optionnotset', 'surveyfield_radiobutton');
+            $errors[$errorkey] = get_string('uerr_optionnotset', 'surveyfield_radiobutton');
             return;
         }
     }
@@ -460,13 +462,13 @@ class surveyfield_radiobutton extends surveyitem_base {
     }
 
     /*
-     * userform_save
+     * userform_prepare_data_to_save
      * starting from the info set by the user in the form
      * I define the info to store in the db
-     * @param $itemdetail, $olduserdata
+     * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_save($itemdetail, $olduserdata) {
+    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
         if (isset($itemdetail['mainelement'])) {
             switch ($itemdetail['mainelement']) {
                 case 'other':

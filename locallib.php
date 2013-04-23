@@ -778,6 +778,7 @@ function survey_save_user_data($fromform) {
                     // this is the black hole where is thrown each useless info like:
                     // - formpage
                     // - nextbutton
+                    // - placeholders
                     // and some more
             }
             continue;
@@ -831,7 +832,7 @@ function survey_save_user_data($fromform) {
 
         // in this method I update $olduserdata->content
         // I do not save to database
-        $item->userform_save($iteminfo->extra, $olduserdata);
+        $item->userform_prepare_data_to_save($iteminfo->extra, $olduserdata, true);
 
         $DB->update_record('survey_userdata', $olduserdata);
     }
@@ -1323,12 +1324,20 @@ function survey_export_close_record($recordtoexport, $downloadtype, $worksheet) 
 function survey_find_submissions($findparams) {
     global $DB;
 
-    foreach ($findparams as $itemid => $elementcontent) {
+    // echo '$findparams (prima):';
+    // var_dump($findparams);
+
+    foreach ($findparams as $itemid => $valuesarray) {
         // I am interested only to non empty fields BUT different from SURVEY_NOANSWERVALUE
-        if ($elementcontent == SURVEY_NOANSWERVALUE) {
+        if ($valuesarray == SURVEY_NOANSWERVALUE) {
             unset($findparams[$itemid]);
+        } else {
+            $findparams[$itemid] = str_replace(SURVEY_URLMULTIVALUESEPARATOR, SURVEY_DBMULTIVALUESEPARATOR, $valuesarray);
         }
     }
+    // echo '$findparams (dopo):';
+    // var_dump($findparams);
+    // die;
 
     // the search process is tricky
     // the procedure is:
@@ -1368,11 +1377,11 @@ function survey_find_submissions($findparams) {
         return $submissionidlist;
     }
 
-    foreach ($findparams as $itemid => $elementcontent) {
+    foreach ($findparams as $itemid => $valuesarray) {
         $where = 'submissionid IN ('.implode(',', $submissionidlist).')
                       AND itemid = :itemid
-                      AND content = :elementcontent';
-        $params = array('itemid' => $itemid, 'elementcontent' => (string)$elementcontent);
+                      AND content = :valuesarray';
+        $params = array('itemid' => $itemid, 'content' => (string)$valuesarray);
         if ($submissionidlist = $DB->get_records_select('survey_userdata', $where, $params, 'submissionid', 'submissionid')) {
             $submissionidlist = array_keys($submissionidlist);
         } else {

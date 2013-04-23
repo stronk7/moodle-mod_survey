@@ -394,15 +394,12 @@ class surveyfield_character extends surveyitem_base {
         $mform->setType($this->itemname, PARAM_RAW);
         if (!$searchform) {
             $mform->setDefault($this->itemname, $this->defaultvalue);
-            $couldbedisabled = $this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem);
-            if ($this->required && (!$couldbedisabled)) {
+
+            if ($this->required) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                 // -> I do not want JS form validation if the page is submitted trough the "previous" button
                 // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-
-                // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'client');
-                // $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
                 $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
             }
         }
@@ -414,14 +411,15 @@ class surveyfield_character extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
+        if ($this->extrarow) {
+            $errorkey = $this->type.'_'.$this->itemid.'_extrarow';
+        } else {
+            $errorkey = $this->itemname;
+        }
+
         if ($this->required) {
-           /* The item is required
-            * but this is not enough to assume that server side validation was joined to the item.
-            * server side validation is added ONLY if ((!$searchform) && $this->required && (!$couldbedisabled)) {
-            * so, to be sure an issue is rised if this field is empty, I execute the validation again.
-            */
             if (empty($data[$this->itemname])) {
-                $errors[$this->itemname] = get_string('required');
+                $errors[$errorkey] = get_string('required');
                 return;
             }
         }
@@ -429,22 +427,22 @@ class surveyfield_character extends surveyitem_base {
         if (!empty($data[$this->itemname])) {
             $fieldlength = strlen($data[$this->itemname]);
             if ($fieldlength > $this->maxlength) {
-                $errors[$this->itemname] = get_string('uerr_texttoolong', 'surveyfield_character');
+                $errors[$errorkey] = get_string('uerr_texttoolong', 'surveyfield_character');
             }
             if ($fieldlength < $this->minlength) {
-                $errors[$this->itemname] = get_string('uerr_texttooshort', 'surveyfield_character');
+                $errors[$errorkey] = get_string('uerr_texttooshort', 'surveyfield_character');
             }
             if (!empty($data[$this->itemname]) && !empty($this->pattern)) {
                 switch ($this->pattern) {
                     case SURVEYFIELD_CHARACTER_EMAILPATTERN:
                         if (!validate_email($data[$this->itemname])) {
-                            $errors[$this->itemname] = get_string('uerr_invalidemail', 'surveyfield_character');
+                            $errors[$errorkey] = get_string('uerr_invalidemail', 'surveyfield_character');
                         }
                         break;
                     case SURVEYFIELD_CHARACTER_URLPATTERN:
                         // if (!preg_match('~^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$~i', $data[$this->itemname])) {
                         if (!survey_character_is_valid_url($data[$this->itemname])) {
-                            $errors[$this->itemname] = get_string('uerr_invalidurl', 'surveyfield_character');
+                            $errors[$errorkey] = get_string('uerr_invalidurl', 'surveyfield_character');
                         }
                         break;
                     case SURVEYFIELD_CHARACTER_CUSTOMPATTERN: // it is a custom pattern done with "A", "a", "*" and "0"
@@ -454,11 +452,11 @@ class surveyfield_character extends surveyitem_base {
                         // "0" numbers
 
                         if ($fieldlength != strlen($this->pattern_text)) {
-                            $errors[$this->itemname] = get_string('uerr_badlength', 'surveyfield_character');
+                            $errors[$errorkey] = get_string('uerr_badlength', 'surveyfield_character');
                         }
 
                         if (!survey_character_text_match_pattern($data[$this->itemname], $this->pattern_text)) {
-                            $errors[$this->itemname] = get_string('uerr_nopatternmatch', 'surveyfield_character');
+                            $errors[$errorkey] = get_string('uerr_nopatternmatch', 'surveyfield_character');
                         }
                         break;
                     default:
@@ -481,13 +479,13 @@ class surveyfield_character extends surveyitem_base {
     }
 
     /*
-     * userform_save
+     * userform_prepare_data_to_save
      * starting from the info set by the user in the form
      * I define the info to store in the db
-     * @param $itemdetail, $olduserdata
+     * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_save($itemdetail, $olduserdata) {
+    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
         if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
             return;

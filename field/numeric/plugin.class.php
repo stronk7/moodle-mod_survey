@@ -384,15 +384,12 @@ class surveyfield_numeric extends surveyitem_base {
         if (!$searchform) {
             $decimalseparator = get_string('decsep', 'langconfig');
             $mform->setDefault($this->itemname, number_format((double)$this->defaultvalue, $this->decimals, $decimalseparator, ''));
-            $couldbedisabled = $this->userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem);
-            if ($this->required && (!$couldbedisabled)) {
+
+            if ($this->required) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                 // -> I do not want JS form validation if the page is submitted trough the "previous" button
                 // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-
-                // $mform->addRule($this->itemname, get_string('required'), 'required', null, 'server');
-                // $mform->addRule($this->itemname, get_string('required'), 'nonempty_rule', $mform);
                 $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
             }
         }
@@ -406,14 +403,15 @@ class surveyfield_numeric extends surveyitem_base {
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         $decimalseparator = get_string('decsep', 'langconfig');
 
+        if ($this->extrarow) {
+            $errorkey = $this->type.'_'.$this->itemid.'_extrarow';
+        } else {
+            $errorkey = $this->itemname;
+        }
+
         if ($this->required) {
-           /* The item is required
-            * but this is not enough to assume that server side validation was joined to the item.
-            * server side validation is added ONLY if ((!$searchform) && $this->required && (!$couldbedisabled)) {
-            * so, to be sure an issue is rised if this field is empty, I execute the validation again.
-            */
             if (empty($data[$this->itemname])) {
-                $errors[$this->itemname] = get_string('required');
+                $errors[$errorkey] = get_string('required');
                 return;
             }
         }
@@ -425,25 +423,25 @@ class surveyfield_numeric extends surveyitem_base {
         // if it is not a number, shouts
         $pattern = '~^\s*([0-9]+)'.get_string('decsep', 'langconfig').'?([0-9]*)\s*$~';
         if (!preg_match($pattern, $data[$this->itemname], $matches)) {
-            $errors[$this->itemname] = get_string('uerr_notanumber', 'surveyfield_numeric');
+            $errors[$errorkey] = get_string('uerr_notanumber', 'surveyfield_numeric');
         } else {
             $thenumber = $matches[1].'.'.$matches[2];
             // if it is < 0 but has been defined as unsigned, shouts
             if (!$this->signed && ($thenumber < 0)) {
-                $errors[$this->itemname] = get_string('uerr_negative', 'surveyfield_numeric');
+                $errors[$errorkey] = get_string('uerr_negative', 'surveyfield_numeric');
             }
             // if it is < $this->lowerbound, shouts
             if (isset($this->lowerbound) && ($thenumber < $this->lowerbound)) {
-                $errors[$this->itemname] = get_string('uerr_lowerthanminimum', 'surveyfield_numeric');
+                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_numeric');
             }
             // if it is > $this->upperbound, shouts
             if (isset($this->upperbound) && ($thenumber > $this->upperbound)) {
-                $errors[$this->itemname] = get_string('uerr_greaterthanmaximum', 'surveyfield_numeric');
+                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_numeric');
             }
             // if it has decimal but has been defined as integer, shouts
             $is_integer = (bool)(strval(intval($thenumber)) == strval($thenumber));
             if (($this->decimals == 0) && (!$is_integer)) {
-                $errors[$this->itemname] = get_string('uerr_notinteger', 'surveyfield_numeric');
+                $errors[$errorkey] = get_string('uerr_notinteger', 'surveyfield_numeric');
             }
         }
     }
@@ -460,13 +458,13 @@ class surveyfield_numeric extends surveyitem_base {
     }
 
     /*
-     * userform_save
+     * userform_prepare_data_to_save
      * starting from the info set by the user in the form
      * I define the info to store in the db
-     * @param $itemdetail, $olduserdata
+     * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_save($itemdetail, $olduserdata) {
+    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
         if (empty($itemdetail['mainelement'])) {
             $olduserdata->content = null;
         } else {

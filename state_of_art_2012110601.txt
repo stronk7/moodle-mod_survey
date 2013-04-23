@@ -40,4 +40,5 @@ Last note: multiselect mform doesn't work! MDL-30940 Fixed by Frédéric Massart
 I am in trouble assigning syles to some mform element. MDL-28194 GRRRRR
 How disable fields upon checkboxes sets? MDL-34760, MDL-38975 Fixed by Eloy Lafuente on April 8, 2013
 $mform->disabledIf doesn't work for 'filemanager' mform elements. MDL-31796
+$mform->disabledIf doesn't work for 'multiselect' mform elements. MDL-39280
 Disabled mform items need to be skipped during validation (and more): MDL-34815
