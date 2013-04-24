@@ -121,13 +121,14 @@ class survey_submissionform extends moodleform {
                         $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
                         //echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
                         //die;
-                        $mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
+                        //$this->itemname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
+                        $mform->addElement('static', $item->itemname.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
                     }
 
                     $item->userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem);
 
                     if ($fullinfo = $item->item_get_full_info(false)) {
-                        $mform->addElement('static', $item->type.'_'.$item->itemid.'_info', get_string('note', 'survey'), $fullinfo);
+                        $mform->addElement('static', $item->itemname.'_info', get_string('note', 'survey'), $fullinfo);
                     }
 
                     if (!$survey->newpageforchild) {
@@ -184,7 +185,7 @@ class survey_submissionform extends moodleform {
         // Show the item only if: the current item matches the parent value
         $olditemid = 0;
         foreach ($data as $k => $v) {
-            if (preg_match('~^'.SURVEY_ITEMPREFIX.'_~', $k)) { // if it starts with SURVEY_ITEMPREFIX_
+            if (preg_match('~^('.SURVEY_ITEMPREFIX.'|'.SURVEY_NEGLECTPREFIX.')_~', $k)) { // if it starts with SURVEY_ITEMPREFIX_
                 $parts = explode('_', $k);
                 $type = $parts[1]; // item type
                 $plugin = $parts[2]; // item plugin

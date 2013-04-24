@@ -357,13 +357,13 @@ class surveyfield_autofill extends surveyitem_base {
     }
 
     /*
-     * userform_prepare_data_to_save
+     * userform_save_preprocessing
      * starting from the info set by the user in the form
      * I define the info to store in the db
      * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
         global $USER, $COURSE, $survey;
 
         $olduserdata->content = '';

@@ -765,7 +765,8 @@ function survey_save_user_data($fromform) {
         //   2 => string 'checkbox' (length=8)
         //   3 => string '1452' (length=4)
         //   4 => string '73' (length=2)
-        if (!preg_match($regexp, $itemname, $matches)) {
+        if (!preg_match($regexp, $itemname, $matches)) { // HERE I ONLY ALLOW ITEMS WITH NAME STARTING WITH SURVEY_ITEMPREFIX
+                                                         // ITEMS STARTING WITH SURVEY_NEGLECTPREFIX ARE DISCARDED HERE
             // button or something not relevant
             switch ($itemname) {
                 case 's': // <-- s is the survey id
@@ -832,7 +833,7 @@ function survey_save_user_data($fromform) {
 
         // in this method I update $olduserdata->content
         // I do not save to database
-        $item->userform_prepare_data_to_save($iteminfo->extra, $olduserdata, true);
+        $item->userform_save_preprocessing($iteminfo->extra, $olduserdata, true);
 
         $DB->update_record('survey_userdata', $olduserdata);
     }
@@ -1081,9 +1082,6 @@ function survey_get_my_groups($cm) {
  */
 function survey_show_thanks_page($survey, $cm) {
     global $DB, $OUTPUT, $USER;
-
-    // $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
-    // $mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
 
     if (!empty($survey->thankshtml)) {
         $context = context_module::instance($cm->id);

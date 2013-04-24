@@ -390,7 +390,12 @@ class surveyfield_numeric extends surveyitem_base {
                 // -> I do not want JS form validation if the page is submitted trough the "previous" button
                 // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
+                if ($this->extrarow) {
+                    $starplace = $this->itemname.'_extrarow';
+                } else {
+                    $starplace = $this->itemname;
+                }
+                $mform->_required[] = $starplace; // add the star for mandatory fields at the end of the page with server side validation too
             }
         }
     }
@@ -404,7 +409,7 @@ class surveyfield_numeric extends surveyitem_base {
         $decimalseparator = get_string('decsep', 'langconfig');
 
         if ($this->extrarow) {
-            $errorkey = $this->type.'_'.$this->itemid.'_extrarow';
+            $errorkey = $this->itemname.'_extrarow';
         } else {
             $errorkey = $this->itemname;
         }
@@ -458,13 +463,13 @@ class surveyfield_numeric extends surveyitem_base {
     }
 
     /*
-     * userform_prepare_data_to_save
+     * userform_save_preprocessing
      * starting from the info set by the user in the form
      * I define the info to store in the db
      * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
         if (empty($itemdetail['mainelement'])) {
             $olduserdata->content = null;
         } else {

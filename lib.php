@@ -124,6 +124,7 @@ define('SURVEY_ADVFILLANDSEARCH', 1);
 
 // ITEMPREFIX
 define('SURVEY_ITEMPREFIX', 'survey');
+define('SURVEY_NEGLECTPREFIX', 'neglect');
 
 // INVITATION AND NO ANSWER VALUE
 define('SURVEY_INVITATIONVALUE', '__invItat10n__'); // user should never guess it

@@ -313,7 +313,12 @@ class surveyfield_textarea extends surveyitem_base {
                 // -> I do not want JS form validation if the page is submitted trough the "previous" button
                 // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                $mform->_required[] = $fieldname;
+                if ($this->extrarow) {
+                    $starplace = $this->itemname.'_extrarow';
+                } else {
+                    $starplace = $fieldname;
+                }
+                $mform->_required[] = $starplace;
             }
         }
     }
@@ -325,7 +330,7 @@ class surveyfield_textarea extends surveyitem_base {
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         if ($this->extrarow) {
-            $errorkey = $this->type.'_'.$this->itemid.'_extrarow';
+            $errorkey = $this->itemname.'_extrarow';
         } else {
             if (!empty($this->useeditor)) {
                 $errorkey = $this->itemname.'_editor';
@@ -334,13 +339,13 @@ class surveyfield_textarea extends surveyitem_base {
             }
         }
 
+        if (!empty($this->useeditor)) {
+            $fieldname = $this->itemname.'_editor';
+        } else {
+            $fieldname = $this->itemname;
+        }
 
         if ($this->required) {
-            if (!empty($this->useeditor)) {
-                $fieldname = $this->itemname.'_editor';
-            } else {
-                $fieldname = $this->itemname;
-            }
             if (empty($data[$fieldname])) {
                 $errors[$errorkey] = get_string('required');
             }
@@ -384,13 +389,13 @@ class surveyfield_textarea extends surveyitem_base {
     }
 
     /*
-     * userform_prepare_data_to_save
+     * userform_save_preprocessing
      * starting from the info set by the user in the form
      * I define the info to store in the db
      * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
         if (!empty($this->useeditor)) {
             $olduserdata->{$this->itemname.'_editor'} = $itemdetail['editor'];
 

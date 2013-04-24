@@ -313,7 +313,7 @@ class surveyfield_checkbox extends surveyitem_base {
          * TAKE CARE: I choose a name for this item that IS UNIQUE BUT is missing the SURVEY_ITEMPREFIX.'_'
          *            In this way I am sure the item will never be saved in the database
          */
-        $placeholderitemname = $this->type.'_'.$this->plugin.'_'.$this->itemid.'_placeholder';
+        $placeholderitemname = SURVEY_NEGLECTPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid.'_placeholder';
         $mform->addElement('hidden', $placeholderitemname, SURVEYFIELD_CHECKBOX_PLACEHOLDER);
         $mform->setType($placeholderitemname, PARAM_INT);
 
@@ -323,7 +323,12 @@ class surveyfield_checkbox extends surveyitem_base {
                 // -> I do not want JS form validation if the page is submitted trough the "previous" button
                 // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                $mform->_required[] = $this->itemname.'_group';
+                if ($this->extrarow) {
+                    $starplace = $this->itemname.'_extrarow';
+                } else {
+                    $starplace = $this->itemname.'_group';
+                }
+                $mform->_required[] = $starplace;
             }
         }
     }
@@ -338,7 +343,7 @@ class surveyfield_checkbox extends surveyitem_base {
             $valuelabel = $this->item_get_value_label_array('options');
 
             if ($this->extrarow) {
-                $errorkey = $this->type.'_'.$this->itemid.'_extrarow';
+                $errorkey = $this->itemname.'_extrarow';
             } else {
                 $errorkey = $this->itemname.'_group';
             }
@@ -482,13 +487,13 @@ class surveyfield_checkbox extends surveyitem_base {
     }
 
     /*
-     * userform_prepare_data_to_save
+     * userform_save_preprocessing
      * starting from the info set by the user in the form
      * I define the info to store in the db
      * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
         $i = 0;
         $return = array();
         $options = $this->item_complete_option_array();

@@ -271,7 +271,7 @@ switch ($currenttab) {
                         $item = survey_get_item($iteminfo->itemid, $iteminfo->type, $iteminfo->plugin);
 
                         $userdata = new stdClass();
-                        $item->userform_prepare_data_to_save($iteminfo->extra, $userdata, false);
+                        $item->userform_save_preprocessing($iteminfo->extra, $userdata, false);
 
                         $searchfields[] = $userdata->content.SURVEY_URLVALUESEPARATOR.$iteminfo->itemid;
                     }

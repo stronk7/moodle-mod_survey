@@ -366,15 +366,6 @@ class surveyfield_rate extends surveyitem_base {
                     $elementgroup[] = $mform->createElement('radio', $uniquename, '', $label, $value);
                 }
                 $mform->addGroup($elementgroup, $uniquename.'_group', $option, ' ', false);
-                if (!$searchform) {
-                    if ($this->required) {
-                        // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                        // -> I do not want JS form validation if the page is submitted trough the "previous" button
-                        // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
-                        // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                        $mform->_required[] = $uniquename.'_group';
-                    }
-                }
 
                 if (!$searchform) {
                     switch ($this->defaultoption) {
@@ -400,15 +391,6 @@ class surveyfield_rate extends surveyitem_base {
             foreach ($options as $option) {
                 $uniquename = $this->itemname.'_'.$optionindex;
                 $mform->addElement('select', $uniquename, $option, $valuelabel, array('class' => 'indent-'.$this->indent));
-                if (!$searchform) {
-                    if ($this->required) {
-                        // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                        // -> I do not want JS form validation if the page is submitted trough the "previous" button
-                        // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
-                        // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                        $mform->_required[] = $this->itemname; // add the star for mandatory fields at the end of the page with server side validation too
-                    }
-                }
 
                 if (!$searchform) {
                     switch ($this->defaultoption) {
@@ -429,6 +411,17 @@ class surveyfield_rate extends surveyitem_base {
                 }
 
                 $optionindex++;
+            }
+        }
+
+        if (!$searchform) {
+            if ($this->required) {
+                // even if the item is required I CAN NOT ADD ANY RULE HERE because:
+                // -> I do not want JS form validation if the page is submitted trough the "previous" button
+                // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+                // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+                $mform->_required[] = $this->itemname.'_extrarow';
+                // Extra row has been forced by the plugin
             }
         }
 
@@ -519,13 +512,13 @@ class surveyfield_rate extends surveyitem_base {
     }
 
     /*
-     * userform_prepare_data_to_save
+     * userform_save_preprocessing
      * starting from the info set by the user in the form
      * I define the info to store in the db
      * @param $itemdetail, $olduserdata, $saving
      * @return
      */
-    public function userform_prepare_data_to_save($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
         if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
         } else {

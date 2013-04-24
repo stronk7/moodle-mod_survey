@@ -57,13 +57,13 @@ class survey_searchform extends moodleform {
                 $elementnumber = $item->customnumber ? $item->customnumber.':' : '';
 
                 $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
-                $mform->addElement('static', $item->type.'_'.$item->itemid.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
+                $mform->addElement('static', $item->itemname.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
             }
 
             $item->userform_mform_element($mform, $survey, $canaccessadvancedform, null, true);
 
             if ($fullinfo = $item->item_get_full_info(true)) {
-                $mform->addElement('static', $item->type.'_'.$item->itemid.'_info', get_string('note', 'survey'), $fullinfo);
+                $mform->addElement('static', $item->itemname.'_info', get_string('note', 'survey'), $fullinfo);
             }
         }
         $itemseeds->close();
