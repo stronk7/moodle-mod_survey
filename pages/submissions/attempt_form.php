@@ -138,8 +138,10 @@ class survey_submissionform extends moodleform {
             }
             $itemseeds->close();
 
-            if (!empty($survey->captcha)) {
-                $mform->addElement('recaptcha', 'captcha_form_footer');
+            if ($currentpage != SURVEY_SUBMISSION_EXPLORE) {
+                if (!empty($survey->captcha)) {
+                    $mform->addElement('recaptcha', 'captcha_form_footer');
+                }
             }
         }
 
@@ -149,26 +151,41 @@ class survey_submissionform extends moodleform {
         if ($formpage != 1) { // 0 or greater than 1
             $buttonarray[] = $mform->createElement('submit', 'prevbutton', get_string('previousformpage', 'survey'));
         }
-        if ($survey->saveresume) {
-            $buttonarray[] = $mform->createElement('submit', 'pausebutton', get_string('pause', 'survey'));
-        }
-        if (($formpage == $lastformpage) || (!$formpage)) {
-            if ($survey->history) {
-                $buttonarray[] = $mform->createElement('submit', 'saveasnewbutton', get_string('saveasnew', 'survey'));
-            } else {
-                $buttonarray[] = $mform->createElement('submit', 'savebutton', get_string('submit'));
+        if ($currentpage != SURVEY_SUBMISSION_EXPLORE) {
+            if ($survey->saveresume) {
+                $buttonarray[] = $mform->createElement('submit', 'pausebutton', get_string('pause', 'survey'));
+            }
+            if (($formpage == $lastformpage) || (!$formpage)) {
+                if ($survey->history) {
+                    $buttonarray[] = $mform->createElement('submit', 'saveasnewbutton', get_string('saveasnew', 'survey'));
+                } else {
+                    $buttonarray[] = $mform->createElement('submit', 'savebutton', get_string('submit'));
+                }
             }
         }
         if (($formpage < $lastformpage) && ($formpage)) { // lower than $lastformpage but different from 0
             $buttonarray[] = $mform->createElement('submit', 'nextbutton', get_string('nextformpage', 'survey'));
         }
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-        $mform->setType('buttonar', PARAM_RAW);
-        $mform->closeHeaderBefore('buttonar');
+
+        if (count($buttonarray)) {
+            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+            $mform->setType('buttonar', PARAM_RAW);
+            $mform->closeHeaderBefore('buttonar');
+        }
     }
 
     function validation($data, $files) {
-        if (isset($data['prevbutton'])) {
+        $mform = $this->_form;
+
+        // $cmid = $this->_customdata->cmid;
+        // $lastformpage = $this->_customdata->lastformpage;
+        // $survey = $this->_customdata->survey;
+        // $submissionid = $this->_customdata->submissionid;
+        // $formpage = $this->_customdata->formpage;
+        // $canaccessadvancedform = $this->_customdata->canaccessadvancedform;
+        $currentpage = $this->_customdata->currentpage;
+
+        if (isset($data['prevbutton']) || ($currentpage == SURVEY_SUBMISSION_EXPLORE)) {
             // skip validation
             return array();
         }

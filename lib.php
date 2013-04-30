@@ -64,13 +64,14 @@ define('SURVEY_TAB'.SURVEY_TABPLUGINS.'NAME', get_string('tabpluginsname', 'surv
 
 // PAGES
     // SUBMISSIONS PAGES
-    define('SURVEY_SUBMISSION_NEW'     , 1);
-    define('SURVEY_SUBMISSION_EDIT'    , 2);
-    define('SURVEY_SUBMISSION_READONLY', 3);
-    define('SURVEY_SUBMISSION_MANAGE'  , 4);
-    define('SURVEY_SUBMISSION_SEARCH'  , 5);
-    define('SURVEY_SUBMISSION_REPORT'  , 6);
-    define('SURVEY_SUBMISSION_EXPORT'  , 7);
+    define('SURVEY_SUBMISSION_EXPLORE' , 1);
+    define('SURVEY_SUBMISSION_NEW'     , 2);
+    define('SURVEY_SUBMISSION_EDIT'    , 3);
+    define('SURVEY_SUBMISSION_READONLY', 4);
+    define('SURVEY_SUBMISSION_MANAGE'  , 5);
+    define('SURVEY_SUBMISSION_SEARCH'  , 6);
+    define('SURVEY_SUBMISSION_REPORT'  , 7);
+    define('SURVEY_SUBMISSION_EXPORT'  , 8);
 
     // ITEMS PAGES
     define('SURVEY_ITEMS_MANAGE'       , 1);
@@ -137,7 +138,7 @@ define('SURVEY_HORIZONTAL', 1);
 // COLELCTION STATUS
 define('SURVEY_STATUSINPROGRESS', 1);
 define('SURVEY_STATUSCLOSED'    , 0);
-define('SURVEY_STATUSBOTH'      , 2);
+define('SURVEY_STATUSALL'       , 2);
 
 // DOWNLOAD
 define('SURVEY_DOWNLOADCSV', 1);
@@ -749,19 +750,23 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     $paramurl = array('s' => $cm->instance, 'tab' => SURVEY_TABSUBMISSIONS);
     $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
+    if (!empty($canmanageitems)) {
+        $paramurl['pag'] = SURVEY_SUBMISSION_EXPLORE;
+        $navnode->add(get_string('tabsubmissionspage1', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+    }
     $paramurl['pag'] = SURVEY_SUBMISSION_NEW;
-    $navnode->add(get_string('tabsubmissionspage1', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+    $navnode->add(get_string('tabsubmissionspage2', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
     $paramurl['pag'] = SURVEY_SUBMISSION_MANAGE;
-    $navnode->add(get_string('tabsubmissionspage4', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
-    $paramurl['pag'] = SURVEY_SUBMISSION_SEARCH;
     $navnode->add(get_string('tabsubmissionspage5', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+    $paramurl['pag'] = SURVEY_SUBMISSION_SEARCH;
+    $navnode->add(get_string('tabsubmissionspage6', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
     if (!empty($canexportdata)) {
         $paramurl['pag'] = SURVEY_SUBMISSION_EXPORT;
-        $navnode->add(get_string('tabsubmissionspage7', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+        $navnode->add(get_string('tabsubmissionspage8', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
     }
     //$navref->add(SURVEY_TAB1NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => SURVEY_TABSUBMISSIONS)));
 
-    if ($canmanageitems) {
+    if (!empty($canmanageitems)) {
         $paramurl = array('s' => $cm->instance, 'tab' => SURVEY_TABITEMS);
         $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
@@ -1009,11 +1014,11 @@ function survey_reset_items_pages($surveyid) {
  * @param $findparams
  * @return
  */
-function survey_has_submissions($surveyid, $status=SURVEY_STATUSBOTH) {
+function survey_has_submissions($surveyid, $status=SURVEY_STATUSALL) {
     global $DB;
 
     $params = array('surveyid' => $surveyid);
-    if ($status != SURVEY_STATUSBOTH) {
+    if ($status != SURVEY_STATUSALL) {
         $params['status'] = $status;
     }
 

@@ -49,6 +49,7 @@ switch ($currenttab) {
         $confirm = optional_param('cnf' , 0, PARAM_INT); // confirm submission deletion
 
         switch ($currentpage) {
+            case SURVEY_SUBMISSION_EXPLORE: // explore
             case SURVEY_SUBMISSION_NEW: // new
             case SURVEY_SUBMISSION_EDIT: // edit
             case SURVEY_SUBMISSION_READONLY: // read only
@@ -96,61 +97,63 @@ switch ($currenttab) {
                 if ($fromform = $mform->get_data()) {
 
                     // start by saving unless the "previous" button has been pressed
-                    if (!isset($fromform->prevbutton)) {
+                    if ($currentpage != SURVEY_SUBMISSION_EXPLORE) { // you are exploring: do not save
+                        if (!isset($fromform->prevbutton)) { // you are NOT exploring AND you did not push the "previous" button
 
-                        if (!$survey->newpageforchild) {
-                            survey_drop_unexpected_values($fromform);
+                            if (!$survey->newpageforchild) {
+                                survey_drop_unexpected_values($fromform);
+                            }
+
+                            $timenow = time();
+                            $savebutton = (isset($fromform->savebutton) && ($fromform->savebutton));
+                            $saveasnewbutton = (isset($fromform->saveasnewbutton) && ($fromform->saveasnewbutton));
+
+                            if ($saveasnewbutton || empty($fromform->submissionid)) { // new record needed
+                                // add a new record to survey_submissions
+                                // this record stub is the basis to build all other possible bailouts
+                                $record = new stdClass();
+                                $record->surveyid = $survey->id;
+                                $record->userid = $USER->id;
+
+                                if (empty($fromform->submissionid)) {
+                                    $record->status = SURVEY_STATUSINPROGRESS;
+                                    $record->timecreated = $timenow;
+                                }
+                                if ($savebutton) {
+                                    $record->status = SURVEY_STATUSCLOSED;
+                                    $record->timemodified = $timenow;
+                                }
+                                if ($saveasnewbutton) {
+                                    $record->status = SURVEY_STATUSCLOSED;
+                                    $record->timecreated = $timenow;
+                                    $record->timemodified = $timenow;
+                                }
+
+                                $submissionid = $DB->insert_record('survey_submissions', $record);
+
+                                $fromform->submissionid = $submissionid;
+                            } else {
+                                $record = new stdClass();
+                                $record->id = $fromform->submissionid;
+                                if ($savebutton) {
+                                    $record->status = SURVEY_STATUSCLOSED;
+                                    $record->timemodified = $timenow;
+                                    $DB->update_record('survey_submissions', $record);
+                                }
+                            }
+
+                            survey_save_user_data($fromform);
+
+                            // now, I saved
+
+                            // BEGIN: send email whether requested
+                            if ($record->status = SURVEY_STATUSCLOSED) {
+                                if (!empty($survey->notifyrole) || !empty($survey->notifymore)) {
+                                    survey_notifyroles($survey, $cm);
+                                }
+                            }
+                            // END: send email whether requested
                         }
-
-                        $timenow = time();
-                        $savebutton = (isset($fromform->savebutton) && ($fromform->savebutton));
-                        $saveasnewbutton = (isset($fromform->saveasnewbutton) && ($fromform->saveasnewbutton));
-
-                        if ($saveasnewbutton || empty($fromform->submissionid)) { // new record needed
-                            // add a new record to survey_submissions
-                            // this record stub is the basis to build all other possible bailouts
-                            $record = new stdClass();
-                            $record->surveyid = $survey->id;
-                            $record->userid = $USER->id;
-
-                            if (empty($fromform->submissionid)) {
-                                $record->status = SURVEY_STATUSINPROGRESS;
-                                $record->timecreated = $timenow;
-                            }
-                            if ($savebutton) {
-                                $record->status = SURVEY_STATUSCLOSED;
-                                $record->timemodified = $timenow;
-                            }
-                            if ($saveasnewbutton) {
-                                $record->status = SURVEY_STATUSCLOSED;
-                                $record->timecreated = $timenow;
-                                $record->timemodified = $timenow;
-                            }
-
-                            $submissionid = $DB->insert_record('survey_submissions', $record);
-
-                            $fromform->submissionid = $submissionid;
-                        } else {
-                            $record = new stdClass();
-                            $record->id = $fromform->submissionid;
-                            if ($savebutton) {
-                                $record->status = SURVEY_STATUSCLOSED;
-                                $record->timemodified = $timenow;
-                                $DB->update_record('survey_submissions', $record);
-                            }
-                        }
-
-                        survey_save_user_data($fromform);
-
-                        // now, I saved
-
-                        // BEGIN: send email whether requested
-                        if ($record->status = SURVEY_STATUSCLOSED) {
-                            if (!empty($survey->notifyrole) || !empty($survey->notifymore)) {
-                                survey_notifyroles($survey, $cm);
-                            }
-                        }
-                        // END: send email whether requested
                     }
 
                     // $fromform->formpage is the currently displayed attempt page and it is where I come from

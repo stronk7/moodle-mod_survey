@@ -133,7 +133,7 @@ class surveyfield_checkbox extends surveyitem_base {
      */
     public function item_save($record) {
         // //////////////////////////////////
-        // Now execute very specific survey_numeric level actions
+        // Now execute very specific plugin level actions
         // //////////////////////////////////
 
         // drop empty rows and trim trailing spaces from each textarea field
@@ -533,6 +533,7 @@ class surveyfield_checkbox extends surveyitem_base {
         // I start from a list of comma separated values
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             $valuelabel = array_keys($this->item_get_value_label_array('options'));
+
             // initialize $prefill array
             foreach ($valuelabel as $checkboxindex => $label) {
                 $uniqueid = $this->itemname.'_'.$checkboxindex;
@@ -543,7 +544,7 @@ class surveyfield_checkbox extends surveyitem_base {
                 $prefill[$this->itemname.'_text'] = '';
             }
 
-            if (!empty($olduserdata->content)) { // I did not unselect each checkbox
+            if (isset($olduserdata->content)) { // I did not unselect each checkbox
                 // something was set
                 $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $olduserdata->content);
 

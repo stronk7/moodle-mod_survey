@@ -20,10 +20,9 @@ defined('MOODLE_INTERNAL') OR die();
 switch ($currenttab) {
     case SURVEY_TABSUBMISSIONS:
         switch ($currentpage) {
-            case SURVEY_SUBMISSION_NEW: // new
-                include_once($CFG->dirroot.'/mod/survey/pages/submissions/attempt.php');
-                break;
-            case SURVEY_SUBMISSION_EDIT: // edit
+            case SURVEY_SUBMISSION_EXPLORE: // explore
+            case SURVEY_SUBMISSION_NEW:     // new
+            case SURVEY_SUBMISSION_EDIT:    // edit
                 include_once($CFG->dirroot.'/mod/survey/pages/submissions/attempt.php');
                 break;
             case SURVEY_SUBMISSION_READONLY: // readonly

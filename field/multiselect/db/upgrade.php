@@ -36,11 +36,11 @@ function xmldb_surveyfield_multiselect_upgrade($oldversion) {
 
     if ($oldversion < 2013041901) {
 
-        // Define field shownrows to be added to survey_multiselect.
+        // Define field heightinrows to be added to survey_multiselect.
         $table = new xmldb_table('survey_multiselect');
-        $field = new xmldb_field('shownrows', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');
+        $field = new xmldb_field('heightinrows', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');
 
-        // Conditionally launch add field shownrows.
+        // Conditionally launch add field heightinrows.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }

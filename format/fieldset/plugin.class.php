@@ -132,6 +132,7 @@ class surveyformat_fieldset extends surveyitem_base {
         // multilang save support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
         $fieldlist = array('fslabel'); // built-in label index
+        $record->fslabel = substr($record->fslabel, 0, 128); // 128 is maximum allowed length I can save
         $this->item_builtin_string_save_support($record, $fieldlist);
 
         // Do parent item saving stuff here (surveyitem_base::item_save($record)))

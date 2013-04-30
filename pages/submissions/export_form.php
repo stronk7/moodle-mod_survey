@@ -33,7 +33,7 @@ class survey_exportform extends moodleform {
         if ($this->_customdata->saveresume) {
             $options = array(SURVEY_STATUSCLOSED => get_string('statusclosed'    , 'survey'),
                              SURVEY_STATUSINPROGRESS => get_string('statusinprogress', 'survey'),
-                             SURVEY_STATUSBOTH => get_string('statusboth'      , 'survey'));
+                             SURVEY_STATUSALL => get_string('statusboth'      , 'survey'));
             $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
         } else {
             $mform->addElement('hidden', $fieldname, SURVEY_STATUSCLOSED);

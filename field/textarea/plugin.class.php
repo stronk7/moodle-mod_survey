@@ -351,10 +351,10 @@ class surveyfield_textarea extends surveyitem_base {
             }
         }
 
-        if ( !is_null($this->maxlength) && (strlen($data[$fieldname]) > $this->maxlength) ) {
+        if ( !is_null($this->maxlength) && (strlen($data[$fieldname]['text']) > $this->maxlength) ) {
             $errors[$errorkey] = get_string('texttoolong', 'surveyfield_textarea');
         }
-        if (strlen($data[$fieldname] < $this->minlength)) {
+        if (strlen($data[$fieldname]['text']) < $this->minlength) {
             $errors[$errorkey] = get_string('texttooshort', 'surveyfield_textarea');
         }
     }
@@ -419,7 +419,7 @@ class surveyfield_textarea extends surveyitem_base {
         $prefill = array();
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            if (!empty($olduserdata->content)) {
+            if (isset($olduserdata->content)) {
                 if (!empty($this->useeditor)) {
                     $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'context' => $this->context);
                     $olduserdata->contentformat = FORMAT_HTML;

@@ -77,6 +77,15 @@ if ($currentpage == SURVEY_SUBMISSION_NEW) {
 // ////////////////////////////
 
 // ////////////////////////////
+// display an alert to explain why buttons are missing
+if ($currentpage == SURVEY_SUBMISSION_EXPLORE) {
+    $exploremodestring = get_string('exploremode', 'survey');
+    echo $OUTPUT->heading($exploremodestring, 2);
+}
+// end of: display an alert to explain why buttons are missing
+// ////////////////////////////
+
+// ////////////////////////////
 // silly orientation text for the user
 // $lastformpage has been defined in beforepage.php
 if ($lastformpage > 1) {
@@ -112,3 +121,6 @@ $prefill['formpage'] = empty($formpage) ? $lastformpage : $formpage; // go to po
 
 $mform->set_data($prefill);
 $mform->display();
+if ($currentpage == SURVEY_SUBMISSION_EXPLORE) {
+    echo $OUTPUT->heading($exploremodestring, 2);
+}

@@ -282,7 +282,7 @@ class surveyitem_baseform extends moodleform {
                     $star = ($record->basicform == SURVEY_NOTPRESENT) ? '(*) ' : '';
                     $thiscontent = survey_get_sid_field_content($record);
 
-                    $content = $star.get_string('pluginname', 'surveyfield_'.$record->plugin).': '.strip_tags($thiscontent);
+                    $content = $star.get_string('pluginname', 'surveyfield_'.$record->plugin).' ['.$record->sortindex.']: '.strip_tags($thiscontent);
                     if (strlen($content) > $maxlength) {
                         $content = substr($content, 0, $maxlength);
                     }
@@ -402,6 +402,8 @@ class surveyitem_baseform extends moodleform {
             if ( (($parentbasicform == SURVEY_NOTPRESENT) && ($childbasicform != SURVEY_NOTPRESENT)) ||
                  (($parentbasicform != SURVEY_NOTPRESENT) && ($childbasicform == SURVEY_NOTPRESENT)) ) {
                 $a = ($parentbasicform == SURVEY_NOTPRESENT) ? get_string('isnotinbasicform', 'survey') : get_string('isinbasicform', 'survey');
+                echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
+                echo '$a = '.$a.'<br />';
                 $errors['basicform'] = get_string('differentbasicform', 'survey', $a);
             }
         }

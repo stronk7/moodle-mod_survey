@@ -59,7 +59,7 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'options';
         $mform->addElement('textarea', $fieldname, get_string($fieldname, 'surveyfield_checkbox'), array('wrap' => 'virtual', 'rows' => '10', 'cols' => '65'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_checkbox');
-        $mform->addRule($fieldname, get_string($fieldname.'_err', 'surveyfield_checkbox'), 'required', null, 'client');
+        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_TEXT);
 
         // ----------------------------------------
@@ -103,7 +103,7 @@ class survey_pluginform extends surveyitem_baseform {
         $clean_defaultvalue = survey_textarea_to_array($data['defaultvalue']);
         $clean_labelother = trim($data['labelother']);
 
-        // costruisco il vettore $value ($label non mi interessa) a partire da $clean_options e $clean_labelother
+        // build $value array (I do not care about $label) starting from $clean_options and $clean_labelother
         $values = array();
 
         foreach ($clean_options as $option) {
@@ -144,11 +144,26 @@ class survey_pluginform extends surveyitem_baseform {
         // //////////////////////////////////////////////////////////////////////////////////////
         $array_unique = array_unique($clean_options);
         if (count($clean_options) != count($array_unique)) {
-            $errors['options'] = get_string('options_err', 'surveyfield_checkbox', $default);
+            $errors['options'] = get_string('optionsduplicated_err', 'surveyfield_checkbox', $default);
         }
         $array_unique = array_unique($clean_defaultvalue);
         if (count($clean_defaultvalue) != count($array_unique)) {
             $errors['defaultvalue'] = get_string('defaultvalue_err', 'surveyfield_checkbox', $default);
+        }
+
+        // //////////////////////////////////////////////////////////////////////////////////////
+        // third check
+        // SURVEY_DBMULTIVALUESEPARATOR can not be contained into values
+        // //////////////////////////////////////////////////////////////////////////////////////
+        foreach ($values as $value) {
+            if (strpos($value, SURVEY_DBMULTIVALUESEPARATOR) !== false) {
+                if (!empty($clean_labelother) && ($value == end($values))) { // if $value is the last
+                    $errors['labelother'] = get_string('optionswithseparator_err', 'surveyfield_checkbox', SURVEY_DBMULTIVALUESEPARATOR);
+                } else {
+                    $errors['options'] = get_string('optionswithseparator_err', 'surveyfield_checkbox', SURVEY_DBMULTIVALUESEPARATOR);
+                }
+                break;
+            }
         }
 
 // print_object($errors);

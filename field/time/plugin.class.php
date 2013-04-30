@@ -529,7 +529,7 @@ class surveyfield_time extends surveyitem_base {
         $prefill = array();
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            if (!empty($olduserdata->content)) {
+            if (isset($olduserdata->content)) {
                 if ($olduserdata->content == SURVEY_NOANSWERVALUE) {
                     $prefill[$this->itemname.'_noanswer'] = 1;
                 } else {

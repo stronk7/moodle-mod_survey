@@ -66,9 +66,9 @@ class surveyfield_multiselect extends surveyitem_base {
     public $defaultvalue = '';
 
     /*
-     * $shownrows = the height of the multiselect in rows
+     * $heightinrows = the height of the multiselect in rows
      */
-    public $shownrows = 3;
+    public $heightinrows = 4;
 
     /*
      * $flag = features describing the object
@@ -234,7 +234,7 @@ class surveyfield_multiselect extends surveyitem_base {
         $valuelabel = $this->item_get_value_label_array('options');
         $defaults = $this->item_get_one_word_per_row('defaultvalue');
 
-        $select = $mform->addElement('select', $this->itemname, $elementlabel, $valuelabel, array('size' => $this->shownrows));
+        $select = $mform->addElement('select', $this->itemname, $elementlabel, $valuelabel, array('size' => $this->heightinrows));
         $select->setMultiple(true);
         if ($defaults) {
             $mform->setDefault($this->itemname, $defaults);
@@ -405,7 +405,7 @@ class surveyfield_multiselect extends surveyitem_base {
         $prefill = array();
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            if (!empty($olduserdata->content)) {
+            if (isset($olduserdata->content)) {
                 $preset = explode(SURVEY_DBMULTIVALUESEPARATOR, $olduserdata->content);
                 $prefill[$this->itemname] = $preset;
             }

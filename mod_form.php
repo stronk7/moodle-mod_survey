@@ -37,7 +37,7 @@ class mod_survey_mod_form extends moodleform_mod {
         } else {
             $mform->setType($fieldname, PARAM_CLEANHTML);
         }
-        $mform->addRule($fieldname, null, 'required', null, 'client');
+        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->addRule($fieldname, get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton($fieldname, 'surveyname', 'survey');
 

@@ -1165,7 +1165,7 @@ function survey_export($cm, $fromform, $survey) {
     if ($fromform->basicform == SURVEY_FILLONLY) {
         $richsubmissionssql .= ' AND si.basicform <> '.SURVEY_NOTPRESENT;
     }
-    if ($fromform->status != SURVEY_STATUSBOTH) {
+    if ($fromform->status != SURVEY_STATUSALL) {
         $richsubmissionssql .= ' AND s.status = :status';
         $params['status'] = $fromform->status;
     }
@@ -1944,8 +1944,9 @@ function survey_drop_unexpected_values(&$fromform) {
             continue;
         }
 
+        // if my parent is already in $disposelist, I have to go to $disposelist FOR SURE
         if (in_array($childitem->parentid, $disposelist)) {
-            $disposelist[] = $childitem->id;
+            $disposelist[] = $childitem->itemid;
             continue;
         }
 

@@ -59,7 +59,7 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'options';
         $mform->addElement('textarea', $fieldname, get_string($fieldname, 'surveyfield_radiobutton'), array('wrap' => 'virtual', 'rows' => '10', 'cols' => '65'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_radiobutton');
-        $mform->addRule($fieldname, get_string($fieldname.'_err', 'surveyfield_radiobutton'), 'required', null, 'client');
+        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_TEXT);
 
         // ----------------------------------------

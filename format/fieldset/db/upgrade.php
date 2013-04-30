@@ -34,6 +34,20 @@ function xmldb_surveyformat_fieldset_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    if ($oldversion < 2013042901) {
+
+        // Changing precision of field fslabel on table survey_fieldset to 128.
+        $table = new xmldb_table('survey_fieldset');
+        $field = new xmldb_field('fslabel', XMLDB_TYPE_CHAR, '128', null, null, null, null, 'fslabel_sid');
+
+        // Launch change of precision for field fslabel.
+        $dbman->change_field_precision($table, $field);
+
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013042901, 'surveyformat_fieldset', 'survey');
+    }
+
     return true;
 }
 

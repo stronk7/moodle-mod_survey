@@ -59,7 +59,7 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'options';
         $mform->addElement('textarea', $fieldname, get_string($fieldname, 'surveyfield_select'), array('wrap' => 'virtual', 'rows' => '10', 'cols' => '65'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_select');
-        $mform->addRule($fieldname, get_string($fieldname.'_err', 'surveyfield_select'), 'required', null, 'client');
+        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_TEXT);
 
         // ----------------------------------------
@@ -68,7 +68,6 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'labelother';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_select'), array('maxlength' => '64', 'size' => '50'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_select');
-        // $mform->addRule($fieldname, get_string($fieldname.'_err', 'surveyfield_select'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_TEXT);
 
         // ----------------------------------------

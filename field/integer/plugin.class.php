@@ -440,7 +440,7 @@ class surveyfield_integer extends surveyitem_base {
         $prefill = array();
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            if (!empty($olduserdata->content)) {
+            if (isset($olduserdata->content)) {
                 $prefill[$this->itemname] = $olduserdata->content;
             // } else {
                 // nothing was set

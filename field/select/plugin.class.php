@@ -451,7 +451,7 @@ class surveyfield_select extends surveyitem_base {
         $prefill = array();
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            if (!empty($olduserdata->content)) {
+            if (isset($olduserdata->content)) {
                 $valuelabel = $this->item_get_value_label_array('options');
                 if (array_key_exists($olduserdata->content, $valuelabel)) {
                     $prefill[$this->itemname] = $olduserdata->content;
@@ -463,7 +463,7 @@ class surveyfield_select extends surveyitem_base {
             } else {
                 // nothing was set
                 // do not accept defaults but overwrite them
-                // Ma se questa è una select, come può essere empty($olduserdata->content)? Ho selezionato la voce "Not answering"
+                // but... if this is a select, how can it be empty($olduserdata->content)? Because user selected "Not answering"
                 $prefill[$this->itemname] = '';
             }
         } // else use item defaults

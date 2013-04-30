@@ -53,7 +53,7 @@ class survey_pluginform extends surveyitem_baseform {
         // newitem::content
         // ----------------------------------------
         $fieldname = 'fslabel';
-        $mform->addElement('text', $fieldname, get_string('fieldsetname', 'surveyformat_fieldset'));
+        $mform->addElement('text', $fieldname, get_string('fieldsetname', 'surveyformat_fieldset'), array('maxlength' => '64', 'size' => '50'));
         $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->addHelpButton($fieldname, 'fieldsetname', 'surveyformat_fieldset');
         $mform->setType($fieldname, PARAM_TEXT);
