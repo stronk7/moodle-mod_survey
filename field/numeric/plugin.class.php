@@ -383,7 +383,9 @@ class surveyfield_numeric extends surveyitem_base {
         $mform->setType($this->itemname, PARAM_RAW); // see: moodlelib.php lines 133+
         if (!$searchform) {
             $decimalseparator = get_string('decsep', 'langconfig');
-            $mform->setDefault($this->itemname, number_format((double)$this->defaultvalue, $this->decimals, $decimalseparator, ''));
+            if (is_numeric($this->defaultvalue)) {
+                $mform->setDefault($this->itemname, number_format((double)$this->defaultvalue, $this->decimals, $decimalseparator, ''));
+            }
 
             if ($this->required) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:

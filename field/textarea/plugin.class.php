@@ -58,12 +58,12 @@ class surveyfield_textarea extends surveyitem_base {
     /*
      * $arearows = number or rows of the text area?
      */
-    public $arearows = 0;
+    public $arearows = 60;
 
     /*
      * $areacols = number or columns of the text area?
      */
-    public $areacols = 0;
+    public $areacols = 10;
 
     /*
      * $minlength = the minimum allowed text length
@@ -303,7 +303,7 @@ class surveyfield_textarea extends surveyitem_base {
         } else {
             $fieldname = $this->itemname;
             $textareaoptions = array('maxfiles' => 0, 'maxbytes' => 0, 'trusttext' => false);
-            $mform->addElement('textarea', $fieldname, $this->content, array('wrap' => 'virtual', 'rows' => $this->arearows, 'cols' => $this->areacols, 'class' => 'smalltext'));
+            $mform->addElement('textarea', $fieldname, $elementlabel, array('wrap' => 'virtual', 'rows' => $this->arearows, 'cols' => $this->areacols, 'class' => 'smalltext'));
             $mform->setType($fieldname, PARAM_TEXT);
         }
 

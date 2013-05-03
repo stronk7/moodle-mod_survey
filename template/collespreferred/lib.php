@@ -42,7 +42,7 @@ function surveytemplate_collespreferred_add() {
     // ////////////// SURVEY_ITEM
     $si_fields = array('surveyid'      , 'type'            , 'plugin'          , 'externalname' ,
                        'content_sid'   , 'content'         , 'contentformat'   , 'customnumber' ,
-                       'extrarow'      , 'softinfo'        , 'required'        , 'fieldname'    ,
+                       'extrarow'      , 'softinfo'        , 'hidehardinfo'    , 'required'     , 'fieldname',
                        'indent'        , 'basicform'       , 'advancedsearch'  , 'hide'         ,
                        'sortindex'     , 'basicformpage'   , 'advancedformpage', 'parentid'     ,
                        'parentcontent' , 'parentvalue'     , 'timecreated'     , 'timemodified');
@@ -92,7 +92,7 @@ function surveytemplate_collespreferred_add() {
     $content_sid++;
     $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
-                    0, '', null, null,
+                    0, '', 0, null, null,
                     0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
                     $sortindex, 1, 1, null,
                     null, null, $timenow, null);
@@ -120,7 +120,7 @@ function surveytemplate_collespreferred_add() {
         // $content_sid++; content_sid is not supposed to grow for fieldset
         $values = array(0, SURVEY_TYPEFORMAT, 'fieldset', $externalname,
                         null, null, FORMAT_HTML, null,
-                        0, '', null, null,
+                        0, '', 0, null, null,
                         0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
                         $sortindex, 1, 1, null,
                         null, null, $timenow, null);
@@ -144,7 +144,7 @@ function surveytemplate_collespreferred_add() {
         //                 and I gat the string for label always from content00
         $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
                         0, null, FORMAT_HTML, null,
-                        0, '', null, null,
+                        0, '', 0, null, null,
                         0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
                         $sortindex, 1, 1, null,
                         null, null, $timenow, null);
@@ -169,7 +169,7 @@ function surveytemplate_collespreferred_add() {
             $content_sid++;
             $values = array(0, SURVEY_TYPEFIELD, 'radiobutton', $externalname,
                             $content_sid, null, FORMAT_HTML, null,
-                            0, '', SURVEY_REQUIREDITEM, null,
+                            0, '', 0, SURVEY_REQUIREDITEM, null,
                             0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
                             $sortindex, 1, 1, null,
                             null, null, $timenow, null);
@@ -198,7 +198,7 @@ function surveytemplate_collespreferred_add() {
     $content_sid++;
     $values = array(0, SURVEY_TYPEFIELD, 'select', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
-                    0, '', SURVEY_REQUIREDITEM, null,
+                    0, '', 0, SURVEY_REQUIREDITEM, null,
                     0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
                     $sortindex, 1, 1, null,
                     null, null, $timenow, null);
@@ -225,7 +225,7 @@ function surveytemplate_collespreferred_add() {
     $content_sid++;
     $values = array(0, SURVEY_TYPEFIELD, 'textarea', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
-                    0, '', SURVEY_OPTIONALITEM, null,
+                    0, '', 0, SURVEY_OPTIONALITEM, null,
                     0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
                     $sortindex, 1, 1, null,
                     null, null, $timenow, null);

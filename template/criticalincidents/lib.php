@@ -42,7 +42,7 @@ function surveytemplate_criticalincidents_add() {
     // ////////////// SURVEY_ITEM
     $si_fields = array('surveyid'      , 'type'            , 'plugin'          , 'externalname' ,
                        'content_sid'   , 'content'         , 'contentformat'   , 'customnumber' ,
-                       'extrarow'      , 'softinfo'        , 'required'        , 'fieldname'    ,
+                       'extrarow'      , 'softinfo'        , 'hidehardinfo'    , 'required'     , 'fieldname',
                        'indent'        , 'basicform'       , 'advancedsearch'  , 'hide'         ,
                        'sortindex'     , 'basicformpage'   , 'advancedformpage', 'parentid'     ,
                        'parentcontent' , 'parentvalue'     , 'timecreated'     , 'timemodified');
@@ -72,7 +72,7 @@ function surveytemplate_criticalincidents_add() {
     $content_sid++;
     $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
-                    0, '', null, null,
+                    0, '', 0, null, null,
                     0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
                     $sortindex, 1, 1, null,
                     null, null, $timenow, null);
@@ -96,7 +96,7 @@ function surveytemplate_criticalincidents_add() {
         $content_sid++;
         $values = array(0, SURVEY_TYPEFIELD, 'textarea', $externalname,
                         $content_sid, null, FORMAT_HTML, null,
-                        0, '', SURVEY_REQUIREDITEM, null,
+                        0, '', 0, SURVEY_REQUIREDITEM, null,
                         0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
                         $sortindex, 1, 1, null,
                         null, null, $timenow, null);

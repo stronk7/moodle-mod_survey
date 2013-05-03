@@ -56,5 +56,20 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012112101, 'survey');
     }
 
+    if ($oldversion < 2013050301) {
+
+        // Define field hidehardinfo to be added to survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('hidehardinfo', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'required');
+
+        // Conditionally launch add field hidehardinfo.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013050301, 'survey');
+    }
+
     return true;
 }

@@ -135,6 +135,16 @@ class surveyitem_baseform extends moodleform {
         }
 
         // ----------------------------------------
+        // newitem::hidehardinfo
+        // ----------------------------------------
+        $fieldname = 'hidehardinfo';
+        if ($forceextrarow = $item->item_form_requires[$fieldname]) {
+            $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
+            $mform->addHelpButton($fieldname, $fieldname, 'survey');
+            $mform->setType($fieldname, PARAM_INT);
+        }
+
+        // ----------------------------------------
         // newitem::customnumber
         // ----------------------------------------
         $fieldname = 'customnumber';

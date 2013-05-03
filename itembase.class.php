@@ -109,6 +109,11 @@ class surveyitem_base {
     public $required = 0;
 
     /*
+     * $hidehardinfo = boolean. Exceptionally hide hard info
+     */
+    public $hidehardinfo = 0;
+
+    /*
      * $fieldname = the name of the field storing data in the db table
      */
     public $fieldname = '';
@@ -196,6 +201,7 @@ class surveyitem_base {
         'customnumber' => true,
         'extrarow' => true,
         'softinfo' => true,
+        'hidehardinfo' => true,
         'required' => true,
         'fieldname' => true,
         'indent' => true,
@@ -280,6 +286,9 @@ class surveyitem_base {
 
         // extrarow
         // $record->extrarow = (isset($record->extrarow)) ? 1 : 0; // extrarow is advcheckbox so doesn't need my intervention
+
+        // hidehardinfo
+        $record->hidehardinfo = (isset($record->hidehardinfo)) ? 1 : 0;
 
         // hide
         // hide/regular part 1
@@ -554,14 +563,30 @@ class surveyitem_base {
         global $CFG;
 
         if (!$searchform) {
-            $hardinfo = $this->item_get_hard_info();
-            $softinfo = (isset($this->softinfo)) ? strip_tags($this->softinfo) : '';
+            if (!$this->hidehardinfo) {
+               $hardinfo = $this->item_get_hard_info();
+            }
+            if (isset($this->softinfo)) {
+                $softinfo = strip_tags($this->softinfo);
+            }
         } else {
-            $hardinfo = ($CFG->survey_hardinfoinsearch) ? $this->item_get_hard_info() : '';
-            $softinfo = ($CFG->survey_softinfoinsearch) ? strip_tags($this->softinfo) : '';
+            if ($CFG->survey_hardinfoinsearch) {
+                $hardinfo = $this->item_get_hard_info();
+            }
+            if ($CFG->survey_softinfoinsearch) {
+                $softinfo = strip_tags($this->softinfo);
+            }
         }
-        $separator = ($hardinfo && $softinfo) ? '<br />' : '';
-        return ($hardinfo.$separator.$softinfo);
+        if (isset($hardinfo) && $hardinfo && isset($softinfo) && $softinfo) {
+            return ($hardinfo.'<br />'.$softinfo);
+        } else {
+            if (isset($hardinfo) && $hardinfo) {
+                return $hardinfo;
+            }
+            if (isset($softinfo) && $softinfo) {
+                return $softinfo;
+            }
+        }
     }
 
     /*
