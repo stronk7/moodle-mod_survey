@@ -88,6 +88,18 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setType($fieldname, PARAM_INT);
         $mform->setDefault($fieldname, SURVEY_VERTICAL);
 
+        // ----------------------------------------
+        // newitem::returnvalue
+        // ----------------------------------------
+        $fieldname = 'returnvalue';
+        $elementgroup = array();
+        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('returnselection', 'surveyfield_checkbox'), SURVEYFIELD_CHECKBOX_RETURNSELECTION);
+        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('returnposition', 'surveyfield_checkbox'), SURVEYFIELD_CHECKBOX_RETURNPOSITION);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_checkbox'), '<br />');
+        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_checkbox');
+        $mform->setType($fieldname, PARAM_INT);
+        $mform->setDefault($fieldname, SURVEYFIELD_CHECKBOX_RETURNSELECTION);
+
         $this->add_item_buttons();
     }
 

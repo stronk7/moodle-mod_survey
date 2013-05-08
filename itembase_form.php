@@ -125,9 +125,9 @@ class surveyitem_baseform extends moodleform {
         }
 
         // ----------------------------------------
-        // newitem::softinfo
+        // newitem::extranote
         // ----------------------------------------
-        $fieldname = 'softinfo';
+        $fieldname = 'extranote';
         if ($item->item_form_requires[$fieldname]) {
             $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'), array('class' => 'longfield'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
@@ -135,9 +135,9 @@ class surveyitem_baseform extends moodleform {
         }
 
         // ----------------------------------------
-        // newitem::hidehardinfo
+        // newitem::hideinstructions
         // ----------------------------------------
-        $fieldname = 'hidehardinfo';
+        $fieldname = 'hideinstructions';
         if ($forceextrarow = $item->item_form_requires[$fieldname]) {
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');

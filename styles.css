@@ -5,64 +5,81 @@
 
 /* surveyfields */
 #page-mod-survey-view table#manageitems,
+#page-mod-survey-view table#sortitems,
 #page-mod-survey-view table#managetemplates {
     width:100%;
 }
 
-#page-mod-survey-view table#manageitems .plugin {
+#page-mod-survey-view table#manageitems .plugin,
+#page-mod-survey-view table#sortitems .plugin {
     padding:0.5em;
     text-align:center;
 }
 
-#page-mod-survey-view table#manageitems .sortindex {
+#page-mod-survey-view table#sortitems .plugin {
+    width:90px;
+}
+
+#page-mod-survey-view table#manageitems .sortindex,
+#page-mod-survey-view table#sortitems .sortindex {
     padding:0.5em;
     text-align:right;
     min-width:2.5em;
 }
 
-#page-mod-survey-view table#manageitems .parentitem {
+#page-mod-survey-view table#manageitems .parentitem,
+#page-mod-survey-view table#sortitems .parentitem {
     padding:0.5em;
     text-align:left;
     white-space:nowrap;
 }
 
 #page-mod-survey-view table#manageitems .uavailability,
-#page-mod-survey-view table#manageitems .mavailability {
+#page-mod-survey-view table#manageitems .mavailability,
+#page-mod-survey-view table#sortitems .uavailability,
+#page-mod-survey-view table#sortitems .mavailability {
     padding:0.5em;
     text-align:center;
     white-space:nowrap;
 }
 
-#page-mod-survey-view table#manageitems .basicformpage {
+#page-mod-survey-view table#manageitems .basicformpage,
+#page-mod-survey-view table#sortitems .basicformpage {
     padding:0.5em;
     white-space:nowrap;
     text-align:center;
 }
 
-#page-mod-survey-view table#manageitems .content {
+#page-mod-survey-view table#manageitems .content,
+#page-mod-survey-view table#sortitems .content {
     padding:0.5em;
 }
 
-#page-mod-survey-view table#manageitems .customnumber {
-    padding:0.5em;
-    white-space:nowrap;
-}
-
-#page-mod-survey-view table#manageitems .actions {
+#page-mod-survey-view table#manageitems .customnumber ,
+#page-mod-survey-view table#sortitems .customnumber {
     padding:0.5em;
     white-space:nowrap;
 }
 
-#page-mod-survey-view table#manageitems img.movetarget {
+#page-mod-survey-view table#manageitems .actions,
+#page-mod-survey-view table#sortitems .actions {
+    padding:0.5em;
+    white-space:nowrap;
+}
+
+#page-mod-survey-view table#manageitems img.movetarget,
+#page-mod-survey-view table#sortitems img.movetarget {
     height:16px;
     width:80px;
 }
 
-#page-mod-survey-view table#manageitems .header {
+#page-mod-survey-view table#manageitems .header,
+#page-mod-survey-view table#sortitems .header {
     text-align:center;
 }
 
 #page-mod-survey-view table#manageitems .dimmed,
+#page-mod-survey-view table#sortitems .dimmed,
 #page-mod-survey-view table#validaterelations .dimmed {
     color:#CDCDCD;
 }

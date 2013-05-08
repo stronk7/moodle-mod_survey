@@ -112,7 +112,7 @@ class surveyformat_label extends surveyitem_base {
         // $this->item_form_requires['content_editor'] = false;
         $this->item_form_requires['customnumber'] = false;
         $this->item_form_requires['extrarow'] = false;
-        $this->item_form_requires['softinfo'] = false;
+        $this->item_form_requires['extranote'] = false;
         $this->item_form_requires['required'] = false;
         $this->item_form_requires['fieldname'] = false;
         $this->item_form_requires['indent'] = false;

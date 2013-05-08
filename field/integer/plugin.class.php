@@ -211,11 +211,11 @@ class surveyfield_integer extends surveyitem_base {
     }
 
     /*
-     * item_get_hard_info
+     * item_get_filling_instructions
      * @param
      * @return
      */
-    public function item_get_hard_info() {
+    public function item_get_filling_instructions() {
 
         $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
 
@@ -243,18 +243,18 @@ class surveyfield_integer extends surveyitem_base {
         }
 
         if ($haslowerbound && $hasupperbound) {
-            $hardinfo = get_string('restriction_lowerupper', 'surveyfield_integer', $a);
+            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_integer', $a);
         } else {
-            $hardinfo = '';
+            $fillinginstruction = '';
             if ($haslowerbound) {
-                $hardinfo = get_string('restriction_lower', 'surveyfield_integer', $a);
+                $fillinginstruction = get_string('restriction_lower', 'surveyfield_integer', $a);
             }
             if ($hasupperbound) {
-                $hardinfo = get_string('restriction_upper', 'surveyfield_integer', $a);
+                $fillinginstruction = get_string('restriction_upper', 'surveyfield_integer', $a);
             }
         }
 
-        return $hardinfo;
+        return $fillinginstruction;
     }
 
     /*

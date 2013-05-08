@@ -175,6 +175,7 @@ switch ($currenttab) {
                     // if "pause" button has been pressed, redirect
                     $pausebutton = (isset($fromform->pausebutton) && ($fromform->pausebutton));
                     if ($pausebutton) {
+                        $paramurl['pag'] = SURVEY_SUBMISSION_MANAGE;
                         $redirecturl = new moodle_url('view.php', $paramurl);
                         redirect($redirecturl); // -> go somewhere
                         die; // <-- never reached

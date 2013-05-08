@@ -34,11 +34,20 @@ function xmldb_surveyfield_checkbox_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // if ($oldversion < 2012101103) {
+    if ($oldversion < 2013050801) {
 
-        // survey savepoint reached
-    //    upgrade_plugin_savepoint(true, 2012062560, 'surveyfield_checkbox', 'survey');
-    // }
+        // Define field returnvalue to be added to survey_checkbox.
+        $table = new xmldb_table('survey_checkbox');
+        $field = new xmldb_field('returnvalue', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'adjustment');
+
+        // Conditionally launch add field returnvalue.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013050801, 'surveyfield_checkbox', 'survey');
+    }
 
     return true;
 }

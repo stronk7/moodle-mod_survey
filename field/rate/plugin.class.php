@@ -112,6 +112,7 @@ class surveyfield_rate extends surveyitem_base {
         // item_form_requires['extrarow'] = true: show extrarow checkbox
         // item_form_requires['extrarow'] = false: do not show extrarow checkbox
         // item_form_requires['extrarow'] = 'disable': disable the extrarow checkbox
+        $this->item_form_requires['hideinstructions'] = false;
         $this->item_form_requires['extrarow'] = 'disable'; // show the checkbox
 
         if (!empty($itemid)) {
@@ -267,19 +268,19 @@ class surveyfield_rate extends surveyitem_base {
     }
 
     /*
-     * item_get_hard_info
+     * item_get_filling_instructions
      * @param
      * @return
      */
-    public function item_get_hard_info() {
+    public function item_get_filling_instructions() {
 
         if (!empty($this->forcedifferentrates)) {
-            $hardinfo = get_string('diffratesrequired', 'surveyfield_rate');
+            $fillinginstruction = get_string('diffratesrequired', 'surveyfield_rate');
         } else {
-            $hardinfo = '';
+            $fillinginstruction = '';
         }
 
-        return $hardinfo;
+        return $fillinginstruction;
     }
 
     /*

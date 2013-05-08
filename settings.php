@@ -32,11 +32,11 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('survey_maxinputdelay', get_string('maxinputdelay', 'survey'),
                        get_string('maxinputdelay_descr', 'survey'), 168, PARAM_INT)); // alias: 7*24 hours == 1 week
 
-    $settings->add(new admin_setting_configcheckbox('survey_softinfoinsearch', get_string('softinfoinsearch', 'survey'),
-                       get_string('softinfoinsearch_descr', 'survey'), 0));
+    $settings->add(new admin_setting_configcheckbox('survey_extranoteinsearch', get_string('extranoteinsearch', 'survey'),
+                       get_string('extranoteinsearch_descr', 'survey'), 0));
 
-    $settings->add(new admin_setting_configcheckbox('survey_hardinfoinsearch', get_string('hardinfoinsearch', 'survey'),
-                       get_string('hardinfoinsearch_descr', 'survey'), 1));
+    $settings->add(new admin_setting_configcheckbox('survey_fillinginstructioninsearch', get_string('fillinginstructioninsearch', 'survey'),
+                       get_string('fillinginstructioninsearch_descr', 'survey'), 1));
 
     $settings->add(new admin_setting_configcheckbox('survey_useadvancedpermissions', get_string('useadvancedpermissions', 'survey'),
                        get_string('useadvancedpermissions_descr', 'survey'), 0));

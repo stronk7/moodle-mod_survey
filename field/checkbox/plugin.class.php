@@ -103,6 +103,8 @@ class surveyfield_checkbox extends surveyitem_base {
         $this->flag->couldbeparent = true;
         $this->flag->useplugintable = true;
 
+        $this->item_form_requires['hideinstructions'] = false;
+
         if (!empty($itemid)) {
             $this->item_load($itemid);
         }
@@ -498,14 +500,27 @@ class surveyfield_checkbox extends surveyitem_base {
         $return = array();
         $options = $this->item_complete_option_array();
 
-        foreach ($options as $value => $label) {
-            if (isset($itemdetail["$i"])) {
-                $return[] = $value;
+        if ($this->returnvalue == SURVEYFIELD_CHECKBOX_RETURNSELECTION) {
+            foreach ($options as $value => $label) {
+                if (isset($itemdetail["$i"])) {
+                    $return[] = $value;
+                }
+                $i++;
             }
-            $i++;
-        }
-        if (isset($itemdetail['other'])) {
-            $return[] = $itemdetail['text'];
+            if (isset($itemdetail['other'])) {
+                $return[] = $itemdetail['text'];
+            }
+        } else { // SURVEYFIELD_CHECKBOX_RETURNPOSITION
+            foreach ($options as $value => $label) {
+                if (isset($itemdetail["$i"])) {
+                    // if ($value === $label) => $value has not been defined
+                    $return[] = ($value === $label) ? '1' : $value;
+                } else {
+                    $return[] = '0';
+                }
+                $i++;
+            }
+            $return[] = isset($itemdetail['other']) ? $itemdetail['other'] : '0';
         }
 
         if (empty($return)) {
@@ -548,12 +563,29 @@ class surveyfield_checkbox extends surveyitem_base {
                 // something was set
                 $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $olduserdata->content);
 
-                foreach ($answers as $answer) {
-                    $checkboxindex = array_search($answer, $valuelabel);
-                    if ($checkboxindex !== false) {
-                        $uniqueid = $this->itemname.'_'.$checkboxindex;
-                        $prefill[$uniqueid] = 1;
-                    } else {
+                if ($this->returnvalue == SURVEYFIELD_CHECKBOX_RETURNSELECTION) {
+                    foreach ($answers as $answer) {
+                        $checkboxindex = array_search($answer, $valuelabel);
+                        if ($checkboxindex !== false) {
+                            $uniqueid = $this->itemname.'_'.$checkboxindex;
+                            $prefill[$uniqueid] = 1;
+                        } else {
+                            $prefill[$this->itemname.'_other'] = 1;
+                            $prefill[$this->itemname.'_text'] = $answer;
+                        }
+                    }
+                } else { // SURVEYFIELD_CHECKBOX_RETURNPOSITION
+                    // here $answers is an array like: array(1,1,0,0,'dummytext')
+                    $checkboxindex = 0;
+                    foreach ($answers as $answer) {
+                        if ($answer == 1) {
+                            $uniqueid = $this->itemname.'_'.$checkboxindex;
+                            $prefill[$uniqueid] = 1;
+                        }
+                        $checkboxindex++;
+                    }
+                    if (count($answers) > count($valuelabel)) { // othervalue has been typed in
+                        $answer = end($answers); // probably useless
                         $prefill[$this->itemname.'_other'] = 1;
                         $prefill[$this->itemname.'_text'] = $answer;
                     }

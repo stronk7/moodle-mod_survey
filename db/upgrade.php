@@ -58,17 +58,30 @@ function xmldb_survey_upgrade($oldversion) {
 
     if ($oldversion < 2013050301) {
 
-        // Define field hidehardinfo to be added to survey_item.
+        // Define field hideinstructions to be added to survey_item.
         $table = new xmldb_table('survey_item');
-        $field = new xmldb_field('hidehardinfo', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'required');
+        $field = new xmldb_field('hideinstructions', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'required');
 
-        // Conditionally launch add field hidehardinfo.
+        // Conditionally launch add field hideinstructions.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
         // Survey savepoint reached.
         upgrade_mod_savepoint(true, 2013050301, 'survey');
+    }
+
+    if ($oldversion < 2013050802) {
+
+        // Rename field softinfo on table survey_item to extranote.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('softinfo', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'extrarow');
+
+        // Launch rename field softinfo.
+        $dbman->rename_field($table, $field, 'extranote');
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013050802, 'survey');
     }
 
     return true;

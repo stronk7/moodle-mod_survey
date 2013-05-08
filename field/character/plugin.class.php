@@ -246,11 +246,11 @@ class surveyfield_character extends surveyitem_base {
     }
 
     /*
-     * item_get_hard_info
+     * item_get_filling_instructions
      * @param
      * @return
      */
-    public function item_get_hard_info() {
+    public function item_get_filling_instructions() {
 
         if (is_null($this->pattern)) {
             if ($this->minlength) {
@@ -258,33 +258,33 @@ class surveyfield_character extends surveyitem_base {
                     $a = new stdClass();
                     $a->minlength = $this->minlength;
                     $a->maxlength = $this->maxlength;
-                    $hardinfo = get_string('restrictions_minmax', 'surveyfield_character', $a);
+                    $fillinginstruction = get_string('restrictions_minmax', 'surveyfield_character', $a);
                 } else {
                     $a = $this->minlength;
-                    $hardinfo = get_string('restrictions_min', 'surveyfield_character', $a);
+                    $fillinginstruction = get_string('restrictions_min', 'surveyfield_character', $a);
                 }
             } else {
                 if ($this->maxlength) {
                     $a = $this->maxlength;
-                    $hardinfo = get_string('restrictions_max', 'surveyfield_character', $a);
+                    $fillinginstruction = get_string('restrictions_max', 'surveyfield_character', $a);
                 } else {
-                    $hardinfo = '';
+                    $fillinginstruction = '';
                 }
             }
         } else {
             switch ($this->pattern) {
                 case SURVEYFIELD_CHARACTER_EMAILPATTERN:
-                    $hardinfo = get_string('restrictions_email', 'surveyfield_character');
+                    $fillinginstruction = get_string('restrictions_email', 'surveyfield_character');
                     break;
                 case SURVEYFIELD_CHARACTER_URLPATTERN:
-                    $hardinfo = get_string('restrictions_url', 'surveyfield_character');
+                    $fillinginstruction = get_string('restrictions_url', 'surveyfield_character');
                     break;
                 default:
-                    $hardinfo = get_string('restrictions_custom', 'surveyfield_character', $this->pattern_text);
+                    $fillinginstruction = get_string('restrictions_custom', 'surveyfield_character', $this->pattern_text);
             }
         }
 
-        return $hardinfo;
+        return $fillinginstruction;
     }
 
     /*

@@ -99,9 +99,9 @@ class surveyitem_base {
     public $extrarow = 0;
 
     /*
-     * $softinfo = an optional text describing the item
+     * $extranote = an optional text describing the item
      */
-    public $softinfo = '';
+    public $extranote = '';
 
     /*
      * $required = boolean. O == optional item; 1 == mandatory item
@@ -109,9 +109,9 @@ class surveyitem_base {
     public $required = 0;
 
     /*
-     * $hidehardinfo = boolean. Exceptionally hide hard info
+     * $hideinstructions = boolean. Exceptionally hide filling instructions
      */
-    public $hidehardinfo = 0;
+    public $hideinstructions = 0;
 
     /*
      * $fieldname = the name of the field storing data in the db table
@@ -200,8 +200,8 @@ class surveyitem_base {
         'content_editor' => true,
         'customnumber' => true,
         'extrarow' => true,
-        'softinfo' => true,
-        'hidehardinfo' => true,
+        'extranote' => true,
+        'hideinstructions' => true,
         'required' => true,
         'fieldname' => true,
         'indent' => true,
@@ -287,8 +287,8 @@ class surveyitem_base {
         // extrarow
         // $record->extrarow = (isset($record->extrarow)) ? 1 : 0; // extrarow is advcheckbox so doesn't need my intervention
 
-        // hidehardinfo
-        $record->hidehardinfo = (isset($record->hidehardinfo)) ? 1 : 0;
+        // hideinstructions
+        $record->hideinstructions = (isset($record->hideinstructions)) ? 1 : 0;
 
         // hide
         // hide/regular part 1
@@ -554,7 +554,7 @@ class surveyitem_base {
     }
 
     /*
-     * item_get_full_info == softinfo + hardinfo
+     * item_get_full_info == extranote + fillinginstruction
      * provides extra description THAT IS NOT SAVED IN THE DATABASE but is shown in the "Add"/"Search" form
      * @param
      * @return
@@ -563,41 +563,41 @@ class surveyitem_base {
         global $CFG;
 
         if (!$searchform) {
-            if (!$this->hidehardinfo) {
-               $hardinfo = $this->item_get_hard_info();
+            if (!$this->hideinstructions) {
+               $fillinginstruction = $this->item_get_filling_instructions();
             }
-            if (isset($this->softinfo)) {
-                $softinfo = strip_tags($this->softinfo);
+            if (isset($this->extranote)) {
+                $extranote = strip_tags($this->extranote);
             }
         } else {
-            if ($CFG->survey_hardinfoinsearch) {
-                $hardinfo = $this->item_get_hard_info();
+            if ($CFG->survey_fillinginstructioninsearch) {
+                $fillinginstruction = $this->item_get_filling_instructions();
             }
-            if ($CFG->survey_softinfoinsearch) {
-                $softinfo = strip_tags($this->softinfo);
+            if ($CFG->survey_extranoteinsearch) {
+                $extranote = strip_tags($this->extranote);
             }
         }
-        if (isset($hardinfo) && $hardinfo && isset($softinfo) && $softinfo) {
-            return ($hardinfo.'<br />'.$softinfo);
+        if (isset($fillinginstruction) && $fillinginstruction && isset($extranote) && $extranote) {
+            return ($fillinginstruction.'<br />'.$extranote);
         } else {
-            if (isset($hardinfo) && $hardinfo) {
-                return $hardinfo;
+            if (isset($fillinginstruction) && $fillinginstruction) {
+                return $fillinginstruction;
             }
-            if (isset($softinfo) && $softinfo) {
-                return $softinfo;
+            if (isset($extranote) && $extranote) {
+                return $extranote;
             }
         }
     }
 
     /*
-     * item_get_hard_info
-     * provides extra hardinfo THAT IS NOT SAVED IN THE DATABASE but is shown in the "Add"/"Search" form
+     * item_get_filling_instructions
+     * provides extra fillinginstruction THAT IS NOT SAVED IN THE DATABASE but is shown in the "Add"/"Search" form
      * @param
      * @return
      */
-    public function item_get_hard_info() {
+    public function item_get_filling_instructions() {
         // if this method is not handled at plugin level,
-        // it means it is supposed to return an empty hardinfo
+        // it means it is supposed to return an empty fillinginstruction
         return '';
     }
 
@@ -948,7 +948,7 @@ class surveyitem_base {
         // STEP 02: make corrections
         // $si_fields = array('surveyid', 'type', 'plugin', 'externalname',
         //                    'content_sid', 'content', 'contentformat', 'customnumber',
-        //                    'extrarow', 'softinfo', 'required', 'fieldname',
+        //                    'extrarow', 'extranote', 'required', 'fieldname',
         //                    'indent', 'basicform', 'advancedsearch', 'hide',
         //                    'sortindex', 'basicformpage', 'advancedformpage', 'parentid',
         //                    'parentcontent', 'parentvalue', 'timecreated', 'timemodified');
@@ -1023,15 +1023,15 @@ class surveyitem_base {
             $values['customnumber'] = '\''.$this->customnumber.'\'';
         }
 
-        // $si_fields = array(...'extrarow', 'softinfo', 'required', 'fieldname',
+        // $si_fields = array(...'extrarow', 'extranote', 'required', 'fieldname',
 
         // override: $value['extrarow']
         /*------------------------------------------------*/
         $values['extrarow'] = $this->extrarow;
 
-        // override: $value['softinfo']
+        // override: $value['extranote']
         /*------------------------------------------------*/
-        $values['softinfo'] = empty($this->softinfo) ? '\'\'' : '\''.$this->softinfo.'\'';
+        $values['extranote'] = empty($this->extranote) ? '\'\'' : '\''.$this->extranote.'\'';
 
         // override: $value['required']
         /*------------------------------------------------*/

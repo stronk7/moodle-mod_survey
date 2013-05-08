@@ -239,30 +239,30 @@ class surveyfield_textarea extends surveyitem_base {
     }
 
     /*
-     * item_get_hard_info
+     * item_get_filling_instructions
      * @param
      * @return
      */
-    public function item_get_hard_info() {
+    public function item_get_filling_instructions() {
 
         if (!empty($this->minlength)) {
             $a = $this->minlength;
             if (!empty($this->maxlength)) {
                 $a .= get_string('and', 'surveyfield_textarea').$this->maxlength;
-                $hardinfo = get_string('hasminmaxlength', 'surveyfield_textarea', $a);
+                $fillinginstruction = get_string('hasminmaxlength', 'surveyfield_textarea', $a);
             } else {
-                $hardinfo = get_string('hasminlength', 'surveyfield_textarea', $a);
+                $fillinginstruction = get_string('hasminlength', 'surveyfield_textarea', $a);
             }
         } else {
             if (!empty($this->maxlength)) {
                 $a = $this->maxlength;
-                $hardinfo = get_string('hasmaxlength', 'surveyfield_textarea', $a);
+                $fillinginstruction = get_string('hasmaxlength', 'surveyfield_textarea', $a);
             } else {
-                $hardinfo = '';
+                $fillinginstruction = '';
             }
         }
 
-        return $hardinfo;
+        return $fillinginstruction;
     }
 
     /*
@@ -351,10 +351,16 @@ class surveyfield_textarea extends surveyitem_base {
             }
         }
 
-        if ( !is_null($this->maxlength) && (strlen($data[$fieldname]['text']) > $this->maxlength) ) {
+        if ($this->useeditor) {
+            $itemcontent = $data[$fieldname]['text'];
+        } else {
+            $itemcontent = $data[$fieldname];
+        }
+
+        if ( !is_null($this->maxlength) && (strlen($itemcontent) > $this->maxlength) ) {
             $errors[$errorkey] = get_string('texttoolong', 'surveyfield_textarea');
         }
-        if (strlen($data[$fieldname]['text']) < $this->minlength) {
+        if (strlen($itemcontent) < $this->minlength) {
             $errors[$errorkey] = get_string('texttooshort', 'surveyfield_textarea');
         }
     }

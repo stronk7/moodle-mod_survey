@@ -26,3 +26,5 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 
 define('SURVEYFIELD_CHECKBOX_PLACEHOLDER', 1);
+define('SURVEYFIELD_CHECKBOX_RETURNSELECTION', 0);
+define('SURVEYFIELD_CHECKBOX_RETURNPOSITION',  1);

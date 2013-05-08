@@ -257,11 +257,11 @@ class surveyfield_date extends surveyitem_base {
     }
 
     /*
-     * item_get_hard_info
+     * item_get_filling_instructions
      * @param
      * @return
      */
-    public function item_get_hard_info() {
+    public function item_get_filling_instructions() {
         global $survey;
 
         $haslowerbound = ($this->lowerbound != $this->item_date_to_unix_time($survey->startyear, 1, 1));
@@ -270,20 +270,20 @@ class surveyfield_date extends surveyitem_base {
         $format = get_string('strftimedate', 'langconfig');
         if ($haslowerbound && $hasupperbound) {
             $a = userdate($this->lowerbound, $format).get_string('and', 'surveyfield_date').userdate($this->upperbound, $format);
-            $hardinfo = get_string('restriction_lowerupper', 'surveyfield_date', $a);
+            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_date', $a);
         } else {
-            $hardinfo = '';
+            $fillinginstruction = '';
             if ($haslowerbound) {
                 $a = userdate($this->lowerbound, $format);
-                $hardinfo = get_string('restriction_lower', 'surveyfield_date', $a);
+                $fillinginstruction = get_string('restriction_lower', 'surveyfield_date', $a);
             }
             if ($hasupperbound) {
                 $a = userdate($this->upperbound, $format);
-                $hardinfo = get_string('restriction_upper', 'surveyfield_date', $a);
+                $fillinginstruction = get_string('restriction_upper', 'surveyfield_date', $a);
             }
         }
 
-        return $hardinfo;
+        return $fillinginstruction;
     }
 
     /*

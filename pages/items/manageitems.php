@@ -140,7 +140,11 @@ $table->column_class('actions', 'actions');
 
 // general properties for the whole table
 // $table->set_attribute('cellpadding', '5');
-$table->set_attribute('id', 'manageitems');
+if ($action == SURVEY_CHANGEORDERASK) {
+    $table->set_attribute('id', 'sortitems');
+} else {
+    $table->set_attribute('id', 'manageitems');
+}
 $table->set_attribute('class', 'generaltable');
 // $table->set_attribute('width', '90%');
 $table->setup();
@@ -311,7 +315,15 @@ foreach ($itemseeds as $itemseed) {
     $tablerow[] = $output;
 
     // *************************************** customnumber
-    $tablerow[] = ($item->type == SURVEY_TYPEFIELD) ? $item->customnumber : '';
+    if ($item->type == SURVEY_TYPEFIELD) {
+        $tablerow[] = $item->customnumber;
+    } else {
+        if ($item->plugin == 'label') {
+            $tablerow[] = $item->labelintro;
+        } else {
+            $tablerow[] = '';
+        }
+    }
 
     if ($action != SURVEY_CHANGEORDERASK) {
         // *************************************** actions

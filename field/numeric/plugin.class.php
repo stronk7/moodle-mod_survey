@@ -257,45 +257,45 @@ class surveyfield_numeric extends surveyitem_base {
     }
 
     /*
-     * item_get_hard_info
+     * item_get_filling_instructions
      * @param
      * @return
      */
-    public function item_get_hard_info() {
+    public function item_get_filling_instructions() {
 
-        $hardinfo = array();
+        $fillinginstruction = array();
 
         if (!empty($this->signed)) {
-            $hardinfo[] = get_string('hassign', 'surveyfield_numeric');
+            $fillinginstruction[] = get_string('hassign', 'surveyfield_numeric');
         }
         if (!empty($this->lowerbound)) {
             $a = $this->lowerbound;
-            $hardinfo[] = get_string('hasminvalue', 'surveyfield_numeric', $a);
+            $fillinginstruction[] = get_string('hasminvalue', 'surveyfield_numeric', $a);
         }
         if (!empty($this->upperbound)) {
             $a = $this->upperbound;
-            $hardinfo[] = get_string('hasmaxvalue', 'surveyfield_numeric', $a);
+            $fillinginstruction[] = get_string('hasmaxvalue', 'surveyfield_numeric', $a);
         }
         if (!empty($this->decimals)) {
             $a = $this->decimals;
-            $hardinfo[] = get_string('hasdecimals', 'surveyfield_numeric', $a);
-            $hardinfo[] = get_string('decimalautofix', 'surveyfield_numeric');
+            $fillinginstruction[] = get_string('hasdecimals', 'surveyfield_numeric', $a);
+            $fillinginstruction[] = get_string('decimalautofix', 'surveyfield_numeric');
         } else {
-            $hardinfo[] = get_string('isinteger', 'surveyfield_numeric');
+            $fillinginstruction[] = get_string('isinteger', 'surveyfield_numeric');
         }
         if (!empty($this->decimals)) {
             // this sentence talks about decimal separator not about the expected value
             // so I leave it as last sentence
             $decimalseparator = get_string('decsep', 'langconfig');
-            $hardinfo[] = get_string('declaredecimalseparator', 'surveyfield_numeric', $decimalseparator);
+            $fillinginstruction[] = get_string('declaredecimalseparator', 'surveyfield_numeric', $decimalseparator);
         }
-        if (count($hardinfo)) {
-            $hardinfo = get_string('number', 'surveyfield_numeric').implode(', ', $hardinfo);
+        if (count($fillinginstruction)) {
+            $fillinginstruction = get_string('number', 'surveyfield_numeric').implode(', ', $fillinginstruction);
         } else {
-            $hardinfo = '';
+            $fillinginstruction = '';
         }
 
-        return $hardinfo;
+        return $fillinginstruction;
     }
 
     /*

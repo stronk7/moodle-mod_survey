@@ -90,7 +90,7 @@ class surveyformat_fieldset extends surveyitem_base {
 
         // list of fields I do not want to have in the item definition form
         $this->item_form_requires['common_fs'] = false;
-        $this->item_form_requires['softinfo'] = false;
+        $this->item_form_requires['extranote'] = false;
         $this->item_form_requires['content_editor'] = false;
         $this->item_form_requires['customnumber'] = false;
         $this->item_form_requires['extrarow'] = false;

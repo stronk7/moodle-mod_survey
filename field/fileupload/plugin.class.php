@@ -51,7 +51,7 @@ class surveyfield_fileupload extends surveyitem_base {
     /*******************************************************************/
 
     /*
-     * $maxbytes = the maximum allowed size of the file to upload
+     * $maxfiles = the maximum number of files allowed to upload
      */
     public $maxfiles = '1';
 
@@ -155,22 +155,22 @@ class surveyfield_fileupload extends surveyitem_base {
     }
 
     /*
-     * item_get_hard_info
+     * item_get_filling_instructions
      * @param
      * @return
      */
-    public function item_get_hard_info() {
+    public function item_get_filling_instructions() {
 
         if ($this->filetypes != '*') {
             // $filetypelist = preg_replace('/([a-zA-Z0-9]+,)([^\s])/', "$1 $2", $this->filetypes);
             $filetypelist = preg_replace('~,(?! )~', ', ', $this->filetypes); // Credits to Sam Marshall
 
-            $hardinfo = get_string('allowedtypes', 'surveyfield_fileupload').$filetypelist;
+            $fillinginstruction = get_string('allowedtypes', 'surveyfield_fileupload').$filetypelist;
         } else {
-            $hardinfo = '';
+            $fillinginstruction = '';
         }
 
-        return $hardinfo;
+        return $fillinginstruction;
     }
 
     /*

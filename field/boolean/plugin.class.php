@@ -93,6 +93,8 @@ class surveyfield_boolean extends surveyitem_base {
         $this->flag->couldbeparent = true;
         $this->flag->useplugintable = true;
 
+        $this->item_form_requires['hideinstructions'] = false;
+
         if (!empty($itemid)) {
             $this->item_load($itemid);
         }

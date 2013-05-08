@@ -116,6 +116,7 @@ class surveyfield_autofill extends surveyitem_base {
         // list of fields I do not want to have in the item definition form
         $this->item_form_requires['indent'] = false;
         $this->item_form_requires['required'] = false;
+        $this->item_form_requires['hideinstructions'] = false;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);

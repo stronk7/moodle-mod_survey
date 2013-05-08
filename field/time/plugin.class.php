@@ -251,11 +251,11 @@ class surveyfield_time extends surveyitem_base {
     }
 
     /*
-     * item_get_hard_info
+     * item_get_filling_instructions
      * @param
      * @return
      */
-    public function item_get_hard_info() {
+    public function item_get_filling_instructions() {
 
         $haslowerbound = ($this->lowerbound != $this->item_time_to_unix_time(0, 0));
         $hasupperbound = ($this->upperbound != $this->item_time_to_unix_time(23, 59));
@@ -268,27 +268,27 @@ class surveyfield_time extends surveyitem_base {
                 $a = $lowerbound['hours'].':'.$lowerbound['minutes'];
                 $a .= get_string('and', 'surveyfield_time');
                 $a .= $upperbound['hours'].':'.$upperbound['minutes'];
-                $hardinfo = get_string('restriction_lowerupper_internal', 'surveyfield_time', $a);
+                $fillinginstruction = get_string('restriction_lowerupper_internal', 'surveyfield_time', $a);
             } else { // $this->rangetype == SURVEYFIELD_TIME_EXTERNALRANGE
                 $a->lowerbound = $lowerbound['hours'].':'.$lowerbound['minutes'];
                 $a->upperbound = $upperbound['hours'].':'.$upperbound['minutes'];
-                $hardinfo = get_string('restriction_lowerupper_external', 'surveyfield_time', $a);
+                $fillinginstruction = get_string('restriction_lowerupper_external', 'surveyfield_time', $a);
             }
         } else {
-            $hardinfo = '';
+            $fillinginstruction = '';
             if ($haslowerbound) {
                 $lowerbound = $this->item_split_unix_time($this->lowerbound);
                 $a = $lowerbound['hours'].':'.$lowerbound['minutes'];
-                $hardinfo = get_string('restriction_lower', 'surveyfield_time', $a);
+                $fillinginstruction = get_string('restriction_lower', 'surveyfield_time', $a);
             }
             if ($hasupperbound) {
                 $upperbound = $this->item_split_unix_time($this->upperbound);
                 $a = $upperbound['hours'].':'.$upperbound['minutes'];
-                $hardinfo = get_string('restriction_upper', 'surveyfield_time', $a);
+                $fillinginstruction = get_string('restriction_upper', 'surveyfield_time', $a);
             }
         }
 
-        return $hardinfo;
+        return $fillinginstruction;
     }
 
     /*

@@ -272,11 +272,11 @@ class surveyfield_age extends surveyitem_base {
     }
 
     /*
-     * item_get_hard_info
+     * item_get_filling_instructions
      * @param
      * @return
      */
-    public function item_get_hard_info() {
+    public function item_get_filling_instructions() {
         $maximumage = get_config('surveyfield_age', 'maximumage');
 
         $haslowerbound = ($this->lowerbound != $this->item_age_to_unix_time(0, 0));
@@ -318,18 +318,18 @@ class surveyfield_age extends surveyitem_base {
         }
 
         if ($haslowerbound && $hasupperbound) {
-            $hardinfo = get_string('restriction_lowerupper', 'surveyfield_age', $a);
+            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_age', $a);
         } else {
-            $hardinfo = '';
+            $fillinginstruction = '';
             if ($haslowerbound) {
-                $hardinfo = get_string('restriction_lower', 'surveyfield_age', $a);
+                $fillinginstruction = get_string('restriction_lower', 'surveyfield_age', $a);
             }
             if ($hasupperbound) {
-                $hardinfo = get_string('restriction_upper', 'surveyfield_age', $a);
+                $fillinginstruction = get_string('restriction_upper', 'surveyfield_age', $a);
             }
         }
 
-        return $hardinfo;
+        return $fillinginstruction;
     }
 
     /*
