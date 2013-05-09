@@ -44,7 +44,7 @@ if (!empty($id)) {
     print_error('You must specify a course_module ID or an instance ID');
 }
 
-require_login($course, true, $cm);
+require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 

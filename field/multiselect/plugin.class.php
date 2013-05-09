@@ -299,19 +299,14 @@ class surveyfield_multiselect extends surveyitem_base {
      * @return
      */
     public function userform_get_parent_disabilitation_info($child_parentcontent) {
-        // TODO: this function is a draft because I don't know what is returned
-
         $disabilitationinfo = array();
 
-        // I need to know how to call mfrom element corresponding to the content of $child_parentcontent
-        // $valuelabel = $this->item_get_value_label_array('options');
-        // $constraintsvalues = survey_textarea_to_array($child_parentcontent);
-        // it is needed to order $constraintsvalues as $this->itemname is ordered
+        $options = survey_textarea_to_array($child_parentcontent);
 
         $mformelementinfo = new stdClass();
-        $mformelementinfo->parentname = $this->itemname;
-        $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $child_parentcontent;
+        $mformelementinfo->parentname = $this->itemname.'[]';
+        $mformelementinfo->operator = 'eq'; // TODO: Should be 'neq', waiting for MDL-39280
+        $mformelementinfo->content = $options;
         $disabilitationinfo[] = $mformelementinfo;
 
         return $disabilitationinfo;

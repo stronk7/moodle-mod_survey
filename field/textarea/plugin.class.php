@@ -409,7 +409,7 @@ class surveyfield_textarea extends surveyitem_base {
             $olduserdata = file_postupdate_standard_editor($olduserdata, $this->itemname, $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
             $olduserdata->content = $olduserdata->{$this->itemname};
         } else {
-            $olduserdata->content = null;
+            $olduserdata->content = $itemdetail['mainelement'];
         }
     }
 

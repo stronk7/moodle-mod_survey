@@ -2298,12 +2298,15 @@ function survey_create_template_content($survey) {
                 }
             }
         }
-
-        $dom = new DOMDocument('1.0');
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-        $dom->loadXML($xmltemplate->asXML());
     }
+
+    $dom = new DOMDocument('1.0');
+    $dom->preserveWhiteSpace = false;
+    $dom->formatOutput = true;
+    $dom->loadXML($xmltemplate->asXML());
+
+    // echo '$xmltemplate = <br />';
+    // print_object($xmltemplate);
 
     return $dom->saveXML();
 }

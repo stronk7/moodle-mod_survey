@@ -520,7 +520,9 @@ class surveyfield_checkbox extends surveyitem_base {
                 }
                 $i++;
             }
-            $return[] = isset($itemdetail['other']) ? $itemdetail['other'] : '0';
+            if (!empty($this->labelother)) {
+                $return[] = isset($itemdetail['other']) ? $itemdetail['other'] : '0';
+            }
         }
 
         if (empty($return)) {
@@ -578,7 +580,7 @@ class surveyfield_checkbox extends surveyitem_base {
                     // here $answers is an array like: array(1,1,0,0,'dummytext')
                     $checkboxindex = 0;
                     foreach ($answers as $answer) {
-                        if ($answer == 1) {
+                        if ( ($checkboxindex == $valuelabel[$checkboxindex]) || ($answer == 1)) {
                             $uniqueid = $this->itemname.'_'.$checkboxindex;
                             $prefill[$uniqueid] = 1;
                         }

@@ -37,8 +37,8 @@ There are two different forms. The basic and the advanced.
 Survey foreseen conditional branching, sort of fields during export, item indentation, custom number, groups with related permissions, mandatory/optional items
 
 Last note: multiselect mform doesn't work! MDL-30940 Fixed by Frédéric Massart on April 19, 2013
-I am in trouble assigning syles to some mform element. MDL-28194 GRRRRR
+I am in trouble assigning syles to some mform element. MDL-28194
 How disable fields upon checkboxes sets? MDL-34760, MDL-38975 Fixed by Eloy Lafuente on April 8, 2013
 $mform->disabledIf doesn't work for 'filemanager' mform elements. MDL-31796
-$mform->disabledIf doesn't work for 'multiselect' mform elements. MDL-39280
+$mform->disabledIf doesn't work for 'multiselect' mform elements. MDL-39280 Partially fixed by Frédéric Massart on May 6, 2013
 Disabled mform items need to be skipped during validation (and more): MDL-34815
