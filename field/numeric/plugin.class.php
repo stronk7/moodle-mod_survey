@@ -417,7 +417,7 @@ class surveyfield_numeric extends surveyitem_base {
         }
 
         if ($this->required) {
-            if (empty($data[$this->itemname])) {
+            if (strlen($data[$this->itemname]) == 0) {
                 $errors[$errorkey] = get_string('required');
                 return;
             }
