@@ -280,6 +280,7 @@ class surveyfield_checkbox extends surveyitem_base {
             $class = ($this->adjustment == SURVEY_VERTICAL) ? array('class' => 'indent-'.$this->indent) : '';
             $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_other', '', $otherlabel, $class);
             $elementgroup[] = $mform->createElement('text', $this->itemname.'_text', '');
+            $mform->setType($this->itemname.'_text', PARAM_ALPHANUMEXT);
 
             if (!$searchform) {
                 $mform->setDefault($this->itemname.'_text', $othervalue);

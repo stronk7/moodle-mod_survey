@@ -305,6 +305,7 @@ class surveyfield_radiobutton extends surveyitem_base {
             $class = ($this->adjustment == SURVEY_VERTICAL) ? array('class' => 'indent-'.$this->indent) : '';
             $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $otherlabel, 'other', $class);
             $elementgroup[] = $mform->createElement('text', $this->itemname.'_text', '');
+            $mform->setType($this->itemname.'_text', PARAM_ALPHANUMEXT);
 
             $mform->disabledIf($this->itemname.'_text', $this->itemname, 'neq', 'other');
         }

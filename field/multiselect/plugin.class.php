@@ -305,7 +305,7 @@ class surveyfield_multiselect extends surveyitem_base {
 
         $mformelementinfo = new stdClass();
         $mformelementinfo->parentname = $this->itemname.'[]';
-        $mformelementinfo->operator = 'eq'; // TODO: Should be 'neq', waiting for MDL-39280
+        $mformelementinfo->operator = 'neq';
         $mformelementinfo->content = $options;
         $disabilitationinfo[] = $mformelementinfo;
 

@@ -333,6 +333,7 @@ class surveyfield_select extends surveyitem_base {
             $elementgroup = array();
             $elementgroup[] = $mform->createElement('select', $this->itemname, '', $valuelabel, array('class' => 'indent-'.$this->indent));
             $elementgroup[] = $mform->createElement('text', $this->itemname.'_text', '');
+            $mform->setType($this->itemname.'_text', PARAM_ALPHANUMEXT);
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
 
             if (!$searchform) {

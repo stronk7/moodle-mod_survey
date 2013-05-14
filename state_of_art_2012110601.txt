@@ -16,12 +16,12 @@ They are:
 -> item type "date" to ask for question like: "When were you born?"
 -> item type "datetime" to ask for question like... well, this item type is really useless, AFAIK, but it was too simple to develop
 -> item type "fileupload" to ask for question like: "Please, upload your CV in PDF format"
+-> item type "integer" to ask for question like: "how many dogs do you feed dayly?"
 -> item type "multiselect" to ask for question like: "what do you usually eat for breakfast? milk, sugar, jam, chocolate, other..."
 -> item type "numeric" to ask for question like: "how many chilgdren do you have?"
 -> item type "radiobutton" to ask for question like: "where do you usually spend your summer holidays? sea, mountain, lake, hills, desert..."
 -> item type "rate" to ask for question like: "please order the following list of foreign languages according to your preferences: EN, ES, IT, FR..."
 -> item type "select" to ask for question like: "where do you usually spend your summer holidays? sea, mountain, lake, hills, desert..."
--> item type "shortage" to ask for question like: "which is the lower age to take part to national elections"
 -> item type "shortdate" to ask for question like: "when were you first arrested?"
 -> item type "textarea" to ask for question like: "enter a small description of what you saw"
 -> item type "time" to ask for question like: "At what time do you usually get breakfast?"
@@ -40,5 +40,5 @@ Last note: multiselect mform doesn't work! MDL-30940 Fixed by Frédéric Massart
 I am in trouble assigning syles to some mform element. MDL-28194
 How disable fields upon checkboxes sets? MDL-34760, MDL-38975 Fixed by Eloy Lafuente on April 8, 2013
 $mform->disabledIf doesn't work for 'filemanager' mform elements. MDL-31796
-$mform->disabledIf doesn't work for 'multiselect' mform elements. MDL-39280 Partially fixed by Frédéric Massart on May 6, 2013
+$mform->disabledIf doesn't work for 'multiselect' mform elements. MDL-39280 Fixed by Frédéric Massart on May 10, 2013
 Disabled mform items need to be skipped during validation (and more): MDL-34815
