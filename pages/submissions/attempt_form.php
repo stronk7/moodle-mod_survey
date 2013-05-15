@@ -148,7 +148,7 @@ class survey_submissionform extends moodleform {
         // -------------------------------------------------------------------------------
         // buttons
         $buttonarray = array();
-        if ($formpage != 1) { // 0 or greater than 1
+        if ($formpage != 1) { // 0 or greater than 1 [0 is returned for $page when no items are found not even in the last page]
             $buttonarray[] = $mform->createElement('submit', 'prevbutton', get_string('previousformpage', 'survey'));
         }
         if ($currentpage != SURVEY_SUBMISSION_EXPLORE) {
@@ -157,7 +157,16 @@ class survey_submissionform extends moodleform {
             }
             if (($formpage == $lastformpage) || (!$formpage)) {
                 if ($survey->history) {
-                    $buttonarray[] = $mform->createElement('submit', 'saveasnewbutton', get_string('saveasnew', 'survey'));
+                    $submission_status = $DB->get_field('survey_submissions', 'status', array('id' => $submissionid), IGNORE_MISSING);
+                    if ($submission_status === FALSE) { // submissions still does not exist
+                        $buttonarray[] = $mform->createElement('submit', 'savebutton', get_string('submit'));
+                    } else {
+                        if ($submission_status == SURVEY_STATUSINPROGRESS) {
+                            $buttonarray[] = $mform->createElement('submit', 'savebutton', get_string('submit'));
+                        } else {
+                            $buttonarray[] = $mform->createElement('submit', 'saveasnewbutton', get_string('saveasnew', 'survey'));
+                        }
+                    }
                 } else {
                     $buttonarray[] = $mform->createElement('submit', 'savebutton', get_string('submit'));
                 }

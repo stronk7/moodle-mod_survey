@@ -1199,7 +1199,7 @@ class surveyitem_base {
         $values['itemid'] = '$itemid';
 
         if (in_array('defaultoption', $pluginstructure)) {
-            $values = $this->update_values_defaultoption($values);
+            $values = $this->item_update_values_defaultoption($values);
         }
 
         foreach ($values as $k => $v) {
@@ -1225,11 +1225,11 @@ class surveyitem_base {
     }
 
     /*
-     * update_values_defaultoption
+     * item_update_values_defaultoption
      * @param $values
      * @return
      */
-    public function update_values_defaultoption($values) {
+    public function item_update_values_defaultoption($values) {
         // override: $value['defaultoption']
         /*------------------------------------------------*/
         switch ($this->defaultoption) {

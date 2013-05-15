@@ -1040,3 +1040,54 @@ function survey_get_user_style_options() {
 
     return $filemanager_options;
 }
+
+/*
+ * survey_attempt_save_preprocessing
+ * @param none
+ * @return survey_submissions record
+ */
+function survey_save_survey_submissions($survey, $fromform) {
+    global $USER, $DB;
+
+    if (!$survey->newpageforchild) {
+        survey_drop_unexpected_values($fromform);
+    }
+
+    $timenow = time();
+    $savebutton = (isset($fromform->savebutton) && ($fromform->savebutton));
+    $saveasnewbutton = (isset($fromform->saveasnewbutton) && ($fromform->saveasnewbutton));
+
+    $survey_submissions = new stdClass();
+    if ($saveasnewbutton || empty($fromform->submissionid)) { // new record needed
+        // add a new record to survey_submissions
+        $survey_submissions->surveyid = $survey->id;
+        $survey_submissions->userid = $USER->id;
+
+        if (empty($fromform->submissionid)) {
+            $survey_submissions->status = SURVEY_STATUSINPROGRESS;
+            $survey_submissions->timecreated = $timenow;
+        }
+        if ($savebutton) {
+            $survey_submissions->status = SURVEY_STATUSCLOSED;
+            $survey_submissions->timemodified = $timenow;
+        }
+        if ($saveasnewbutton) {
+            $survey_submissions->status = SURVEY_STATUSCLOSED;
+            $survey_submissions->timecreated = $timenow;
+            $survey_submissions->timemodified = $timenow;
+        }
+
+        $survey_submissions->id = $DB->insert_record('survey_submissions', $survey_submissions);
+
+        $fromform->submissionid = $submissionid;
+    } else {
+        $survey_submissions->id = $fromform->submissionid;
+        if ($savebutton) {
+            $survey_submissions->status = SURVEY_STATUSCLOSED;
+            $survey_submissions->timemodified = $timenow;
+            $DB->update_record('survey_submissions', $survey_submissions);
+        }
+    }
+
+    return $survey_submissions;
+}

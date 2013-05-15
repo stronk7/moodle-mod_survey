@@ -59,9 +59,9 @@ switch ($currenttab) {
                 // if the form (once submitted) send $submissionid == 0, the value will be overwritten later in if ($fromform = $mform->get_data()) {
 
                 // ////////////////////////////
-                // group items per basicform/advancedform
+                // assign items to pages in the basicform and in the advancedform
                 $lastformpage = survey_assign_pages($canaccessadvancedform);
-                // end of: group items per basicform/advancedform whether needed
+                // end of: assign items to pages in the basicform and in the advancedform
                 // ////////////////////////////
 
                 // ////////////////////////////
@@ -74,7 +74,11 @@ switch ($currenttab) {
                 $formparams->canaccessadvancedform = $canaccessadvancedform; // Help selecting the fields to show
                 $formparams->formpage = $formpage;
                 $formparams->currentpage = $currentpage;
+                // end of: prepare params for the form
+                // ////////////////////////////
 
+                // ////////////////////////////
+                // define $mform
                 require_once($CFG->dirroot.'/mod/survey/pages/submissions/attempt_form.php');
                 $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => $currentpage);
                 $formurl = new moodle_url('view.php', $paramurl);
@@ -83,7 +87,7 @@ switch ($currenttab) {
                 } else {
                     $mform = new survey_submissionform($formurl, $formparams);
                 }
-                // end of: prepare params for the form
+                // end of: define $mform
                 // ////////////////////////////
 
                 // ////////////////////////////
@@ -96,55 +100,19 @@ switch ($currenttab) {
 
                 if ($fromform = $mform->get_data()) {
 
-                    // start by saving unless the "previous" button has been pressed
                     if ($currentpage != SURVEY_SUBMISSION_EXPLORE) { // you are exploring: do not save
-                        if (!isset($fromform->prevbutton)) { // you are NOT exploring AND you did not push the "previous" button
+                        // start by saving unless the "previous" button has been pressed
+                        if (!isset($fromform->prevbutton)) {
+                            $survey_submissions = survey_save_survey_submissions($survey, $fromform);
 
-                            if (!$survey->newpageforchild) {
-                                survey_drop_unexpected_values($fromform);
-                            }
-
-                            $timenow = time();
-                            $savebutton = (isset($fromform->savebutton) && ($fromform->savebutton));
-                            $saveasnewbutton = (isset($fromform->saveasnewbutton) && ($fromform->saveasnewbutton));
-
-                            if ($saveasnewbutton || empty($fromform->submissionid)) { // new record needed
-                                // add a new record to survey_submissions
-                                // this record stub is the basis to build all other possible bailouts
-                                $record = new stdClass();
-                                $record->surveyid = $survey->id;
-                                $record->userid = $USER->id;
-
-                                if (empty($fromform->submissionid)) {
-                                    $record->status = SURVEY_STATUSINPROGRESS;
-                                    $record->timecreated = $timenow;
-                                }
-                                if ($savebutton) {
-                                    $record->status = SURVEY_STATUSCLOSED;
-                                    $record->timemodified = $timenow;
-                                }
-                                if ($saveasnewbutton) {
-                                    $record->status = SURVEY_STATUSCLOSED;
-                                    $record->timecreated = $timenow;
-                                    $record->timemodified = $timenow;
-                                }
-
-                                $submissionid = $DB->insert_record('survey_submissions', $record);
-
-                                $fromform->submissionid = $submissionid;
-                            } else {
-                                $record = new stdClass();
-                                $record->id = $fromform->submissionid;
-                                if ($savebutton) {
-                                    $record->status = SURVEY_STATUSCLOSED;
-                                    $record->timemodified = $timenow;
-                                    $DB->update_record('survey_submissions', $record);
-                                }
-                            }
+                            // override $submissionid with the one coming from the form
+                            $submissionid = $survey_submissions->id;
 
                             survey_save_user_data($fromform);
 
-                            // now, I saved
+                            /*
+                             * ok, I saved
+                             */
 
                             // BEGIN: send email whether requested
                             if ($record->status = SURVEY_STATUSCLOSED) {
@@ -160,7 +128,7 @@ switch ($currenttab) {
 
                     // if I am here, the form has been submitted using: <<, >>, save o saveasnew
                     // formpage has the following life:
-                    // quando la form viene caricata per la prima volta:
+                    // when the first page of the form has been loaded:
                     //     $formpage get the default value "1" in getparam
                     //     it is stored in the form through set_data($prefill); at the end of the attempt.php file
                     // if execution comes from the submission of the form through << o >>:
@@ -372,11 +340,6 @@ switch ($currenttab) {
                 }
 
                 if ($fromform = $mform->get_data()) {
-                    // has this submission been forced to be new?
-                    if (!empty($saveasnew)) {
-                        $fromform->itemid = 0;
-                    }
-
                     $userfeedback = $item->item_save($fromform);
                     $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABITEMS, 'pag' => SURVEY_ITEMS_MANAGE, 'ufd' => $userfeedback);
                     $returnurl = new moodle_url('view.php', $paramurl);

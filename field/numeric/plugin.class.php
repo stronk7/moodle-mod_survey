@@ -472,7 +472,7 @@ class surveyfield_numeric extends surveyitem_base {
      * @return
      */
     public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
-        if (empty($itemdetail['mainelement'])) {
+        if (strlen($itemdetail['mainelement']) == 0) {
             $olduserdata->content = null;
         } else {
             $decimalseparator = get_string('decsep', 'langconfig');

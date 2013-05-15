@@ -45,7 +45,7 @@ if (!$DB->count_records_select('survey_item', $whereclause, $whereparams)) {
 // do not trigger $survey->maxentries if you are submitting an already displayed form (&& !$fromform)
 if ($currentpage == SURVEY_SUBMISSION_NEW) {
     if ($survey->maxentries && !$fromform) {
-        $alreadysubmitted = $DB->count_records('survey_submissions', array('surveyid' => $survey->id, 'userid' => $USER->id));
+        $alreadysubmitted = $DB->count_records('survey_submissions', array('surveyid' => $survey->id, 'userid' => $USER->id, 'status' => SURVEY_STATUSCLOSED));
         if ($alreadysubmitted >= $survey->maxentries) { // > should never be verified
             $params = array('id' => $cm->id, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => SURVEY_SUBMISSION_MANAGE);
             $redirecturl = new moodle_url('view.php', $params);
@@ -65,9 +65,10 @@ if ($currentpage == SURVEY_SUBMISSION_NEW) {
 // ////////////////////////////
 // manage the thanks page
 // for the thanks page, you MUST be here because you need $PAGE before
-if ($currentpage == SURVEY_SUBMISSION_NEW) {
+if ( ($currentpage == SURVEY_SUBMISSION_NEW) || ($currentpage == SURVEY_SUBMISSION_EDIT) ) {
     $savebutton = (isset($fromform->savebutton) && ($fromform->savebutton));
-    if ($savebutton) {
+    $saveasnewbutton = (isset($fromform->saveasnewbutton) && ($fromform->saveasnewbutton));
+    if ($savebutton || $saveasnewbutton) {
         survey_show_thanks_page($survey, $cm);
         echo $OUTPUT->footer();
         die;
