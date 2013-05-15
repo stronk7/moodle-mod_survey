@@ -32,7 +32,11 @@ if (!$DB->count_records_select('survey_item', $whereclause, $whereparams)) {
     } else {
         echo $OUTPUT->notification(get_string('nouseritemsfound', 'survey'), 'generaltable generalbox boxaligncenter boxwidthnormal');
     }
-    $continueurl = new moodle_url('/mod/survey/view.php', array('s' => $survey->id, 'tab' => SURVEY_TABITEMS, 'pag' => SURVEY_ITEMS_MANAGE));
+    if ($canmanageitems) {
+        $continueurl = new moodle_url('/mod/survey/view.php', array('s' => $survey->id, 'tab' => SURVEY_TABITEMS, 'pag' => SURVEY_ITEMS_MANAGE));
+    } else {
+        $continueurl = new moodle_url('/course/view.php', array('id' => $COURSE->id));
+    }
     echo $OUTPUT->continue_button($continueurl);
     echo $OUTPUT->footer();
     die;
