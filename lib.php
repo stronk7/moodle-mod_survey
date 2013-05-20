@@ -1079,7 +1079,7 @@ function survey_save_survey_submissions($survey, $fromform) {
 
         $survey_submissions->id = $DB->insert_record('survey_submissions', $survey_submissions);
 
-        $fromform->submissionid = $submissionid;
+        $fromform->submissionid = $survey_submissions->id;
     } else {
         $survey_submissions->id = $fromform->submissionid;
         if ($savebutton) {

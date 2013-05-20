@@ -115,7 +115,7 @@ switch ($currenttab) {
                              */
 
                             // BEGIN: send email whether requested
-                            if ($record->status = SURVEY_STATUSCLOSED) {
+                            if ($survey_submissions->status = SURVEY_STATUSCLOSED) {
                                 if (!empty($survey->notifyrole) || !empty($survey->notifymore)) {
                                     survey_notifyroles($survey, $cm);
                                 }
