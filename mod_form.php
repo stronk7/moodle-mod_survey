@@ -55,7 +55,7 @@ class mod_survey_mod_form extends moodleform_mod {
         // I can save a query because I know in which $COURSE I am
         //$groupmode = isset($cm) ? groups_get_activity_groupmode($cm, $COURSE) : 0;
         if (isset($cm)) {
-            $groupmode = empty($COURSE->groupmodeforce) ? $cm->groupmode : $course->groupmode;
+            $groupmode = empty($COURSE->groupmodeforce) ? $cm->groupmode : $COURSE->groupmode;
         } else {
             $groupmode = 0;
         }

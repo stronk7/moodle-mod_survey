@@ -108,12 +108,21 @@ class surveyfield_textarea extends surveyitem_base {
         $this->plugin = 'textarea';
 
         $this->flag = new stdclass();
-        $this->flag->issearchable = true;
+        $this->flag->issearchable = false;
         $this->flag->couldbeparent = false;
         $this->flag->useplugintable = true;
 
-        // if the item is constructed at survey instance creation
-        // (this happen if a builtin survey is requested)
+        /*
+         * this item is not issearchable
+         * so the default inherited from itembase.class.php
+         * public $basicform = SURVEY_FILLANDSEARCH;
+         * can not match the plugin_form element
+         * So I change it to SURVEY_FILLONLY
+         */
+        $this->basicform = SURVEY_FILLONLY;
+
+        // if this routine is executed at survey instance creation time
+        // (this happens if a builtin survey is requested)
         // $cm does not exist
         if (isset($cm)) {
             $this->context = context_module::instance($cm->id);

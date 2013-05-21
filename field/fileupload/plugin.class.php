@@ -104,6 +104,15 @@ class surveyfield_fileupload extends surveyitem_base {
 
         $this->context = context_module::instance($cm->id);
 
+        /*
+         * this item is not issearchable
+         * so the default inherited from itembase.class.php
+         * public $basicform = SURVEY_FILLANDSEARCH;
+         * can not match the plugin_form element
+         * So I change it to SURVEY_FILLONLY
+         */
+        $this->basicform = SURVEY_FILLONLY;
+
         if (!empty($itemid)) {
             $this->item_load($itemid);
         }
@@ -282,21 +291,29 @@ class surveyfield_fileupload extends surveyitem_base {
      */
     public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
 // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
+// echo '$itemdetail:';
+// var_dump($itemdetail);
+//
 // echo '$olduserdata:';
 // var_dump($olduserdata);
+//
+// die;
+
         if (!empty($itemdetail)) {
             $fieldname = $this->itemname.'_filemanager';
-            $olduserdata->{$fieldname} = $itemdetail['filemanager']; // needed for the mform element
-            $olduserdata->content = $itemdetail['filemanager'];                     // needed for the saving process
 
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-            $olduserdata = file_postupdate_standard_filemanager($olduserdata, $fieldname, $attachmentoptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
+            file_save_draft_area_files($itemdetail['filemanager'], $this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, $attachmentoptions);
+
+            // $olduserdata->{$fieldname} = $itemdetail['filemanager']; // needed for the mform element
+            // $olduserdata->content = $itemdetail['filemanager'];      // needed for the saving process
+
+            // $olduserdata = file_postupdate_standard_filemanager($olduserdata, $fieldname, $attachmentoptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
+
 // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
 // echo '$olduserdata:';
 // var_dump($olduserdata);
 // die;
-        } else {
-            $olduserdata->content = null;
         }
     }
 
@@ -309,49 +326,19 @@ class surveyfield_fileupload extends surveyitem_base {
      * @return
      */
     public function userform_set_prefill($olduserdata) {
-        // echo 'Just arrived in userform_set_prefill with the following $olduserdata<br />';
-        // echo '$this->itemname = '.$this->itemname.'<br />';
-        // var_dump($olduserdata);
         $prefill = array();
 
-        // VERSIONE 1
-        // if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-        //     $fieldname = $this->itemname.'_filemanager';
-        //     $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-        //
-        //     $olduserdata = file_prepare_standard_filemanager($olduserdata, $fieldname, $attachmentoptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
-        //
-        //     $prefill[$fieldname] = $olduserdata->{$fieldname};
-        // } // else use item defaults
+        if ($olduserdata) { // $olduserdata may be boolean false for not existing data
+            $fieldname = $this->itemname.'_filemanager';
 
-        // VERSIONE 3
-        // if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-        //     $fieldname = $this->itemname.'_filemanager';
-        //     $draftitemid = file_get_submitted_draft_itemid($fieldname); // I am calling the filearea with $fieldname
-        //     $filemanager_options = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-        //
-        //     file_prepare_draft_area($draftitemid, $this->context->id, 'mod_survey', $filearea, 0, $filemanager_options);
-        //
-        //     $prefill[$fieldname] = $draftitemid;
-        // } // else use item defaults
+            // $prefill->id = $olduserdata->submissionid;
+            $draftitemid = 0;
+            $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
+            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, $attachmentoptions);
 
-        $fieldname = $this->itemname.'_filemanager';
-        if (empty($olduserdata)) { // $olduserdata may be boolean false for not existing data
-            $olduserdata = new stdClass();
-            $olduserdata->id = null;
+            $prefill[$fieldname] = $draftitemid;
         }
 
-        $draftitemid = file_get_submitted_draft_itemid($fieldname);
-
-        $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-        file_prepare_draft_area($draftitemid, $this->context->id, 'mod_survey', $fieldname, $olduserdata->id, $attachmentoptions);
-
-        $prefill[$fieldname] = $draftitemid;
-
-        // echo 'I modified $olduserdata as here displayed<br />';
-        // var_dump($olduserdata);
-        // echo 'Going to get out from userform_set_prefill with the following $prefill<br />';
-        // var_dump($prefill);
         return $prefill;
     }
 

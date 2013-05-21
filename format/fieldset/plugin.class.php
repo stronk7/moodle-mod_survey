@@ -98,6 +98,7 @@ class surveyformat_fieldset extends surveyitem_base {
         $this->item_form_requires['required'] = false;
         $this->item_form_requires['fieldname'] = false;
         $this->item_form_requires['indent'] = false;
+        $this->item_form_requires['hideinstructions'] = false;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);

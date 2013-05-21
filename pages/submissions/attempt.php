@@ -104,8 +104,8 @@ if ($lastformpage > 1) {
 // ////////////////////////////
 
 // if I am here, this means that:
-//    1. the "survey_additemform" has been submitted using "Next" or "Previous" buttons OR it is the first access
-//    2. the $fromform->formpage has been recalculated in beforepage.php nell'ambito della gestione di << o >>
+//    1. the attempt_form has been submitted using "Next" or "Previous" buttons OR it is the first access
+//    2. the $fromform->formpage has been recalculated in beforepage.php in the frame of the management of << o >>
 // Now I really need to calculate prefill for fields and prepare standard editors and filemanager
 $prefill = array();
 

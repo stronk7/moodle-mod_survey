@@ -655,7 +655,8 @@ function survey_set_prefill($survey, $canaccessadvancedform, $formpage, $submiss
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
             $olduserdata = $DB->get_record('survey_userdata', array('submissionid' => $submissionid, 'itemid' => $item->itemid));
-            $prefill = array_merge($prefill, $item->userform_set_prefill($olduserdata));
+            $singleprefill = $item->userform_set_prefill($olduserdata);
+            $prefill = array_merge($prefill, $singleprefill);
         }
         $itemseeds->close();
     }
@@ -817,7 +818,7 @@ function survey_save_user_data($fromform) {
 
     foreach ($infoperitem as $iteminfo) {
         if (!$olduserdata = $DB->get_record('survey_userdata', array('submissionid' => $iteminfo->submissionid, 'itemid' => $iteminfo->itemid))) {
-            // Quickly make one now!
+            // Quickly make one new!
             $olduserdata = new stdClass();
             $olduserdata->surveyid = $iteminfo->surveyid;
             $olduserdata->submissionid = $iteminfo->submissionid;
@@ -825,7 +826,7 @@ function survey_save_user_data($fromform) {
             $olduserdata->content = 'dummy_content';
 
             $id = $DB->insert_record('survey_userdata', $olduserdata);
-            $olduserdata = $DB->get_record('survey_userdata', array('id'=>$id));
+            $olduserdata = $DB->get_record('survey_userdata', array('id' => $id));
         }
         $olduserdata->timecreated = time();
 
@@ -835,7 +836,9 @@ function survey_save_user_data($fromform) {
         // I do not save to database
         $item->userform_save_preprocessing($iteminfo->extra, $olduserdata, true);
 
-        $DB->update_record('survey_userdata', $olduserdata);
+        if ($olduserdata->content != 'dummy_content') {
+            $DB->update_record('survey_userdata', $olduserdata);
+        }
     }
 }
 

@@ -78,6 +78,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->disabledIf($fieldname.'_group', $fieldname.'_check', 'checked');
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_character');
         $mform->setType($fieldname, PARAM_RAW);
+        $mform->setType($fieldname.'_text', PARAM_ALPHANUMEXT);
         $mform->setDefault($fieldname.'_check', 'checked');
 
         // ----------------------------------------

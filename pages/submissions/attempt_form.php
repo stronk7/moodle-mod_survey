@@ -158,17 +158,18 @@ class survey_submissionform extends moodleform {
             if (($formpage == $lastformpage) || (!$formpage)) {
                 if ($survey->history) {
                     $submission_status = $DB->get_field('survey_submissions', 'status', array('id' => $submissionid), IGNORE_MISSING);
-                    if ($submission_status === FALSE) { // submissions still does not exist
-                        $buttonarray[] = $mform->createElement('submit', 'savebutton', get_string('submit'));
+                    if ($submission_status === false) { // submissions still does not exist
+                        $usesimplesavebutton = true;
                     } else {
-                        if ($submission_status == SURVEY_STATUSINPROGRESS) {
-                            $buttonarray[] = $mform->createElement('submit', 'savebutton', get_string('submit'));
-                        } else {
-                            $buttonarray[] = $mform->createElement('submit', 'saveasnewbutton', get_string('saveasnew', 'survey'));
-                        }
+                        $usesimplesavebutton = ($submission_status == SURVEY_STATUSINPROGRESS);
                     }
                 } else {
+                    $usesimplesavebutton = true;
+                }
+                if ($usesimplesavebutton) {
                     $buttonarray[] = $mform->createElement('submit', 'savebutton', get_string('submit'));
+                } else {
+                    $buttonarray[] = $mform->createElement('submit', 'saveasnewbutton', get_string('saveasnew', 'survey'));
                 }
             }
         }
