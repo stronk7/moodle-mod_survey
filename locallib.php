@@ -522,12 +522,19 @@ function survey_assign_pages($canaccessadvancedform=false) {
     global $DB, $survey;
 
     // were pages assigned?
-    $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
-    if (!$pagenumber = $DB->get_field('survey_item', 'MAX('.$pagefield.')', array('surveyid' => $survey->id, 'hide' => 0))) {
+    if ($canaccessadvancedform) {
+        $pagefield = 'advancedformpage';
+        $conditions = array('surveyid' => $survey->id, 'hide' => 0);
+    } else {
+        $pagefield = 'basicformpage';
+        $conditions = array('surveyid' => $survey->id, 'hide' => 0, 'basicform' => 1);
+    }
+    $pagenumber = $DB->get_field('survey_item', 'MAX('.$pagefield.')', $conditions)
+    if (!$pagenumber) {
         $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
         $pagenumber = 1;
-        $conditions = array('surveyid' => $survey->id, 'hide' => 0);
-        if ($items = $DB->get_recordset('survey_item', $conditions, 'sortindex', 'id, type, plugin, parentid, '.$pagefield.', sortindex')) {
+        $items = $DB->get_recordset('survey_item', $conditions, 'sortindex', 'id, type, plugin, parentid, '.$pagefield.', sortindex')) {
+        if ($items) {
             foreach ($items as $item) {
 
                 if ($item->plugin == 'pagebreak') { // it is a page break
