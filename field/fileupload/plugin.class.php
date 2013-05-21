@@ -104,6 +104,15 @@ class surveyfield_fileupload extends surveyitem_base {
 
         $this->context = context_module::instance($cm->id);
 
+        /*
+         * this item is not issearchable
+         * so the default inherited from itembase.class.php
+         * public $basicform = SURVEY_FILLANDSEARCH;
+         * can not match the plugin_form element
+         * So I change it to SURVEY_FILLONLY
+         */
+        $this->basicform = SURVEY_FILLONLY;
+
         if (!empty($itemid)) {
             $this->item_load($itemid);
         }

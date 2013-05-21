@@ -108,6 +108,15 @@ class surveyfield_rate extends surveyitem_base {
         $this->flag->couldbeparent = false;
         $this->flag->useplugintable = true;
 
+        /*
+         * this item is not issearchable
+         * so the default inherited from itembase.class.php
+         * public $basicform = SURVEY_FILLANDSEARCH;
+         * can not match the plugin_form element
+         * So I change it to SURVEY_FILLONLY
+         */
+        $this->basicform = SURVEY_FILLONLY;
+
         $this->extrarow = 1; // define the value of the checkbox
         // item_form_requires['extrarow'] = true: show extrarow checkbox
         // item_form_requires['extrarow'] = false: do not show extrarow checkbox
