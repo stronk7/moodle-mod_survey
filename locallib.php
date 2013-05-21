@@ -529,11 +529,11 @@ function survey_assign_pages($canaccessadvancedform=false) {
         $pagefield = 'basicformpage';
         $conditions = array('surveyid' => $survey->id, 'hide' => 0, 'basicform' => 1);
     }
-    $pagenumber = $DB->get_field('survey_item', 'MAX('.$pagefield.')', $conditions)
+    $pagenumber = $DB->get_field('survey_item', 'MAX('.$pagefield.')', $conditions);
     if (!$pagenumber) {
         $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
         $pagenumber = 1;
-        $items = $DB->get_recordset('survey_item', $conditions, 'sortindex', 'id, type, plugin, parentid, '.$pagefield.', sortindex')) {
+        $items = $DB->get_recordset('survey_item', $conditions, 'sortindex', 'id, type, plugin, parentid, '.$pagefield.', sortindex');
         if ($items) {
             foreach ($items as $item) {
 
