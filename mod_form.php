@@ -20,7 +20,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 class mod_survey_mod_form extends moodleform_mod {
 
-    function definition() {
+    public function definition() {
         global $COURSE, $DB, $CFG, $cm;
 
         $mform = $this->_form;
@@ -200,7 +200,7 @@ class mod_survey_mod_form extends moodleform_mod {
 
     // questa funzione viene eseguita dopo aver mostrato la mod_form
     // e serve per preparare i dati al salvataggio
-    function get_data() {
+    public function get_data() {
         $data = parent::get_data();
         if (!$data) {
             return false;
@@ -215,13 +215,24 @@ class mod_survey_mod_form extends moodleform_mod {
         } else {
             $data->notifyrole = '';
         }
+
+        // Turn off completion settings if the checkboxes aren't ticked
+        if (!empty($data->completionunlocked)) {
+            $autocompletion = !empty($data->completion) && ($data->completion == COMPLETION_TRACKING_AUTOMATIC);
+            if (empty($data->completionsubmit_check) || !$autocompletion) {
+                $data->completionsubmit = 0;
+            }
+        }
+
         return $data;
     }
 
     // questa funzione viene eseguita prima di mostrare la mod_form
     // e serve per definire eventuali preset
-    function data_preprocessing(&$default_values) {
+    public function data_preprocessing(&$default_values) {
         global $DB;
+
+        parent::data_preprocessing($default_values);
 
         if (isset($default_values['readaccess'])) { // if one has been set, then all of them have been set
             $default_values['accessrights'] = $default_values['readaccess'].'.'.$default_values['editaccess'].'.'.$default_values['deleteaccess'];
@@ -257,5 +268,35 @@ class mod_survey_mod_form extends moodleform_mod {
             }
             $default_values['notifyrole'] = $values;
         }
+
+        $fieldname = 'completionsubmit';
+        $default_values[$fieldname.'_check'] = !empty($default_values[$fieldname]) ? 1 : 0;
+        if (empty($default_values[$fieldname])) {
+            $default_values[$fieldname] = 1;
+        }
+    }
+
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        return $errors;
+    }
+
+    public function add_completion_rules() {
+        $mform =& $this->_form;
+
+        $fieldname = 'completionsubmit';
+        $elementgroup = array();
+        $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_check', '', get_string($fieldname.'_check', 'survey'));
+        $elementgroup[] = $mform->createElement('text', $fieldname, '', array('size' => 3));
+        $mform->setType($fieldname, PARAM_INT);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname.'_group', 'survey'), ' ', false);
+        $mform->addHelpButton($fieldname.'_group', $fieldname.'_group', 'survey');
+        $mform->disabledIf($fieldname, $fieldname.'_check', 'notchecked');
+
+        return array($fieldname.'_group');
+    }
+
+    public function completion_rule_enabled($data) {
+        return (!empty($data['completionsubmit_check']) && ($data['completionsubmit'] != 0));
     }
 }
