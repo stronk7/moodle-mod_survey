@@ -47,6 +47,10 @@ $string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
 $string['uerr_lowerthanminimum'] = 'Provided time is too small';
 $string['uerr_greaterthanmaximum'] = 'Provided time is too high';
 $string['customdefault'] = 'Custom';
+$string['downloadformat'] = 'Download format';
+$string['downloadformat_help'] = 'Choose the format of the answer as it appear once user attempts are downloaded';
+$string['formatuser'] = 'User format';
+$string['formathm'] = 'hh:mm';
 
 $string['currenttimedefault'] = 'Current time';
 $string['invitationhour'] = 'Choose an hour';

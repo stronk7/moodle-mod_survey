@@ -35,6 +35,7 @@ class surveyitem_baseform extends moodleform {
     function definition() {
         global $DB, $CFG;
 
+        // -------------------------------------------------------------------------------
         // start getting $customdata
         $item = $this->_customdata->item;
         $survey = $this->_customdata->survey;
@@ -344,6 +345,7 @@ class surveyitem_baseform extends moodleform {
     function add_item_buttons() {
         $mform = $this->_form;
 
+        // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
         $survey = $this->_customdata->survey;
         $hassubmissions = $this->_customdata->hassubmissions;
@@ -368,6 +370,7 @@ class surveyitem_baseform extends moodleform {
     function validation($data, $files) {
         global $CFG, $DB;
 
+        // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
         $survey = $this->_customdata->survey;
         $hassubmissions = $this->_customdata->hassubmissions;

@@ -30,6 +30,9 @@ define('SURVEYFIELD_TIME_INTERNALRANGE', 1);
 define('SURVEYFIELD_TIME_EXTERNALRANGE', 2);
 define('SURVEYFIELD_TIME_FORMAT', '[hh:mm]');
 
+define('SURVEYFIELD_TIME_USERFORMAT', 0);
+define('SURVEYFIELD_TIME_HMFORMAT', 1);
+
 /*
  * survey_time_check_time
  * @param $hour, $minute

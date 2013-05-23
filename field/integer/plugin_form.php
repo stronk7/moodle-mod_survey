@@ -38,7 +38,6 @@ class survey_pluginform extends surveyitem_baseform {
         $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
 
         // -------------------------------------------------------------------------------
-        // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
         $hassubmissions = $this->_customdata->hassubmissions;
 

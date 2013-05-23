@@ -38,7 +38,6 @@ class survey_pluginform extends surveyitem_baseform {
         $maximumage = get_config('surveyfield_age', 'maximumage');
 
         // -------------------------------------------------------------------------------
-        // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
         $hassubmissions = $this->_customdata->hassubmissions;
 
@@ -111,7 +110,7 @@ class survey_pluginform extends surveyitem_baseform {
     }
 
     function validation($data, $files) {
-        // acquisisco i valori per pre-definire i campi della form
+        // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
 
         $errors = parent::validation($data, $files);

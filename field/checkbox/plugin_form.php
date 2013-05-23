@@ -36,7 +36,6 @@ class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
         // -------------------------------------------------------------------------------
-        // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
@@ -106,7 +105,6 @@ class survey_pluginform extends surveyitem_baseform {
         $errors = parent::validation($data, $files);
 
         // -------------------------------------------------------------------------------
-        // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
 
         // clean inputs

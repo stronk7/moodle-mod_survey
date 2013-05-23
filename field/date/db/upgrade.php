@@ -34,11 +34,20 @@ function xmldb_surveyfield_date_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // if ($oldversion < 2012101103) {
+    if ($oldversion < 2013052302) {
 
-        // survey savepoint reached
-    //    upgrade_plugin_savepoint(true, 2012062560, 'surveyfield_date', 'survey');
-    // }
+        // Define field downloadformat to be added to survey_date.
+        $table = new xmldb_table('survey_date');
+        $field = new xmldb_field('downloadformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');
+
+        // Conditionally launch add field downloadformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013052302, 'surveyfield_date', 'survey');
+    }
 
     return true;
 }

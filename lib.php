@@ -58,7 +58,7 @@ $i++; define('SURVEY_TABPLUGINS'    , $i);
 
 // TAB NAMES
 define('SURVEY_TAB'.SURVEY_TABSUBMISSIONS.'NAME', get_string('tabsubmissionsname', 'survey'));
-define('SURVEY_TAB'.SURVEY_TABITEMS.'NAME'  , get_string('tabitemname', 'survey'));
+define('SURVEY_TAB'.SURVEY_TABITEMS.'NAME', get_string('tabitemname', 'survey'));
 define('SURVEY_TAB'.SURVEY_TABTEMPLATES.'NAME', get_string('tabtemplatename', 'survey'));
 define('SURVEY_TAB'.SURVEY_TABPLUGINS.'NAME', get_string('tabpluginsname', 'survey'));
 
@@ -1089,4 +1089,33 @@ function survey_save_survey_submissions($survey, $fromform) {
     }
 
     return $survey_submissions;
+}
+
+/**
+ * Obtains the automatic completion state for this module based on any conditions
+ * in survey settings.
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ */
+function survey_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
+
+    // Get forum details
+    if (!$survey = $DB->get_record('survey', array('id' => $cm->instance))) {
+        throw new Exception('Can\'t find survey '.$cm->instance);
+    }
+
+    // If completion option is enabled, evaluate it and return true/false.
+    if ($survey->completionsubmit) {
+        $params = array('surveyid' => $cm->instance, 'userid' => $userid, 'status' => SURVEY_STATUSCLOSED);
+        $submissioncount = $DB->count_records('survey_submissions', $params);
+        return ($submissioncount >= $completionsubmit);
+    } else {
+        // Completion option is not enabled so just return $type.
+        return $type;
+    }
 }

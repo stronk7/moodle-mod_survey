@@ -36,7 +36,6 @@ class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
         // -------------------------------------------------------------------------------
-        // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
@@ -91,6 +90,17 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname.'_minute', $justadefault['minutes']);
         }
 
+        // ----------------------------------------
+        // newitem::downloadformat
+        // ----------------------------------------
+        $fieldname = 'downloadformat';
+        $options = array();
+        $options[SURVEYFIELD_DATETIME_USERFORMAT] = get_string('formatuser', 'surveyfield_datetime');
+        $options[SURVEYFIELD_DATETIME_DMYHMFORMAT] = get_string('formatdmyhm', 'surveyfield_datetime');
+        $options[SURVEYFIELD_DATETIME_HMYMDFORMAT] = get_string('formathmmdy', 'surveyfield_datetime');
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_datetime'), $options);
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_datetime');
+
         if (!$hassubmissions) {
             // /////////////////////////////////////////////////////////////////////////////////////////////////
             // here I open a new fieldset
@@ -139,7 +149,7 @@ class survey_pluginform extends surveyitem_baseform {
     }
 
     function validation($data, $files) {
-        // acquisisco i valori per pre-definire i campi della form
+        // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
 
         $errors = parent::validation($data, $files);

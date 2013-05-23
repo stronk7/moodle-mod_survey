@@ -43,6 +43,11 @@ $string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
 $string['uerr_lowerthanminimum'] = 'Provided short date is too small';
 $string['uerr_greaterthanmaximum'] = 'Provided short date is too high';
 $string['customdefault'] = 'Custom';
+$string['downloadformat'] = 'Download format';
+$string['downloadformat_help'] = 'Choose the format of the answer as it appear once user attempts are downloaded';
+$string['formatuser'] = 'User format';
+$string['formatmy'] = 'mm yyyy';
+$string['formatym'] = 'yyyy mm';
 
 $string['currentshortdatedefault'] = 'Current short date';
 $string['invitationmonth'] = 'Choose a month';

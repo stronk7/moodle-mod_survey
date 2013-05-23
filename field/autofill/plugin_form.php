@@ -36,7 +36,6 @@ class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
         // -------------------------------------------------------------------------------
-        // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
         $survey = $this->_customdata->survey;
         $hassubmissions = $this->_customdata->hassubmissions;

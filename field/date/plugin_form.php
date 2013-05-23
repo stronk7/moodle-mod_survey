@@ -36,12 +36,11 @@ class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
         // -------------------------------------------------------------------------------
-        // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
         $hassubmissions = $this->_customdata->hassubmissions;
 
         // -------------------------------------------------------------------------------
-        // comincio con la "sezione" comune della form
+        // start with common section of the form
         parent::definition();
 
         // -------------------------------------------------------------------------------
@@ -85,6 +84,17 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname.'_year', $justadefault['year']);
         }
 
+        // ----------------------------------------
+        // newitem::downloadformat
+        // ----------------------------------------
+        $fieldname = 'downloadformat';
+        $options = array();
+        $options[SURVEYFIELD_DATE_USERFORMAT] = get_string('formatuser', 'surveyfield_date');
+        $options[SURVEYFIELD_DATE_YMDFORMAT] = get_string('formatmdy', 'surveyfield_date');
+        $options[SURVEYFIELD_DATE_DMYFORMAT] = get_string('formatdmy', 'surveyfield_date');
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_date'), $options);
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_date');
+
         if (!$hassubmissions) {
             // /////////////////////////////////////////////////////////////////////////////////////////////////
             // here I open a new fieldset
@@ -125,7 +135,7 @@ class survey_pluginform extends surveyitem_baseform {
     }
 
     function validation($data, $files) {
-        // acquisisco i valori per pre-definire i campi della form
+        // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
 
         $errors = parent::validation($data, $files);

@@ -84,5 +84,20 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013050802, 'survey');
     }
 
+    if ($oldversion < 2013052301) {
+
+        // Define field completionsubmit to be added to survey.
+        $table = new xmldb_table('survey');
+        $field = new xmldb_field('completionsubmit', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'thankshtmlformat');
+
+        // Conditionally launch add field completionsubmit.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013052301, 'survey');
+    }
+
     return true;
 }

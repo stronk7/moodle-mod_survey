@@ -36,7 +36,6 @@ class survey_pluginform extends surveyitem_baseform {
 
     function definition() {
         // -------------------------------------------------------------------------------
-        // acquisisco i valori per pre-definire i campi della form
         $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
@@ -73,7 +72,7 @@ class survey_pluginform extends surveyitem_baseform {
         $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
         $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
         $separator = array(' ', ' ', ' ', ' ', '<br />', ' ');
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_date'), $separator, false);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_shortdate'), $separator, false);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_shortdate');
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
 
@@ -83,6 +82,17 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname.'_month', $justadefault['mon']);
             $mform->setDefault($fieldname.'_year', $justadefault['year']);
         }
+
+        // ----------------------------------------
+        // newitem::downloadformat
+        // ----------------------------------------
+        $fieldname = 'downloadformat';
+        $options = array();
+        $options[SURVEYFIELD_SHORTDATE_USERFORMAT] = get_string('formatuser', 'surveyfield_shortdate');
+        $options[SURVEYFIELD_SHORTDATE_MYFORMAT] = get_string('formatmy', 'surveyfield_shortdate');
+        $options[SURVEYFIELD_SHORTDATE_YMFORMAT] = get_string('formatym', 'surveyfield_shortdate');
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_shortdate'), $options);
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_shortdate');
 
         if (!$hassubmissions) {
             // /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,7 +130,7 @@ class survey_pluginform extends surveyitem_baseform {
     }
 
     function validation($data, $files) {
-        // acquisisco i valori per pre-definire i campi della form
+        // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
 
         $errors = parent::validation($data, $files);
