@@ -87,10 +87,7 @@ class survey_pluginform extends surveyitem_baseform {
         // newitem::downloadformat
         // ----------------------------------------
         $fieldname = 'downloadformat';
-        $options = array();
-        $options[SURVEYFIELD_SHORTDATE_USERFORMAT] = get_string('formatuser', 'surveyfield_shortdate');
-        $options[SURVEYFIELD_SHORTDATE_MYFORMAT] = get_string('formatmy', 'surveyfield_shortdate');
-        $options[SURVEYFIELD_SHORTDATE_YMFORMAT] = get_string('formatym', 'surveyfield_shortdate');
+        $options = survey_get_unixtimedownloadformats();
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_shortdate'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_shortdate');
 

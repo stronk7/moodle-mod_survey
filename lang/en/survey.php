@@ -313,6 +313,7 @@ $string['translatedstring'] = '$string[\'{$a->stringindex}\'] = \'English transl
 $string['type'] = 'Type';
 $string['typefield'] = 'Question';
 $string['typeformat'] = 'Format';
+$string['unixtime'] = 'unix time';
 $string['unlimited'] = 'Unlimited';
 $string['useadvancedpermissions_descr'] = 'Use advanced permissions to allow students to see/edit/delete responses from other students';
 $string['useadvancedpermissions'] = 'Use advanced permissions';
@@ -331,7 +332,6 @@ $string['xmltemplate_help'] = 'Choose the template you want to download as zip f
 $string['xmltemplate'] = 'Preset to export';
 $string['you'] = 'You';
 $string['youarenotinagroup'] = 'You do not belong to any of the group in which this course is divided';
-$string['aaa'] = 'bbb';
 $string['aaa'] = 'bbb';
 $string['aaa'] = 'bbb';
 $string['aaa'] = 'bbb';

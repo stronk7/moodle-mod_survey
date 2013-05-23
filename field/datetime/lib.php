@@ -25,10 +25,6 @@ defined('MOODLE_INTERNAL') || die();
 
 define('SURVEYFIELD_DATETIME_FORMAT', '[dd/mm/yyyy;hh:mm]');
 
-define('SURVEYFIELD_DATETIME_USERFORMAT', 0);
-define('SURVEYFIELD_DATETIME_DMYHMFORMAT', 1);
-define('SURVEYFIELD_DATETIME_HMYMDFORMAT', 2);
-
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 
 /*

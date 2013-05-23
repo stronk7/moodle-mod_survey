@@ -2617,3 +2617,30 @@ function survey_get_contextid_from_sharinglevel($sharinglevel) {
 
     return $context->id;
 }
+
+/*
+ * survey_get_downloadformats
+ * @param
+ * @return
+ */
+function survey_get_unixtimedownloadformats() {
+    $option = array();
+    $timenow = time();
+
+    $option[''] = get_string('unixtime', 'survey');
+    $option['strftimedate'] = userdate($timenow, get_string('strftimedate', 'core_langconfig'));
+    $option['strftimedatefullshort'] = userdate($timenow, get_string('strftimedatefullshort', 'core_langconfig'));
+    $option['strftimedateshort'] = userdate($timenow, get_string('strftimedateshort', 'core_langconfig'));
+    $option['strftimedatetime'] = userdate($timenow, get_string('strftimedatetime', 'core_langconfig'));
+    $option['strftimedatetimeshort'] = userdate($timenow, get_string('strftimedatetimeshort', 'core_langconfig'));
+    $option['strftimedaydate'] = userdate($timenow, get_string('strftimedaydate', 'core_langconfig'));
+    $option['strftimedaydatetime'] = userdate($timenow, get_string('strftimedaydatetime', 'core_langconfig'));
+    $option['strftimedayshort'] = userdate($timenow, get_string('strftimedayshort', 'core_langconfig'));
+    $option['strftimedaytime'] = userdate($timenow, get_string('strftimedaytime', 'core_langconfig'));
+    $option['strftimemonthyear'] = userdate($timenow, get_string('strftimemonthyear', 'core_langconfig'));
+    $option['strftimerecent'] = userdate($timenow, get_string('strftimerecent', 'core_langconfig'));
+    $option['strftimerecentfull'] = userdate($timenow, get_string('strftimerecentfull', 'core_langconfig'));
+    $option['strftimetime'] = userdate($timenow, get_string('strftimetime', 'core_langconfig'));
+
+    return $option;
+}

@@ -559,8 +559,14 @@ class surveyfield_time extends surveyitem_base {
      */
     public function userform_db_to_export($itemvalue) {
         $content = $itemvalue->content;
-        $timearray = $this->item_split_unix_time($content);
-        return $this->item_time_to_text($timearray);
+        if (!$this->downloadformat) { // return unixtime
+            return $content;
+        } else {
+            // TODO: is userdate correct?
+            // if I fill the survey from a different timezone and I write 5pm,
+            // the teacher has to get the same time not a different one
+            return userdate($content, get_string($this->downloadformat, 'core_langconfig'));
+        }
     }
 
     /*

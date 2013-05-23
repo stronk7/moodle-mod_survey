@@ -45,9 +45,6 @@ $string['uerr_greaterthanmaximum'] = 'Provided date and time is too high';
 $string['customdefault'] = 'Custom';
 $string['downloadformat'] = 'Download format';
 $string['downloadformat_help'] = 'Choose the format of the answer as it appear once user attempts are downloaded';
-$string['formatuser'] = 'User format';
-$string['formathmmdy'] = 'hh:mm - mmmm dd, yyyy';
-$string['formatdmyhm'] = 'dd/mm/yyyy hh:mm';
 
 $string['currentdatetimedefault'] = 'Current date and time';
 $string['invitationday'] = 'Choose a day';

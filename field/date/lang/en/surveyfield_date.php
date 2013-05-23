@@ -50,6 +50,3 @@ $string['uerr_datenotsetrequired'] = 'Please define a date';
 $string['uerr_datenotset'] = 'Please define a date or select the "{$a}" checkbox';
 $string['downloadformat'] = 'Download format';
 $string['downloadformat_help'] = 'Choose the format of the answer as it appear once user attempts are downloaded';
-$string['formatuser'] = 'User format';
-$string['formatmdy'] = 'mmmm dd, yyyy';
-$string['formatdmy'] = 'dd/mm/yyyy';
