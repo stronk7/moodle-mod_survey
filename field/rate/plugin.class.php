@@ -156,7 +156,7 @@ class surveyfield_rate extends surveyitem_base {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
-        // set custom fields value as defined for this field
+        // set custom fields value as defined for this question plugin
         // drop empty rows and trim edging rows spaces from each textarea field
         $fieldlist = array('options', 'rates', 'defaultvalue');
         survey_clean_textarea_fields($record, $fieldlist);
