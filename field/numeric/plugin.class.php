@@ -299,49 +299,6 @@ class surveyfield_numeric extends surveyitem_base {
     }
 
     /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        $constraints = array();
-
-        if (!empty($this->signed)) {
-            $constraints[] = get_string('signed', 'surveyfield_numeric').': '.get_string('allowed', 'surveyfield_numeric');
-        }
-        if (isset($this->decimals)) {
-            $constraints[] = get_string('decimals', 'surveyfield_numeric').': '.$this->decimals;
-        }
-        if (isset($this->lowerbound)) {
-            $constraints[] = get_string('lowerbound', 'surveyfield_numeric').': '.$this->lowerbound;
-        }
-        if (isset($this->upperbound)) {
-            $constraints[] = get_string('upperbound', 'surveyfield_numeric').': '.$this->upperbound;
-        }
-
-        return implode($constraints, '<br />');
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        $status = true;
-
-        $matches = $this->item_atomize_parent_content($childvalue);
-        $decimals = $matches[2];
-        // $status = true only if strlen($decimals) il lower or equal than $this->decimals
-        $status = $status && (strlen($decimals) <= $this->decimals);
-
-        $status = $status && ($childvalue >= $this->lowerbound);
-        $status = $status && ($childvalue <= $this->upperbound);
-
-        return $status;
-    }
-
-    /*
      * item_get_parent_format
      * @param
      * @return

@@ -292,44 +292,16 @@ class surveyfield_datetime extends surveyitem_base {
     }
 
     /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        $constraints = array();
-
-        $datetimearray = $this->item_split_unix_time($this->lowerbound, false);
-        $constraints[] = get_string('lowerbound', 'surveyfield_age').': '.$this->item_datetime_to_text($datetimearray);
-
-        $datetimearray = $this->item_split_unix_time($this->upperbound, false);
-        $constraints[] = get_string('upperbound', 'surveyfield_age').': '.$this->item_datetime_to_text($datetimearray);
-
-        return implode($constraints, '<br />');
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        $status = true;
-        $status = $status && ($childvalue >= $this->lowerbound);
-        $status = $status && ($childvalue <= $this->upperbound);
-
-        return $status;
-    }
-
-    /*
      * item_datetime_to_text
      * starting from an agearray returns the corresponding age in text format
      * @param $agearray
      * @return
      */
     public function item_datetime_to_text($datetimearray) {
-        $return = $datetimearray['mday'].'/'.$datetimearray['mon'].'/'.$datetimearray['year'].'; '.
-            $datetimearray['hours'].':'.$datetimearray['minutes'];
+        $return = userdate($unixtime, '%d/%m/%y, %H:%M');
+        // $return = $datetimearray['mday'].'/'.$datetimearray['mon'].'/'.$datetimearray['year'].'; '.
+        //     $datetimearray['hours'].':'.$datetimearray['minutes'];
+
         return $return;
     }
 

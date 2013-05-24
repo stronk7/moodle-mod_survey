@@ -98,7 +98,7 @@ class surveyfield_integer extends surveyitem_base {
 
         $this->flag = new stdclass();
         $this->flag->issearchable = true;
-        $this->flag->couldbeparent = false;
+        $this->flag->couldbeparent = true;
         $this->flag->useplugintable = true;
 
         if (!empty($itemid)) {

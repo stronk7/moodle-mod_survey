@@ -183,24 +183,6 @@ class surveyfield_fileupload extends surveyitem_base {
     }
 
     /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        return 'item_list_constraints method is still under construction for '.$this->plugin;
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        return 'item_parent_validate_child_constraints needs refinements in plugin: '.$this->plugin;
-    }
-
-    /*
      * item_get_plugin_values
      * @param $pluginstructure
      * @param $pluginsid

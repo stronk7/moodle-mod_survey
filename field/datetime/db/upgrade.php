@@ -49,5 +49,18 @@ function xmldb_surveyfield_datetime_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013052302, 'surveyfield_datetime', 'survey');
     }
 
+    if ($oldversion < 2013052401) {
+
+        // Changing type of field downloadformat on table survey_datetime to char.
+        $table = new xmldb_table('survey_datetime');
+        $field = new xmldb_field('downloadformat', XMLDB_TYPE_CHAR, '32', null, null, null, null, 'defaultvalue');
+
+        // Launch change of type for field downloadformat.
+        $dbman->change_field_type($table, $field);
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013052401, 'surveyfield_datetime', 'survey');
+    }
+
     return true;
 }

@@ -333,36 +333,6 @@ class surveyfield_age extends surveyitem_base {
     }
 
     /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        $constraints = array();
-
-        $agearray = $this->item_split_unix_time($this->lowerbound);
-        $constraints[] = get_string('lowerbound', 'surveyfield_age').': '.$this->item_age_to_text($agearray);
-
-        $agearray = $this->item_split_unix_time($this->upperbound);
-        $constraints[] = get_string('upperbound', 'surveyfield_age').': '.$this->item_age_to_text($agearray);
-
-        return implode($constraints, '<br />');
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        $status = true;
-        $status = $status && ($childvalue >= $this->lowerbound);
-        $status = $status && ($childvalue <= $this->upperbound);
-
-        return $status;
-    }
-
-    /*
      * item_age_to_text
      * starting from an agearray returns the corresponding age in text format
      * @param $agearray
@@ -370,6 +340,7 @@ class surveyfield_age extends surveyitem_base {
      */
     public function item_age_to_text($agearray) {
         $return = $agearray['year'].' '.get_string('years').' '.$agearray['mon'].' '.get_string('months', 'surveyfield_age');
+
         return $return;
     }
 
@@ -580,6 +551,7 @@ class surveyfield_age extends surveyitem_base {
     public function userform_db_to_export($itemvalue) {
         $content = $itemvalue->content;
         $agearray = $this->item_split_unix_time($content);
+
         return $this->item_age_to_text($agearray);
     }
 

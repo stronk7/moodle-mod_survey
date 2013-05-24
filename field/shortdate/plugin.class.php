@@ -285,36 +285,6 @@ class surveyfield_shortdate extends surveyitem_base {
     }
 
     /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        $constraints = array();
-
-        $shortdatearray = $this->item_split_unix_time($this->lowerbound, false);
-        $constraints[] = get_string('lowerbound', 'surveyfield_shortage').': '.$this->item_shortdate_to_text($shortdatearray);
-
-        $shortdatearray = $this->item_split_unix_time($this->upperbound, false);
-        $constraints[] = get_string('upperbound', 'surveyfield_shortage').': '.$this->item_shortdate_to_text($shortdatearray);
-
-        return implode($constraints, '<br />');
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        $status = true;
-        $status = $status && ($childvalue >= $this->lowerbound);
-        $status = $status && ($childvalue <= $this->upperbound);
-
-        return $status;
-    }
-
-    /*
      * item_shortdate_to_text
      * starting from an agearray returns the corresponding age in text format
      * @param $agearray
@@ -322,6 +292,7 @@ class surveyfield_shortdate extends surveyitem_base {
      */
     public function item_shortdate_to_text($shortdatearray) {
         $return = $shortdatearray['year'].' '.get_string('years').' '.$shortdatearray['mon'].' '.get_string('months', 'surveyfield_age');
+
         return $return;
     }
 

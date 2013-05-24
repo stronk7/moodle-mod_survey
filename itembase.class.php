@@ -1474,4 +1474,35 @@ class surveyitem_base {
     public function userform_db_to_export($itemvalue) {
         return $itemvalue->content;
     }
+
+    /*
+     * item_list_constraints
+     * @param
+     * @return list of contraints of the plugin in text format
+     */
+    public function item_list_constraints() {
+        /* nothing to do here because
+         * if (the item has $this->flag->couldbeparent = true;)
+         *     it uses its own method overriding this
+         * } else {
+         *     it does not need it and, eventually, comes here to do nothing.
+         * }
+         */
+    }
+
+    /*
+     * item_parent_validate_child_constraints
+     * @param
+     * @return status of child relation
+     */
+    public function item_parent_validate_child_constraints($childvalue) {
+        /* nothing to do here because
+         * if (the item has $this->flag->couldbeparent = true;)
+         *     it uses its own method overriding this
+         * } else {
+         *     it does not need it and, eventually, comes here to do nothing.
+         * }
+         */
+    }
+
 }
