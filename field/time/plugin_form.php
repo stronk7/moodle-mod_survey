@@ -29,7 +29,7 @@
 defined('MOODLE_INTERNAL') OR die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot.'/mod/survey/itembase_form.php');
+require_once($CFG->dirroot.'/mod/survey/forms/items/itembase_form.php');
 require_once($CFG->dirroot.'/mod/survey/field/time/lib.php');
 
 class survey_pluginform extends surveyitem_baseform {
@@ -79,14 +79,6 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname.'_hour', $justadefault['hours']);
             $mform->setDefault($fieldname.'_minute', $justadefault['minutes']);
         }
-
-        // ----------------------------------------
-        // newitem::downloadformat
-        // ----------------------------------------
-        $fieldname = 'downloadformat';
-        $options = survey_get_unixtimedownloadformats();
-        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_time'), $options);
-        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_time');
 
         if (!$hassubmissions) {
             // /////////////////////////////////////////////////////////////////////////////////////////////////

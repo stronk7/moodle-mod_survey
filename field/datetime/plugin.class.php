@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') OR die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/datetime/lib.php');
 
 class surveyfield_datetime extends surveyitem_base {
@@ -59,6 +59,11 @@ class surveyfield_datetime extends surveyitem_base {
      * $defaultvalue = the value of the field when the form is initially displayed.
      */
     public $defaultvalue = 0;
+
+    /*
+     * $downloadformat = the format of the content once downloaded
+     */
+    public $downloadformat = '';
 
     /*
      * $lowerbound = the minimum allowed date and time

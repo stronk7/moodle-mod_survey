@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/integer/lib.php');
 
 class surveyfield_integer extends surveyitem_base {
@@ -409,8 +409,15 @@ class surveyfield_integer extends surveyitem_base {
      * @return
      */
     public function userform_get_parent_disabilitation_info($child_parentcontent) {
-        // $this->flag->couldbeparent = false
-        // this method is never called
+        $disabilitationinfo = array();
+
+        $mformelementinfo = new stdClass();
+        $mformelementinfo->parentname = $this->itemname;
+        $mformelementinfo->operator = 'neq';
+        $mformelementinfo->content = $child_parentcontent;
+        $disabilitationinfo[] = $mformelementinfo;
+
+        return $disabilitationinfo;
     }
 
     /*

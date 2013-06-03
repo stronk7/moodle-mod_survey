@@ -14,3 +14,6 @@ that an Admin would be able to disable/enable survey question types at
 site level. (thanks to JR)
 -> The Autofill question message "Content will be added at submit time" should not be displayed to the Student when taking the Survey, as it does not mean anything to him. That is a message for Teacher, not Student. (thanks to JR)
 -> Ask how to refresh navigation block from within the module
+-> modificare il modo in cui la time plugin salva il dato in modo da renderlo immune dal timezone (TZ)
+-> nella search form meto in un campo di tipo numerico un vaore testuale e cerco: errore
+-> siamo sicuri che la mform_validation sia eseguita in uscita dalla search form?

@@ -26,10 +26,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot.'/mod/survey/itembase_form.php');
+require_once($CFG->dirroot.'/mod/survey/forms/items/itembase_form.php');
 require_once($CFG->dirroot.'/mod/survey/field/date/lib.php');
 
 class survey_pluginform extends surveyitem_baseform {
@@ -58,7 +58,7 @@ class survey_pluginform extends surveyitem_baseform {
         // $months = array_combine(range(0, 11), range(0, 11));
         $months = array();
         for ($i=1; $i<=12; $i++) {
-            $months[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), "%B"); // january, february, march...
+            $months[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), "%B", 0); // january, february, march...
         }
         $years = array_combine(range($startyear, $stopyear), range($startyear, $stopyear));
 

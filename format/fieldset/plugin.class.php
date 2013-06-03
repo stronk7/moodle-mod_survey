@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/format/fieldset/lib.php');
 
 class surveyformat_fieldset extends surveyitem_base {
@@ -222,7 +222,7 @@ class surveyformat_fieldset extends surveyitem_base {
     public function userform_display_as_read_only($itemvalue) { // no longer used - obsolete
         echo '<fieldset class="clearfix">
             <legend class="ftoggler">'.strip_tags($this->content).'</legend>';
-        // la chiusura è gestita in /pages/submissions/readonly.php righe 62+
+        // la chiusura è gestita in /forms/submissions/readonly.php righe 62+
     }
 
     /*

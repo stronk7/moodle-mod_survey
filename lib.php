@@ -49,69 +49,67 @@ define('SURVEY_REFERRALMONTH'      , 0);
 // TAB NUMBERS ALIAS COUNT OF THE TABS IN THE TAB BAR
 // to change tabs order, just exchange numbers if the following lines
 
-$i = 0;
-$i++; define('SURVEY_TABSUBMISSIONS', $i);
-$i++; define('SURVEY_TABITEMS'      , $i);
-$i++; define('SURVEY_TABTEMPLATES'  , $i);
-$i++; define('SURVEY_TABPLUGINS'    , $i);
-      define('SURVEY_TABCOUNT'      , $i);
+define('SURVEY_TABSUBMISSIONS', 1);
+define('SURVEY_TABITEMS'      , 2);
+define('SURVEY_TABUTEMPLATES' , 3);
+define('SURVEY_TABMTEMPLATES' , 4);
 
 // TAB NAMES
 define('SURVEY_TAB'.SURVEY_TABSUBMISSIONS.'NAME', get_string('tabsubmissionsname', 'survey'));
 define('SURVEY_TAB'.SURVEY_TABITEMS.'NAME', get_string('tabitemname', 'survey'));
-define('SURVEY_TAB'.SURVEY_TABTEMPLATES.'NAME', get_string('tabtemplatename', 'survey'));
-define('SURVEY_TAB'.SURVEY_TABPLUGINS.'NAME', get_string('tabpluginsname', 'survey'));
+define('SURVEY_TAB'.SURVEY_TABUTEMPLATES.'NAME', get_string('tabutemplatename', 'survey'));
+define('SURVEY_TAB'.SURVEY_TABMTEMPLATES.'NAME', get_string('tabmtemplatename', 'survey'));
 
 // PAGES
     // SUBMISSIONS PAGES
-    define('SURVEY_SUBMISSION_EXPLORE' , 1);
+    define('SURVEY_SUBMISSION_PREVIEW' , 1);
     define('SURVEY_SUBMISSION_NEW'     , 2);
-    define('SURVEY_SUBMISSION_EDIT'    , 3);
-    define('SURVEY_SUBMISSION_READONLY', 4);
-    define('SURVEY_SUBMISSION_MANAGE'  , 5);
+    define('SURVEY_SUBMISSION_MANAGE'  , 3);
+    define('SURVEY_SUBMISSION_EDIT'    , 4);
+    define('SURVEY_SUBMISSION_READONLY', 5);
     define('SURVEY_SUBMISSION_SEARCH'  , 6);
     define('SURVEY_SUBMISSION_REPORT'  , 7);
     define('SURVEY_SUBMISSION_EXPORT'  , 8);
 
     // ITEMS PAGES
     define('SURVEY_ITEMS_MANAGE'       , 1);
-    define('SURVEY_ITEMS_REORDER'      , 2);
-    define('SURVEY_ITEMS_ADD'          , 3);
-    define('SURVEY_ITEMS_CONFIGURE'    , 4);
-    define('SURVEY_ITEMS_ADDSET'       , 5);
-    define('SURVEY_ITEMS_VALIDATE'     , 6);
+    define('SURVEY_ITEMS_ADD'          , 2);
+    define('SURVEY_ITEMS_CONFIGURE'    , 3);
+    define('SURVEY_ITEMS_VALIDATE'     , 4);
 
-    // TEMPLATES PAGES
-    define('SURVEY_TEMPLATES_MANAGE'   , 1);
-    define('SURVEY_TEMPLATES_BUILD'    , 2);
-    define('SURVEY_TEMPLATES_IMPORT'   , 3);
+    // USER TEMPLATES PAGES
+    define('SURVEY_UTEMPLATES_MANAGE'  , 1);
+    define('SURVEY_UTEMPLATES_BUILD'   , 2);
+    define('SURVEY_UTEMPLATES_IMPORT'  , 3);
+    define('SURVEY_UTEMPLATES_APPLY'   , 4);
 
-    // PLUGINS PAGES
-    define('SURVEY_PLUGINS_BUILD'      , 1);
+    // MASTER TEMPLATES PAGES
+    define('SURVEY_MTEMPLATES_BUILD'   , 1);
+    define('SURVEY_MTEMPLATES_APPLY'   , 2);
 
 // ITEM TYPES
 define('SURVEY_TYPEFIELD' , 'field');
 define('SURVEY_TYPEFORMAT', 'format');
 
 // ACTIONS
-define('SURVEY_NOACTION'           , '0');
-define('SURVEY_CHOOSEFTYPE'        , '1');
-define('SURVEY_EDITITEM'           , '2');
-define('SURVEY_HIDEITEM'           , '3');
-define('SURVEY_SHOWITEM'           , '4');
-define('SURVEY_DELETEITEM'         , '5');
-define('SURVEY_CHANGEORDERASK'     , '6');
-define('SURVEY_CHANGEORDER'        , '7');
-define('SURVEY_REQUIREDOFF'        , '8');
-define('SURVEY_REQUIREDON'         , '9');
-define('SURVEY_CHANGEINDENT'       , '10');
-define('SURVEY_EDITSURVEY'         , '11');
-define('SURVEY_VIEWSURVEY'         , '12');
-define('SURVEY_DELETESURVEY'       , '13');
-define('SURVEY_DELETEALLRESPONSES' , '14');
-define('SURVEY_VALIDATE'           , '15');
-define('SURVEY_DELETETEMPLATE'     , '16');
-define('SURVEY_EXPORTTEMPLATE'     , '17');
+define('SURVEY_NOACTION'          , '0');
+define('SURVEY_CHOOSEFTYPE'       , '1');
+define('SURVEY_EDITITEM'          , '2');
+define('SURVEY_HIDEITEM'          , '3');
+define('SURVEY_SHOWITEM'          , '4');
+define('SURVEY_DELETEITEM'        , '5');
+define('SURVEY_CHANGEORDERASK'    , '6');
+define('SURVEY_CHANGEORDER'       , '7');
+define('SURVEY_REQUIREDOFF'       , '8');
+define('SURVEY_REQUIREDON'        , '9');
+define('SURVEY_CHANGEINDENT'      , '10');
+define('SURVEY_EDITSURVEY'        , '11');
+define('SURVEY_VIEWSURVEY'        , '12');
+define('SURVEY_DELETESURVEY'      , '13');
+define('SURVEY_DELETEALLRESPONSES', '14');
+define('SURVEY_VALIDATE'          , '15');
+define('SURVEY_DELETEUTEMPLATE'   , '16');
+define('SURVEY_EXPORTUTEMPLATE'   , '17');
 
 // SAVESTATUS
 define('SURVEY_NOFEEDBACK', 0);
@@ -153,8 +151,9 @@ define('SURVEY_URLMULTIVALUESEPARATOR', '+');
 define('SURVEY_DBMULTIVALUESEPARATOR', ', ');
 
 // CONFIRMATION
-define('SURVEY_CONFIRM', 1);
-define('SURVEY_NEGATE' , 2);
+define('SURVEY_UNCONFIRMED',   0);
+define('SURVEY_CONFIRMED_YES', 1);
+define('SURVEY_CONFIRMED_NO' , 2);
 
 // values for defaultvalue_option
 define('SURVEY_CUSTOMDEFAULT'    , 1);
@@ -182,9 +181,6 @@ define('SURVEY_IGNOREITEMS', '3');
 
 // empty template field
 define('SURVEY_EMPTYTEMPLATEFIELD', '@@NULL@@');
-
-define('SURVEY_USERTEMPLATE', 'TEMPLATE');
-define('SURVEY_MASTERTEMPLATE', 'SURVEYPLUGIN');
 
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API                                                            //
@@ -742,60 +738,78 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     $canexportdata = survey_user_can_export_data($cm);
     $hassubmissions = survey_has_submissions($cm->instance);
 
-    $survey = $DB->get_record('survey', array('id' => $cm->instance));
     // $currentgroup = groups_get_activity_group($cm);
     // $groupmode = groups_get_activity_groupmode($cm);
 
-    $paramurl = array('s' => $cm->instance, 'tab' => SURVEY_TABSUBMISSIONS);
-    $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_CONTAINER);
-
-    if (!empty($canmanageitems)) {
-        $paramurl['pag'] = SURVEY_SUBMISSION_EXPLORE;
-        $navnode->add(get_string('tabsubmissionspage1', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+    /*
+     * SURVEY_TABSUBMISSIONS
+     */
+    // PARENT
+    $paramurl = array('s' => $cm->instance);
+    if ($canmanageitems) {
+        $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
+    } else {
+        $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_CONTAINER);
     }
-    $paramurl['pag'] = SURVEY_SUBMISSION_NEW;
+
+    // CHILDREN
+    if (!empty($canmanageitems)) {
+        $navnode->add(get_string('tabsubmissionspage1', 'survey'), new moodle_url('/mod/survey/view_preview.php', $paramurl), navigation_node::TYPE_SETTING);
+    }
     $navnode->add(get_string('tabsubmissionspage2', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
-    $paramurl['pag'] = SURVEY_SUBMISSION_MANAGE;
-    $navnode->add(get_string('tabsubmissionspage5', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
-    $paramurl['pag'] = SURVEY_SUBMISSION_SEARCH;
-    $navnode->add(get_string('tabsubmissionspage6', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+    $navnode->add(get_string('tabsubmissionspage5', 'survey'), new moodle_url('/mod/survey/view_manage.php', $paramurl), navigation_node::TYPE_SETTING);
+    $navnode->add(get_string('tabsubmissionspage6', 'survey'), new moodle_url('/mod/survey/view_search.php', $paramurl), navigation_node::TYPE_SETTING);
     if (!empty($canexportdata)) {
-        $paramurl['pag'] = SURVEY_SUBMISSION_EXPORT;
-        $navnode->add(get_string('tabsubmissionspage8', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+        $navnode->add(get_string('tabsubmissionspage8', 'survey'), new moodle_url('/mod/survey/view_export.php', $paramurl), navigation_node::TYPE_SETTING);
     }
-    //$navref->add(SURVEY_TAB1NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => SURVEY_TABSUBMISSIONS)));
 
+    /*
+     * SURVEY_TABITEMS
+     */
     if (!empty($canmanageitems)) {
-        $paramurl = array('s' => $cm->instance, 'tab' => SURVEY_TABITEMS);
-        $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_CONTAINER);
-
-        $paramurl['pag'] = SURVEY_ITEMS_MANAGE;
-        $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
-        if (!$hassubmissions) {
-            $paramurl['pag'] = SURVEY_ITEMS_ADD;
-            $navnode->add(get_string('tabitemspage3', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
-            $paramurl['pag'] = SURVEY_ITEMS_ADDSET;
-            $navnode->add(get_string('tabitemspage5', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+        // PARENT
+        $itemcount = $DB->count_records('survey_item', array('surveyid' => $cm->instance));
+        $paramurl = array('s' => $cm->instance);
+        if ($itemcount) {
+            $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
+        } else {
+            $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/items_add.php', $paramurl), navigation_node::TYPE_CONTAINER);
         }
-        $paramurl['pag'] = SURVEY_ITEMS_VALIDATE;
-        $navnode->add(get_string('tabitemspage6', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
+
+        // CHILDREN
+        $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_SETTING);
+        if (!$hassubmissions) {
+            $navnode->add(get_string('tabitemspage2', 'survey'), new moodle_url('/mod/survey/items_add.php', $paramurl), navigation_node::TYPE_SETTING);
+        }
+        $navnode->add(get_string('tabitemspage4', 'survey'), new moodle_url('/mod/survey/items_validate.php', $paramurl), navigation_node::TYPE_SETTING);
         //$navref->add(SURVEY_TAB2NAME, new moodle_url('/mod/survey/view.php', $paramurl));
     }
 
-    $paramurl = array('s' => $cm->instance, 'tab' => SURVEY_TABTEMPLATES);
-    $navnode = $navref->add(SURVEY_TAB3NAME,  new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_CONTAINER);
+    /*
+     * SURVEY_TABUTEMPLATES
+     */
+    // PARENT
+    $paramurl = array('s' => $cm->instance);
+    $navnode = $navref->add(SURVEY_TAB3NAME,  new moodle_url('/mod/survey/utemplate_build.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
-    $paramurl['pag'] = SURVEY_TEMPLATES_MANAGE;
-    $navnode->add(get_string('tabtemplatepage1', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
-    $paramurl['pag'] = SURVEY_TEMPLATES_BUILD;
-    $navnode->add(get_string('tabtemplatepage2', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
-    $paramurl['pag'] = SURVEY_TEMPLATES_IMPORT;
-    $navnode->add(get_string('tabtemplatepage3', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
-    // $navref->add(SURVEY_TAB3NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => SURVEY_TABTEMPLATES)));
+    // CHILDREN
+    $navnode->add(get_string('tabutemplatepage1', 'survey'), new moodle_url('/mod/survey/utemplate_manage.php', $paramurl), navigation_node::TYPE_SETTING);
+    $navnode->add(get_string('tabutemplatepage2', 'survey'), new moodle_url('/mod/survey/utemplate_build.php', $paramurl), navigation_node::TYPE_SETTING);
+    $navnode->add(get_string('tabutemplatepage3', 'survey'), new moodle_url('/mod/survey/utemplate_import.php', $paramurl), navigation_node::TYPE_SETTING);
+    $navnode->add(get_string('tabutemplatepage4', 'survey'), new moodle_url('/mod/survey/utemplate_apply.php', $paramurl), navigation_node::TYPE_SETTING);
+    // $navref->add(SURVEY_TAB3NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => SURVEY_TABUTEMPLATES)));
 
+    /*
+     * SURVEY_TABMTEMPLATES
+     */
     if ($canmanageplugin) {
-        $paramurl = array('s' => $cm->instance, 'tab' => SURVEY_TABPLUGINS);
-        $navref->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/view.php', $paramurl));
+        // PARENT
+        $paramurl = array('s' => $cm->instance);
+        $navref->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/mtemplate.php', $paramurl), navigation_node::TYPE_CONTAINER);
+
+        // CHILDREN
+        $navnode->add(get_string('tabutemplatepage1', 'survey'), new moodle_url('/mod/survey/mtemplate_build.php', $paramurl), navigation_node::TYPE_SETTING);
+        $navnode->add(get_string('tabutemplatepage2', 'survey'), new moodle_url('/mod/survey/mtemplate_apply.php', $paramurl), navigation_node::TYPE_SETTING);
     }
 }
 
@@ -822,10 +836,10 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
     if ($surveyreportlist = get_plugin_list('surveyreport')) {
         $icon = new pix_icon('i/report', '', 'moodle', array('class'=>'icon'));
         $reportnode = $surveynode->add(get_string('report'), null, navigation_node::TYPE_CONTAINER);
-        $paramurl = array('s' => $PAGE->cm->instance, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => SURVEY_SUBMISSION_REPORT);
+        $paramurl = array('s' => $PAGE->cm->instance);
         foreach ($surveyreportlist as $pluginname => $pluginpath) {
             $paramurl['rname'] = $pluginname;
-            $reportnode->add(get_string('pluginname', 'surveyreport_'.$pluginname), new moodle_url('view.php', $paramurl), navigation_node::TYPE_SETTING, null, null, $icon);
+            $reportnode->add(get_string('pluginname', 'surveyreport_'.$pluginname), new moodle_url('view_report.php', $paramurl), navigation_node::TYPE_SETTING, null, null, $icon);
         }
     }
 }
@@ -937,7 +951,7 @@ function survey_get_plugin_list($plugintype=null, $includetype=false, $count=fal
  * @param $canaccessadvancedform, $searchform, $allpages=false
  * @return
  */
-function survey_fetch_items_seeds($canaccessadvancedform, $searchform, $allpages=false) {
+function survey_fetch_items_seeds($canaccessadvancedform, $searchform, $filtertype=false, $allpages=false) {
     $return = 'SELECT si.*
                FROM {survey_item} si
                WHERE si.surveyid = :surveyid';
@@ -958,6 +972,9 @@ function survey_fetch_items_seeds($canaccessadvancedform, $searchform, $allpages
                 $return .= ' AND si.basicformpage = :formpage';
             }
         }
+    }
+    if ($filtertype) {
+        $return .= ' AND si.type = :type';
     }
     $return .= ' AND si.hide = 0
             ORDER BY si.sortindex';
@@ -1038,57 +1055,6 @@ function survey_get_user_style_options() {
     $filemanager_options['subdirs'] = false;
 
     return $filemanager_options;
-}
-
-/*
- * survey_attempt_save_preprocessing
- * @param none
- * @return survey_submissions record
- */
-function survey_save_survey_submissions($survey, $fromform) {
-    global $USER, $DB;
-
-    if (!$survey->newpageforchild) {
-        survey_drop_unexpected_values($fromform);
-    }
-
-    $timenow = time();
-    $savebutton = (isset($fromform->savebutton) && ($fromform->savebutton));
-    $saveasnewbutton = (isset($fromform->saveasnewbutton) && ($fromform->saveasnewbutton));
-
-    $survey_submissions = new stdClass();
-    if ($saveasnewbutton || empty($fromform->submissionid)) { // new record needed
-        // add a new record to survey_submissions
-        $survey_submissions->surveyid = $survey->id;
-        $survey_submissions->userid = $USER->id;
-
-        if (empty($fromform->submissionid)) {
-            $survey_submissions->status = SURVEY_STATUSINPROGRESS;
-            $survey_submissions->timecreated = $timenow;
-        }
-        if ($savebutton) {
-            $survey_submissions->status = SURVEY_STATUSCLOSED;
-            $survey_submissions->timemodified = $timenow;
-        }
-        if ($saveasnewbutton) {
-            $survey_submissions->status = SURVEY_STATUSCLOSED;
-            $survey_submissions->timecreated = $timenow;
-            $survey_submissions->timemodified = $timenow;
-        }
-
-        $survey_submissions->id = $DB->insert_record('survey_submissions', $survey_submissions);
-
-        $fromform->submissionid = $survey_submissions->id;
-    } else {
-        $survey_submissions->id = $fromform->submissionid;
-        if ($savebutton) {
-            $survey_submissions->status = SURVEY_STATUSCLOSED;
-            $survey_submissions->timemodified = $timenow;
-            $DB->update_record('survey_submissions', $survey_submissions);
-        }
-    }
-
-    return $survey_submissions;
 }
 
 /**

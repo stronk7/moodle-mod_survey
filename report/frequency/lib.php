@@ -41,8 +41,8 @@ function surveyreport_displaydistribution($cm, $urvey, $itemid, $submissionscoun
 
     $table = new flexible_table('submissionslist');
 
-    $paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => SURVEY_SUBMISSION_REPORT, 'rname' => 'frequency');
-    $table->define_baseurl(new moodle_url('view.php', $paramurl));
+    $paramurl = array('id' => $cm->id, 'rname' => 'frequency');
+    $table->define_baseurl(new moodle_url('view_report.php', $paramurl));
 
     $tablecolumns = array();
     $tablecolumns[] = 'answer';
@@ -79,7 +79,6 @@ function surveyreport_displaydistribution($cm, $urvey, $itemid, $submissionscoun
 
     $paramurl = array();
     $paramurl['id'] = $cm->id;
-    $paramurl['tab'] = SURVEY_TABSUBMISSIONS;
     $basepath = new moodle_url('view.php', $paramurl);
 
     list($where, $params) = $table->get_sql_where();

@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/textarea/lib.php');
 
 class surveyfield_textarea extends surveyitem_base {
@@ -58,12 +58,12 @@ class surveyfield_textarea extends surveyitem_base {
     /*
      * $arearows = number or rows of the text area?
      */
-    public $arearows = 60;
+    public $arearows = 10;
 
     /*
      * $areacols = number or columns of the text area?
      */
-    public $areacols = 10;
+    public $areacols = 60;
 
     /*
      * $minlength = the minimum allowed text length

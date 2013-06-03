@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/numeric/lib.php');
 
 class surveyfield_numeric extends surveyitem_base {
@@ -432,18 +432,22 @@ class surveyfield_numeric extends surveyitem_base {
         if (strlen($itemdetail['mainelement']) == 0) {
             $olduserdata->content = null;
         } else {
-            $decimalseparator = get_string('decsep', 'langconfig');
-            $matches = $this->item_atomize_parent_content($itemdetail['mainelement']);
-            $decimals = isset($matches[2]) ? $matches[2] : '0';
-            if (strlen($decimals) > $this->decimals) {
-                // round it
-                $decimals = round((float)$decimals, $this->decimals);
+            if (empty($this->decimals)) {
+                $olduserdata->content = $itemdetail['mainelement'];
+            } else {
+                $decimalseparator = get_string('decsep', 'langconfig');
+                $matches = $this->item_atomize_parent_content($itemdetail['mainelement']);
+                $decimals = isset($matches[2]) ? $matches[2] : '0';
+                if (strlen($decimals) > $this->decimals) {
+                    // round it
+                    $decimals = round((float)$decimals, $this->decimals);
+                }
+                if (strlen($decimals) < $this->decimals) {
+                    // padright
+                    $decimals = str_pad($decimals, $this->decimals, '0', STR_PAD_RIGHT);
+                }
+                $olduserdata->content = $matches[1].$decimalseparator.$decimals;
             }
-            if (strlen($decimals) < $this->decimals) {
-                // padright
-                $decimals = str_pad($decimals, $this->decimals, '0', STR_PAD_RIGHT);
-            }
-            $olduserdata->content = $matches[1].$decimalseparator.$decimals;
         }
     }
 

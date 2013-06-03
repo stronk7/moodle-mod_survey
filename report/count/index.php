@@ -34,8 +34,8 @@ echo $OUTPUT->heading(get_string('pluginname', 'surveyreport_count'));
 
 $table = new flexible_table('userattempts');
 
-$paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => SURVEY_SUBMISSION_REPORT, 'rname' => $reportname);
-$table->define_baseurl(new moodle_url('view.php', $paramurl));
+$paramurl = array('id' => $cm->id, 'rname' => $reportname);
+$table->define_baseurl(new moodle_url('view_report.php', $paramurl));
 
 $tablecolumns = array();
 $tablecolumns[] = 'picture';

@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/autofill/lib.php');
 
 class surveyfield_autofill extends surveyitem_base {
@@ -358,15 +358,15 @@ class surveyfield_autofill extends surveyitem_base {
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT02:
                         $format_time = get_string('strftimedaytime');
-                        $olduserdata->content .= userdate($olduserdata->time, $format_time);
+                        $olduserdata->content .= userdate($olduserdata->time, $format_time, 0);
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT03:
                         $format_date = get_string("strftimedate");
-                        $olduserdata->content .= userdate($olduserdata->time, $format_date);
+                        $olduserdata->content .= userdate($olduserdata->time, $format_date, 0);
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT04:
                         $format_datetime = get_string("strftimedatetime");
-                        $olduserdata->content .= userdate($olduserdata->time, $format_datetime);
+                        $olduserdata->content .= userdate($olduserdata->time, $format_datetime, 0);
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT05:
                         $olduserdata->content .= $USER->id;

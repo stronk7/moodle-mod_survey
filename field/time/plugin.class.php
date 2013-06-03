@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/time/lib.php');
 
 class surveyfield_time extends surveyitem_base {
@@ -298,10 +298,7 @@ class surveyfield_time extends surveyitem_base {
      * @return
      */
     public function item_time_to_text($timearray) {
-        $return = userdate($unixtime, '%H:%M');
-        // $return = $timearray['hours'].':'.$timearray['minutes'];
-
-        return $return;
+        return = $timearray['hours'].':'.$timearray['minutes'];
     }
 
     /*
@@ -531,14 +528,8 @@ class surveyfield_time extends surveyitem_base {
      */
     public function userform_db_to_export($itemvalue) {
         $content = $itemvalue->content;
-        if (!$this->downloadformat) { // return unixtime
-            return $content;
-        } else {
-            // TODO: is userdate correct?
-            // if I fill the survey from a different timezone and I write 5pm,
-            // the teacher has to get the same time not a different one
-            return userdate($content, get_string($this->downloadformat, 'core_langconfig'));
-        }
+        $timearray = $this->item_split_unix_time($content);
+        return $this->item_time_to_text($timearray);
     }
 
     /*
