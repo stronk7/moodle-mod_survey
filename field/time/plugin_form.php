@@ -132,9 +132,9 @@ class survey_pluginform extends surveyitem_baseform {
 
         // constrain default between boundaries
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
-            $defaultvalue = $item->item_time_to_unix_time($data['defaultvalue_hour'], $data['defaultvalue_minute']);
-            $lowerbound = $item->item_time_to_unix_time($data['defaultvalue_hour'], $data['defaultvalue_minute']);
-            $upperbound = $item->item_time_to_unix_time($data['defaultvalue_hour'], $data['defaultvalue_minute']);
+            $defaultvalue = $item->item_time_to_minutesfrommidnight($data['defaultvalue_hour'], $data['defaultvalue_minute']);
+            $lowerbound = $item->item_time_to_minutesfrommidnight($data['defaultvalue_hour'], $data['defaultvalue_minute']);
+            $upperbound = $item->item_time_to_minutesfrommidnight($data['defaultvalue_hour'], $data['defaultvalue_minute']);
             if ($data['rangetype'] == SURVEYFIELD_TIME_INTERNALRANGE) {
                 if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
                     $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_time');

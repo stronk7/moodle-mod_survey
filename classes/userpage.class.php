@@ -93,16 +93,18 @@ class mod_survey_userpagemanager {
         // were pages assigned?
         if ($this->canaccessadvancedform) {
             $pagefield = 'advancedformpage';
-            $conditions = array('surveyid' => $this->survey->id, 'hide' => 0);
+            $whereclause = 'surveyid = :surveyid AND hide = 0';
         } else {
             $pagefield = 'basicformpage';
-            $conditions = array('surveyid' => $this->survey->id, 'hide' => 0, 'basicform' => 1);
+            $whereclause = 'surveyid = :surveyid AND hide = 0 AND basicform <> 0';
         }
-        $pagenumber = $DB->get_field('survey_item', 'MAX('.$pagefield.')', $conditions);
+        $whereparams = array('surveyid' => $this->survey->id);
+        $pagenumber = $DB->get_field_select('survey_item', 'MAX('.$pagefield.')', $whereclause, $whereparams);
+
         if (!$pagenumber) {
             $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
             $pagenumber = 1;
-            $items = $DB->get_recordset('survey_item', $conditions, 'sortindex', 'id, type, plugin, parentid, '.$pagefield.', sortindex');
+            $items = $DB->get_recordset_select('survey_item', $whereclause, $whereparams, 'sortindex', 'id, type, plugin, parentid, '.$pagefield.', sortindex');
             if ($items) {
                 foreach ($items as $item) {
 
@@ -339,7 +341,6 @@ class mod_survey_userpagemanager {
 
         $survey_submissions = new stdClass();
         if (empty($this->formdata->submissionid)) {
-
             // add a new record to survey_submissions
             $survey_submissions->surveyid = $this->survey->id;
             $survey_submissions->userid = $USER->id;
@@ -368,7 +369,9 @@ class mod_survey_userpagemanager {
                 // case: "save" was requested, I am not here
                 // case: "save as" was requested, I am not here
                 // case: "next" was requested, so status = SURVEY_STATUSINPROGRESS
-                $survey_submissions->status = SURVEY_STATUSINPROGRESS;
+                $status = $DB->get_field('survey_submissions', 'status', array('id' => $this->formdata->submissionid), MUST_EXIST);
+                $survey_submissions->id = $this->formdata->submissionid;
+                $survey_submissions->status = $status;
             }
         }
         $this->submissionid = $survey_submissions->id;
@@ -705,11 +708,11 @@ class mod_survey_userpagemanager {
     }
 
     /*
-     * explicit_explore_mode
+     * declare_preview_mode
      * @param
      * @return
      */
-    public function explicit_explore_mode() {
+    public function declare_preview_mode() {
         global $OUTPUT;
 
         $exploremodestring = get_string('exploremode', 'survey');

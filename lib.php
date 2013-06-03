@@ -93,19 +93,19 @@ define('SURVEY_TYPEFORMAT', 'format');
 
 // ACTIONS
 define('SURVEY_NOACTION'          , '0');
-define('SURVEY_CHOOSEFTYPE'       , '1');
-define('SURVEY_EDITITEM'          , '2');
-define('SURVEY_HIDEITEM'          , '3');
-define('SURVEY_SHOWITEM'          , '4');
-define('SURVEY_DELETEITEM'        , '5');
-define('SURVEY_CHANGEORDERASK'    , '6');
-define('SURVEY_CHANGEORDER'       , '7');
-define('SURVEY_REQUIREDOFF'       , '8');
-define('SURVEY_REQUIREDON'        , '9');
-define('SURVEY_CHANGEINDENT'      , '10');
-define('SURVEY_EDITSURVEY'        , '11');
-define('SURVEY_VIEWSURVEY'        , '12');
-define('SURVEY_DELETESURVEY'      , '13');
+define('SURVEY_EDITITEM'          , '1');
+define('SURVEY_HIDEITEM'          , '2');
+define('SURVEY_SHOWITEM'          , '3');
+define('SURVEY_DELETEITEM'        , '4');
+define('SURVEY_CHANGEORDERASK'    , '5');
+define('SURVEY_CHANGEORDER'       , '6');
+define('SURVEY_REQUIREDOFF'       , '7');
+define('SURVEY_REQUIREDON'        , '8');
+define('SURVEY_CHANGEINDENT'      , '9');
+define('SURVEY_EDITSURVEY'        , '10');
+define('SURVEY_READONLYSURVEY'    , '11');
+define('SURVEY_DELETESURVEY'      , '12');
+define('SURVEY_PREVIEWSURVEY'     , '13');
 define('SURVEY_DELETEALLRESPONSES', '14');
 define('SURVEY_VALIDATE'          , '15');
 define('SURVEY_DELETEUTEMPLATE'   , '16');
@@ -754,10 +754,12 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
 
     // CHILDREN
     if (!empty($canmanageitems)) {
-        $navnode->add(get_string('tabsubmissionspage1', 'survey'), new moodle_url('/mod/survey/view_preview.php', $paramurl), navigation_node::TYPE_SETTING);
+        $localparamurl = array('s' => $cm->instance, 'act' => SURVEY_PREVIEWSURVEY);
+        $navnode->add(get_string('tabsubmissionspage1', 'survey'), new moodle_url('/mod/survey/view.php', $localparamurl), navigation_node::TYPE_SETTING);
     }
     $navnode->add(get_string('tabsubmissionspage2', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
-    $navnode->add(get_string('tabsubmissionspage5', 'survey'), new moodle_url('/mod/survey/view_manage.php', $paramurl), navigation_node::TYPE_SETTING);
+    $localparamurl = array('s' => $cm->instance, 'act' => SURVEY_SUBMISSION_READONLY);
+    $navnode->add(get_string('tabsubmissionspage5', 'survey'), new moodle_url('/mod/survey/view_manage.php', $localparamurl), navigation_node::TYPE_SETTING);
     $navnode->add(get_string('tabsubmissionspage6', 'survey'), new moodle_url('/mod/survey/view_search.php', $paramurl), navigation_node::TYPE_SETTING);
     if (!empty($canexportdata)) {
         $navnode->add(get_string('tabsubmissionspage8', 'survey'), new moodle_url('/mod/survey/view_export.php', $paramurl), navigation_node::TYPE_SETTING);
@@ -842,39 +844,6 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
             $reportnode->add(get_string('pluginname', 'surveyreport_'.$pluginname), new moodle_url('view_report.php', $paramurl), navigation_node::TYPE_SETTING, null, null, $icon);
         }
     }
-}
-
-/*
- * survey_user_can_manage_items
- * @param $cm
- * @return
- */
-function survey_user_can_manage_items($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:manageitems', $context, null, true));
-}
-
-/*
- * survey_user_can_manage_plugin
- * @param $cm
- * @return
- */
-function survey_user_can_manage_plugin($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:manageplugin', $context, null, true));
-}
-
-/*
- * survey_user_can_export_data
- * @param $cm
- * @return
- */
-function survey_user_can_export_data($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:exportdata', $context, null, true));
 }
 
 // //////////////////////////////////////////////////////////////////////////////

@@ -291,7 +291,7 @@ class surveyfield_fileupload extends surveyitem_base {
             // $olduserdata->content = $itemdetail['filemanager'];      // needed for the saving process
 
             // $olduserdata = file_postupdate_standard_filemanager($olduserdata, $fieldname, $attachmentoptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
-
+            $olduserdata->content = '';
 // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
 // echo '$olduserdata:';
 // var_dump($olduserdata);

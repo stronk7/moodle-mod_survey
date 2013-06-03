@@ -61,7 +61,7 @@ $export_manager = new mod_survey_exportmanager($survey);
 // ////////////////////////////
 // define $mform return url
 $paramurl = array('id' => $cm->id);
-$formurl = new moodle_url('view.php', $paramurl);
+$formurl = new moodle_url('view_export.php', $paramurl);
 // end of: define $mform return url
 // ////////////////////////////
 

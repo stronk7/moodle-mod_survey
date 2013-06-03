@@ -54,14 +54,28 @@ $formpage = optional_param('formpage' , 1, PARAM_INT); // form page number
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $submissionid = optional_param('submissionid', 0, PARAM_INT);
 // whether it comes from the form or from the redirect in GET, $submissionid is fetched here
-// if the form (once submitted) send $submissionid == 0, the value will be overwritten later in if ($userpage_manager->formdata = $dataentry_form->get_data()) {
+// if the form (once submitted) send $submissionid == 0, the value will be overwritten later in if ($userpage_manager->formdata = $userpage_form->get_data()) {
 
 $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
-if ($action == SURVEY_NOACTION) {
-    $currentpage = SURVEY_SUBMISSION_NEW; // needed by tabs.php
-} else {
-    $currentpage = SURVEY_SUBMISSION_EDIT; // needed by tabs.php
+switch ($action) {
+    case SURVEY_NOACTION:
+        $currentpage = SURVEY_SUBMISSION_NEW; // needed by tabs.php
+        break;
+    case SURVEY_EDITSURVEY:
+        $currentpage = SURVEY_SUBMISSION_EDIT; // needed by tabs.php
+        break;
+    case SURVEY_READONLYSURVEY:
+        $currentpage = SURVEY_SUBMISSION_READONLY; // needed by tabs.php
+        break;
+    case SURVEY_PREVIEWSURVEY:
+        $currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
+        break;
+    default:
+        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
 }
+
+$cansubmit = ($currentpage != SURVEY_SUBMISSION_READONLY);
+$cansubmit = $cansubmit && ($currentpage != SURVEY_SUBMISSION_PREVIEW);
 
 survey_add_custom_css($survey->id, $cm->id);
 
@@ -99,34 +113,36 @@ $formparams->canaccessadvancedform = $userpage_manager->canaccessadvancedform; /
 $formparams->formpage = $formpage;
 $formparams->currentpage = $currentpage;
 if ($currentpage == SURVEY_SUBMISSION_READONLY) {
-    $dataentry_form = new survey_submissionform($formurl, $formparams, 'post', '', null, false);
+    $userpage_form = new survey_submissionform($formurl, $formparams, 'post', '', null, false);
 } else {
-    $dataentry_form = new survey_submissionform($formurl, $formparams);
+    $userpage_form = new survey_submissionform($formurl, $formparams);
 }
 // end of: prepare params for the form
 // ////////////////////////////
 
 // ////////////////////////////
 // manage form submission
-if ($dataentry_form->is_cancelled()) {
+if ($userpage_form->is_cancelled()) {
     $redirecturl = new moodle_url('view_manage.php', $paramurl);
     redirect($redirecturl, get_string('usercanceled', 'survey'));
 }
 
-if ($userpage_manager->formdata = $dataentry_form->get_data()) {
-    // SAVE unless the "previous" button has been pressed
-    //             and "pause"    button has been pressed
-    $prevbutton = (isset($userpage_manager->formdata->prevbutton) && ($userpage_manager->formdata->prevbutton));
-    $pausebutton = (isset($userpage_manager->formdata->pausebutton) && ($userpage_manager->formdata->pausebutton));
-    if (!$prevbutton && !$pausebutton) {
-        $userpage_manager->save_user_data();
-        $userpage_manager->notifyroles();
-    }
+if ($userpage_manager->formdata = $userpage_form->get_data()) {
+    if ($cansubmit) {
+        // SAVE unless the "previous" button has been pressed
+        //             and "pause"    button has been pressed
+        $prevbutton = (isset($userpage_manager->formdata->prevbutton) && ($userpage_manager->formdata->prevbutton));
+        $pausebutton = (isset($userpage_manager->formdata->pausebutton) && ($userpage_manager->formdata->pausebutton));
+        if (!$prevbutton && !$pausebutton) {
+            $userpage_manager->save_user_data();
+            $userpage_manager->notifyroles();
+        }
 
-    // if "pause" button has been pressed, redirect
-    if ($pausebutton) {
-        $redirecturl = new moodle_url('view_manage.php', $paramurl);
-        redirect($redirecturl); // -> go somewhere
+        // if "pause" button has been pressed, redirect
+        if ($pausebutton) {
+            $redirecturl = new moodle_url('view_manage.php', $paramurl);
+            redirect($redirecturl); // -> go somewhere
+        }
     }
 
     $paramurl['submissionid'] = $userpage_manager->submissionid;
@@ -172,7 +188,7 @@ if (!$userpage_manager->count_input_items()) {
 
 // ////////////////////////////
 // is the user allowed to submit one more survey?
-if ($action == SURVEY_NOACTION) {
+if ($cansubmit) {
     if (!$userpage_manager->submissions_allowed()) {
         $userpage_manager->submissions_exceeded_stopexecution();
     }
@@ -182,8 +198,18 @@ if ($action == SURVEY_NOACTION) {
 
 // ////////////////////////////
 // manage the thanks page
-$userpage_manager->manage_thanks_page();
+if ($cansubmit) {
+    $userpage_manager->manage_thanks_page();
+}
 // end of: manage the thanks page
+// ////////////////////////////
+
+// ////////////////////////////
+// display an alert to explain why buttons are missing
+if ($currentpage == SURVEY_SUBMISSION_PREVIEW) {
+    $userpage_manager->declare_preview_mode();
+}
+// end of: display an alert to explain why buttons are missing
 // ////////////////////////////
 
 // ////////////////////////////
@@ -195,16 +221,26 @@ $userpage_manager->message_current_page();
 // ////////////////////////////
 // calculate prefill for fields and prepare standard editors and filemanager
 // if sumission already exists
-if (!empty($submissionid)) {
-    $prefill = $userpage_manager->get_prefill_data(false);
-    $prefill['submissionid'] = $submissionid;
+if ($cansubmit) {
+    if (!empty($submissionid)) {
+        $prefill = $userpage_manager->get_prefill_data(false);
+        $prefill['submissionid'] = $submissionid;
+    }
 }
 // go to populate the hidden field of the form
 $prefill['formpage'] = empty($formpage) ? $userpage_manager->lastformpage : $formpage;
 
-$dataentry_form->set_data($prefill);
-$dataentry_form->display();
+$userpage_form->set_data($prefill);
+$userpage_form->display();
 // end of: calculate prefill for fields and prepare standard editors and filemanager
+// ////////////////////////////
+
+// ////////////////////////////
+// display an alert to explain why buttons are missing
+if ($currentpage == SURVEY_SUBMISSION_PREVIEW) {
+    $userpage_manager->declare_preview_mode();
+}
+// end of: display an alert to explain why buttons are missing
 // ////////////////////////////
 
 // Finish the page

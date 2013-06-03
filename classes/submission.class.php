@@ -104,7 +104,7 @@ class mod_survey_submissionmanager {
         switch ($this->action) {
             case SURVEY_NOACTION:
             case SURVEY_EDITSURVEY:
-            case SURVEY_VIEWSURVEY:
+            case SURVEY_READONLYSURVEY:
                 break;
             case SURVEY_DELETESURVEY:
                 $this->manage_submission_deletion();
@@ -427,8 +427,8 @@ class mod_survey_submissionmanager {
                     $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
                 } else {                                                                                              // view only
-                    // $paramurl['act'] = SURVEY_VIEWSURVEY;
-                    $basepath = new moodle_url('view_readonly.php', $paramurl);
+                    $paramurl['act'] = SURVEY_READONLYSURVEY;
+                    $basepath = new moodle_url('view.php', $paramurl);
                     $icontitle = $restrictedaccess;
                     $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url('t/preview').'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
