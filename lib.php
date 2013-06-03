@@ -182,6 +182,127 @@ define('SURVEY_IGNOREITEMS', '3');
 // empty template field
 define('SURVEY_EMPTYTEMPLATEFIELD', '@@NULL@@');
 
+/*
+ * survey_user_can_do_anything
+ * @param
+ * @return
+ */
+function survey_user_can_do_anything() {
+    $context = context_system::instance();
+
+    return (has_capability('moodle/site:doanything', $context));
+}
+
+/*
+ * survey_user_can_preview
+ * @param $cm
+ * @return
+ */
+function survey_user_can_preview($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:preview', $context, null, true));
+}
+
+/*
+ * survey_user_can_submit
+ * @param $cm
+ * @return
+ */
+function survey_user_can_submit($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:submit', $context, null, true));
+}
+
+/*
+ * survey_user_can_access_advanced_form
+ * @param $cm
+ * @return
+ */
+function survey_user_can_access_advanced_form($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:accessadvancedform', $context, null, true));
+}
+
+/*
+ * survey_user_can_export_data
+ * @param $cm
+ * @return
+ */
+function survey_user_can_export_data($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:exportdata', $context, null, true));
+}
+
+/*
+ * survey_user_can_access_reports
+ * @param $cm
+ * @return
+ */
+function survey_user_can_access_reports($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:accessreports', $context, null, true));
+}
+
+/*
+ * survey_user_can_manage_items
+ * @param $cm
+ * @return
+ */
+function survey_user_can_manage_items($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:manageitems', $context, null, true));
+}
+
+/*
+ * survey_user_can_manage_plugin
+ * @param $cm
+ * @return
+ */
+function survey_user_can_manage_plugin($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:manageplugin', $context, null, true));
+}
+
+/*
+ * survey_user_can_read_all_submissions
+ * @param $cm
+ * @return
+ */
+function survey_user_can_read_all_submissions($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:readall', $context, null, true));
+}
+
+/*
+ * survey_user_can_edit_all_submissions
+ * @param $cm
+ * @return
+ */
+function survey_user_can_edit_all_submissions($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:editall', $context, null, true));
+}
+
+/*
+ * survey_user_can_delete_all_submissions
+ * @param $cm
+ * @return
+ */
+function survey_user_can_delete_all_submissions($cm) {
+    $context = context_module::instance($cm->id);
+
+    return (has_capability('mod/survey:deleteall', $context, null, true));
+}
+
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API                                                            //
 // //////////////////////////////////////////////////////////////////////////////
