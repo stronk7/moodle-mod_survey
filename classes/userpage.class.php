@@ -96,7 +96,7 @@ class mod_survey_userpagemanager {
             $whereclause = 'surveyid = :surveyid AND hide = 0';
         } else {
             $pagefield = 'basicformpage';
-            $whereclause = 'surveyid = :surveyid AND hide = 0 AND basicform <> 0';
+            $whereclause = 'surveyid = :surveyid AND hide = 0 AND basicform <> '.SURVEY_NOTPRESENT;
         }
         $whereparams = array('surveyid' => $this->survey->id);
         $pagenumber = $DB->get_field_select('survey_item', 'MAX('.$pagefield.')', $whereclause, $whereparams);
@@ -715,8 +715,8 @@ class mod_survey_userpagemanager {
     public function declare_preview_mode() {
         global $OUTPUT;
 
-        $exploremodestring = get_string('exploremode', 'survey');
-        echo $OUTPUT->heading($exploremodestring, 2);
+        $previewmodestring = get_string('previewmode', 'survey');
+        echo $OUTPUT->heading($previewmodestring, 2);
     }
 
     /*

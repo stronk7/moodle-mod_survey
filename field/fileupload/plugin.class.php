@@ -267,20 +267,11 @@ class surveyfield_fileupload extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
+     * this method calculates what to save in the db
      * @param $itemdetail, $olduserdata, $saving
      * @return
      */
     public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
-// echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-// echo '$itemdetail:';
-// var_dump($itemdetail);
-//
-// echo '$olduserdata:';
-// var_dump($olduserdata);
-//
-// die;
-
         if (!empty($itemdetail)) {
             $fieldname = $this->itemname.'_filemanager';
 
@@ -291,11 +282,17 @@ class surveyfield_fileupload extends surveyitem_base {
             // $olduserdata->content = $itemdetail['filemanager'];      // needed for the saving process
 
             // $olduserdata = file_postupdate_standard_filemanager($olduserdata, $fieldname, $attachmentoptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
-            $olduserdata->content = '';
-// echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-// echo '$olduserdata:';
-// var_dump($olduserdata);
-// die;
+            if ($saving) {
+                $fs = get_file_storage();
+                if ($files = $fs->get_area_files($this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, 'sortorder', false)) {
+                    foreach ($files as $file) {
+                        $oldfiles[] = $file->get_filename();
+                    }
+                    $olduserdata->content = implode(', ', $oldfiles);
+                } else {
+                    $olduserdata->content = '';
+                }
+            }
         }
     }
 

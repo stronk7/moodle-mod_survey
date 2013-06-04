@@ -495,7 +495,7 @@ class surveyfield_age extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
+     * this method calculates what to save in the db
      * @param $itemdetail, $olduserdata, $saving
      * @return
      */

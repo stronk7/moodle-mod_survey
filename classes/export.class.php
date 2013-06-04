@@ -129,7 +129,7 @@ class mod_survey_exportmanager {
                 $worksheet[0] = $workbook->add_worksheet(get_string('survey', 'survey'));
             }
 
-            survey_export_print_header($this->survey, $fieldidlist, $this->formdata, $worksheet);
+            $this->export_print_header($fieldidlist, $worksheet);
 
             // reduce the weight of $fieldidlist storing no longer relevant infos
             $fieldidlistkeys = array_keys($fieldidlist);
@@ -151,11 +151,11 @@ class mod_survey_exportmanager {
                 }
 
                 if ($oldrichsubmissionid == $richsubmission->id) {
-                    $recordtoexport[$richsubmission->itemid] = survey_decode_content($richsubmission);
+                    $recordtoexport[$richsubmission->itemid] = $this->decode_content($richsubmission);
                 } else {
                     if (!empty($oldrichsubmissionid)) { // new richsubmissionid, stop managing old record
                         // write old record
-                        survey_export_close_record($recordtoexport, $this->formdata->downloadtype, $worksheet);
+                        $this->export_close_record($recordtoexport, $worksheet);
                     }
                     $oldrichsubmissionid = $richsubmission->id;
 
@@ -171,11 +171,11 @@ class mod_survey_exportmanager {
 
                     $recordtoexport['timecreated'] = userdate($richsubmission->timecreated);
                     $recordtoexport['timemodified'] = userdate($richsubmission->timemodified);
-                    $recordtoexport[$richsubmission->itemid] = survey_decode_content($richsubmission);
+                    $recordtoexport[$richsubmission->itemid] = $this->decode_content($richsubmission);
                 }
             }
             $richsubmissions->close();
-            survey_export_close_record($recordtoexport, $this->formdata->downloadtype, $worksheet);
+            $this->export_close_record($recordtoexport, $worksheet);
 
             if ($this->formdata->downloadtype == SURVEY_DOWNLOADXLS) {
                 $workbook->close();
@@ -184,4 +184,73 @@ class mod_survey_exportmanager {
             return SURVEY_NORECORDSFOUND;
         }
     }
+
+    /*
+     * export_print_header
+     * @param $fieldidlist, $worksheet
+     * @return
+     */
+    function export_print_header($fieldidlist, $worksheet) {
+        // write the names of the fields in the header of the file to export
+        $recordtoexport = array();
+        if (empty($this->survey->anonymous)) {
+            $recordtoexport[] = get_string('firstname');
+            $recordtoexport[] = get_string('lastname');
+        }
+        foreach ($fieldidlist as $singlefield) {
+            $recordtoexport[] = empty($singlefield->fieldname) ? $singlefield->plugin.'_'.$singlefield->id : $singlefield->fieldname;
+        }
+        $recordtoexport[] = get_string('timecreated', 'survey');
+        $recordtoexport[] = get_string('timemodified', 'survey');
+
+        if ($this->formdata->downloadtype == SURVEY_DOWNLOADCSV) {
+            echo implode(',', $recordtoexport)."\n";
+        } else { // SURVEY_DOWNLOADXLS
+            $col = 0;
+            foreach ($recordtoexport as $header) {
+                $worksheet[0]->write(0, $col, $header, '');
+                $col++;
+            }
+        }
+    }
+
+    /*
+     * export_close_record
+     * @param $recordtoexport, $worksheet
+     * @return
+     */
+    function export_close_record($recordtoexport, $worksheet) {
+        static $row = 0;
+
+        if ($this->formdata->downloadtype == SURVEY_DOWNLOADCSV) {
+            echo implode(',', $recordtoexport)."\n";
+        } else {
+            // SURVEY_DOWNLOADXLS
+            $row++;
+            $col = 0;
+            foreach ($recordtoexport as $value) {
+                $worksheet[0]->write($row, $col, $value, '');
+                $col++;
+            }
+        }
+    }
+
+    /*
+     * decode_content
+     * @param $richsubmission
+     * @return
+     */
+    function decode_content($richsubmission) {
+        global $CFG;
+
+        $plugin = $richsubmission->plugin;
+        $itemid = $richsubmission->itemid;
+        $content = $richsubmission->content;
+        $item = survey_get_item($itemid, SURVEY_TYPEFIELD, $plugin);
+
+        $return = isset($content) ? $item->userform_db_to_export($richsubmission) : '';
+
+        return $return;
+    }
+
 }
