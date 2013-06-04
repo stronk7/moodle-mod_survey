@@ -56,6 +56,11 @@ class surveyfield_time extends surveyitem_base {
     public $defaultoption = SURVEY_INVITATIONDEFAULT;
 
     /*
+     * $step = the step for minutes drop down menu
+     */
+    public $step = 1;
+
+    /*
      * $defaultvalue = the value of the field when the form is initially displayed.
      */
     public $defaultvalue = 0;
@@ -354,7 +359,7 @@ class surveyfield_time extends surveyitem_base {
         for ($i = (int)$this->lowerbound_hour; $i <= $this->upperbound_hour; $i++) {
             $hours[$i] = sprintf("%02d", $i);
         }
-        for ($i = 0; $i <= 59; $i++) {
+        for ($i = 0; $i <= 59; $i += $this->step) {
             $minutes[$i] = sprintf("%02d", $i);
         }
 

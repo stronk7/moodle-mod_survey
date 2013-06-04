@@ -103,13 +103,14 @@ define('SURVEY_REQUIREDOFF'       , '7');
 define('SURVEY_REQUIREDON'        , '8');
 define('SURVEY_CHANGEINDENT'      , '9');
 define('SURVEY_EDITSURVEY'        , '10');
-define('SURVEY_READONLYSURVEY'    , '11');
-define('SURVEY_DELETESURVEY'      , '12');
-define('SURVEY_PREVIEWSURVEY'     , '13');
-define('SURVEY_DELETEALLRESPONSES', '14');
-define('SURVEY_VALIDATE'          , '15');
-define('SURVEY_DELETEUTEMPLATE'   , '16');
-define('SURVEY_EXPORTUTEMPLATE'   , '17');
+define('SURVEY_DUPLICATESURVEY'   , '11');
+define('SURVEY_READONLYSURVEY'    , '12');
+define('SURVEY_DELETESURVEY'      , '13');
+define('SURVEY_PREVIEWSURVEY'     , '14');
+define('SURVEY_DELETEALLRESPONSES', '15');
+define('SURVEY_VALIDATE'          , '16');
+define('SURVEY_DELETEUTEMPLATE'   , '17');
+define('SURVEY_EXPORTUTEMPLATE'   , '18');
 
 // SAVESTATUS
 define('SURVEY_NOFEEDBACK', 0);

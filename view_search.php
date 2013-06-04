@@ -61,11 +61,6 @@ $formpage = optional_param('formpage' , 1, PARAM_INT); // form page number
 $search_manager = new mod_survey_searchmanager($survey);
 $search_manager->canaccessadvancedform = survey_user_can_access_advanced_form($cm);
 
-$search_manager->countsearchitems();
-if ($search_manager->empty_form) {
-    break;
-}
-
 // ////////////////////////////
 // define $search_form return url
 $paramurl = array('id' => $cm->id);

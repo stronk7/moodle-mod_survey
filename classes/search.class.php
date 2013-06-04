@@ -61,29 +61,6 @@ class mod_survey_searchmanager {
     }
 
     /*
-     * countsearchitems
-     * @param
-     * @return
-     */
-    public function countsearchitems() {
-        global $DB;
-
-        // if no items are available for the search form, stop the intervention here
-        $sqlparams = array('surveyid' => $this->survey->id, 'hide' => 0);
-        if (!$this->canaccessadvancedform) {
-            $sqlparams['basicform'] = SURVEY_FILLANDSEARCH;
-        } else {
-            $sqlparams['advancedsearch'] = SURVEY_ADVFILLANDSEARCH;
-        }
-
-        if ($DB->count_records('survey_item', $sqlparams)) {
-            $this->empty_form = false;
-        } else {
-            $this->empty_form = true;
-        }
-    }
-
-    /*
      * definesearchparamlist
      * @param
      * @return

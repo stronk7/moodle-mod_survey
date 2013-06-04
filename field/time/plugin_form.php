@@ -57,6 +57,21 @@ class survey_pluginform extends surveyitem_baseform {
         }
 
         // ----------------------------------------
+        // newitem::step
+        // ----------------------------------------
+        $fieldname = 'step';
+        $options = array();
+        $options[1] = get_string('oneminute', 'surveyfield_time');
+        $options[5] = get_string('fiveminutes', 'surveyfield_time');
+        $options[10] = get_string('tenminutes', 'surveyfield_time');
+        $options[15] = get_string('fifteenminutes', 'surveyfield_time');
+        $options[20] = get_string('twentyminutes', 'surveyfield_time');
+        $options[30] = get_string('thirtyminutes', 'surveyfield_time');
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_time'), $options);
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_time');
+        $mform->setType($fieldname, PARAM_INT);
+
+        // ----------------------------------------
         // newitem::defaultvalue
         // ----------------------------------------
         $fieldname = 'defaultvalue';

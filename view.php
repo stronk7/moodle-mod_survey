@@ -62,6 +62,7 @@ switch ($action) {
         $currentpage = SURVEY_SUBMISSION_NEW; // needed by tabs.php
         break;
     case SURVEY_EDITSURVEY:
+    case SURVEY_DUPLICATESURVEY:
         $currentpage = SURVEY_SUBMISSION_EDIT; // needed by tabs.php
         break;
     case SURVEY_READONLYSURVEY:
@@ -88,6 +89,12 @@ $userpage_manager->submissionid = $submissionid;
 $userpage_manager->canaccessadvancedform = survey_user_can_access_advanced_form($cm);
 $userpage_manager->canmanageitems = survey_user_can_manage_items($cm);
 
+if ($action == SURVEY_DUPLICATESURVEY) {
+    $userpage_manager->duplicate_submission();
+    $paramurl = array('id' => $cm->id, 'submissionid' => $userpage_manager->submissionid);
+    $redirecturl = new moodle_url('view.php', $paramurl);
+    redirect($redirecturl);
+}
 // ////////////////////////////
 // assign items to pages in the basicform and in the advancedform
 $userpage_manager->assign_pages();

@@ -260,7 +260,7 @@ class mod_survey_userpagemanager {
                 continue; // to next foreach
             }
 
-            $itemid = $matches[3]; // itemid dell'elemento della form (o del group di elementi della form)
+            $itemid = $matches[3]; // itemid of the mform element (o of the group of mform elements referring to the same item)
             if (!isset($infoperitem[$itemid])) {
                 $infoperitem[$itemid] = new stdClass();
                 $infoperitem[$itemid]->surveyid = $surveyid;
@@ -839,5 +839,29 @@ class mod_survey_userpagemanager {
                 }
             }
         }
+    }
+
+    /*
+     * duplicate_submission
+     * @param $allpages
+     * @return
+     */
+    public function duplicate_submission() {
+        global $DB;
+
+        $survey_submissions = $DB->get_record('survey_submissions', array('id' => $this->submissionid));
+        $survey_submissions->timecreated = time();
+        $survey_submissions->status = SURVEY_STATUSINPROGRESS;
+        unset($survey_submissions->timemodified);
+        $submissionid = $DB->insert_record('survey_submissions', $survey_submissions);
+
+        $survey_userdata = $DB->get_recordset('survey_userdata', array('submissionid' => $this->submissionid));
+        foreach ($survey_userdata as $survey_userdatum) {
+            unset($survey_userdatum->id);
+            $survey_userdatum->submissionid = $submissionid;
+            $DB->insert_record('survey_userdata', $survey_userdatum);
+        }
+        $survey_userdata->close();
+        $this->submissionid = $submissionid;
     }
 }

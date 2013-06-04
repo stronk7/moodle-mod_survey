@@ -136,13 +136,13 @@ class mod_survey_submissionmanager {
             $a->timemodified = userdate($submission->timemodified);
             if ($submission->userid != $USER->id) {
                 $a->fullname = fullname($DB->get_record('user', array('id' => $submission->userid), 'firstname, lastname', MUST_EXIST));
-                if ($a->timecreated == $a->timemodified) {
+                if ($a->timemodified == 0) {
                     $message = get_string('askdeleteonesurveynevermodified', 'survey', $a);
                 } else {
                     $message = get_string('askdeleteonesurvey', 'survey', $a);
                 }
             } else {
-                if ($a->timecreated == $a->timemodified) {
+                if ($a->timemodified == 0) {
                     $message = get_string('askdeletemysurveynevermodified', 'survey', $a);
                 } else {
                     $message = get_string('askdeletemysurvey', 'survey', $a);
@@ -312,12 +312,6 @@ class mod_survey_submissionmanager {
 
         $status = array(SURVEY_STATUSINPROGRESS => get_string('statusinprogress', 'survey'),
                         SURVEY_STATUSCLOSED => get_string('statusclosed', 'survey'));
-        $firsticontitle = array();
-        $firsticontitle[0] = get_string('edit');
-        $firsticontitle[1] = get_string('add');
-        $firsticonicon = array();
-        $firsticonicon[0] = 't/edit';
-        $firsticonicon[1] = 't/copy';
         $deletetitle = get_string('delete');
         $neverstring = get_string('never');
         $restrictedaccess = get_string('restrictedaccess', 'survey');
@@ -419,14 +413,26 @@ class mod_survey_submissionmanager {
                 // actions
                 $paramurl['submissionid'] = $submission->submissionid;
                 if (survey_i_can_edit($this->survey, $mygroups, $submission->userid) || $this->caneditallsubmissions) {     // "edit" or "edit as new"
-                    $paramurl['act'] = SURVEY_EDITSURVEY;
-                    $icontype = ($submission->status == SURVEY_STATUSCLOSED) ? $this->survey->history : 0;
+                    if ($submission->status == SURVEY_STATUSCLOSED) {
+                        if ($this->survey->history) {
+                            $paramurl['act'] = SURVEY_DUPLICATESURVEY;
+                            $icontitle = get_string('duplicate');
+                            $iconpath = 't/copy';
+                        } else {
+                            $paramurl['act'] = SURVEY_EDITSURVEY;
+                            $icontitle = get_string('edit');
+                            $iconpath = 't/edit';
+                        }
+                    } else {
+                        // alwats allow the user to finalize his/her submission
+                        $paramurl['act'] = SURVEY_EDITSURVEY;
+                        $icontitle = get_string('edit');
+                        $iconpath = 't/edit';
+                    }
                     $basepath = new moodle_url('view.php', $paramurl);
-                    $icontitle = $firsticontitle[$icontype];
-                    $iconpath = $firsticonicon[$icontype];
                     $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
-                } else {                                                                                              // view only
+                } else {                                                                                                   // read only
                     $paramurl['act'] = SURVEY_READONLYSURVEY;
                     $basepath = new moodle_url('view.php', $paramurl);
                     $icontitle = $restrictedaccess;

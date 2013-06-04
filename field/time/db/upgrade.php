@@ -49,17 +49,30 @@ function xmldb_surveyfield_time_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013052302, 'surveyfield_time', 'survey');
     }
 
-    if ($oldversion < 2013052401) {
+    if ($oldversion < 2013060402) {
 
-        // Changing type of field downloadformat on table survey_time to char.
+        // Define field step to be dropped from survey_time.
         $table = new xmldb_table('survey_time');
-        $field = new xmldb_field('downloadformat', XMLDB_TYPE_CHAR, '32', null, null, null, null, 'defaultvalue');
+        $field = new xmldb_field('downloadformat');
 
-        // Launch change of type for field downloadformat.
-        $dbman->change_field_type($table, $field);
+        // Conditionally launch drop field step.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field step to be added to survey_time.
+        $table = new xmldb_table('survey_time');
+        $field = new xmldb_field('step', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1', 'itemid');
+
+        // Conditionally launch add field step.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013052401, 'surveyfield_time', 'survey');
+        upgrade_plugin_savepoint(true, 2013060402, 'surveyfield_time', 'survey');
     }
+
     return true;
 }
