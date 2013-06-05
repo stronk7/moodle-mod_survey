@@ -79,9 +79,9 @@ $sql = 'SELECT DISTINCT u.id, u.picture, u.imagealt, u.firstname, u.lastname, u.
                 WHERE contextid = '.$context->id.'
                   AND roleid IN ('.implode($role).')) ra ON u.id = ra.userid
 		LEFT JOIN (SELECT *, count(s.id) as attempts
-			         FROM {survey_submissions} s
-			         WHERE s.surveyid = :surveyid
-			         GROUP BY s.userid) s ON s.userid = u.id
+			       FROM {survey_submissions} s
+			       WHERE s.surveyid = :surveyid
+			       GROUP BY s.userid) s ON s.userid = u.id
 		WHERE ISNULL(s.id)';
 if ($table->get_sql_sort()) {
     $sql .= ' ORDER BY '.$table->get_sql_sort();

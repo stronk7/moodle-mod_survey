@@ -214,7 +214,7 @@ if ($cansubmit) {
 // ////////////////////////////
 // display an alert to explain why buttons are missing
 if ($currentpage == SURVEY_SUBMISSION_PREVIEW) {
-    $userpage_manager->declare_preview_mode();
+    $userpage_manager->message_preview_mode();
 }
 // end of: display an alert to explain why buttons are missing
 // ////////////////////////////
@@ -245,7 +245,7 @@ $userpage_form->display();
 // ////////////////////////////
 // display an alert to explain why buttons are missing
 if ($currentpage == SURVEY_SUBMISSION_PREVIEW) {
-    $userpage_manager->declare_preview_mode();
+    $userpage_manager->message_preview_mode();
 }
 // end of: display an alert to explain why buttons are missing
 // ////////////////////////////

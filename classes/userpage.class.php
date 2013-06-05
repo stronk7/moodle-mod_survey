@@ -708,11 +708,11 @@ class mod_survey_userpagemanager {
     }
 
     /*
-     * declare_preview_mode
+     * message_preview_mode
      * @param
      * @return
      */
-    public function declare_preview_mode() {
+    public function message_preview_mode() {
         global $OUTPUT;
 
         $previewmodestring = get_string('previewmode', 'survey');

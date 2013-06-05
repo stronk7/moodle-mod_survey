@@ -39,6 +39,8 @@ if ($currenttab == SURVEY_TABMTEMPLATES) {
 
 $hassubmissions = survey_has_submissions($survey->id);
 
+$canpreview = survey_user_can_preview($cm);
+$cansubmit = survey_user_can_submit($cm);
 $canexportdata = survey_user_can_export_data($cm);
 $canaccessreports = survey_user_can_access_reports($cm);
 $canmanageitems = survey_user_can_manage_items($cm);
@@ -122,16 +124,18 @@ switch ($currenttab) {
 
         $row = array();
 
-        if (!empty($canmanageitems)) {
+        if (!empty($canpreview)) {
             $localparamurl = array('id' => $cm->id, 'act' => SURVEY_PREVIEWSURVEY);
             $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
             $strlabel = get_string('tabsubmissionspage1', 'survey');
             $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
         }
 
-        $elementurl = new moodle_url('/mod/survey/view.php', $paramurl);
-        $strlabel = get_string('tabsubmissionspage2', 'survey');
-        $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
+        if (!empty($cansubmit)) {
+            $elementurl = new moodle_url('/mod/survey/view.php', $paramurl);
+            $strlabel = get_string('tabsubmissionspage2', 'survey');
+            $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
+        }
 
         $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
         $strlabel = get_string('tabsubmissionspage3', 'survey'); // manage data

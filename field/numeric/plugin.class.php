@@ -385,27 +385,29 @@ class surveyfield_numeric extends surveyitem_base {
         }
 
         // if it is not a number, shouts
-        $pattern = '~^\s*([0-9]+)'.get_string('decsep', 'langconfig').'?([0-9]*)\s*$~';
-        if (!preg_match($pattern, $data[$this->itemname], $matches)) {
-            $errors[$errorkey] = get_string('uerr_notanumber', 'surveyfield_numeric');
-        } else {
-            $thenumber = $matches[1].'.'.$matches[2];
-            // if it is < 0 but has been defined as unsigned, shouts
-            if (!$this->signed && ($thenumber < 0)) {
-                $errors[$errorkey] = get_string('uerr_negative', 'surveyfield_numeric');
-            }
-            // if it is < $this->lowerbound, shouts
-            if (isset($this->lowerbound) && ($thenumber < $this->lowerbound)) {
-                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_numeric');
-            }
-            // if it is > $this->upperbound, shouts
-            if (isset($this->upperbound) && ($thenumber > $this->upperbound)) {
-                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_numeric');
-            }
-            // if it has decimal but has been defined as integer, shouts
-            $is_integer = (bool)(strval(intval($thenumber)) == strval($thenumber));
-            if (($this->decimals == 0) && (!$is_integer)) {
-                $errors[$errorkey] = get_string('uerr_notinteger', 'surveyfield_numeric');
+        if (strlen($data[$this->itemname]) > 0) {
+            $pattern = '~^\s*([0-9]+)'.get_string('decsep', 'langconfig').'?([0-9]*)\s*$~';
+            if (!preg_match($pattern, $data[$this->itemname], $matches)) {
+                $errors[$errorkey] = get_string('uerr_notanumber', 'surveyfield_numeric');
+            } else {
+                $thenumber = $matches[1].'.'.$matches[2];
+                // if it is < 0 but has been defined as unsigned, shouts
+                if (!$this->signed && ($thenumber < 0)) {
+                    $errors[$errorkey] = get_string('uerr_negative', 'surveyfield_numeric');
+                }
+                // if it is < $this->lowerbound, shouts
+                if (isset($this->lowerbound) && ($thenumber < $this->lowerbound)) {
+                    $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_numeric');
+                }
+                // if it is > $this->upperbound, shouts
+                if (isset($this->upperbound) && ($thenumber > $this->upperbound)) {
+                    $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_numeric');
+                }
+                // if it has decimal but has been defined as integer, shouts
+                $is_integer = (bool)(strval(intval($thenumber)) == strval($thenumber));
+                if (($this->decimals == 0) && (!$is_integer)) {
+                    $errors[$errorkey] = get_string('uerr_notinteger', 'surveyfield_numeric');
+                }
             }
         }
     }

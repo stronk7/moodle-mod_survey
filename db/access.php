@@ -75,7 +75,8 @@ $capabilities = array(
     ),
 
     'mod/survey:preview' => array(
-        'captype' => 'write', // Only just a write.
+
+        'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'teacher' => CAP_ALLOW,
@@ -88,11 +89,10 @@ $capabilities = array(
         'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'student' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' => 'moodle/course:manageactivities'
+        )
     ),
 
     'mod/survey:accessadvancedform' => array(
@@ -106,7 +106,6 @@ $capabilities = array(
     ),
 
     'mod/survey:exportdata' => array(
-
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -119,7 +118,6 @@ $capabilities = array(
     ),
 
     'mod/survey:accessreports' => array(
-
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'read',
@@ -132,7 +130,6 @@ $capabilities = array(
     ),
 
     'mod/survey:manageitems' => array(
-
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -145,7 +142,6 @@ $capabilities = array(
     ),
 
     'mod/survey:manageplugin' => array(
-
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -158,7 +154,6 @@ $capabilities = array(
     ),
 
     'mod/survey:readall' => array(
-
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -171,7 +166,6 @@ $capabilities = array(
     ),
 
     'mod/survey:editall' => array(
-
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -184,7 +178,6 @@ $capabilities = array(
     ),
 
     'mod/survey:deleteall' => array(
-
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -194,7 +187,6 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
         )
-    ),
-
+    )
 );
 
