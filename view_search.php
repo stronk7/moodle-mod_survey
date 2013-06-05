@@ -64,7 +64,7 @@ $search_manager->canaccessadvancedform = survey_user_can_access_advanced_form($c
 // ////////////////////////////
 // define $search_form return url
 $paramurl = array('id' => $cm->id);
-$formurl = new moodle_url('view.php', $paramurl);
+$formurl = new moodle_url('view_search.php', $paramurl);
 // end of: define $search_form return url
 // ////////////////////////////
 
@@ -84,7 +84,8 @@ $search_form = new survey_searchform($formurl, $formparams);
 if ($search_manager->formdata = $search_form->get_data()) { // $search_form, here, is the search form
     // in this routine I do not execute a real search
     // I just define the list of parameters for the url of SURVEY_SUBMISSION_MANAGE
-    $paramurl = $search_manager->definesearchparamlist();
+    $paramurl = array('id' => $cm->id);
+    $paramurl['searchquery'] = $search_manager->searchparamurl();
     $returnurl = new moodle_url('view_manage.php', $paramurl);
     redirect($returnurl);
 }
@@ -105,7 +106,7 @@ $PAGE->set_heading($course->shortname);
 echo $OUTPUT->header();
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-if ($search_manager->empty_form) {
+if (!$search_manager->count_search_items()) {
     $search_manager->noitem_stopexecution();
 } else {
     $search_form->display();

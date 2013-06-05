@@ -48,12 +48,6 @@ class mod_survey_searchmanager {
     public $formdata = null;
 
     /*
-     * $empty_form: the form content as submitted by the user
-     */
-    public $empty_form = true;
-
-
-    /*
      * Class constructor
      */
     public function __construct($survey) {
@@ -65,7 +59,7 @@ class mod_survey_searchmanager {
      * @param
      * @return
      */
-    public function definesearchparamlist() {
+    public function searchparamurl() {
         global $PAGE;
 
         $cm = $PAGE->cm;
@@ -113,19 +107,35 @@ class mod_survey_searchmanager {
             $item->userform_save_preprocessing($iteminfo->extra, $userdata, false);
 
             if (!is_null($userdata->content)) {
-                $searchfields[] = $userdata->content.SURVEY_URLVALUESEPARATOR.$iteminfo->itemid;
+                //$searchfields[] = $userdata->content.SURVEY_URLVALUESEPARATOR.$iteminfo->itemid;
+                $searchfields[$iteminfo->itemid] = $userdata->content;
             }
         }
 
         // echo '$searchfields:';
         // var_dump($searchfields);
-        // define searchfields_get to let it carry all the information to the next URL
-        $searchfields_get = implode(SURVEY_URLPARAMSEPARATOR, $searchfields);
 
-        $paramurl = array('id' => $cm->id);
-        $paramurl['searchquery'] = $searchfields_get;
+        return serialize($searchfields);
+    }
 
-        return $paramurl;
+    /*
+     * count_input_items
+     * @param
+     * @return
+     */
+    public function count_search_items() {
+        global $DB;
+
+        // if no items are available, stop the intervention here
+        $whereparams = array('surveyid' => $this->survey->id);
+        $whereclause = 'surveyid = :surveyid AND hide = 0';
+        if (!$this->canaccessadvancedform) {
+            $whereclause .= ' AND basicform = '.SURVEY_FILLANDSEARCH;
+        } else {
+            $whereclause .= ' AND advancedsearch = '.SURVEY_ADVFILLANDSEARCH;
+        }
+
+        return $DB->count_records_select('survey_item', $whereclause, $whereparams);
     }
 
     /*

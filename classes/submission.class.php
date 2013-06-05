@@ -246,7 +246,7 @@ class mod_survey_submissionmanager {
         $table = new flexible_table('submissionslist');
 
         $paramurl = array('id' => $cm->id);
-        if ($this->searchfields_get) { // declared in beforepage.php - it is a string
+        if ($this->searchfields_get) {
             $paramurl['searchquery'] = $this->searchfields_get;
         }
         $table->define_baseurl(new moodle_url('view_manage.php', $paramurl));
@@ -325,18 +325,7 @@ class mod_survey_submissionmanager {
         $params['surveyid'] = $this->survey->id;
 
         if ($this->searchfields_get) {
-            // there is a restriction to records to show
-            $longformfield = array();
-            // $fieldarray = explode('&amp;', $this->searchfields_get);
-            $fieldarray = explode(SURVEY_URLPARAMSEPARATOR, urldecode($this->searchfields_get));
-            foreach ($fieldarray as $valuefield) {
-                $element = explode(SURVEY_URLVALUESEPARATOR, $valuefield);
-
-                $index = $element[1];
-                $longformfield[$index] = $element[0];
-            }
-
-            if ($submissionidlist = survey_find_submissions($longformfield)) {
+            if ($submissionidlist = $this->get_filtered_id_list()) {
                 $sql = 'SELECT s.*, s.id as submissionid,
                                u.firstname, u.lastname, u.id, u.picture, u.imagealt, u.email
                         FROM {survey_submissions} s
@@ -351,6 +340,7 @@ class mod_survey_submissionmanager {
                         WHERE s.surveyid = -1';
             }
         } else {
+            // TODO: get only the list of submissions of the owners I am allowed to see
             $sql = 'SELECT s.*, s.id as submissionid,
                            u.firstname, u.lastname, u.id, u.picture, u.imagealt, u.email
                     FROM {survey_submissions} s
@@ -457,5 +447,81 @@ class mod_survey_submissionmanager {
 
         $table->summary = get_string('submissionslist', 'survey');
         $table->print_html();
+    }
+
+    /*
+     * survey_find_submissions
+     * @param
+     * @return
+     */
+    public function get_filtered_id_list() {
+        global $DB;
+
+        $search_restrictions = unserialize($this->searchfields_get);
+        // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
+        // echo '$search_restrictions (prima):';
+        // var_dump($search_restrictions);
+
+        foreach ($search_restrictions as $itemid => $valuesarray) {
+            // I am interested only to non empty fields BUT different from SURVEY_NOANSWERVALUE
+            if ($valuesarray == SURVEY_NOANSWERVALUE) {
+                unset($search_restrictions[$itemid]);
+            }
+        }
+        // echo '$search_restrictions (dopo):';
+        // var_dump($search_restrictions);
+        // die;
+
+        // the search process is tricky
+        // the procedure is:
+        // step 1:
+        //     get the set of submissions matching the first condition
+        // step 2:
+        //     check the found set for all the other conditions
+        //     if at least one condition does not match, delete the submission id from the starting set
+        //     Whatever will not be deleted, is the submission matching ALL submitted requests
+
+        // if the search form is empty (has no conditions) return all the submissions
+        if (!$search_restrictions) {
+            return;
+        }
+
+        $keys = array_keys($search_restrictions);
+        $firstitemid = $keys[0];
+        $firstcontent = $search_restrictions[$firstitemid];
+
+        unset($search_restrictions[$firstitemid]); // drop the first element of $search_restrictions
+
+        // should work but does not: MDL-27629
+        // $submissionidlist = $DB->get_records('survey_userdata', array('itemid' => $firstitemid, $DB->sql_compare_text('content') => $firstcontent), 'submissionid');
+
+        $where = 'itemid = :itemid AND '.$DB->sql_compare_text('content').' = :content';
+        $params = array('itemid' => $firstitemid, 'content' => (string)$firstcontent);
+        if (!$submissionidlist = $DB->get_records_select('survey_userdata', $where, $params, 'submissionid', 'submissionid')) {
+            // nessuna submission soddisfa le richieste
+            return array();
+        } else {
+            $submissionidlist = array_keys($submissionidlist); // list of submission id matching the first constraint
+
+        }
+
+        if (!$search_restrictions) {
+            // if no more constaints are available, the process is finished
+            return $submissionidlist;
+        }
+
+        foreach ($search_restrictions as $itemid => $valuesarray) {
+            $where = 'submissionid IN ('.implode(',', $submissionidlist).')
+                          AND itemid = :itemid
+                          AND content = :valuesarray';
+            $params = array('itemid' => $itemid, 'content' => (string)$valuesarray);
+            if ($submissionidlist = $DB->get_records_select('survey_userdata', $where, $params, 'submissionid', 'submissionid')) {
+                $submissionidlist = array_keys($submissionidlist);
+            } else {
+                // not any submission meets all the constraints
+                return array();
+            }
+        }
+        return $submissionidlist;
     }
 }
