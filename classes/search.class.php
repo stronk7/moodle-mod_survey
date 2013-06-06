@@ -59,7 +59,7 @@ class mod_survey_searchmanager {
      * @param
      * @return
      */
-    public function searchparamurl() {
+    public function get_searchparamurl() {
         global $PAGE;
 
         $cm = $PAGE->cm;
@@ -104,14 +104,14 @@ class mod_survey_searchmanager {
             $item = survey_get_item($iteminfo->itemid, $iteminfo->type, $iteminfo->plugin);
 
             $userdata = new stdClass();
-            $item->userform_save_preprocessing($iteminfo->extra, $userdata, false);
+            $item->userform_save_preprocessing($iteminfo->extra, $userdata);
 
             if (!is_null($userdata->content)) {
-                //$searchfields[] = $userdata->content.SURVEY_URLVALUESEPARATOR.$iteminfo->itemid;
                 $searchfields[$iteminfo->itemid] = $userdata->content;
             }
         }
 
+        // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
         // echo '$searchfields:';
         // var_dump($searchfields);
 

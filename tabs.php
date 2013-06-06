@@ -34,7 +34,7 @@ if ($currenttab == SURVEY_TABITEMS) {
     require_capability('mod/survey:manageitems', $context);
 }
 if ($currenttab == SURVEY_TABMTEMPLATES) {
-    require_capability('mod/survey:manageplugin', $context);
+    require_capability('mod/survey:managemtemplates', $context);
 }
 
 $hassubmissions = survey_has_submissions($survey->id);
@@ -44,7 +44,7 @@ $cansubmit = survey_user_can_submit($cm);
 $canexportdata = survey_user_can_export_data($cm);
 $canaccessreports = survey_user_can_access_reports($cm);
 $canmanageitems = survey_user_can_manage_items($cm);
-$canmanageplugin = survey_user_can_manage_plugin($cm);
+$canmanagemtemplates = survey_user_can_manage_master_templates($cm);
 
 $whereparams = array('surveyid' => $survey->id);
 $countparents = $DB->count_records_select('survey_item', 'surveyid = :surveyid AND parentid <> 0', $whereparams);
@@ -94,7 +94,7 @@ $row[] = new tabobject(SURVEY_TAB3NAME, $elementurl->out(), SURVEY_TAB3NAME);
 // -----------------------------------------------------------------------------
 // TAB MASTER TEMPLATES
 // -----------------------------------------------------------------------------
-if ($canmanageplugin) {
+if ($canmanagemtemplates) {
     $elementurl = new moodle_url('/mod/survey/mtemplates_build.php', $paramurl);
     $row[] = new tabobject(SURVEY_TAB4NAME, $elementurl->out(), SURVEY_TAB4NAME);
 }

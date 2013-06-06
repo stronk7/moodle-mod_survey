@@ -277,10 +277,8 @@ function survey_i_can_delete($survey, $mygroup, $ownerid) {
  * @return
  */
 function survey_get_my_groups($cm) {
-    global $USER, $COURSE;
-
-    if (groups_get_activity_groupmode($cm, $COURSE) == SEPARATEGROUPS) {   // Separate groups are being used
-        $mygroupslist = groups_get_user_groups($COURSE->id, $USER->id); // this is 0 whether no groups are set
+    if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {   // Separate groups are being used
+        $mygroupslist = groups_get_user_groups($cm->course); // this is 0 whether no groups are set
         $mygroups = array();
         foreach ($mygroupslist[0] as $mygroupid) { // [0] is for all groupings combined
             $mygroups[] = $mygroupid;

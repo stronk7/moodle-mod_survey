@@ -83,9 +83,9 @@ $search_form = new survey_searchform($formurl, $formparams);
 // manage form submission
 if ($search_manager->formdata = $search_form->get_data()) { // $search_form, here, is the search form
     // in this routine I do not execute a real search
-    // I just define the list of parameters for the url of SURVEY_SUBMISSION_MANAGE
+    // I only define the param searchquery for the url of SURVEY_SUBMISSION_MANAGE
     $paramurl = array('id' => $cm->id);
-    $paramurl['searchquery'] = $search_manager->searchparamurl();
+    $paramurl['searchquery'] = $search_manager->get_searchparamurl();
     $returnurl = new moodle_url('view_manage.php', $paramurl);
     redirect($returnurl);
 }

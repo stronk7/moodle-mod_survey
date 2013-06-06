@@ -145,10 +145,6 @@ define('SURVEY_DOWNLOADXLS', 2);
 define('SURVEY_NOFIELDSSELECTED', 1);
 define('SURVEY_NORECORDSFOUND'  , 2);
 
-// SEARCH
-define('SURVEY_URLPARAMSEPARATOR', '-');
-define('SURVEY_URLVALUESEPARATOR', '_');
-define('SURVEY_URLMULTIVALUESEPARATOR', '+');
 define('SURVEY_DBMULTIVALUESEPARATOR', ', ');
 
 // CONFIRMATION
@@ -261,14 +257,14 @@ function survey_user_can_manage_items($cm) {
 }
 
 /*
- * survey_user_can_manage_plugin
+ * survey_user_can_manage_master_templates
  * @param $cm
  * @return
  */
-function survey_user_can_manage_plugin($cm) {
+function survey_user_can_manage_master_templates($cm) {
     $context = context_module::instance($cm->id);
 
-    return (has_capability('mod/survey:manageplugin', $context, null, true));
+    return (has_capability('mod/survey:managemtemplates', $context, null, true));
 }
 
 /*
@@ -856,7 +852,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     global $CFG, $OUTPUT, $USER, $DB;
 
     $canmanageitems = survey_user_can_manage_items($cm);
-    $canmanageplugin = survey_user_can_manage_plugin($cm);
+    $canmanagemtemplates = survey_user_can_manage_master_templates($cm);
     $canexportdata = survey_user_can_export_data($cm);
     $hassubmissions = survey_has_submissions($cm->instance);
 
@@ -926,7 +922,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     /*
      * SURVEY_TABMTEMPLATES
      */
-    if ($canmanageplugin) {
+    if ($canmanagemtemplates) {
         // PARENT
         $paramurl = array('s' => $cm->instance);
         $navref->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/mtemplate.php', $paramurl), navigation_node::TYPE_CONTAINER);

@@ -141,7 +141,19 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:manageplugin' => array(
+    'mod/survey:managemtemplates' => array(
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:manageutemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',

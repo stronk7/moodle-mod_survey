@@ -371,16 +371,12 @@ class surveyfield_multiselect extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (!is_null($itemdetail['mainelement'])) {
-            if ($saving) {
-                $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $itemdetail['mainelement']);
-            } else { // searching
-                $olduserdata->content = urlencode( implode(SURVEY_URLMULTIVALUESEPARATOR, $itemdetail['mainelement']) );
-            }
+            $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $itemdetail['mainelement']);
         } else {
             $olduserdata->content = null;
         }

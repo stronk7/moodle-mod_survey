@@ -493,10 +493,10 @@ class surveyfield_checkbox extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         $i = 0;
         $return = array();
         $options = $this->item_complete_option_array();
@@ -529,11 +529,7 @@ class surveyfield_checkbox extends surveyitem_base {
         if (empty($return)) {
             $olduserdata->content = null;
         } else {
-            if ($saving) {
-                $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $return);
-            } else { // searching
-                $olduserdata->content = urlencode( implode(SURVEY_URLMULTIVALUESEPARATOR, $return) );
-            }
+            $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $return);
         }
     }
 

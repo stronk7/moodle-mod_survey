@@ -51,7 +51,7 @@ function survey_autofill_get_elements($surveyid) {
     global $COURSE;
 
     $cm = get_coursemodule_from_instance('survey', $surveyid, $COURSE->id, false, MUST_EXIST);
-    $usegroups = groups_get_activity_groupmode($cm, $COURSE);
+    $usegroups = groups_get_activity_groupmode($cm);
 
     $options = array();
     $options[''] = array(get_string('choosedots'));

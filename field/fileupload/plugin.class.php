@@ -268,30 +268,25 @@ class surveyfield_fileupload extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (!empty($itemdetail)) {
             $fieldname = $this->itemname.'_filemanager';
 
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
             file_save_draft_area_files($itemdetail['filemanager'], $this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, $attachmentoptions);
 
-            // $olduserdata->{$fieldname} = $itemdetail['filemanager']; // needed for the mform element
-            // $olduserdata->content = $itemdetail['filemanager'];      // needed for the saving process
-
-            // $olduserdata = file_postupdate_standard_filemanager($olduserdata, $fieldname, $attachmentoptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
-            if ($saving) {
-                $fs = get_file_storage();
-                if ($files = $fs->get_area_files($this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, 'sortorder', false)) {
-                    foreach ($files as $file) {
-                        $oldfiles[] = $file->get_filename();
-                    }
-                    $olduserdata->content = implode(', ', $oldfiles);
-                } else {
-                    $olduserdata->content = '';
+            // needed only for export purposes
+            $fs = get_file_storage();
+            if ($files = $fs->get_area_files($this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, 'sortorder', false)) {
+                foreach ($files as $file) {
+                    $oldfiles[] = $file->get_filename();
                 }
+                $olduserdata->content = implode(', ', $oldfiles);
+            } else {
+                $olduserdata->content = '';
             }
         }
     }

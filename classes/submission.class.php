@@ -247,7 +247,13 @@ class mod_survey_submissionmanager {
 
         $paramurl = array('id' => $cm->id);
         if ($this->searchfields_get) {
-            $paramurl['searchquery'] = $this->searchfields_get;
+            if ($submissionidlist = $this->get_filtered_id_list()) {
+                $paramurl['searchquery'] = $this->searchfields_get;
+            } else {
+                $table->print_nothing_to_display();
+                echo $OUTPUT->footer();
+                die;
+            }
         }
         $table->define_baseurl(new moodle_url('view_manage.php', $paramurl));
 
@@ -310,6 +316,8 @@ class mod_survey_submissionmanager {
             die;
         }
 
+        $mygroups = survey_get_my_groups($cm);
+
         $status = array(SURVEY_STATUSINPROGRESS => get_string('statusinprogress', 'survey'),
                         SURVEY_STATUSCLOSED => get_string('statusclosed', 'survey'));
         $deletetitle = get_string('delete');
@@ -322,30 +330,25 @@ class mod_survey_submissionmanager {
 
         list($where, $params) = $table->get_sql_where();
 
-        $params['surveyid'] = $this->survey->id;
-
-        if ($this->searchfields_get) {
-            if ($submissionidlist = $this->get_filtered_id_list()) {
-                $sql = 'SELECT s.*, s.id as submissionid,
-                               u.firstname, u.lastname, u.id, u.picture, u.imagealt, u.email
-                        FROM {survey_submissions} s
-                            JOIN {user} u ON s.userid = u.id
-                        WHERE s.id IN ('.implode(',', $submissionidlist).')';
-            } else {
-                // No matching record has been found. I need to return an empty recordset
-                $sql = 'SELECT s.*, s.id as submissionid,
-                               u.firstname, u.lastname, u.id, u.picture, u.imagealt, u.email
-                        FROM {survey_submissions} s
-                            JOIN {user} u ON s.userid = u.id
-                        WHERE s.surveyid = -1';
+        $userfields = user_picture::fields('u');
+        $sql = 'SELECT s.*, s.id as submissionid,'.$userfields.'
+                FROM {survey_submissions} s
+                    JOIN {user} u ON (s.userid = u.id)';
+        if ($mygroups) {
+            $i = 0;
+            $relations = array();
+            foreach ($mygroups as $mygroup) {
+                $i++;
+                $relations[] = '(gm.groupid = :groupid'.$i.')';
+                $params['groupid'.$i] = $mygroup;
             }
-        } else {
-            // TODO: get only the list of submissions of the owners I am allowed to see
-            $sql = 'SELECT s.*, s.id as submissionid,
-                           u.firstname, u.lastname, u.id, u.picture, u.imagealt, u.email
-                    FROM {survey_submissions} s
-                        JOIN {user} u ON s.userid = u.id
-                    WHERE s.surveyid = :surveyid';
+            $sql .= ' JOIN {groups_members} gm ON (gm.userid = u.id AND ('.implode(' OR ', $relations).'))';
+        }
+        $sql .= ' WHERE s.surveyid = :surveyid';
+        $params['surveyid'] = $this->survey->id;
+        if ($this->searchfields_get) {
+            // I am sure $submissionidlist exists otherwise execution is stopped before
+            $sql .= 'WHERE s.id IN ('.implode(',', $submissionidlist).')';
         }
 
         if ($where) {
@@ -371,7 +374,6 @@ class mod_survey_submissionmanager {
                 echo $OUTPUT->single_button($url, $caption, 'get');
             }
 
-            $mygroups = survey_get_my_groups($cm);
             foreach ($submissions as $submission) {
                 if (!$this->canreadallsubmissions && !survey_i_can_read($this->survey, $mygroups, $submission->userid)) {
                     continue;
@@ -380,7 +382,7 @@ class mod_survey_submissionmanager {
                 $tablerow = array();
 
                 // icon
-                $tablerow[] = $OUTPUT->user_picture($submission, array('courseid'=>$COURSE->id));
+                $tablerow[] = $OUTPUT->user_picture($submission, array('courseid' => $COURSE->id));
 
                 // user fullname
                 $tablerow[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$submission->userid.'&amp;course='.$COURSE->id.'">'.fullname($submission).'</a>';
@@ -458,6 +460,7 @@ class mod_survey_submissionmanager {
         global $DB;
 
         $search_restrictions = unserialize($this->searchfields_get);
+
         // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
         // echo '$search_restrictions (prima):';
         // var_dump($search_restrictions);
@@ -502,7 +505,6 @@ class mod_survey_submissionmanager {
             return array();
         } else {
             $submissionidlist = array_keys($submissionidlist); // list of submission id matching the first constraint
-
         }
 
         if (!$search_restrictions) {

@@ -308,7 +308,7 @@ class mod_survey_userpagemanager {
 
             // in this method I update $userdata_record->content
             // I do not really save to database
-            $item->userform_save_preprocessing($iteminfo->extra, $userdata_record, true);
+            $item->userform_save_preprocessing($iteminfo->extra, $userdata_record);
 
             if ($userdata_record->content != 'dummy_content') {
                 $DB->update_record('survey_userdata', $userdata_record);
@@ -399,7 +399,7 @@ class mod_survey_userpagemanager {
 
         $context = context_course::instance($COURSE->id);
 
-        if (groups_get_activity_groupmode($cm, $COURSE) == SEPARATEGROUPS) {   // Separate groups are being used
+        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {   // Separate groups are being used
             if ($mygroups = survey_get_my_groups($cm)) { // se non appartengo ad un gruppo, non ho compagni di gruppo
                 $roles = explode(',', $this->survey->notifyrole);
                 $receivers = array();

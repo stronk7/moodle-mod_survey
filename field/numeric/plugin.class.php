@@ -56,6 +56,11 @@ class surveyfield_numeric extends surveyitem_base {
     public $defaultvalue = 0;
 
     /*
+     * $decimalseparator
+     */
+    public $decimalseparator = '.';
+
+    /*
      * $signed = will be, the expected number, signed
      */
     public $signed = 0;
@@ -97,6 +102,7 @@ class surveyfield_numeric extends surveyitem_base {
     public function __construct($itemid=0) {
         $this->type = SURVEY_TYPEFIELD;
         $this->plugin = 'numeric';
+        $this->decimalseparator = get_string('decsep', 'langconfig');
 
         $this->flag = new stdclass();
         $this->flag->issearchable = true;
@@ -104,7 +110,7 @@ class surveyfield_numeric extends surveyitem_base {
         $this->flag->useplugintable = true;
 
         if (!empty($itemid)) {
-                $this->item_load($itemid);
+            $this->item_load($itemid);
         }
     }
 
@@ -286,8 +292,7 @@ class surveyfield_numeric extends surveyitem_base {
         if (!empty($this->decimals)) {
             // this sentence talks about decimal separator not about the expected value
             // so I leave it as last sentence
-            $decimalseparator = get_string('decsep', 'langconfig');
-            $fillinginstruction[] = get_string('declaredecimalseparator', 'surveyfield_numeric', $decimalseparator);
+            $fillinginstruction[] = get_string('declaredecimalseparator', 'surveyfield_numeric', $this->decimalseparator);
         }
         if (count($fillinginstruction)) {
             $fillinginstruction = get_string('number', 'surveyfield_numeric').implode(', ', $fillinginstruction);
@@ -304,9 +309,7 @@ class surveyfield_numeric extends surveyitem_base {
      * @return
      */
     public function item_get_parent_format() {
-        $decimalseparator = get_string('decsep', 'langconfig');
-
-        return get_string('parentformatdecimal', 'surveyfield_'.$this->plugin, $decimalseparator);
+        return get_string('parentformatdecimal', 'surveyfield_'.$this->plugin, $this->decimalseparator);
     }
 
     /*
@@ -339,9 +342,8 @@ class surveyfield_numeric extends surveyitem_base {
         $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent, 'itemid' => $this->itemid));
         $mform->setType($this->itemname, PARAM_RAW); // see: moodlelib.php lines 133+
         if (!$searchform) {
-            $decimalseparator = get_string('decsep', 'langconfig');
             if (is_numeric($this->defaultvalue)) {
-                $mform->setDefault($this->itemname, number_format((double)$this->defaultvalue, $this->decimals, $decimalseparator, ''));
+                $mform->setDefault($this->itemname, number_format((double)$this->defaultvalue, $this->decimals, $this->decimalseparator, ''));
             }
 
             if ($this->required) {
@@ -365,8 +367,6 @@ class surveyfield_numeric extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $decimalseparator = get_string('decsep', 'langconfig');
-
         if ($this->extrarow) {
             $errorkey = $this->itemname.'_extrarow';
         } else {
@@ -386,7 +386,7 @@ class surveyfield_numeric extends surveyitem_base {
 
         // if it is not a number, shouts
         if (strlen($data[$this->itemname]) > 0) {
-            $pattern = '~^\s*([0-9]+)'.get_string('decsep', 'langconfig').'?([0-9]*)\s*$~';
+            $pattern = '~^\s*([0-9]+)'.$this->decimalseparator.'?([0-9]*)\s*$~';
             if (!preg_match($pattern, $data[$this->itemname], $matches)) {
                 $errors[$errorkey] = get_string('uerr_notanumber', 'surveyfield_numeric');
             } else {
@@ -427,19 +427,18 @@ class surveyfield_numeric extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (strlen($itemdetail['mainelement']) == 0) {
             $olduserdata->content = null;
         } else {
             if (empty($this->decimals)) {
                 $olduserdata->content = $itemdetail['mainelement'];
             } else {
-                $decimalseparator = get_string('decsep', 'langconfig');
                 $matches = $this->item_atomize_parent_content($itemdetail['mainelement']);
-                $decimals = isset($matches[2]) ? $matches[2] : '0';
+                $decimals = isset($matches[2]) ? $matches[2] : '';
                 if (strlen($decimals) > $this->decimals) {
                     // round it
                     $decimals = round((float)$decimals, $this->decimals);
@@ -448,7 +447,16 @@ class surveyfield_numeric extends surveyitem_base {
                     // padright
                     $decimals = str_pad($decimals, $this->decimals, '0', STR_PAD_RIGHT);
                 }
-                $olduserdata->content = $matches[1].$decimalseparator.$decimals;
+                if (isset($matches[1])) {
+                    // I DO ALWATYS save using english decimal separator
+                    // At load time, the number will be formatted according to user settings
+                    $olduserdata->content = $matches[1].'.'.$decimals;
+                } else {
+                    // in the SEARCH form the remote user entered something very wrong
+                    // remember: the for search form NO VALIDATION IS PERFORMED
+                    // user is free to waste his/her time as he/she like
+                    $olduserdata->content = $itemdetail['mainelement'];
+                }
             }
         }
     }
@@ -466,8 +474,7 @@ class surveyfield_numeric extends surveyitem_base {
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (isset($olduserdata->content)) {
-                $decimalseparator = get_string('decsep', 'langconfig');
-                $prefill[$this->itemname] = number_format((double)$olduserdata->content, $this->decimals, $decimalseparator, '');
+                $prefill[$this->itemname] = number_format((double)$olduserdata->content, $this->decimals, $this->decimalseparator, '');
             // } else {
                 // nothing was set
                 // do not accept defaults but overwrite them

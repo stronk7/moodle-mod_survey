@@ -507,10 +507,10 @@ class surveyfield_rate extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
         } else {
@@ -526,12 +526,7 @@ class surveyfield_rate extends surveyitem_base {
                 $i++;
             }
 
-            // $return can be empty but I do not care of it
-            if ($saving) {
-                $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $return);
-            } else { // searching
-                $olduserdata->content = urlencode( implode(SURVEY_URLMULTIVALUESEPARATOR, $return) );
-            }
+            $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $return);
         }
     }
 
