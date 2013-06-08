@@ -402,11 +402,7 @@ class mod_survey_itemelement {
                 $icons = '';
                 // *************************************** SURVEY_EDITITEM
                 $paramurl = $paramurl_base + array('act' => SURVEY_EDITITEM);
-<<<<<<< HEAD
                 $basepath = new moodle_url('items_setup.php', $paramurl);
-=======
-                $basepath = new moodle_url('items_configure.php', $paramurl);
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 
                 $icons .= '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
                 $icons .= '<img src="'.$OUTPUT->pix_url('t/edit').'" class="iconsmall" alt="'.$edittitle.'" title="'.$edittitle.'" /></a>&nbsp;';
@@ -1003,11 +999,7 @@ class mod_survey_itemelement {
 
             // *************************************** SURVEY_EDITITEM
             $paramurl = $paramurl_base + array('act' => SURVEY_EDITITEM);
-<<<<<<< HEAD
             $basepath = new moodle_url('items_setup.php', $paramurl);
-=======
-            $basepath = new moodle_url('items_configure.php', $paramurl);
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 
             $icons = '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
             $icons .= '<img src="'.$OUTPUT->pix_url('t/edit').'" class="iconsmall" alt="'.$edittitle.'" title="'.$edittitle.'" /></a>&nbsp;';

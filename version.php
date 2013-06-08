@@ -30,10 +30,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $module->component = 'mod_survey';     // Full name of the plugin (used for diagnostics)
 $module->maturity = MATURITY_ALPHA;    // MATURITY_RC
-<<<<<<< HEAD
 $module->version = 2013060702;         // The current module version (Date: YYYYMMDDXX)
-=======
-$module->version = 2013060601;         // The current module version (Date: YYYYMMDDXX)
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 $module->requires = 2010031900;        // Requires this Moodle version
 $module->cron = 3600;                  // Period for cron to check this module (secs)

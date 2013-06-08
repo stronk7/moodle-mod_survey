@@ -55,12 +55,9 @@ $currentpage = SURVEY_UTEMPLATES_MANAGE; // needed by tabs.php
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
 
-<<<<<<< HEAD
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:manageusertemplates', $context);
 
-=======
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
@@ -68,11 +65,8 @@ $utemplate_manager = new mod_survey_usertemplate($survey, $action, $confirm);
 $utemplate_manager->utemplateid = optional_param('fid', 0, PARAM_INT);
 
 $utemplate_manager->action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
-<<<<<<< HEAD
 $utemplate_manager->canexportutemplates = survey_user_can_export_user_templates($cm);
 $utemplate_manager->candeleteutemplates = survey_user_can_delete_user_templates($cm);
-=======
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 $utemplate_manager->manage_actions();
 
 // ////////////////////////////////////////////////////////////

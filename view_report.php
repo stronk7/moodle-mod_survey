@@ -54,11 +54,8 @@ $currentpage = SURVEY_SUBMISSION_REPORT; // needed by tabs.php
 $reportname = optional_param('rname', '', PARAM_ALPHA);
 $hassubmissions = survey_has_submissions($survey->id);
 
-<<<<<<< HEAD
 require_capability('mod/survey:accessreports', $context);
 
-=======
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 // ////////////////////////////////////////////////////////////
 // Output starts here
 // ////////////////////////////////////////////////////////////

@@ -57,16 +57,11 @@ $type = optional_param('type', null, PARAM_TEXT);
 
 $hassubmissions = survey_has_submissions($survey->id, SURVEY_STATUSCLOSED);
 
-<<<<<<< HEAD
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:setupitems', $context);
 
 // ////////////////////////////////////////////////////////////
 // manager definition
-=======
-// ////////////////////////////////////////////////////////////
-// calculations
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 // ////////////////////////////////////////////////////////////
 $item_manager = new mod_survey_itemelement($survey, $type, $plugin);
 
@@ -81,10 +76,7 @@ $item_manager->parentid = optional_param('pit', 0, PARAM_INT);
 $item_manager->userfeedback = optional_param('ufd', SURVEY_NOFEEDBACK, PARAM_INT);
 
 $item_manager->hassubmissions = $hassubmissions;
-<<<<<<< HEAD
 
-=======
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////

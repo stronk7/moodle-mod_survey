@@ -141,20 +141,12 @@ class mod_survey_exportmanager {
 
             // get user group (to filter survey to download)
             $mygroups = survey_get_my_groups($cm);
-<<<<<<< HEAD
             $canmanageallsubmissions = survey_user_can_manage_all_submissions($cm);
-=======
-            $canreadallsubmissions = survey_user_can_read_all_submissions($cm);
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 
             $oldrichsubmissionid = 0;
 
             foreach ($richsubmissions as $richsubmission) {
-<<<<<<< HEAD
                 if (!$canmanageallsubmissions && !survey_i_can_read($this->survey, $mygroups, $richsubmission->userid)) {
-=======
-                if (!$canreadallsubmissions && !survey_i_can_read($this->survey, $mygroups, $richsubmission->userid)) {
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
                     continue;
                 }
 

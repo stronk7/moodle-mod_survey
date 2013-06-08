@@ -72,17 +72,10 @@ define('SURVEY_TAB'.SURVEY_TABMTEMPLATES.'NAME', get_string('tabmtemplatename', 
     define('SURVEY_SUBMISSION_EXPORT'  , 8);
 
     // ITEMS PAGES
-<<<<<<< HEAD
     define('SURVEY_ITEMS_MANAGE'  , 1);
     define('SURVEY_ITEMS_ADD'     , 2);
     define('SURVEY_ITEMS_SETUP'   , 3);
     define('SURVEY_ITEMS_VALIDATE', 4);
-=======
-    define('SURVEY_ITEMS_MANAGE'       , 1);
-    define('SURVEY_ITEMS_ADD'          , 2);
-    define('SURVEY_ITEMS_CONFIGURE'    , 3);
-    define('SURVEY_ITEMS_VALIDATE'     , 4);
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 
     // USER TEMPLATES PAGES
     define('SURVEY_UTEMPLATES_MANAGE'  , 1);
@@ -100,24 +93,17 @@ define('SURVEY_TYPEFORMAT', 'format');
 
 // ACTIONS
 define('SURVEY_NOACTION'          , '0');
-<<<<<<< HEAD
 // -> ITEM section
-=======
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 define('SURVEY_EDITITEM'          , '1');
 define('SURVEY_HIDEITEM'          , '2');
 define('SURVEY_SHOWITEM'          , '3');
 define('SURVEY_DELETEITEM'        , '4');
-<<<<<<< HEAD
 // -> ITEM section
-=======
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 define('SURVEY_CHANGEORDERASK'    , '5');
 define('SURVEY_CHANGEORDER'       , '6');
 define('SURVEY_REQUIREDOFF'       , '7');
 define('SURVEY_REQUIREDON'        , '8');
 define('SURVEY_CHANGEINDENT'      , '9');
-<<<<<<< HEAD
 // -> RESPONSES section
 define('SURVEY_EDITRESPONSE'      , '10');
 define('SURVEY_DUPLICATERESPONSE' , '11');
@@ -129,17 +115,6 @@ define('SURVEY_PREVIEWSURVEY'     , '15');
 // -> UTEMPLATE section
 define('SURVEY_DELETEUTEMPLATE'   , '16');
 define('SURVEY_EXPORTUTEMPLATE'   , '17');
-=======
-define('SURVEY_EDITSURVEY'        , '10');
-define('SURVEY_DUPLICATESURVEY'   , '11');
-define('SURVEY_READONLYSURVEY'    , '12');
-define('SURVEY_DELETESURVEY'      , '13');
-define('SURVEY_PREVIEWSURVEY'     , '14');
-define('SURVEY_DELETEALLRESPONSES', '15');
-define('SURVEY_VALIDATE'          , '16');
-define('SURVEY_DELETEUTEMPLATE'   , '17');
-define('SURVEY_EXPORTUTEMPLATE'   , '18');
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 
 // SAVESTATUS
 define('SURVEY_NOFEEDBACK', 0);
@@ -231,7 +206,6 @@ function survey_user_can_preview($cm) {
 }
 
 /*
-<<<<<<< HEAD
  * survey_user_can_access_advanced_form
  * @param $cm
  * @return
@@ -243,8 +217,6 @@ function survey_user_can_access_advanced_form($cm) {
 }
 
 /*
-=======
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
  * survey_user_can_submit
  * @param $cm
  * @return
@@ -256,7 +228,6 @@ function survey_user_can_submit($cm) {
 }
 
 /*
-<<<<<<< HEAD
  * survey_user_can_search
  * @param $cm
  * @return
@@ -287,38 +258,6 @@ function survey_user_can_export_data($cm) {
     $context = context_module::instance($cm->id);
 
     return (has_capability('mod/survey:exportdata', $context, null, true));
-=======
- * survey_user_can_access_advanced_form
- * @param $cm
- * @return
- */
-function survey_user_can_access_advanced_form($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:accessadvancedform', $context, null, true));
-}
-
-/*
- * survey_user_can_export_data
- * @param $cm
- * @return
- */
-function survey_user_can_export_data($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:exportdata', $context, null, true));
-}
-
-/*
- * survey_user_can_access_reports
- * @param $cm
- * @return
- */
-function survey_user_can_access_reports($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:accessreports', $context, null, true));
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 }
 
 /*
@@ -333,7 +272,6 @@ function survey_user_can_manage_items($cm) {
 }
 
 /*
-<<<<<<< HEAD
  * survey_user_can_create_user_template
  * @param $cm
  * @return
@@ -342,16 +280,6 @@ function survey_user_can_create_user_template($cm) {
     $context = context_module::instance($cm->id);
 
     return (has_capability('mod/survey:createusertemplates', $context, null, true));
-=======
- * survey_user_can_manage_master_templates
- * @param $cm
- * @return
- */
-function survey_user_can_manage_master_templates($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:managemtemplates', $context, null, true));
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 }
 
 /*
@@ -359,7 +287,6 @@ function survey_user_can_manage_master_templates($cm) {
  * @param $cm
  * @return
  */
-<<<<<<< HEAD
 function survey_user_can_manage_all_submissions($cm) {
     $context = context_module::instance($cm->id);
 
@@ -452,34 +379,6 @@ function survey_user_can_apply_master_templates($cm) {
     $context = context_module::instance($cm->id);
 
     return (has_capability('mod/survey:applymastertemplate', $context, null, true));
-=======
-function survey_user_can_read_all_submissions($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:readall', $context, null, true));
-}
-
-/*
- * survey_user_can_edit_all_submissions
- * @param $cm
- * @return
- */
-function survey_user_can_edit_all_submissions($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:editall', $context, null, true));
-}
-
-/*
- * survey_user_can_delete_all_submissions
- * @param $cm
- * @return
- */
-function survey_user_can_delete_all_submissions($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:deleteall', $context, null, true));
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 }
 
 // //////////////////////////////////////////////////////////////////////////////
@@ -1034,13 +933,9 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     global $CFG, $OUTPUT, $USER, $DB;
 
     $canmanageitems = survey_user_can_manage_items($cm);
-<<<<<<< HEAD
     $canpreview = survey_user_can_preview($cm);
     $cansubmit = survey_user_can_submit($cm);
     $cansearch = survey_user_can_search($cm);
-=======
-    $canmanagemtemplates = survey_user_can_manage_master_templates($cm);
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
     $canexportdata = survey_user_can_export_data($cm);
 
     $canmanageusertemplates = survey_user_can_manage_user_templates($cm);
@@ -1054,12 +949,9 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
 
     $hassubmissions = survey_has_submissions($cm->instance);
 
-<<<<<<< HEAD
     $whereparams = array('surveyid' => $cm->instance);
     $countparents = $DB->count_records_select('survey_item', 'surveyid = :surveyid AND parentid <> 0', $whereparams);
 
-=======
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
     // $currentgroup = groups_get_activity_group($cm);
     // $groupmode = groups_get_activity_groupmode($cm);
 
@@ -1075,7 +967,6 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     }
 
     // CHILDREN
-<<<<<<< HEAD
     if ($canpreview) {
         $localparamurl = array('s' => $cm->instance, 'act' => SURVEY_PREVIEWSURVEY);
         $navnode->add(get_string('tabsubmissionspage1', 'survey'), new moodle_url('/mod/survey/view.php', $localparamurl), navigation_node::TYPE_SETTING);
@@ -1089,28 +980,13 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
         $navnode->add(get_string('tabsubmissionspage6', 'survey'), new moodle_url('/mod/survey/view_search.php', $paramurl), navigation_node::TYPE_SETTING);
     }
     if ($canexportdata) {
-=======
-    if (!empty($canmanageitems)) {
-        $localparamurl = array('s' => $cm->instance, 'act' => SURVEY_PREVIEWSURVEY);
-        $navnode->add(get_string('tabsubmissionspage1', 'survey'), new moodle_url('/mod/survey/view.php', $localparamurl), navigation_node::TYPE_SETTING);
-    }
-    $navnode->add(get_string('tabsubmissionspage2', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
-    $localparamurl = array('s' => $cm->instance, 'act' => SURVEY_SUBMISSION_READONLY);
-    $navnode->add(get_string('tabsubmissionspage5', 'survey'), new moodle_url('/mod/survey/view_manage.php', $localparamurl), navigation_node::TYPE_SETTING);
-    $navnode->add(get_string('tabsubmissionspage6', 'survey'), new moodle_url('/mod/survey/view_search.php', $paramurl), navigation_node::TYPE_SETTING);
-    if (!empty($canexportdata)) {
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         $navnode->add(get_string('tabsubmissionspage8', 'survey'), new moodle_url('/mod/survey/view_export.php', $paramurl), navigation_node::TYPE_SETTING);
     }
 
     /*
      * SURVEY_TABITEMS
      */
-<<<<<<< HEAD
     if ($canmanageitems) {
-=======
-    if (!empty($canmanageitems)) {
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         // PARENT
         $itemcount = $DB->count_records('survey_item', array('surveyid' => $cm->instance));
         $paramurl = array('s' => $cm->instance);
@@ -1124,22 +1000,15 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
         $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_SETTING);
         if (!$hassubmissions) {
             $navnode->add(get_string('tabitemspage2', 'survey'), new moodle_url('/mod/survey/items_add.php', $paramurl), navigation_node::TYPE_SETTING);
-<<<<<<< HEAD
         }
         if ($countparents) {
             $navnode->add(get_string('tabitemspage4', 'survey'), new moodle_url('/mod/survey/items_validate.php', $paramurl), navigation_node::TYPE_SETTING);
         }
-=======
-        }
-        $navnode->add(get_string('tabitemspage4', 'survey'), new moodle_url('/mod/survey/items_validate.php', $paramurl), navigation_node::TYPE_SETTING);
-        //$navref->add(SURVEY_TAB2NAME, new moodle_url('/mod/survey/view.php', $paramurl));
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
     }
 
     /*
      * SURVEY_TABUTEMPLATES
      */
-<<<<<<< HEAD
     if ($canmanageusertemplates) {
         // PARENT
         $paramurl = array('s' => $cm->instance);
@@ -1159,43 +1028,23 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
             $navnode->add(get_string('tabutemplatepage4', 'survey'), new moodle_url('/mod/survey/utemplate_apply.php', $paramurl), navigation_node::TYPE_SETTING);
         }
     }
-=======
-    // PARENT
-    $paramurl = array('s' => $cm->instance);
-    $navnode = $navref->add(SURVEY_TAB3NAME,  new moodle_url('/mod/survey/utemplate_build.php', $paramurl), navigation_node::TYPE_CONTAINER);
-
-    // CHILDREN
-    $navnode->add(get_string('tabutemplatepage1', 'survey'), new moodle_url('/mod/survey/utemplate_manage.php', $paramurl), navigation_node::TYPE_SETTING);
-    $navnode->add(get_string('tabutemplatepage2', 'survey'), new moodle_url('/mod/survey/utemplate_build.php', $paramurl), navigation_node::TYPE_SETTING);
-    $navnode->add(get_string('tabutemplatepage3', 'survey'), new moodle_url('/mod/survey/utemplate_import.php', $paramurl), navigation_node::TYPE_SETTING);
-    $navnode->add(get_string('tabutemplatepage4', 'survey'), new moodle_url('/mod/survey/utemplate_apply.php', $paramurl), navigation_node::TYPE_SETTING);
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
     // $navref->add(SURVEY_TAB3NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => SURVEY_TABUTEMPLATES)));
 
     /*
      * SURVEY_TABMTEMPLATES
      */
-<<<<<<< HEAD
     if ($cancreatemastertemplate || (!$hassubmissions && $canapplymastertemplate)) {
-=======
-    if ($canmanagemtemplates) {
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         // PARENT
         $paramurl = array('s' => $cm->instance);
         $navref->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/mtemplate.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
         // CHILDREN
-<<<<<<< HEAD
         if ($cancreatemastertemplate) {
             $navnode->add(get_string('tabutemplatepage1', 'survey'), new moodle_url('/mod/survey/mtemplate_create.php', $paramurl), navigation_node::TYPE_SETTING);
         }
         if (!$hassubmissions && $canapplymastertemplate) {
             $navnode->add(get_string('tabutemplatepage2', 'survey'), new moodle_url('/mod/survey/mtemplate_apply.php', $paramurl), navigation_node::TYPE_SETTING);
         }
-=======
-        $navnode->add(get_string('tabutemplatepage1', 'survey'), new moodle_url('/mod/survey/mtemplate_build.php', $paramurl), navigation_node::TYPE_SETTING);
-        $navnode->add(get_string('tabutemplatepage2', 'survey'), new moodle_url('/mod/survey/mtemplate_apply.php', $paramurl), navigation_node::TYPE_SETTING);
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
     }
 }
 

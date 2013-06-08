@@ -30,33 +30,21 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
-<<<<<<< HEAD:forms/mtemplates/createmtemplate_form.php
 class survey_mtemplatecreateform extends moodleform {
-=======
-class survey_mtemplatebuildform extends moodleform {
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c:forms/mtemplates/createmtemplate_form.php
 
     function definition() {
 
         $mform = $this->_form;
 
         // ----------------------------------------
-<<<<<<< HEAD:forms/mtemplates/createmtemplate_form.php
         // mtemplatecreate::surveyid
-=======
-        // mtemplatebuild::surveyid
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c:forms/mtemplates/createmtemplate_form.php
         // ----------------------------------------
         $fieldname = 'surveyid';
         $mform->addElement('hidden', $fieldname, 0);
         $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------
-<<<<<<< HEAD:forms/mtemplates/createmtemplate_form.php
         // mtemplatecreate::mastertemplatename
-=======
-        // mtemplatebuild::mastertemplatename
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c:forms/mtemplates/createmtemplate_form.php
         // ----------------------------------------
         $fieldname = 'mastertemplatename';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'));
