@@ -90,8 +90,8 @@ survey_add_custom_css($survey->id, $cm->id);
 $userpage_manager = new mod_survey_userpagemanager($survey);
 $userpage_manager->formpage = $formpage;
 $userpage_manager->submissionid = $submissionid;
-$userpage_manager->canaccessadvancedform = survey_user_can_access_advanced_form($cm);
-$userpage_manager->canmanageitems = survey_user_can_manage_items($cm);
+$userpage_manager->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $context, null, true);
+$userpage_manager->canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
 
 if ($action == SURVEY_DUPLICATERESPONSE) {
     $userpage_manager->duplicate_submission();

@@ -62,7 +62,7 @@ require_capability('mod/survey:searchsubmissions', $context);
 // calculations
 // ////////////////////////////////////////////////////////////
 $search_manager = new mod_survey_searchmanager($survey);
-$search_manager->canaccessadvancedform = survey_user_can_access_advanced_form($cm);
+$search_manager->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $context, null, true);
 
 // ////////////////////////////
 // define $search_form return url

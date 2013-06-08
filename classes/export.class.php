@@ -141,7 +141,7 @@ class mod_survey_exportmanager {
 
             // get user group (to filter survey to download)
             $mygroups = survey_get_my_groups($cm);
-            $canmanageallsubmissions = survey_user_can_manage_all_submissions($cm);
+            $canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $context, null, true);
 
             $oldrichsubmissionid = 0;
 

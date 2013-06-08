@@ -75,8 +75,8 @@ switch ($action) {
 $submission_manager = new mod_survey_submissionmanager($survey);
 $submission_manager->submissionid = $submissionid;
 $submission_manager->confirm = $confirm;
-$submission_manager->canaccessadvancedform = survey_user_can_access_advanced_form($cm);
-$submission_manager->canmanageallsubmissions = survey_user_can_manage_all_submissions($cm);
+$submission_manager->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $context, null, true);
+$submission_manager->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $context, null, true);
 $submission_manager->action = $action;
 $submission_manager->searchfields_get = optional_param('searchquery', '', PARAM_RAW);
 

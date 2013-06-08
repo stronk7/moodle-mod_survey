@@ -194,193 +194,6 @@ function survey_user_can_do_anything() {
     return (has_capability('moodle/site:doanything', $context));
 }
 
-/*
- * survey_user_can_preview
- * @param $cm
- * @return
- */
-function survey_user_can_preview($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:preview', $context, null, true));
-}
-
-/*
- * survey_user_can_access_advanced_form
- * @param $cm
- * @return
- */
-function survey_user_can_access_advanced_form($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:accessadvancedform', $context, null, true));
-}
-
-/*
- * survey_user_can_submit
- * @param $cm
- * @return
- */
-function survey_user_can_submit($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:submit', $context, null, true));
-}
-
-/*
- * survey_user_can_search
- * @param $cm
- * @return
- */
-function survey_user_can_search($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:searchsubmissions', $context, null, true));
-}
-
-/*
- * survey_user_can_access_reports
- * @param $cm
- * @return
- */
-function survey_user_can_access_reports($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:accessreports', $context, null, true));
-}
-
-/*
- * survey_user_can_export_data
- * @param $cm
- * @return
- */
-function survey_user_can_export_data($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:exportdata', $context, null, true));
-}
-
-/*
- * survey_user_can_manage_items
- * @param $cm
- * @return
- */
-function survey_user_can_manage_items($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:manageitems', $context, null, true));
-}
-
-/*
- * survey_user_can_create_user_template
- * @param $cm
- * @return
- */
-function survey_user_can_create_user_template($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:createusertemplates', $context, null, true));
-}
-
-/*
- * survey_user_can_read_all_submissions
- * @param $cm
- * @return
- */
-function survey_user_can_manage_all_submissions($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:manageallsubmissions', $context, null, true));
-}
-
-/*
- * survey_user_can_manage_user_templates
- * @param $cm
- * @return
- */
-function survey_user_can_manage_user_templates($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:manageusertemplates', $context, null, true));
-}
-
-/*
- * survey_user_can_delete_user_templates
- * @param $cm
- * @return
- */
-function survey_user_can_delete_user_templates($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:deleteusertemplates', $context, null, true));
-}
-
-/*
- * survey_user_can_export_user_templates
- * @param $cm
- * @return
- */
-function survey_user_can_export_user_templates($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:exportusertemplates', $context, null, true));
-}
-
-/*
- * survey_user_can_create_user_templates
- * @param $cm
- * @return
- */
-function survey_user_can_create_user_templates($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:createusertemplates', $context, null, true));
-}
-
-/*
- * survey_user_can_import_user_templates
- * @param $cm
- * @return
- */
-function survey_user_can_import_user_templates($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:importusertemplates', $context, null, true));
-}
-
-/*
- * survey_user_can_apply_master_templates
- * @param $cm
- * @return
- */
-function survey_user_can_apply_user_templates($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:applyusertemplates', $context, null, true));
-}
-
-/*
- * survey_user_can_create_master_templates
- * @param $cm
- * @return
- */
-function survey_user_can_create_master_templates($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:createmastertemplate', $context, null, true));
-}
-
-/*
- * survey_user_can_apply_master_templates
- * @param $cm
- * @return
- */
-function survey_user_can_apply_master_templates($cm) {
-    $context = context_module::instance($cm->id);
-
-    return (has_capability('mod/survey:applymastertemplate', $context, null, true));
-}
-
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API                                                            //
 // //////////////////////////////////////////////////////////////////////////////
@@ -932,19 +745,19 @@ function survey_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 function survey_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm) {
     global $CFG, $OUTPUT, $USER, $DB;
 
-    $canmanageitems = survey_user_can_manage_items($cm);
-    $canpreview = survey_user_can_preview($cm);
-    $cansubmit = survey_user_can_submit($cm);
-    $cansearch = survey_user_can_search($cm);
-    $canexportdata = survey_user_can_export_data($cm);
+    $canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
+    $canpreview = has_capability('mod/survey:preview', $context, null, true);
+    $cansubmit = has_capability('mod/survey:submit', $context, null, true);
+    $cansearch = has_capability('mod/survey:searchsubmissions', $context, null, true);
+    $canexportdata = has_capability('mod/survey:exportdata', $context, null, true);
 
-    $canmanageusertemplates = survey_user_can_manage_user_templates($cm);
-    $cancreateusertemplates = survey_user_can_create_user_templates($cm);
-    $canimportusertemplates = survey_user_can_import_user_templates($cm);
-    $canapplyusertemplates = survey_user_can_apply_user_templates($cm);
+    $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $context, null, true);
+    $cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
+    $canimportusertemplates = has_capability('mod/survey:importusertemplates', $context, null, true);
+    $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
 
-    $cancreatemastertemplate = survey_user_can_create_master_templates($cm);
-    $canapplymastertemplate = survey_user_can_apply_master_templates($cm);
+    $cancreatemastertemplate = has_capability('mod/survey:createmastertemplate', $context, null, true);
+    $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $context, null, true);
 
 
     $hassubmissions = survey_has_submissions($cm->instance);

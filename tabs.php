@@ -33,20 +33,20 @@ defined('MOODLE_INTERNAL') || die();
 
 $hassubmissions = survey_has_submissions($survey->id);
 
-$canpreview = survey_user_can_preview($cm);
-$cansubmit = survey_user_can_submit($cm);
-$cansearch = survey_user_can_search($cm);
-$canexportdata = survey_user_can_export_data($cm);
-$canaccessreports = survey_user_can_access_reports($cm);
-$canmanageitems = survey_user_can_manage_items($cm);
+$canpreview = has_capability('mod/survey:preview', $context, null, true);
+$cansubmit = has_capability('mod/survey:submit', $context, null, true);
+$cansearch = has_capability('mod/survey:searchsubmissions', $context, null, true);
+$canexportdata = has_capability('mod/survey:exportdata', $context, null, true);
+$canaccessreports = has_capability('mod/survey:accessreports', $context, null, true);
+$canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
 
-$canmanageusertemplates = survey_user_can_manage_user_templates($cm);
-$cancreateusertemplates = survey_user_can_create_user_templates($cm);
-$canimportusertemplates = survey_user_can_import_user_templates($cm);
-$canapplyusertemplates = survey_user_can_apply_user_templates($cm);
+$canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $context, null, true);
+$cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
+$canimportusertemplates = has_capability('mod/survey:importusertemplates', $context, null, true);
+$canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
 
-$cancreatemastertemplate = survey_user_can_create_master_templates($cm);
-$canapplymastertemplate = survey_user_can_apply_master_templates($cm);
+$cancreatemastertemplate = has_capability('mod/survey:createmastertemplate', $context, null, true);
+$canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $context, null, true);
 
 $whereparams = array('surveyid' => $survey->id);
 $countparents = $DB->count_records_select('survey_item', 'surveyid = :surveyid AND parentid <> 0', $whereparams);
