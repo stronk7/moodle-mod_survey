@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/fileupload/lib.php');
 
 class surveyfield_fileupload extends surveyitem_base {
@@ -183,24 +183,6 @@ class surveyfield_fileupload extends surveyitem_base {
     }
 
     /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        return 'item_list_constraints method is still under construction for '.$this->plugin;
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        return 'item_parent_validate_child_constraints needs refinements in plugin: '.$this->plugin;
-    }
-
-    /*
      * item_get_plugin_values
      * @param $pluginstructure
      * @param $pluginsid
@@ -285,35 +267,27 @@ class surveyfield_fileupload extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * this method calculates what to save in the db
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
-// echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-// echo '$itemdetail:';
-// var_dump($itemdetail);
-//
-// echo '$olduserdata:';
-// var_dump($olduserdata);
-//
-// die;
-
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (!empty($itemdetail)) {
             $fieldname = $this->itemname.'_filemanager';
 
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
             file_save_draft_area_files($itemdetail['filemanager'], $this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, $attachmentoptions);
 
-            // $olduserdata->{$fieldname} = $itemdetail['filemanager']; // needed for the mform element
-            // $olduserdata->content = $itemdetail['filemanager'];      // needed for the saving process
-
-            // $olduserdata = file_postupdate_standard_filemanager($olduserdata, $fieldname, $attachmentoptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
-
-// echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-// echo '$olduserdata:';
-// var_dump($olduserdata);
-// die;
+            // needed only for export purposes
+            $fs = get_file_storage();
+            if ($files = $fs->get_area_files($this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, 'sortorder', false)) {
+                foreach ($files as $file) {
+                    $oldfiles[] = $file->get_filename();
+                }
+                $olduserdata->content = implode(', ', $oldfiles);
+            } else {
+                $olduserdata->content = '';
+            }
         }
     }
 

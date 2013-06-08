@@ -34,17 +34,27 @@ require_once($CFG->libdir.'/tablelib.php');
 
 echo $OUTPUT->heading(get_string('pluginname', 'surveyreport_frequency'));
 
+// ////////////////////////////
+// define $mform return url
+$paramurl = array('id' => $cm->id, 'rname' => 'frequency');
+$formurl = new moodle_url('view_report.php', $paramurl);
+// end of: define $mform return url
+// ////////////////////////////
+
+// ////////////////////////////
+// prepare params for the form
 $formparams = new stdClass();
 $formparams->survey = $survey;
 $formparams->answercount = $hassubmissions;
-
-$paramurl = array('id' => $cm->id, 'tab' => SURVEY_TABSUBMISSIONS, 'pag' => SURVEY_SUBMISSION_REPORT, 'rname' => 'frequency');
-$formurl = new moodle_url('view.php', $paramurl);
 $mform = new survey_chooseitemform($formurl, $formparams);
+// end of: prepare params for the form
+// ////////////////////////////
 
 $fromform = $mform->get_data(); // get_data is needed to execute $mform->validation($data, $files);
 $mform->display();
 
+// ////////////////////////////
+// manage form submission
 if ($fromform) {
     surveyreport_displaydistribution($cm, $survey, $fromform->itemid, $hassubmissions);
 
@@ -56,5 +66,6 @@ if ($fromform) {
         $url = 'id='.$cm->id.'&amp;group=0&amp;itemid='.$fromform->itemid;
         survey_print_graph($url);
     }
-
 }
+// end of: manage form submission
+// ////////////////////////////

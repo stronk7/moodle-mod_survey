@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/character/lib.php');
 
 class surveyfield_character extends surveyitem_base {
@@ -131,7 +131,7 @@ class surveyfield_character extends surveyitem_base {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
-        // set custom fields value as defined for this field
+        // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
         // multilang save support for builtin survey
@@ -288,59 +288,6 @@ class surveyfield_character extends surveyitem_base {
     }
 
     /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        $constraints = array();
-        if (isset($this->pattern)) {
-            switch ($this->pattern) {
-                case SURVEYFIELD_CHARACTER_EMAILPATTERN:
-                    $constraints[] = get_string('pattern', 'surveyfield_character').': '.get_string('mail', 'surveyfield_character');
-                    break;
-                case SURVEYFIELD_CHARACTER_URLPATTERN:
-                    $constraints[] = get_string('pattern', 'surveyfield_character').': '.get_string('url', 'surveyfield_character');
-                    break;
-                default:
-                    $constraints[] = get_string('pattern', 'surveyfield_character').': '.$this->pattern_text;
-                    break;
-            }
-        } else {
-            $constraints[] = get_string('minlength', 'surveyfield_character').': '.$this->minlength;
-            $constraints[] = get_string('maxlength', 'surveyfield_character').': '.$this->maxlength;
-        }
-
-        return implode($constraints, '<br />');
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        $status = true;
-        if (isset($this->pattern)) {
-            switch ($this->pattern) {
-                case SURVEYFIELD_CHARACTER_EMAILPATTERN:
-                    $status = validate_email($childvalue);
-                    break;
-                case SURVEYFIELD_CHARACTER_URLPATTERN:
-                    $status = survey_character_is_valid_url($childvalue);
-                    break;
-                default:
-                    $status = survey_character_text_match_pattern($childvalue, $this->pattern_text);
-            }
-        } else {
-            $status = $status && (strlen($childvalue) >= $this->minlength);
-            $status = $status && (strlen($childvalue) <= $this->maxlength);
-        }
-
-        return $status;
-    }
-
-    /*
      * item_get_plugin_values
      * @param $pluginstructure
      * @param $pluginsid
@@ -486,11 +433,11 @@ class surveyfield_character extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * this method calculates what to save in the db
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
             return;

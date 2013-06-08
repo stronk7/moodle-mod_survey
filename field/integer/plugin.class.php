@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/integer/lib.php');
 
 class surveyfield_integer extends surveyitem_base {
@@ -98,7 +98,7 @@ class surveyfield_integer extends surveyitem_base {
 
         $this->flag = new stdclass();
         $this->flag->issearchable = true;
-        $this->flag->couldbeparent = false;
+        $this->flag->couldbeparent = true;
         $this->flag->useplugintable = true;
 
         if (!empty($itemid)) {
@@ -132,7 +132,7 @@ class surveyfield_integer extends surveyitem_base {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
-        // set custom fields value as defined for this field
+        // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
         // multilang save support for builtin survey
@@ -409,18 +409,25 @@ class surveyfield_integer extends surveyitem_base {
      * @return
      */
     public function userform_get_parent_disabilitation_info($child_parentcontent) {
-        // $this->flag->couldbeparent = false
-        // this method is never called
+        $disabilitationinfo = array();
+
+        $mformelementinfo = new stdClass();
+        $mformelementinfo->parentname = $this->itemname;
+        $mformelementinfo->operator = 'neq';
+        $mformelementinfo->content = $child_parentcontent;
+        $disabilitationinfo[] = $mformelementinfo;
+
+        return $disabilitationinfo;
     }
 
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * this method calculates what to save in the db
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
         } else {

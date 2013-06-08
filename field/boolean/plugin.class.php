@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/boolean/lib.php');
 
 class surveyfield_boolean extends surveyitem_base {
@@ -125,7 +125,7 @@ class surveyfield_boolean extends surveyitem_base {
         // //////////////////////////////////
         // Now execute very specific plugin level actions
         // //////////////////////////////////
-        // set custom fields value as defined for this field
+        // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
         // multilang save support for builtin survey
@@ -429,11 +429,11 @@ class surveyfield_boolean extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * this method calculates what to save in the db
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         $olduserdata->content = $itemdetail['mainelement'];
     }
 

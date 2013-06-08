@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') OR die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/datetime/lib.php');
 
 class surveyfield_datetime extends surveyitem_base {
@@ -59,6 +59,11 @@ class surveyfield_datetime extends surveyitem_base {
      * $defaultvalue = the value of the field when the form is initially displayed.
      */
     public $defaultvalue = 0;
+
+    /*
+     * $downloadformat = the format of the content once downloaded
+     */
+    public $downloadformat = '';
 
     /*
      * $lowerbound = the minimum allowed date and time
@@ -136,7 +141,7 @@ class surveyfield_datetime extends surveyitem_base {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
-        // set custom fields value as defined for this field
+        // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
         // multilang save support for builtin survey
@@ -292,44 +297,16 @@ class surveyfield_datetime extends surveyitem_base {
     }
 
     /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        $constraints = array();
-
-        $datetimearray = $this->item_split_unix_time($this->lowerbound, false);
-        $constraints[] = get_string('lowerbound', 'surveyfield_age').': '.$this->item_datetime_to_text($datetimearray);
-
-        $datetimearray = $this->item_split_unix_time($this->upperbound, false);
-        $constraints[] = get_string('upperbound', 'surveyfield_age').': '.$this->item_datetime_to_text($datetimearray);
-
-        return implode($constraints, '<br />');
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        $status = true;
-        $status = $status && ($childvalue >= $this->lowerbound);
-        $status = $status && ($childvalue <= $this->upperbound);
-
-        return $status;
-    }
-
-    /*
      * item_datetime_to_text
      * starting from an agearray returns the corresponding age in text format
      * @param $agearray
      * @return
      */
     public function item_datetime_to_text($datetimearray) {
-        $return = $datetimearray['mday'].'/'.$datetimearray['mon'].'/'.$datetimearray['year'].'; '.
-            $datetimearray['hours'].':'.$datetimearray['minutes'];
+        $return = userdate($unixtime, '%d/%m/%y, %H:%M');
+        // $return = $datetimearray['mday'].'/'.$datetimearray['mon'].'/'.$datetimearray['year'].'; '.
+        //     $datetimearray['hours'].':'.$datetimearray['minutes'];
+
         return $return;
     }
 
@@ -533,11 +510,11 @@ class surveyfield_datetime extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * this method calculates what to save in the db
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
         } else {

@@ -23,23 +23,24 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Integer';
-$string['userfriendlypluginname'] = 'Integer';
+$string['and'] = ' and ';
+$string['customdefault'] = 'Custom';
 $string['defaultvalue_help'] = 'This is the integer the remote user will find answered by default. The default for this type of question is mandatory.';
 $string['defaultvalue'] = 'Default';
 $string['lowerbound_help'] = 'The lower integer the user will be allowed to enter';
 $string['lowerbound'] = 'Lower bound';
-$string['upperbound_help'] = 'The upper integer the user will be allowed to enter';
-$string['upperbound'] = 'Upper bound';
-$string['outofrangedefault'] = 'Default does not fall within the specified range';
-$string['and'] = ' and ';
-$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a}';
-$string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
-$string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
-$string['uerr_lowerthanminimum'] = 'Provided integer is too small';
-$string['uerr_greaterthanmaximum'] = 'Provided integer is too big';
-$string['maximuminteger'] = 'Maximum integer';
 $string['maximuminteger_desc'] = 'The maximun integer this software will allow to ever enter';
-$string['customdefault'] = 'Custom';
+$string['maximuminteger'] = 'Maximum integer';
+$string['outofrangedefault'] = 'Default does not fall within the specified range';
+$string['parentformat'] = '[an integer]';
+$string['pluginname'] = 'Integer';
+$string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
+$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a}';
+$string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
+$string['uerr_greaterthanmaximum'] = 'Provided integer is too big';
 $string['uerr_integernotset'] = 'Please choose an integer or the last item: "{$a}"';
 $string['uerr_integernotsetrequired'] = 'Please choose an integer';
+$string['uerr_lowerthanminimum'] = 'Provided integer is too small';
+$string['upperbound_help'] = 'The upper integer the user will be allowed to enter';
+$string['upperbound'] = 'Upper bound';
+$string['userfriendlypluginname'] = 'Integer';

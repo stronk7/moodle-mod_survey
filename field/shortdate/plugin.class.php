@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/shortdate/lib.php');
 
 class surveyfield_shortdate extends surveyitem_base {
@@ -59,6 +59,11 @@ class surveyfield_shortdate extends surveyitem_base {
      * $defaultvalue = the value of the field when the form is initially displayed.
      */
     public $defaultvalue = 0;
+
+    /*
+     * $downloadformat = the format of the content once downloaded
+     */
+    public $downloadformat = '';
 
     /*
      * $lowerbound = the minimum allowed short date
@@ -136,7 +141,7 @@ class surveyfield_shortdate extends surveyitem_base {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
-        // set custom fields value as defined for this field
+        // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
         // multilang save support for builtin survey
@@ -267,51 +272,21 @@ class surveyfield_shortdate extends surveyitem_base {
 
         $format = get_string('strftimemonthyear', 'langconfig');
         if ($haslowerbound && $hasupperbound) {
-            $a = userdate($this->lowerbound, $format).get_string('and', 'surveyfield_shortdate').userdate($this->upperbound, $format);
+            $a = userdate($this->lowerbound, $format, 0).get_string('and', 'surveyfield_shortdate').userdate($this->upperbound, $format, 0);
             $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_shortdate', $a);
         } else {
             $fillinginstruction = '';
             if ($haslowerbound) {
-                $a = userdate($this->lowerbound, $format);
+                $a = userdate($this->lowerbound, $format, 0);
                 $fillinginstruction = get_string('restriction_lower', 'surveyfield_shortdate', $a);
             }
             if ($hasupperbound) {
-                $a = userdate($this->upperbound, $format);
+                $a = userdate($this->upperbound, $format, 0);
                 $fillinginstruction = get_string('restriction_upper', 'surveyfield_shortdate', $a);
             }
         }
 
         return $fillinginstruction;
-    }
-
-    /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        $constraints = array();
-
-        $shortdatearray = $this->item_split_unix_time($this->lowerbound, false);
-        $constraints[] = get_string('lowerbound', 'surveyfield_shortage').': '.$this->item_shortdate_to_text($shortdatearray);
-
-        $shortdatearray = $this->item_split_unix_time($this->upperbound, false);
-        $constraints[] = get_string('upperbound', 'surveyfield_shortage').': '.$this->item_shortdate_to_text($shortdatearray);
-
-        return implode($constraints, '<br />');
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        $status = true;
-        $status = $status && ($childvalue >= $this->lowerbound);
-        $status = $status && ($childvalue <= $this->upperbound);
-
-        return $status;
     }
 
     /*
@@ -322,6 +297,7 @@ class surveyfield_shortdate extends surveyitem_base {
      */
     public function item_shortdate_to_text($shortdatearray) {
         $return = $shortdatearray['year'].' '.get_string('years').' '.$shortdatearray['mon'].' '.get_string('months', 'surveyfield_age');
+
         return $return;
     }
 
@@ -362,7 +338,7 @@ class surveyfield_shortdate extends surveyitem_base {
         }
 
         for ($i=1; $i<=12; $i++) {
-            $months[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), "%B"); // january, february, march...
+            $months[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), "%B", 0); // january, february, march...
         }
         $years += array_combine(range($this->lowerbound_year, $this->upperbound_year), range($this->lowerbound_year, $this->upperbound_year));
 
@@ -493,11 +469,11 @@ class surveyfield_shortdate extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * this method calculates what to save in the db
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
         } else {
@@ -553,7 +529,7 @@ class surveyfield_shortdate extends surveyitem_base {
             // TODO: is userdate correct?
             // if I fill the survey from a different timezone and I write 5pm,
             // the teacher has to get the same shortdate not a different one
-            return userdate($content, get_string($this->downloadformat, 'core_langconfig'));
+            return userdate($content, get_string($this->downloadformat, 'core_langconfig'), 0);
         }
     }
 

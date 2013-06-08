@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/numeric/lib.php');
 
 class surveyfield_numeric extends surveyitem_base {
@@ -54,6 +54,11 @@ class surveyfield_numeric extends surveyitem_base {
      * $defaultvalue = the value of the field when the form is initially displayed.
      */
     public $defaultvalue = 0;
+
+    /*
+     * $decimalseparator
+     */
+    public $decimalseparator = '.';
 
     /*
      * $signed = will be, the expected number, signed
@@ -97,6 +102,7 @@ class surveyfield_numeric extends surveyitem_base {
     public function __construct($itemid=0) {
         $this->type = SURVEY_TYPEFIELD;
         $this->plugin = 'numeric';
+        $this->decimalseparator = get_string('decsep', 'langconfig');
 
         $this->flag = new stdclass();
         $this->flag->issearchable = true;
@@ -104,7 +110,7 @@ class surveyfield_numeric extends surveyitem_base {
         $this->flag->useplugintable = true;
 
         if (!empty($itemid)) {
-                $this->item_load($itemid);
+            $this->item_load($itemid);
         }
     }
 
@@ -146,7 +152,7 @@ class surveyfield_numeric extends surveyitem_base {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
-        // set custom fields value as defined for this field
+        // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
         // signed
@@ -286,8 +292,7 @@ class surveyfield_numeric extends surveyitem_base {
         if (!empty($this->decimals)) {
             // this sentence talks about decimal separator not about the expected value
             // so I leave it as last sentence
-            $decimalseparator = get_string('decsep', 'langconfig');
-            $fillinginstruction[] = get_string('declaredecimalseparator', 'surveyfield_numeric', $decimalseparator);
+            $fillinginstruction[] = get_string('declaredecimalseparator', 'surveyfield_numeric', $this->decimalseparator);
         }
         if (count($fillinginstruction)) {
             $fillinginstruction = get_string('number', 'surveyfield_numeric').implode(', ', $fillinginstruction);
@@ -299,57 +304,12 @@ class surveyfield_numeric extends surveyitem_base {
     }
 
     /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        $constraints = array();
-
-        if (!empty($this->signed)) {
-            $constraints[] = get_string('signed', 'surveyfield_numeric').': '.get_string('allowed', 'surveyfield_numeric');
-        }
-        if (isset($this->decimals)) {
-            $constraints[] = get_string('decimals', 'surveyfield_numeric').': '.$this->decimals;
-        }
-        if (isset($this->lowerbound)) {
-            $constraints[] = get_string('lowerbound', 'surveyfield_numeric').': '.$this->lowerbound;
-        }
-        if (isset($this->upperbound)) {
-            $constraints[] = get_string('upperbound', 'surveyfield_numeric').': '.$this->upperbound;
-        }
-
-        return implode($constraints, '<br />');
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        $status = true;
-
-        $matches = $this->item_atomize_parent_content($childvalue);
-        $decimals = $matches[2];
-        // $status = true only if strlen($decimals) il lower or equal than $this->decimals
-        $status = $status && (strlen($decimals) <= $this->decimals);
-
-        $status = $status && ($childvalue >= $this->lowerbound);
-        $status = $status && ($childvalue <= $this->upperbound);
-
-        return $status;
-    }
-
-    /*
      * item_get_parent_format
      * @param
      * @return
      */
     public function item_get_parent_format() {
-        $decimalseparator = get_string('decsep', 'langconfig');
-
-        return get_string('parentformatdecimal', 'surveyfield_'.$this->plugin, $decimalseparator);
+        return get_string('parentformatdecimal', 'surveyfield_'.$this->plugin, $this->decimalseparator);
     }
 
     /*
@@ -382,9 +342,8 @@ class surveyfield_numeric extends surveyitem_base {
         $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent, 'itemid' => $this->itemid));
         $mform->setType($this->itemname, PARAM_RAW); // see: moodlelib.php lines 133+
         if (!$searchform) {
-            $decimalseparator = get_string('decsep', 'langconfig');
             if (is_numeric($this->defaultvalue)) {
-                $mform->setDefault($this->itemname, number_format((double)$this->defaultvalue, $this->decimals, $decimalseparator, ''));
+                $mform->setDefault($this->itemname, number_format((double)$this->defaultvalue, $this->decimals, $this->decimalseparator, ''));
             }
 
             if ($this->required) {
@@ -408,8 +367,6 @@ class surveyfield_numeric extends surveyitem_base {
      * @return
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
-        $decimalseparator = get_string('decsep', 'langconfig');
-
         if ($this->extrarow) {
             $errorkey = $this->itemname.'_extrarow';
         } else {
@@ -428,27 +385,29 @@ class surveyfield_numeric extends surveyitem_base {
         }
 
         // if it is not a number, shouts
-        $pattern = '~^\s*([0-9]+)'.get_string('decsep', 'langconfig').'?([0-9]*)\s*$~';
-        if (!preg_match($pattern, $data[$this->itemname], $matches)) {
-            $errors[$errorkey] = get_string('uerr_notanumber', 'surveyfield_numeric');
-        } else {
-            $thenumber = $matches[1].'.'.$matches[2];
-            // if it is < 0 but has been defined as unsigned, shouts
-            if (!$this->signed && ($thenumber < 0)) {
-                $errors[$errorkey] = get_string('uerr_negative', 'surveyfield_numeric');
-            }
-            // if it is < $this->lowerbound, shouts
-            if (isset($this->lowerbound) && ($thenumber < $this->lowerbound)) {
-                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_numeric');
-            }
-            // if it is > $this->upperbound, shouts
-            if (isset($this->upperbound) && ($thenumber > $this->upperbound)) {
-                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_numeric');
-            }
-            // if it has decimal but has been defined as integer, shouts
-            $is_integer = (bool)(strval(intval($thenumber)) == strval($thenumber));
-            if (($this->decimals == 0) && (!$is_integer)) {
-                $errors[$errorkey] = get_string('uerr_notinteger', 'surveyfield_numeric');
+        if (strlen($data[$this->itemname]) > 0) {
+            $pattern = '~^\s*([0-9]+)'.$this->decimalseparator.'?([0-9]*)\s*$~';
+            if (!preg_match($pattern, $data[$this->itemname], $matches)) {
+                $errors[$errorkey] = get_string('uerr_notanumber', 'surveyfield_numeric');
+            } else {
+                $thenumber = $matches[1].'.'.$matches[2];
+                // if it is < 0 but has been defined as unsigned, shouts
+                if (!$this->signed && ($thenumber < 0)) {
+                    $errors[$errorkey] = get_string('uerr_negative', 'surveyfield_numeric');
+                }
+                // if it is < $this->lowerbound, shouts
+                if (isset($this->lowerbound) && ($thenumber < $this->lowerbound)) {
+                    $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_numeric');
+                }
+                // if it is > $this->upperbound, shouts
+                if (isset($this->upperbound) && ($thenumber > $this->upperbound)) {
+                    $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_numeric');
+                }
+                // if it has decimal but has been defined as integer, shouts
+                $is_integer = (bool)(strval(intval($thenumber)) == strval($thenumber));
+                if (($this->decimals == 0) && (!$is_integer)) {
+                    $errors[$errorkey] = get_string('uerr_notinteger', 'surveyfield_numeric');
+                }
             }
         }
     }
@@ -467,26 +426,38 @@ class surveyfield_numeric extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * this method calculates what to save in the db
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (strlen($itemdetail['mainelement']) == 0) {
             $olduserdata->content = null;
         } else {
-            $decimalseparator = get_string('decsep', 'langconfig');
-            $matches = $this->item_atomize_parent_content($itemdetail['mainelement']);
-            $decimals = isset($matches[2]) ? $matches[2] : '0';
-            if (strlen($decimals) > $this->decimals) {
-                // round it
-                $decimals = round((float)$decimals, $this->decimals);
+            if (empty($this->decimals)) {
+                $olduserdata->content = $itemdetail['mainelement'];
+            } else {
+                $matches = $this->item_atomize_parent_content($itemdetail['mainelement']);
+                $decimals = isset($matches[2]) ? $matches[2] : '';
+                if (strlen($decimals) > $this->decimals) {
+                    // round it
+                    $decimals = round((float)$decimals, $this->decimals);
+                }
+                if (strlen($decimals) < $this->decimals) {
+                    // padright
+                    $decimals = str_pad($decimals, $this->decimals, '0', STR_PAD_RIGHT);
+                }
+                if (isset($matches[1])) {
+                    // I DO ALWATYS save using english decimal separator
+                    // At load time, the number will be formatted according to user settings
+                    $olduserdata->content = $matches[1].'.'.$decimals;
+                } else {
+                    // in the SEARCH form the remote user entered something very wrong
+                    // remember: the for search form NO VALIDATION IS PERFORMED
+                    // user is free to waste his/her time as he/she like
+                    $olduserdata->content = $itemdetail['mainelement'];
+                }
             }
-            if (strlen($decimals) < $this->decimals) {
-                // padright
-                $decimals = str_pad($decimals, $this->decimals, '0', STR_PAD_RIGHT);
-            }
-            $olduserdata->content = $matches[1].$decimalseparator.$decimals;
         }
     }
 
@@ -503,8 +474,7 @@ class surveyfield_numeric extends surveyitem_base {
 
         if ($olduserdata) { // $olduserdata may be boolean false for not existing data
             if (isset($olduserdata->content)) {
-                $decimalseparator = get_string('decsep', 'langconfig');
-                $prefill[$this->itemname] = number_format((double)$olduserdata->content, $this->decimals, $decimalseparator, '');
+                $prefill[$this->itemname] = number_format((double)$olduserdata->content, $this->decimals, $this->decimalseparator, '');
             // } else {
                 // nothing was set
                 // do not accept defaults but overwrite them

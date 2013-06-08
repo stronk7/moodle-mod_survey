@@ -1,11 +1,11 @@
 The module has been written for 40%/50%.
 It is completely modular (uses db/subplugins.php) and, of course, uses oop.
 
-The module foreseen: 17 types of fields and 3 types of other items.
+The module foreseen: 16 types of fields and 3 types of other items.
 Everywhere I used mform.
 
 what is in:
-17+3 item type.
+16+3 item type.
 They are:
 -- fields --
 -> item type "age" to ask for question like: "How old were you at you first access to narcotic"
@@ -14,7 +14,6 @@ They are:
 -> item type "character" to ask for question like: "write down your email" or "enter your personal web site URL" or "enter the PIN code of your card"
 -> item type "checkbox" to ask for question like: "what do you usually eat for breakfast? milk, sugar, jam, chocolate, other..."
 -> item type "date" to ask for question like: "When were you born?"
--> item type "datetime" to ask for question like... well, this item type is really useless, AFAIK, but it was too simple to develop
 -> item type "fileupload" to ask for question like: "Please, upload your CV in PDF format"
 -> item type "integer" to ask for question like: "how many dogs do you feed dayly?"
 -> item type "multiselect" to ask for question like: "what do you usually eat for breakfast? milk, sugar, jam, chocolate, other..."
@@ -31,7 +30,7 @@ They are:
 -> item type "pagebreak"
 -> item type "label" to display labels in the survey page
 
-User can choose, configure them and add them to a survey.
+User can choose, setup them and include them into search forms.
 They all have a long list of features to verify the content provided by the user.
 There are two different forms. The basic and the advanced.
 Survey foreseen conditional branching, sort of fields during export, item indentation, custom number, groups with related permissions, mandatory/optional items

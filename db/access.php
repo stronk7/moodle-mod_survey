@@ -47,8 +47,119 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
+/*
+Let's start with a summary:.
+It follows the list of TABS detailed with corresponding sub-tabs and php file name.
+For each sub-tab, I would define a capability at first but, I will find, sometimes it is useless.
 
+// -----------------------------------------------------------------------------
+// TWO MODULE GENERAL CAPABILITIES
+// -----------------------------------------------------------------------------
+    mod/survey:addinstance
+    mod/survey:view
+
+// -----------------------------------------------------------------------------
+// TAB SURVEY
+// -----------------------------------------------------------------------------
+    SUB-TAB == SURVEY_SUBMISSION_PREVIEW
+        $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
+        mod/survey:preview
+
+    SUB-TAB == SURVEY_SUBMISSION_NEW
+        $elementurl = new moodle_url('/mod/survey/view.php', $paramurl);
+        mod/survey:accessadvancedform
+        mod/survey:submit
+
+    SUB-TAB == SURVEY_SUBMISSION_MANAGE
+        $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
+        mod/survey:manageallsubmissions
+        mod/survey:managesubmissions <-- USELESS I think.
+                                         Each user is allowed to manage submissions.
+                                         At worst, none depending on general module advanced permissions.
+
+    SUB-TAB == SURVEY_SUBMISSION_EDIT
+    SUB-TAB == SURVEY_SUBMISSION_READONLY
+        $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
+        mod/survey:readsubmissions   <-- USELESS I think.
+                                         Each user is allowed to manage submissions.
+                                         At worst, none depending on general module advanced permissions.
+        mod/survey:editsubmissions   <-- USELESS I think.
+                                         Each user is allowed to manage submissions.
+                                         At worst, none depending on general module advanced permissions.
+        mod/survey:deletesubmissions <-- USELESS I think.
+                                         Each user is allowed to manage submissions.
+                                         At worst, none depending on general module advanced permissions.
+
+    SUB-TAB == SURVEY_SUBMISSION_SEARCH
+        $elementurl = new moodle_url('/mod/survey/view_search.php', $paramurl);
+        mod/survey:searchsubmissions
+
+    SUB-TAB == SURVEY_SUBMISSION_REPORT
+        $elementurl = new moodle_url('/mod/survey/view_report.php', $paramurl);
+        mod/survey:accessreports
+
+    SUB-TAB == SURVEY_SUBMISSION_EXPORT
+        $elementurl = new moodle_url('/mod/survey/view_export.php', $paramurl);
+        mod/survey:exportdata
+
+// -----------------------------------------------------------------------------
+// TAB ELEMENTS
+// -----------------------------------------------------------------------------
+    SUB-TAB == SURVEY_ITEMS_MANAGE
+        $elementurl = new moodle_url('/mod/survey/items_manage.php', $localparamurl);
+        mod/survey:manageitems
+
+    SUB-TAB == SURVEY_ITEMS_ADD
+        $elementurl = new moodle_url('/mod/survey/items_add.php', $localparamurl);
+        mod/survey:additems
+
+    SUB-TAB == SURVEY_ITEMS_SETUP
+        $elementurl = new moodle_url('/mod/survey/items_setup.php', $localparamurl);
+        mod/survey:setupitems        <-- USELESS I think.
+                                         Each user allowed to add items,
+                                         should be allowed to validate branching too.
+
+    SUB-TAB == SURVEY_ITEMS_VALIDATE
+        $elementurl = new moodle_url('/mod/survey/items_validate.php', $localparamurl);
+        mod/survey:validatebranching <-- USELESS I think.
+                                         Each user allowed to add items,
+                                         should be allowed to validate branching too.
+
+// -----------------------------------------------------------------------------
+// TAB USER TEMPLATES
+// -----------------------------------------------------------------------------
+    SUB-TAB == SURVEY_UTEMPLATES_MANAGE
+        $elementurl = new moodle_url('/mod/survey/utemplates_manage.php', $localparamurl);
+        mod/survey:manageusertemplates
+        mod/survey:deleteusertemplates
+        mod/survey:exportusertemplates
+
+    SUB-TAB == SURVEY_UTEMPLATES_BUILD
+        $elementurl = new moodle_url('/mod/survey/utemplates_create.php', $localparamurl);
+        mod/survey:createusertemplates
+
+    SUB-TAB == SURVEY_UTEMPLATES_IMPORT
+        $elementurl = new moodle_url('/mod/survey/utemplates_import.php', $localparamurl);
+        mod/survey:importusertemplates
+
+    SUB-TAB == SURVEY_UTEMPLATES_APPLY
+        $elementurl = new moodle_url('/mod/survey/utemplates_apply.php', $localparamurl);
+        mod/survey:applyusertemplates
+
+// -----------------------------------------------------------------------------
+// TAB MASTER TEMPLATES
+// -----------------------------------------------------------------------------
+    SUB-TAB == SURVEY_MTEMPLATES_BUILD
+        $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $localparamurl);
+        mod/survey:createmastertemplate
+
+    SUB-TAB == SURVEY_MTEMPLATES_APPLY
+        $elementurl = new moodle_url('/mod/survey/mtemplates_apply.php', $localparamurl);
+        mod/survey:applymastertemplate
+
+*/
+
+$capabilities = array(
     'mod/survey:addinstance' => array(
         'riskbitmask' => RISK_XSS,
 
@@ -61,6 +172,30 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
 
+    'mod/survey:view' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'guest' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'mod/survey:preview' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'mod/survey:accessadvancedform' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
@@ -71,8 +206,27 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:exportdata' => array(
+    'mod/survey:submit' => array(
+        'riskbitmask' => RISK_XSS,
 
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW
+        )
+    ),
+
+    'mod/survey:manageallsubmissions' => array(
+        'riskbitmask' => RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW
+        )
+    ),
+
+    'mod/survey:deleteallsubmissions' => array(
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -84,8 +238,17 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:accessreports' => array(
+    'mod/survey:searchsubmissions' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
 
+    'mod/survey:accessreports' => array(
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'read',
@@ -97,8 +260,19 @@ $capabilities = array(
         )
     ),
 
+    'mod/survey:exportdata' => array(
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
     'mod/survey:manageitems' => array(
-
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -110,8 +284,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:manageplugin' => array(
-
+    'mod/survey:additems' => array(
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -123,8 +296,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:readall' => array(
-
+    'mod/survey:setupitems' => array(
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -136,8 +308,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:editall' => array(
-
+    'mod/survey:manageusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -149,8 +320,79 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:deleteall' => array(
+    'mod/survey:deleteusertemplates' => array(
+        'riskbitmask' => RISK_PERSONAL,
 
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:exportusertemplates' => array(
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:createusertemplates' => array(
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:importusertemplates' => array(
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:applyusertemplates' => array(
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:createmastertemplate' => array(
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:applymastertemplate' => array(
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',

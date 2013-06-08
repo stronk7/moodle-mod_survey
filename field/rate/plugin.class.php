@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/rate/lib.php');
 
 class surveyfield_rate extends surveyitem_base {
@@ -156,7 +156,7 @@ class surveyfield_rate extends surveyitem_base {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
-        // set custom fields value as defined for this field
+        // set custom fields value as defined for this question plugin
         // drop empty rows and trim edging rows spaces from each textarea field
         $fieldlist = array('options', 'rates', 'defaultvalue');
         survey_clean_textarea_fields($record, $fieldlist);
@@ -290,24 +290,6 @@ class surveyfield_rate extends surveyitem_base {
         }
 
         return $fillinginstruction;
-    }
-
-    /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        return 'item_list_constraints method is still under construction for '.$this->plugin;
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        return 'item_parent_validate_child_constraints needs refinements in plugin: '.$this->plugin;
     }
 
     /*
@@ -524,11 +506,11 @@ class surveyfield_rate extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * this method calculates what to save in the db
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
         } else {
@@ -544,12 +526,7 @@ class surveyfield_rate extends surveyitem_base {
                 $i++;
             }
 
-            // $return can be empty but I do not care of it
-            if ($saving) {
-                $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $return);
-            } else { // searching
-                $olduserdata->content = urlencode( implode(SURVEY_URLMULTIVALUESEPARATOR, $return) );
-            }
+            $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $return);
         }
     }
 

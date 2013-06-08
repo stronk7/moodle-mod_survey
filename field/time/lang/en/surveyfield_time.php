@@ -47,8 +47,14 @@ $string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
 $string['uerr_lowerthanminimum'] = 'Provided time is too small';
 $string['uerr_greaterthanmaximum'] = 'Provided time is too high';
 $string['customdefault'] = 'Custom';
-$string['downloadformat'] = 'Download format';
-$string['downloadformat_help'] = 'Choose the format of the answer as it appear once user attempts are downloaded';
+$string['oneminute'] = 'One minute';
+$string['fiveminutes'] = 'five minutes';
+$string['tenminutes'] = 'ten minutes';
+$string['fifteenminutes'] = 'fifteen minutes';
+$string['twentyminutes'] = 'twenty minutes';
+$string['thirtyminutes'] = 'thirty minutes';
+$string['step'] = 'Step';
+$string['step_help'] = 'Step of the minute drop down menu as it appear in the attemp form';
 
 $string['currenttimedefault'] = 'Current time';
 $string['invitationhour'] = 'Choose an hour';

@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/time/lib.php');
 
 class surveyfield_time extends surveyitem_base {
@@ -54,6 +54,11 @@ class surveyfield_time extends surveyitem_base {
      * $defaultoption = the value of the field when the form is initially displayed.
      */
     public $defaultoption = SURVEY_INVITATIONDEFAULT;
+
+    /*
+     * $step = the step for minutes drop down menu
+     */
+    public $step = 1;
 
     /*
      * $defaultvalue = the value of the field when the form is initially displayed.
@@ -134,7 +139,7 @@ class surveyfield_time extends surveyitem_base {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
-        // set custom fields value as defined for this field
+        // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
         // multilang save support for builtin survey
@@ -146,12 +151,26 @@ class surveyfield_time extends surveyitem_base {
     }
 
     /*
-     * item_time_to_unix_time
+     * item_time_to_minutesfrommidnight
      * @param $hour, $minute
      * @return
      */
-    public function item_time_to_unix_time($hour, $minute) {
-        return (gmmktime($hour, $minute, 0, 1, 1, SURVEYFIELD_TIME_YEAROFFSET)); // This is GMT
+    public function item_time_to_minutesfrommidnight($hour, $minute) {
+        return (60*$hour + $minute);
+    }
+
+    /*
+     * item_minutesfrommidnight_to_time
+     * @param $hour, $minute
+     * @return
+     */
+    public function item_minutesfrommidnight_to_time($minutesfrommidnight) {
+        $getdate = array();
+        $getdate['hours'] = intval($minutesfrommidnight/60);
+        $getdate['minutes'] = $minutesfrommidnight - (60*$getdate['hours']);
+
+        // print_object($getdate);
+        return $getdate;
     }
 
     /*
@@ -179,7 +198,7 @@ class surveyfield_time extends surveyitem_base {
                         break;
                 }
             }
-            $timearray = $this->item_split_unix_time($this->{$field});
+            $timearray = $this->item_minutesfrommidnight_to_time($this->{$field});
             $this->{$field.'_hour'} = $timearray['hours'];
             $this->{$field.'_minute'} = $timearray['minutes'];
         }
@@ -202,7 +221,7 @@ class surveyfield_time extends surveyitem_base {
         $fieldlist = $this->item_composite_fields();
         foreach ($fieldlist as $field) {
             if (isset($record->{$field.'_hour'}) && isset($record->{$field.'_minute'})) {
-                $record->{$field} = $this->item_time_to_unix_time($record->{$field.'_hour'}, $record->{$field.'_minute'});
+                $record->{$field} = $this->item_time_to_minutesfrommidnight($record->{$field.'_hour'}, $record->{$field.'_minute'});
                 unset($record->{$field.'_hour'});
                 unset($record->{$field.'_minute'});
             } else {
@@ -257,13 +276,13 @@ class surveyfield_time extends surveyitem_base {
      */
     public function item_get_filling_instructions() {
 
-        $haslowerbound = ($this->lowerbound != $this->item_time_to_unix_time(0, 0));
-        $hasupperbound = ($this->upperbound != $this->item_time_to_unix_time(23, 59));
+        $haslowerbound = ($this->lowerbound != $this->item_time_to_minutesfrommidnight(0, 0));
+        $hasupperbound = ($this->upperbound != $this->item_time_to_minutesfrommidnight(23, 59));
 
         $format = get_string('strftimetime', 'langconfig');
         if ($haslowerbound && $hasupperbound) {
-            $lowerbound = $this->item_split_unix_time($this->lowerbound);
-            $upperbound = $this->item_split_unix_time($this->upperbound);
+            $lowerbound = $this->item_minutesfrommidnight_to_time($this->lowerbound);
+            $upperbound = $this->item_minutesfrommidnight_to_time($this->upperbound);
             if ($this->rangetype == SURVEYFIELD_TIME_INTERNALRANGE) {
                 $a = $lowerbound['hours'].':'.$lowerbound['minutes'];
                 $a .= get_string('and', 'surveyfield_time');
@@ -277,12 +296,12 @@ class surveyfield_time extends surveyitem_base {
         } else {
             $fillinginstruction = '';
             if ($haslowerbound) {
-                $lowerbound = $this->item_split_unix_time($this->lowerbound);
+                $lowerbound = $this->item_minutesfrommidnight_to_time($this->lowerbound);
                 $a = $lowerbound['hours'].':'.$lowerbound['minutes'];
                 $fillinginstruction = get_string('restriction_lower', 'surveyfield_time', $a);
             }
             if ($hasupperbound) {
-                $upperbound = $this->item_split_unix_time($this->upperbound);
+                $upperbound = $this->item_minutesfrommidnight_to_time($this->upperbound);
                 $a = $upperbound['hours'].':'.$upperbound['minutes'];
                 $fillinginstruction = get_string('restriction_upper', 'surveyfield_time', $a);
             }
@@ -292,44 +311,13 @@ class surveyfield_time extends surveyitem_base {
     }
 
     /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        $constraints = array();
-
-        $timearray = $this->item_split_unix_time($this->lowerbound, false);
-        $constraints[] = get_string('lowerbound', 'surveyfield_age').': '.$this->item_time_to_text($timearray);
-
-        $timearray = $this->item_split_unix_time($this->upperbound, false);
-        $constraints[] = get_string('upperbound', 'surveyfield_age').': '.$this->item_time_to_text($timearray);
-
-        return implode($constraints, '<br />');
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        $status = true;
-        $status = $status && ($childvalue >= $this->lowerbound);
-        $status = $status && ($childvalue <= $this->upperbound);
-
-        return $status;
-    }
-
-    /*
      * item_time_to_text
      * starting from an agearray returns the corresponding age in text format
      * @param $agearray
      * @return
      */
     public function item_time_to_text($timearray) {
-        $return = $timearray['hours'].':'.$timearray['minutes'];
-        return $return;
+        return $timearray['hours'].':'.$timearray['minutes'];
     }
 
     /*
@@ -371,7 +359,7 @@ class surveyfield_time extends surveyitem_base {
         for ($i = (int)$this->lowerbound_hour; $i <= $this->upperbound_hour; $i++) {
             $hours[$i] = sprintf("%02d", $i);
         }
-        for ($i = 0; $i <= 59; $i++) {
+        for ($i = 0; $i <= 59; $i += $this->step) {
             $minutes[$i] = sprintf("%02d", $i);
         }
 
@@ -415,13 +403,13 @@ class surveyfield_time extends surveyitem_base {
             } else {
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
-                        $timearray = $this->item_split_unix_time($this->defaultvalue, true);
+                        $timearray = $this->item_minutesfrommidnight_to_time($this->defaultvalue, true);
                         break;
                     case SURVEY_TIMENOWDEFAULT:
-                        $timearray = $this->item_split_unix_time(time(), true);
+                        $timearray = $this->item_minutesfrommidnight_to_time(time(), true);
                         break;
                     case SURVEY_NOANSWERDEFAULT:
-                        $timearray = $this->item_split_unix_time($this->lowerbound, true);
+                        $timearray = $this->item_minutesfrommidnight_to_time($this->lowerbound, true);
                         $mform->setDefault($this->itemname.'_noanswer', '1');
                         break;
                     case SURVEY_LIKELASTDEFAULT:
@@ -429,9 +417,9 @@ class surveyfield_time extends surveyitem_base {
                         $sql = 'userid = :userid ORDER BY timecreated DESC LIMIT 1';
                         $mylastsubmissionid = $DB->get_field_select('survey_submissions', 'id', $sql, array('userid' => $USER->id), IGNORE_MISSING);
                         if ($time = $DB->get_field('survey_userdata', 'content', array('itemid' => $this->itemid, 'submissionid' => $mylastsubmissionid), IGNORE_MISSING)) {
-                            $timearray = $this->item_split_unix_time($time, false);
+                            $timearray = $this->item_minutesfrommidnight_to_time($time, false);
                         } else { // as in standard default
-                            $timearray = $this->item_split_unix_time(time(), true);
+                            $timearray = $this->item_minutesfrommidnight_to_time(time(), true);
                         }
                         break;
                     default:
@@ -441,7 +429,7 @@ class surveyfield_time extends surveyitem_base {
                 $mform->setDefault($this->itemname.'_minute', $timearray['minutes']);
             }
         } else {
-            $timearray = $this->item_split_unix_time($this->lowerbound);
+            $timearray = $this->item_minutesfrommidnight_to_time($this->lowerbound);
             $mform->setDefault($this->itemname.'_hour', $timearray['hours']);
             $mform->setDefault($this->itemname.'_minute', $timearray['minutes']);
             $mform->setDefault($this->itemname.'_noanswer', '1');
@@ -478,10 +466,10 @@ class surveyfield_time extends surveyitem_base {
             return;
         }
 
-        $haslowerbound = ($this->lowerbound != $this->item_time_to_unix_time(0, 0));
-        $hasupperbound = ($this->upperbound != $this->item_time_to_unix_time(23, 59));
+        $haslowerbound = ($this->lowerbound != $this->item_time_to_minutesfrommidnight(0, 0));
+        $hasupperbound = ($this->upperbound != $this->item_time_to_minutesfrommidnight(23, 59));
 
-        $userinput = $this->item_time_to_unix_time($data[$this->itemname.'_hour'], $data[$this->itemname.'_minute']);
+        $userinput = $this->item_time_to_minutesfrommidnight($data[$this->itemname.'_hour'], $data[$this->itemname.'_minute']);
 
         if ($haslowerbound && ($userinput < $this->lowerbound)) {
             $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_time');
@@ -505,15 +493,15 @@ class surveyfield_time extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * this method calculates what to save in the db
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
         } else {
-            $olduserdata->content = $this->item_time_to_unix_time($itemdetail['hour'], $itemdetail['minute']);
+            $olduserdata->content = $this->item_time_to_minutesfrommidnight($itemdetail['hour'], $itemdetail['minute']);
         }
     }
 
@@ -533,7 +521,7 @@ class surveyfield_time extends surveyitem_base {
                 if ($olduserdata->content == SURVEY_NOANSWERVALUE) {
                     $prefill[$this->itemname.'_noanswer'] = 1;
                 } else {
-                    $datearray = $this->item_split_unix_time($olduserdata->content);
+                    $datearray = $this->item_minutesfrommidnight_to_time($olduserdata->content);
                     $prefill[$this->itemname.'_hour'] = $datearray['hours'];
                     $prefill[$this->itemname.'_minute'] = $datearray['minutes'];
                 }
@@ -559,14 +547,8 @@ class surveyfield_time extends surveyitem_base {
      */
     public function userform_db_to_export($itemvalue) {
         $content = $itemvalue->content;
-        if (!$this->downloadformat) { // return unixtime
-            return $content;
-        } else {
-            // TODO: is userdate correct?
-            // if I fill the survey from a different timezone and I write 5pm,
-            // the teacher has to get the same time not a different one
-            return userdate($content, get_string($this->downloadformat, 'core_langconfig'));
-        }
+        $timearray = $this->item_minutesfrommidnight_to_time($content);
+        return $this->item_time_to_text($timearray);
     }
 
     /*

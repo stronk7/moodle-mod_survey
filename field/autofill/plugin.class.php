@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/autofill/lib.php');
 
 class surveyfield_autofill extends surveyitem_base {
@@ -149,7 +149,7 @@ class surveyfield_autofill extends surveyitem_base {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
-        // set custom fields value as defined for this field
+        // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
         // showfield
@@ -241,24 +241,6 @@ class surveyfield_autofill extends surveyitem_base {
     public function item_parent_content_encode_value($parentcontent) {
         // $this->flag->couldbeparent = false
         // this method is never called
-    }
-
-    /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        return '';
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        return '<span class="warningmessage">'.get_string('cannotcheck', 'surveyformat_label').'</span>';
     }
 
     /*
@@ -360,11 +342,11 @@ class surveyfield_autofill extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * this method calculates what to save in the db
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         global $USER, $COURSE, $survey;
 
         $olduserdata->content = '';
@@ -376,15 +358,15 @@ class surveyfield_autofill extends surveyitem_base {
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT02:
                         $format_time = get_string('strftimedaytime');
-                        $olduserdata->content .= userdate($olduserdata->time, $format_time);
+                        $olduserdata->content .= userdate($olduserdata->time, $format_time, 0);
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT03:
                         $format_date = get_string("strftimedate");
-                        $olduserdata->content .= userdate($olduserdata->time, $format_date);
+                        $olduserdata->content .= userdate($olduserdata->time, $format_date, 0);
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT04:
                         $format_datetime = get_string("strftimedatetime");
-                        $olduserdata->content .= userdate($olduserdata->time, $format_datetime);
+                        $olduserdata->content .= userdate($olduserdata->time, $format_datetime, 0);
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT05:
                         $olduserdata->content .= $USER->id;

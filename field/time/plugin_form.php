@@ -29,7 +29,7 @@
 defined('MOODLE_INTERNAL') OR die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot.'/mod/survey/itembase_form.php');
+require_once($CFG->dirroot.'/mod/survey/forms/items/itembase_form.php');
 require_once($CFG->dirroot.'/mod/survey/field/time/lib.php');
 
 class survey_pluginform extends surveyitem_baseform {
@@ -57,6 +57,21 @@ class survey_pluginform extends surveyitem_baseform {
         }
 
         // ----------------------------------------
+        // newitem::step
+        // ----------------------------------------
+        $fieldname = 'step';
+        $options = array();
+        $options[1] = get_string('oneminute', 'surveyfield_time');
+        $options[5] = get_string('fiveminutes', 'surveyfield_time');
+        $options[10] = get_string('tenminutes', 'surveyfield_time');
+        $options[15] = get_string('fifteenminutes', 'surveyfield_time');
+        $options[20] = get_string('twentyminutes', 'surveyfield_time');
+        $options[30] = get_string('thirtyminutes', 'surveyfield_time');
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_time'), $options);
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_time');
+        $mform->setType($fieldname, PARAM_INT);
+
+        // ----------------------------------------
         // newitem::defaultvalue
         // ----------------------------------------
         $fieldname = 'defaultvalue';
@@ -79,14 +94,6 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname.'_hour', $justadefault['hours']);
             $mform->setDefault($fieldname.'_minute', $justadefault['minutes']);
         }
-
-        // ----------------------------------------
-        // newitem::downloadformat
-        // ----------------------------------------
-        $fieldname = 'downloadformat';
-        $options = survey_get_unixtimedownloadformats();
-        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_time'), $options);
-        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_time');
 
         if (!$hassubmissions) {
             // /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,9 +147,9 @@ class survey_pluginform extends surveyitem_baseform {
 
         // constrain default between boundaries
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
-            $defaultvalue = $item->item_time_to_unix_time($data['defaultvalue_hour'], $data['defaultvalue_minute']);
-            $lowerbound = $item->item_time_to_unix_time($data['defaultvalue_hour'], $data['defaultvalue_minute']);
-            $upperbound = $item->item_time_to_unix_time($data['defaultvalue_hour'], $data['defaultvalue_minute']);
+            $defaultvalue = $item->item_time_to_minutesfrommidnight($data['defaultvalue_hour'], $data['defaultvalue_minute']);
+            $lowerbound = $item->item_time_to_minutesfrommidnight($data['defaultvalue_hour'], $data['defaultvalue_minute']);
+            $upperbound = $item->item_time_to_minutesfrommidnight($data['defaultvalue_hour'], $data['defaultvalue_minute']);
             if ($data['rangetype'] == SURVEYFIELD_TIME_INTERNALRANGE) {
                 if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
                     $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_time');

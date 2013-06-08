@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/age/lib.php');
 
 class surveyfield_age extends surveyitem_base {
@@ -127,7 +127,7 @@ class surveyfield_age extends surveyitem_base {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
-        // set custom fields value as defined for this field
+        // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
         // multilang save support for builtin survey
@@ -333,36 +333,6 @@ class surveyfield_age extends surveyitem_base {
     }
 
     /*
-     * item_list_constraints
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        $constraints = array();
-
-        $agearray = $this->item_split_unix_time($this->lowerbound);
-        $constraints[] = get_string('lowerbound', 'surveyfield_age').': '.$this->item_age_to_text($agearray);
-
-        $agearray = $this->item_split_unix_time($this->upperbound);
-        $constraints[] = get_string('upperbound', 'surveyfield_age').': '.$this->item_age_to_text($agearray);
-
-        return implode($constraints, '<br />');
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        $status = true;
-        $status = $status && ($childvalue >= $this->lowerbound);
-        $status = $status && ($childvalue <= $this->upperbound);
-
-        return $status;
-    }
-
-    /*
      * item_age_to_text
      * starting from an agearray returns the corresponding age in text format
      * @param $agearray
@@ -370,6 +340,7 @@ class surveyfield_age extends surveyitem_base {
      */
     public function item_age_to_text($agearray) {
         $return = $agearray['year'].' '.get_string('years').' '.$agearray['mon'].' '.get_string('months', 'surveyfield_age');
+
         return $return;
     }
 
@@ -524,11 +495,11 @@ class surveyfield_age extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * this method calculates what to save in the db
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (isset($itemdetail['noanswer'])) {
             $olduserdata->content = null;
         } else {
@@ -580,6 +551,7 @@ class surveyfield_age extends surveyitem_base {
     public function userform_db_to_export($itemvalue) {
         $content = $itemvalue->content;
         $agearray = $this->item_split_unix_time($content);
+
         return $this->item_age_to_text($agearray);
     }
 

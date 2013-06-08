@@ -26,9 +26,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/itembase.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/multiselect/lib.php');
 
 class surveyfield_multiselect extends surveyitem_base {
@@ -370,17 +370,13 @@ class surveyfield_multiselect extends surveyitem_base {
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
-     * I define the info to store in the db
-     * @param $itemdetail, $olduserdata, $saving
+     * this method calculates what to save in the db
+     * @param $itemdetail, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata, $saving) {
+    public function userform_save_preprocessing($itemdetail, $olduserdata) {
         if (!is_null($itemdetail['mainelement'])) {
-            if ($saving) {
-                $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $itemdetail['mainelement']);
-            } else { // searching
-                $olduserdata->content = urlencode( implode(SURVEY_URLMULTIVALUESEPARATOR, $itemdetail['mainelement']) );
-            }
+            $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $itemdetail['mainelement']);
         } else {
             $olduserdata->content = null;
         }
