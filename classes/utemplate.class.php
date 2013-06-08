@@ -56,6 +56,7 @@ class mod_survey_usertemplate extends mod_survey_template {
      */
     public $userfeedback = SURVEY_NOFEEDBACK;
 
+<<<<<<< HEAD
     /*
      * $canexportutemplates
      */
@@ -66,6 +67,8 @@ class mod_survey_usertemplate extends mod_survey_template {
      */
     public $candeleteusertemplates = false;
 
+=======
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 
     /*
      * Class constructor
@@ -492,6 +495,7 @@ class mod_survey_usertemplate extends mod_survey_template {
 
                 $icons = '';
                 // *************************************** SURVEY_DELETEUTEMPLATE
+<<<<<<< HEAD
                 if ($this->candeleteusertemplates) {
                     if ($xmlfile->get_userid() == $USER->id) { // only the owner can delete his/her template
                         $paramurl['act'] = SURVEY_DELETEUTEMPLATE;
@@ -510,6 +514,22 @@ class mod_survey_usertemplate extends mod_survey_template {
                     $icons .= '<a class="editing_update" title="'.$exporttitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url('download', 'survey').'" class="iconsmall" alt="'.$exporttitle.'" title="'.$exporttitle.'" /></a>';
                 }
+=======
+                if ($xmlfile->get_userid() == $USER->id) { // only the owner can delete his/her template
+                    $paramurl['act'] = SURVEY_DELETEUTEMPLATE;
+                    $basepath = new moodle_url('utemplates_manage.php', $paramurl);
+
+                    $icons .= '<a class="editing_update" title="'.$deletetitle.'" href="'.$basepath.'">';
+                    $icons .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$deletetitle.'" title="'.$deletetitle.'" /></a>&nbsp;';
+                }
+
+                // *************************************** SURVEY_EXPORTUTEMPLATE
+                $paramurl['act'] = SURVEY_EXPORTUTEMPLATE;
+                $basepath = new moodle_url('utemplates_manage.php', $paramurl);
+
+                $icons .= '<a class="editing_update" title="'.$exporttitle.'" href="'.$basepath.'">';
+                $icons .= '<img src="'.$OUTPUT->pix_url('download', 'survey').'" class="iconsmall" alt="'.$exporttitle.'" title="'.$exporttitle.'" /></a>';
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 
                 $tablerow[] = $icons;
 

@@ -29,7 +29,6 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 require_once($CFG->dirroot.'/mod/survey/classes/item.class.php');
-require_once($CFG->dirroot.'/mod/survey/forms/items/itemtype_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $s = optional_param('s', 0, PARAM_INT);  // survey instance ID
@@ -51,23 +50,15 @@ require_course_login($course, true, $cm);
 add_to_log($course->id, 'survey', 'view', "elements.php?id=$cm->id", $survey->name, $cm->id);
 
 $currenttab = SURVEY_TABITEMS; // needed by tabs.php
-$currentpage = SURVEY_ITEMS_ADD; // needed by tabs.php
+$currentpage = SURVEY_ITEMS_CONFIGURE; // needed by tabs.php
 
 $plugin = optional_param('plugin', null, PARAM_TEXT);
 $type = optional_param('type', null, PARAM_TEXT);
 
 $hassubmissions = survey_has_submissions($survey->id, SURVEY_STATUSCLOSED);
 
-<<<<<<< HEAD
-$context = context_module::instance($cm->id);
-require_capability('mod/survey:additems', $context);
-
-// ////////////////////////////////////////////////////////////
-// manager definition
-=======
 // ////////////////////////////////////////////////////////////
 // calculations
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 // ////////////////////////////////////////////////////////////
 $item_manager = new mod_survey_itemelement($survey, $type, $plugin);
 
@@ -82,14 +73,69 @@ $item_manager->parentid = optional_param('pit', 0, PARAM_INT);
 $item_manager->userfeedback = optional_param('ufd', SURVEY_NOFEEDBACK, PARAM_INT);
 
 $item_manager->hassubmissions = $hassubmissions;
-<<<<<<< HEAD
-
-=======
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-// nothing to do here ;-)
+if (preg_match('~^('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_(\w+)$~', $item_manager->plugin, $match)) {
+    // execution comes from /forms/items/itemtype.php
+    $item_manager->type = $match[1]; // field or format
+    $item_manager->plugin = $match[2]; // boolean or char ... or fieldset ...
+} else {
+    // execution comes from /forms/items/manageitems.php
+    $saveasnew = optional_param('saveasnew', null, PARAM_TEXT);
+}
+
+require_once($CFG->dirroot.'/mod/survey/'.$item_manager->type.'/'.$item_manager->plugin.'/plugin.class.php');
+require_once($CFG->dirroot.'/mod/survey/'.$item_manager->type.'/'.$item_manager->plugin.'/plugin_form.php');
+
+// ////////////////////////////
+// get item
+$itemclass = 'survey'.$item_manager->type.'_'.$item_manager->plugin;
+$item = new $itemclass($item_manager->itemid);
+if (method_exists($item, 'item_set_editor')) {
+    $item->item_set_editor($cm->id, $item);
+}
+// end of: get item
+// ////////////////////////////
+
+// ////////////////////////////
+// define $item_form return url
+$paramurl = array('id' => $cm->id);
+$formurl = new moodle_url('items_configure.php', $paramurl);
+// end of: define $item_form return url
+// ////////////////////////////
+
+// ////////////////////////////
+// prepare params for the form
+$formparams = new stdClass();
+$formparams->survey = $item_manager->survey;                 // needed to setup date boundaries in date fields
+$formparams->item = $item;                                   // needed in many situations
+$formparams->hassubmissions = $item_manager->hassubmissions; // are editing features restricted?
+$item_form = new survey_pluginform($formurl, $formparams);
+// end of: prepare params for the form
+// ////////////////////////////
+
+// ////////////////////////////
+// manage form submission
+if ($item_form->is_cancelled()) {
+    $returnurl = new moodle_url('items_manage.php', $paramurl);
+    redirect($returnurl);
+}
+
+if ($fromform = $item_form->get_data()) {
+    // was this item forced to be new?
+    if (!empty($saveasnew)) {
+        $fromform->itemid = 0;
+    }
+
+    $item->item_save($fromform);
+
+    $paramurl = array('id' => $cm->id, 'ufd' => $item->userfeedback);
+    $returnurl = new moodle_url('items_manage.php', $paramurl);
+    redirect($returnurl);
+}
+// end of: manage form submission
+// ////////////////////////////
 
 // ////////////////////////////////////////////////////////////
 // Output starts here
@@ -106,18 +152,8 @@ echo $OUTPUT->header();
 
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-$paramurl = array('id' => $cm->id);
-<<<<<<< HEAD
-$formurl = new moodle_url('items_setup.php', $paramurl);
-=======
-$formurl = new moodle_url('items_configure.php', $paramurl);
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
-
-$message = get_string('additem', 'survey');
-echo $OUTPUT->box($message, 'notice centerpara');
-
-$itemtype = new survey_itemtypeform($formurl);
-$itemtype->display();
+$item_form->set_data($item);
+$item_form->display();
 
 // Finish the page
 echo $OUTPUT->footer();

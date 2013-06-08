@@ -69,11 +69,19 @@ class mod_survey_mastertemplate extends mod_survey_template {
     }
 
     /*
+<<<<<<< HEAD
      * create_mtemplate
      * @param
      * @return
      */
     public function create_mtemplate() {
+=======
+     * build_mtemplate
+     * @param
+     * @return
+     */
+    public function build_mtemplate() {
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         global $CFG, $DB;
 
         $pluginname = clean_filename($this->formdata->mastertemplatename);
@@ -85,7 +93,11 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
         foreach ($master_filelist as $master_file) {
             $master_fileinfo = pathinfo($master_file);
+<<<<<<< HEAD
             // create the structure of the temporary folder
+=======
+            // build the structure of the temporary folder
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
             // the folder has to be created WITHOUT $CFG->tempdir/
             $temp_path = $temp_subdir.'/'.dirname($master_file);
             make_temp_directory($temp_path); // <-- just created the folder for the current plugin
@@ -277,7 +289,11 @@ class mod_survey_mastertemplate extends mod_survey_template {
         $base->plugin = 'item';
         $itemseeds = array_merge(array('item' => $base), $itemseeds);
 
+<<<<<<< HEAD
         // STEP 05: create survey_$plugin table structure array
+=======
+        // STEP 05: build survey_$plugin table structure array
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         foreach ($itemseeds as $itemseed) {
             $tablename = 'survey_'.$itemseed->plugin;
             if ($structure = $this->get_table_structure($tablename)) {

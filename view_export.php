@@ -47,16 +47,22 @@ if (!empty($id)) {
 }
 
 require_course_login($course, true, $cm);
+<<<<<<< HEAD
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:exportdata', $context);
+=======
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 
 $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 $currentpage = SURVEY_SUBMISSION_EXPORT; // needed by tabs.php
 
+<<<<<<< HEAD
 require_capability('mod/survey:exportdata', $context);
 
+=======
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////

@@ -56,11 +56,15 @@ $submissionid = optional_param('submissionid', 0, PARAM_INT);
 // whether it comes from the form or from the redirect in GET, $submissionid is fetched here
 // if the form (once submitted) send $submissionid == 0, the value will be overwritten later in if ($userpage_manager->formdata = $userpage_form->get_data()) {
 
+<<<<<<< HEAD
 $context = context_module::instance($cm->id);
+=======
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 switch ($action) {
     case SURVEY_NOACTION:
         $currentpage = SURVEY_SUBMISSION_NEW; // needed by tabs.php
+<<<<<<< HEAD
         require_capability('mod/survey:submit', $context);
         break;
     case SURVEY_EDITRESPONSE:
@@ -74,6 +78,18 @@ switch ($action) {
     case SURVEY_PREVIEWSURVEY:
         $currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
         require_capability('mod/survey:preview', $context);
+=======
+        break;
+    case SURVEY_EDITSURVEY:
+    case SURVEY_DUPLICATESURVEY:
+        $currentpage = SURVEY_SUBMISSION_EDIT; // needed by tabs.php
+        break;
+    case SURVEY_READONLYSURVEY:
+        $currentpage = SURVEY_SUBMISSION_READONLY; // needed by tabs.php
+        break;
+    case SURVEY_PREVIEWSURVEY:
+        $currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         break;
     default:
         debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
@@ -93,7 +109,11 @@ $userpage_manager->submissionid = $submissionid;
 $userpage_manager->canaccessadvancedform = survey_user_can_access_advanced_form($cm);
 $userpage_manager->canmanageitems = survey_user_can_manage_items($cm);
 
+<<<<<<< HEAD
 if ($action == SURVEY_DUPLICATERESPONSE) {
+=======
+if ($action == SURVEY_DUPLICATESURVEY) {
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
     $userpage_manager->duplicate_submission();
     $paramurl = array('id' => $cm->id, 'submissionid' => $userpage_manager->submissionid);
     $redirecturl = new moodle_url('view.php', $paramurl);

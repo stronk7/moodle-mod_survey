@@ -50,7 +50,11 @@ $string['tabsubmissionsname'] = 'Survey';
 $string['tabitemname'] = 'Elements';
     $string['tabitemspage1'] = 'Manage elements';
     $string['tabitemspage2'] = 'Add element';
+<<<<<<< HEAD
     $string['tabitemspage3'] = 'Setup element';
+=======
+    $string['tabitemspage3'] = 'Configure element';
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
     $string['tabitemspage4'] = 'Validate branching';
 $string['tabutemplatename'] = 'User templates';
     $string['tabutemplatepage1'] = 'Manage';
@@ -81,12 +85,21 @@ $string['anonymous'] = 'Anonymous';
 $string['applymtemplateinfo'] = 'You can enrich your survey applying set of questions coming from a master template plugin';
 $string['applytemplate'] = 'Apply template';
 $string['applyutemplateinfo'] = 'You can enrich your survey applying set of questions coming from an XML user template<br /><strong>Be warned: by setting "{$a->itemset}" to "{$a->none}" and "{$a->actionoverother}" to "{$a->delete}" you bring your survey back to just created state</strong>';
+<<<<<<< HEAD
 $string['askdeleteallsubmissions'] = 'Are you sure you want delete ALL the stored attempt?';
 $string['askdeletemysubmissions'] = 'Are you sure you want delete your attempt created on {$a->timecreated} and modified on {$a->timemodified}?';
 $string['askdeletemysubmissionsnevermodified'] = 'Are you sure you want delete your attempt created on {$a->timecreated} and never modified?';
 $string['askdeleteoneitem'] = 'Are you sure you want delete the survey element: {$a}';
 $string['askdeleteonesurvey'] = 'Are you sure you want delete the selected attempt owned by {$a->fullname}, created on {$a->timecreated} and modified on {$a->timemodified}?';
 $string['askdeleteonesurveynevermodified'] = 'Are you sure you want delete the selected attempts owned by {$a->fullname}, created on {$a->timecreated} and never modified?';
+=======
+$string['askdeleteallsurveys'] = 'Are you sure you want delete ALL the stored surveys?';
+$string['askdeletemysurvey'] = 'Are you sure you want delete your attempt created on {$a->timecreated} and modified on {$a->timemodified}?';
+$string['askdeletemysurveynevermodified'] = 'Are you sure you want delete your attempt created on {$a->timecreated} and never modified?';
+$string['askdeleteoneitem'] = 'Are you sure you want delete the survey element: {$a}';
+$string['askdeleteonesurvey'] = 'Are you sure you want delete the selected survey owned by {$a->fullname}, created on {$a->timecreated} and modified on {$a->timemodified}?';
+$string['askdeleteonesurveynevermodified'] = 'Are you sure you want delete the selected survey owned by {$a->fullname}, created on {$a->timecreated} and never modified?';
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 $string['askdeleteonetemplate'] = 'Are you sure you want delete the user template "{$a}"';
 $string['askitemsshow'] = 'Showing the question {$a->lastitem} you are going to show all its ancestors.<br />Ancestors are questions in position: {$a->ancestors}.<br />Do you confirm this action?';
 $string['askitemstohide'] = 'Hiding the question {$a->parentid} all its dependencies will be hided too.<br />Dependencies is/are the question/s in position: {$a->dependencies}.<br />Do you confirm this action?';
@@ -287,6 +300,7 @@ $string['survey:accessadvancedform'] = 'Access advanced form';
 $string['survey:accessreports'] = 'Access reports';
 $string['survey:additems'] = 'Add survey elements';
 $string['survey:addinstance'] = 'Add a new survey activity';
+<<<<<<< HEAD
 $string['survey:applyusertemplates'] = 'Apply user templates';
 $string['survey:applymastertemplates'] = 'Apply master templates';
 $string['survey:createmastertemplates'] = 'Create master templates';
@@ -301,6 +315,17 @@ $string['survey:preview'] = 'Preview a survey';
 $string['survey:searchsubmissions'] = 'Search attempts';
 $string['survey:submit'] = 'Submit attempts';
 $string['survey:validatebranching'] = 'Validate branching';
+=======
+$string['survey:deleteall'] = 'Delete all surveys';
+$string['survey:editall'] = 'Edit all surveys';
+$string['survey:exportdata'] = 'Export collected data';
+$string['survey:manageitems'] = 'Manage questions';
+$string['survey:managemtemplates'] = 'Manage master templates';
+$string['survey:manageutemplates'] = 'Manage user templates';
+$string['survey:preview'] = 'Preview a survey';
+$string['survey:readall'] = 'View all surveys';
+$string['survey:submit'] = 'Submit surveys';
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 $string['survey:view'] = 'View surveys';
 $string['surveydeleted'] = 'User attempts have been successfully deleted';
 $string['surveyfield'] = 'survey questions';
@@ -344,6 +369,7 @@ $string['xmltemplate'] = 'Preset to export';
 $string['you'] = 'You';
 $string['youarenotinagroup'] = 'You do not belong to any of the group in which this course is divided';
 $string['incorrectaccessdetected'] = 'Incorrect access detected';
+$string['aaa'] = 'bbb';
 $string['aaa'] = 'bbb';
 $string['aaa'] = 'bbb';
 $string['aaa'] = 'bbb';

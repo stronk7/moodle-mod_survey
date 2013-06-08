@@ -63,9 +63,25 @@ class mod_survey_submissionmanager {
     public $confirm = false;
 
     /*
+<<<<<<< HEAD
      * $canmanageallsubmissions
      */
     public $canmanageallsubmissions = false;
+=======
+     * $canreadallsubmissions
+     */
+    public $canreadallsubmissions = false;
+
+    /*
+     * $caneditallsubmissions
+     */
+    public $caneditallsubmissions = false;
+
+    /*
+     * $candeleteallsubmissions
+     */
+    public $candeleteallsubmissions = false;
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 
     /*
      * $searchfields_get
@@ -93,10 +109,17 @@ class mod_survey_submissionmanager {
     public function manage_actions() {
         switch ($this->action) {
             case SURVEY_NOACTION:
+<<<<<<< HEAD
             case SURVEY_EDITRESPONSE:
             case SURVEY_READONLYRESPONSE:
                 break;
             case SURVEY_DELETERESPONSE:
+=======
+            case SURVEY_EDITSURVEY:
+            case SURVEY_READONLYSURVEY:
+                break;
+            case SURVEY_DELETESURVEY:
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
                 $this->manage_submission_deletion();
                 break;
             case SURVEY_DELETEALLRESPONSES:
@@ -133,6 +156,7 @@ class mod_survey_submissionmanager {
                 }
             } else {
                 if ($a->timemodified == 0) {
+<<<<<<< HEAD
                     $message = get_string('askdeletemysubmissionsnevermodified', 'survey', $a);
                 } else {
                     $message = get_string('askdeletemysubmissions', 'survey', $a);
@@ -140,6 +164,15 @@ class mod_survey_submissionmanager {
             }
 
             $optionbase = array('id' => $cm->id, 'act' => SURVEY_DELETERESPONSE);
+=======
+                    $message = get_string('askdeletemysurveynevermodified', 'survey', $a);
+                } else {
+                    $message = get_string('askdeletemysurvey', 'survey', $a);
+                }
+            }
+
+            $optionbase = array('id' => $cm->id, 'act' => SURVEY_DELETESURVEY);
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 
             $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'submissionid' => $this->submissionid);
             $urlyes = new moodle_url('view_manage.php', $optionsyes);
@@ -179,7 +212,11 @@ class mod_survey_submissionmanager {
 
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             // ask for confirmation
+<<<<<<< HEAD
             $message = get_string('askdeleteallsubmissions', 'survey');
+=======
+            $message = get_string('askdeleteallsurveys', 'survey');
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 
             $optionbase = array('s' => $this->survey->id, 'surveyid' => $this->survey->id, 'act' => SURVEY_DELETEALLRESPONSES);
 
@@ -234,7 +271,10 @@ class mod_survey_submissionmanager {
         $context = context_module::instance($cm->id);
 
         $table = new flexible_table('submissionslist');
+<<<<<<< HEAD
         $table->initialbars(true);
+=======
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 
         $paramurl = array('id' => $cm->id);
         if ($this->searchfields_get) {
@@ -285,6 +325,11 @@ class mod_survey_submissionmanager {
         }
         $table->column_class('actions', 'actions');
 
+<<<<<<< HEAD
+=======
+        $table->initialbars(true);
+
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         // hide the same info whether in two consecutive rows
         $table->column_suppress('picture');
         $table->column_suppress('fullname');
@@ -323,6 +368,7 @@ class mod_survey_submissionmanager {
         $sql = 'SELECT s.*, s.id as submissionid,'.$userfields.'
                 FROM {survey_submissions} s
                     JOIN {user} u ON (s.userid = u.id)';
+<<<<<<< HEAD
         if (!$this->canmanageallsubmissions) {
             if ($mygroups) {
                 $i = 0;
@@ -334,6 +380,17 @@ class mod_survey_submissionmanager {
                 }
                 $sql .= ' JOIN {groups_members} gm ON (gm.userid = u.id AND ('.implode(' OR ', $relations).'))';
             }
+=======
+        if ($mygroups) {
+            $i = 0;
+            $relations = array();
+            foreach ($mygroups as $mygroup) {
+                $i++;
+                $relations[] = '(gm.groupid = :groupid'.$i.')';
+                $params['groupid'.$i] = $mygroup;
+            }
+            $sql .= ' JOIN {groups_members} gm ON (gm.userid = u.id AND ('.implode(' OR ', $relations).'))';
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         }
         $sql .= ' WHERE s.surveyid = :surveyid';
         $params['surveyid'] = $this->survey->id;
@@ -355,7 +412,12 @@ class mod_survey_submissionmanager {
         $submissions = $DB->get_recordset_sql($sql, $params, $table->get_sql_sort());
 
         if ($submissions->valid()) {
+<<<<<<< HEAD
             if ($this->canmanageallsubmissions) {
+=======
+
+            if ($this->candeleteallsubmissions) {
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
                 $paramurl = array();
                 $paramurl['s'] = $this->survey->id;
                 $paramurl['act'] = SURVEY_DELETEALLRESPONSES;
@@ -365,7 +427,11 @@ class mod_survey_submissionmanager {
             }
 
             foreach ($submissions as $submission) {
+<<<<<<< HEAD
                 if (!$this->canmanageallsubmissions && !survey_i_can_read($this->survey, $mygroups, $submission->userid)) {
+=======
+                if (!$this->canreadallsubmissions && !survey_i_can_read($this->survey, $mygroups, $submission->userid)) {
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
                     continue;
                 }
 
@@ -394,6 +460,7 @@ class mod_survey_submissionmanager {
 
                 // actions
                 $paramurl['submissionid'] = $submission->submissionid;
+<<<<<<< HEAD
                 if (survey_i_can_edit($this->survey, $mygroups, $submission->userid) || $this->canmanageallsubmissions) {     // "edit" or "edit as new"
                     if ($submission->status == SURVEY_STATUSCLOSED) {
                         if ($this->survey->history) {
@@ -402,12 +469,26 @@ class mod_survey_submissionmanager {
                             $iconpath = 't/copy';
                         } else {
                             $paramurl['act'] = SURVEY_EDITRESPONSE;
+=======
+                if (survey_i_can_edit($this->survey, $mygroups, $submission->userid) || $this->caneditallsubmissions) {     // "edit" or "edit as new"
+                    if ($submission->status == SURVEY_STATUSCLOSED) {
+                        if ($this->survey->history) {
+                            $paramurl['act'] = SURVEY_DUPLICATESURVEY;
+                            $icontitle = get_string('duplicate');
+                            $iconpath = 't/copy';
+                        } else {
+                            $paramurl['act'] = SURVEY_EDITSURVEY;
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
                             $icontitle = get_string('edit');
                             $iconpath = 't/edit';
                         }
                     } else {
                         // alwats allow the user to finalize his/her submission
+<<<<<<< HEAD
                         $paramurl['act'] = SURVEY_EDITRESPONSE;
+=======
+                        $paramurl['act'] = SURVEY_EDITSURVEY;
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
                         $icontitle = get_string('edit');
                         $iconpath = 't/edit';
                     }
@@ -415,15 +496,24 @@ class mod_survey_submissionmanager {
                     $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
                 } else {                                                                                                   // read only
+<<<<<<< HEAD
                     $paramurl['act'] = SURVEY_READONLYRESPONSE;
+=======
+                    $paramurl['act'] = SURVEY_READONLYSURVEY;
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
                     $basepath = new moodle_url('view.php', $paramurl);
                     $icontitle = $restrictedaccess;
                     $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url('t/preview').'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
                 }
 
+<<<<<<< HEAD
                 if (survey_i_can_delete($this->survey, $mygroups, $submission->userid) || $this->canmanageallsubmissions) { // delete
                     $paramurl['act'] = SURVEY_DELETERESPONSE;
+=======
+                if (survey_i_can_delete($this->survey, $mygroups, $submission->userid) || $this->candeleteallsubmissions) { // delete
+                    $paramurl['act'] = SURVEY_DELETESURVEY;
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
                     $basepath = new moodle_url('view_manage.php', $paramurl);
                     $icons .= '&nbsp;<a class="editing_update" title="'.$deletetitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$deletetitle.'" title="'.$deletetitle.'" /></a>';

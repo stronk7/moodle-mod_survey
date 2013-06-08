@@ -28,8 +28,8 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
-require_once($CFG->dirroot.'/mod/survey/classes/utemplate.class.php');
-require_once($CFG->dirroot.'/mod/survey/forms/utemplates/applyutemplate_form.php');
+require_once($CFG->dirroot.'/mod/survey/classes/mtemplate.class.php');
+require_once($CFG->dirroot.'/mod/survey/forms/mtemplates/createmtemplate_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $s = optional_param('s', 0, PARAM_INT);  // survey instance ID
@@ -48,62 +48,39 @@ if (!empty($id)) {
 
 require_course_login($course, true, $cm);
 
-add_to_log($course->id, 'survey', 'view', "utemplates.php?id=$cm->id", $survey->name, $cm->id);
+add_to_log($course->id, 'survey', 'view', "mtemplates.php?id=$cm->id", $survey->name, $cm->id);
 
-$currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
-$currentpage = SURVEY_UTEMPLATES_APPLY; // needed by tabs.php
+$currenttab = SURVEY_TABMTEMPLATES; // needed by tabs.php
+$currentpage = SURVEY_MTEMPLATES_BUILD; // needed by tabs.php
 
-$action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
-$confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
-
-<<<<<<< HEAD
-$context = context_module::instance($cm->id);
-require_capability('mod/survey:applyusertemplates', $context);
-
-=======
->>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$utemplate_manager = new mod_survey_usertemplate($survey, $action, $confirm);
+$mtemplate_manager = new mod_survey_mastertemplate($survey);
 
-// ////////////////////////////
-// define $apply_utemplate return url
 $paramurl = array('id' => $cm->id);
-$formurl = new moodle_url('utemplates_apply.php', $paramurl);
-// end of: define $apply_utemplate return url
-// ////////////////////////////
+$formurl = new moodle_url('mtemplates_build.php', $paramurl);
+$build_utemplate = new survey_mtemplatebuildform($formurl);
 
-// ////////////////////////////
-// prepare params for the form
-$formparams = new stdClass();
-$formparams->cmid = $cm->id;
-$formparams->survey = $survey;
-$formparams->utemplate_manager = $utemplate_manager;
-$apply_utemplate = new survey_applyutemplateform($formurl, $formparams);
-// end of: prepare params for the form
-// ////////////////////////////
-
-// ////////////////////////////
-// manage form submission
-if ($apply_utemplate->is_cancelled()) {
-    $returnurl = new moodle_url('items_add.php', $paramurl);
-    redirect($returnurl);
+if ($mtemplate_manager->formdata = $build_utemplate->get_data()) {
+    $exportfile = $mtemplate_manager->build_mtemplate();
+    $exportfilename = basename($exportfile);
+    header("Content-Type: application/download\n");
+    header("Content-Disposition: attachment; filename=\"$exportfilename\"");
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
+    header('Pragma: public');
+    $exportfilehandler = fopen($exportfile, 'rb');
+    print fread($exportfilehandler, filesize($exportfile));
+    fclose($exportfilehandler);
+    unlink($exportfile);
+    exit(0);
 }
-
-if ($utemplate_manager->formdata = $apply_utemplate->get_data()) {
-    $utemplate_manager->apply_utemplate();
-
-    $redirecturl = new moodle_url('items_manage.php', $paramurl);
-    redirect($redirecturl);
-}
-// end of: manage form submission
-// ////////////////////////////
 
 // ////////////////////////////////////////////////////////////
 // Output starts here
 // ////////////////////////////////////////////////////////////
-$PAGE->set_url('/mod/survey/utemplates.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/survey/mtemplates.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
 
@@ -112,19 +89,17 @@ $PAGE->set_heading($course->shortname);
 // $PAGE->set_focuscontrol('some-html-id');
 
 echo $OUTPUT->header();
-
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-$a = new stdClass();
-$a->itemset = get_string('itemset', 'survey');
-$a->none = get_string('notanyset', 'survey');
-$a->actionoverother = get_string('actionoverother', 'survey');
-$a->delete = get_string('delete', 'survey');
+echo $OUTPUT->notification(get_string('currenttotemplate', 'survey'), 'generaltable generalbox boxaligncenter boxwidthwide');
 
-$message = get_string('applyutemplateinfo', 'survey', $a);
-echo $OUTPUT->box($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
+$record = new stdClass();
+$record->surveyid = $survey->id;
 
-$apply_utemplate->display();
+$build_utemplate->set_data($record);
+$build_utemplate->display();
+
 
 // Finish the page
 echo $OUTPUT->footer();
+

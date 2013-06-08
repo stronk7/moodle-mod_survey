@@ -30,7 +30,11 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
+<<<<<<< HEAD:forms/utemplates/createutemplate_form.php
 class survey_utemplatecreateform extends moodleform {
+=======
+class survey_utemplatebuildform extends moodleform {
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c:forms/utemplates/createutemplate_form.php
 
     function definition() {
         $mform = $this->_form;
@@ -40,14 +44,22 @@ class survey_utemplatecreateform extends moodleform {
         $utemplate_manager = $this->_customdata->utemplate_manager;
 
         // ----------------------------------------
+<<<<<<< HEAD:forms/utemplates/createutemplate_form.php
         // utemplatecreate::surveyid
+=======
+        // utemplatebuild::surveyid
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c:forms/utemplates/createutemplate_form.php
         // ----------------------------------------
         $fieldname = 'surveyid';
         $mform->addElement('hidden', $fieldname, 0);
         $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------
+<<<<<<< HEAD:forms/utemplates/createutemplate_form.php
         // utemplatecreate::templatename
+=======
+        // utemplatebuild::templatename
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c:forms/utemplates/createutemplate_form.php
         // ----------------------------------------
         $fieldname = 'templatename';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'));
@@ -56,14 +68,22 @@ class survey_utemplatecreateform extends moodleform {
         $mform->setType($fieldname, PARAM_FILE); // templatename is going to be a file name
 
         // ----------------------------------------
+<<<<<<< HEAD:forms/utemplates/createutemplate_form.php
         // utemplatecreate::overwrite
+=======
+        // utemplatebuild::overwrite
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c:forms/utemplates/createutemplate_form.php
         // ----------------------------------------
         $fieldname = 'overwrite';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
         // ----------------------------------------
+<<<<<<< HEAD:forms/utemplates/createutemplate_form.php
         // utemplatecreate::sharinglevel
+=======
+        // utemplatebuild::sharinglevel
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c:forms/utemplates/createutemplate_form.php
         // ----------------------------------------
         $fieldname = 'sharinglevel';
         $options = array();

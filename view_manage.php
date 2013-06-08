@@ -53,6 +53,7 @@ $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 $currentpage = SURVEY_SUBMISSION_MANAGE; // needed by tabs.php
 
 $submissionid = optional_param('submissionid', 0, PARAM_INT);
+<<<<<<< HEAD
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $confirm = optional_param('cnf' , 0, PARAM_INT); // confirm submission deletion
 
@@ -69,6 +70,10 @@ switch ($action) {
         debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
 }
 
+=======
+$confirm = optional_param('cnf' , 0, PARAM_INT); // confirm submission deletion
+
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
@@ -76,8 +81,15 @@ $submission_manager = new mod_survey_submissionmanager($survey);
 $submission_manager->submissionid = $submissionid;
 $submission_manager->confirm = $confirm;
 $submission_manager->canaccessadvancedform = survey_user_can_access_advanced_form($cm);
+<<<<<<< HEAD
 $submission_manager->canmanageallsubmissions = survey_user_can_manage_all_submissions($cm);
 $submission_manager->action = $action;
+=======
+$submission_manager->canreadallsubmissions = survey_user_can_read_all_submissions($cm);
+$submission_manager->caneditallsubmissions = survey_user_can_edit_all_submissions($cm);
+$submission_manager->candeleteallsubmissions = survey_user_can_delete_all_submissions($cm);
+$submission_manager->action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 $submission_manager->searchfields_get = optional_param('searchquery', '', PARAM_RAW);
 
 // ////////////////////////////////////////////////////////////

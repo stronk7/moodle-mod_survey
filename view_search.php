@@ -55,9 +55,12 @@ $currentpage = SURVEY_SUBMISSION_SEARCH; // needed by tabs.php
 
 $formpage = optional_param('formpage' , 1, PARAM_INT); // form page number
 
+<<<<<<< HEAD
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:searchsubmissions', $context);
 
+=======
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
@@ -88,7 +91,10 @@ if ($search_manager->formdata = $search_form->get_data()) { // $search_form, her
     // in this routine I do not execute a real search
     // I only define the param searchquery for the url of SURVEY_SUBMISSION_MANAGE
     $paramurl = array('id' => $cm->id);
+<<<<<<< HEAD
     // remember to select submissions by groupsmates ONLY
+=======
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
     $paramurl['searchquery'] = $search_manager->get_searchparamurl();
     $returnurl = new moodle_url('view_manage.php', $paramurl);
     redirect($returnurl);

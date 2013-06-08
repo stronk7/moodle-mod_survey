@@ -196,6 +196,19 @@ $capabilities = array(
         )
     ),
 
+<<<<<<< HEAD
+=======
+    'mod/survey:submit' => array(
+        'riskbitmask' => RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW
+        )
+    ),
+
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
     'mod/survey:accessadvancedform' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
@@ -206,6 +219,7 @@ $capabilities = array(
         )
     ),
 
+<<<<<<< HEAD
     'mod/survey:submit' => array(
         'riskbitmask' => RISK_XSS,
 
@@ -227,6 +241,9 @@ $capabilities = array(
     ),
 
     'mod/survey:deleteallsubmissions' => array(
+=======
+    'mod/survey:exportdata' => array(
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -238,6 +255,7 @@ $capabilities = array(
         )
     ),
 
+<<<<<<< HEAD
     'mod/survey:searchsubmissions' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
@@ -248,6 +266,8 @@ $capabilities = array(
         )
     ),
 
+=======
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
     'mod/survey:accessreports' => array(
         'riskbitmask' => RISK_PERSONAL,
 
@@ -273,6 +293,7 @@ $capabilities = array(
     ),
 
     'mod/survey:manageitems' => array(
+<<<<<<< HEAD
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -285,6 +306,8 @@ $capabilities = array(
     ),
 
     'mod/survey:additems' => array(
+=======
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -296,6 +319,7 @@ $capabilities = array(
         )
     ),
 
+<<<<<<< HEAD
     'mod/survey:setupitems' => array(
         'riskbitmask' => RISK_PERSONAL,
 
@@ -321,6 +345,8 @@ $capabilities = array(
     ),
 
     'mod/survey:deleteusertemplates' => array(
+=======
+    'mod/survey:managemtemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -332,6 +358,20 @@ $capabilities = array(
         )
     ),
 
+    'mod/survey:manageutemplates' => array(
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+<<<<<<< HEAD
     'mod/survey:exportusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
 
@@ -345,6 +385,9 @@ $capabilities = array(
     ),
 
     'mod/survey:createusertemplates' => array(
+=======
+    'mod/survey:readall' => array(
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -356,6 +399,7 @@ $capabilities = array(
         )
     ),
 
+<<<<<<< HEAD
     'mod/survey:importusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
 
@@ -369,6 +413,9 @@ $capabilities = array(
     ),
 
     'mod/survey:applyusertemplates' => array(
+=======
+    'mod/survey:editall' => array(
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -380,6 +427,7 @@ $capabilities = array(
         )
     ),
 
+<<<<<<< HEAD
     'mod/survey:createmastertemplate' => array(
         'riskbitmask' => RISK_PERSONAL,
 
@@ -393,6 +441,9 @@ $capabilities = array(
     ),
 
     'mod/survey:applymastertemplate' => array(
+=======
+    'mod/survey:deleteall' => array(
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'write',
@@ -402,7 +453,6 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
         )
-    ),
-
+    )
 );
 

@@ -56,9 +56,12 @@ $currentpage = SURVEY_UTEMPLATES_IMPORT; // needed by tabs.php
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
 
+<<<<<<< HEAD
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:importusertemplates', $context);
 
+=======
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////

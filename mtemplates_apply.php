@@ -53,9 +53,12 @@ add_to_log($course->id, 'survey', 'view', "mtemplates.php?id=$cm->id", $survey->
 $currenttab = SURVEY_TABMTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_MTEMPLATES_APPLY; // needed by tabs.php
 
+<<<<<<< HEAD
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:applymastertemplate', $context);
 
+=======
+>>>>>>> 5be0a9a1b0149babfc062c50aa455db64239ab8c
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
