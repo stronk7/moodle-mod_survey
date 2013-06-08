@@ -49,6 +49,8 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 
+$context = context_system::instance();
+
 $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 $currentpage = SURVEY_SUBMISSION_MANAGE; // needed by tabs.php
 

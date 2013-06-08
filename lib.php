@@ -745,6 +745,7 @@ function survey_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 function survey_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm) {
     global $CFG, $OUTPUT, $USER, $DB;
 
+    $context = context_system::instance();
     $canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
     $canpreview = has_capability('mod/survey:preview', $context, null, true);
     $cansubmit = has_capability('mod/survey:submit', $context, null, true);
