@@ -261,6 +261,8 @@ class surveyfield_textarea extends surveyitem_base {
         return $fillinginstruction;
     }
 
+    // MARK userform
+
     /*
      * userform_mform_element
      * @param $mform

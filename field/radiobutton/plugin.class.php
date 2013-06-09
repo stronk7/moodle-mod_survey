@@ -250,6 +250,8 @@ class surveyfield_radiobutton extends surveyitem_base {
         return $values;
     }
 
+    // MARK parent
+
     /*
      * parent_validate_child_constraints
      * @param
@@ -278,6 +280,8 @@ class surveyfield_radiobutton extends surveyitem_base {
     public function parent_encode_content_to_value($parentcontent) {
         return $parentcontent;
     }
+
+    // MARK userform
 
     /*
      * userform_mform_element

@@ -1249,6 +1249,8 @@ class surveyitem_base {
         return $values;
     }
 
+    // MARK parent
+
     /*
      * parent_validate_child_constraints
      * @param

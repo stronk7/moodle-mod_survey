@@ -188,6 +188,8 @@ class surveyfield_checkbox extends surveyitem_base {
         return $values;
     }
 
+    // MARK parent
+
     /*
      * parent_validate_child_constraints
      * @param
@@ -247,6 +249,8 @@ class surveyfield_checkbox extends surveyitem_base {
 
         return $parentcontent;
     }
+
+    // MARK userform
 
     /*
      * userform_mform_element

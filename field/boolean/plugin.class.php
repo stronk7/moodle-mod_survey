@@ -190,6 +190,8 @@ class surveyfield_boolean extends surveyitem_base {
         }
     }
 
+    // MARK parent
+
     /*
      * parent_validate_child_constraints
      * @param
@@ -268,6 +270,8 @@ class surveyfield_boolean extends surveyitem_base {
 
         return $values;
     }
+
+    // MARK userform
 
     /*
      * userform_mform_element
