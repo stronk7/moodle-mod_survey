@@ -42,7 +42,7 @@ function surveytemplate_attls_add() {
     // ////////////// SURVEY_ITEM
     $si_fields = array('surveyid'      , 'type'            , 'plugin'          , 'externalname' ,
                        'content_sid'   , 'content'         , 'contentformat'   , 'customnumber' ,
-                       'extrarow'      , 'extranote'       , 'hideinstructions', 'required'     , 'fieldname',
+                       'extrarow'      , 'extranote'       , 'hideinstructions', 'required'     , 'variable',
                        'indent'        , 'basicform'       , 'advancedsearch'  , 'hide'         ,
                        'sortindex'     , 'basicformpage'   , 'advancedformpage', 'parentid'     ,
                        'parentcontent' , 'parentvalue'     , 'timecreated'     , 'timemodified');

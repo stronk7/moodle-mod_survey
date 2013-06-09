@@ -59,12 +59,12 @@ class mod_survey_usertemplate extends mod_survey_template {
     /*
      * $canexportutemplates
      */
-    public $canexportusertemplates = false;
+    public $canexportutemplates = false;
 
     /*
      * $candeleteutemplates
      */
-    public $candeleteusertemplates = false;
+    public $candeleteutemplates = false;
 
 
     /*
@@ -492,7 +492,7 @@ class mod_survey_usertemplate extends mod_survey_template {
 
                 $icons = '';
                 // *************************************** SURVEY_DELETEUTEMPLATE
-                if ($this->candeleteusertemplates) {
+                if ($this->candeleteutemplates) {
                     if ($xmlfile->get_userid() == $USER->id) { // only the owner can delete his/her template
                         $paramurl['act'] = SURVEY_DELETEUTEMPLATE;
                         $basepath = new moodle_url('utemplates_manage.php', $paramurl);

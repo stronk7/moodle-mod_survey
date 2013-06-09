@@ -43,8 +43,6 @@ define('SURVEY_MINEVERYEAR'        , 1970);
 define('SURVEY_MAXEVERYEAR'        , 2020);
 define('SURVEY_VALUELABELSEPARATOR', '::');
 define('SURVEY_OTHERSEPARATOR'     , '->');
-define('SURVEY_REFERRALYEAR'       , 1970);
-define('SURVEY_REFERRALMONTH'      , 0);
 
 // TAB NUMBERS ALIAS COUNT OF THE TABS IN THE TAB BAR
 // to change tabs order, just exchange numbers if the following lines

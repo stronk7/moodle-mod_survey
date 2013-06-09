@@ -83,7 +83,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         $this->item_form_requires['extrarow'] = false;
         $this->item_form_requires['extranote'] = false;
         $this->item_form_requires['required'] = false;
-        $this->item_form_requires['fieldname'] = false;
+        $this->item_form_requires['variable'] = false;
         $this->item_form_requires['indent'] = false;
         $this->item_form_requires['hideinstructions'] = false;
 

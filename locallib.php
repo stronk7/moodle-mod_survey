@@ -309,7 +309,7 @@ function survey_add_custom_css($surveyid, $cmid) {
 
 /*
  * survey_get_sid_field_content
- * @param $record, $fieldname='content'
+ * @param $record
  * @return
  */
 function survey_get_sid_field_content($record) {

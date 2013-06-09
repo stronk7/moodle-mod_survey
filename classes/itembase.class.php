@@ -114,9 +114,9 @@ class surveyitem_base {
     public $hideinstructions = 0;
 
     /*
-     * $fieldname = the name of the field storing data in the db table
+     * $variable = the name of the field storing data in the db table
      */
-    public $fieldname = '';
+    public $variable = '';
 
     /*
      * $indent = the indent of the item in the form layout/template
@@ -208,7 +208,7 @@ class surveyitem_base {
         'extranote' => true,
         'hideinstructions' => true,
         'required' => true,
-        'fieldname' => true,
+        'variable' => true,
         'indent' => true,
         'basicform' => true,
         'advancedsearch' => true,
@@ -952,7 +952,7 @@ class surveyitem_base {
         // STEP 02: make corrections
         // $si_fields = array('surveyid', 'type', 'plugin', 'externalname',
         //                    'content_sid', 'content', 'contentformat', 'customnumber',
-        //                    'extrarow', 'extranote', 'required', 'fieldname',
+        //                    'extrarow', 'extranote', 'required', 'variable',
         //                    'indent', 'basicform', 'advancedsearch', 'hide',
         //                    'sortindex', 'basicformpage', 'advancedformpage', 'parentid',
         //                    'parentcontent', 'parentvalue', 'timecreated', 'timemodified');
@@ -1027,7 +1027,7 @@ class surveyitem_base {
             $values['customnumber'] = '\''.$this->customnumber.'\'';
         }
 
-        // $si_fields = array(...'extrarow', 'extranote', 'required', 'hideinstructions', 'fieldname',
+        // $si_fields = array(...'extrarow', 'extranote', 'required', 'hideinstructions', 'variable',
 
         // override: $value['extrarow']
         /*------------------------------------------------*/
@@ -1057,9 +1057,9 @@ class surveyitem_base {
         /*------------------------------------------------*/
         $values['hideinstructions'] = $this->hideinstructions;
 
-        // override: $value['fieldname']
+        // override: $value['variable']
         /*------------------------------------------------*/
-        $values['fieldname'] = empty($this->fieldname) ? '\'\'' : '\''.$this->fieldname.'\'';
+        $values['variable'] = empty($this->variable) ? '\'\'' : '\''.$this->variable.'\'';
 
         // $si_fields = array(...'indent', 'basicform', 'advancedsearch', 'hide',
 

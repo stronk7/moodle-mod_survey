@@ -99,5 +99,31 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013052301, 'survey');
     }
 
+    if ($oldversion < 2013060901) {
+
+        // Rename field fieldname on table survey_item to variable.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('fieldname', XMLDB_TYPE_CHAR, '64', null, null, null, null, 'hideinstructions');
+
+        // Launch rename field fieldname.
+        $dbman->rename_field($table, $field, 'variable');
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013060901, 'survey');
+    }
+
+    if ($oldversion < 2013060903) {
+
+        // Rename field hidehardinfo on table survey_item to hideinstructions.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('hidehardinfo', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'required');
+
+        // Launch rename field hidehardinfo.
+        $dbman->rename_field($table, $field, 'hideinstructions');
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013060903, 'survey');
+    }
+
     return true;
 }

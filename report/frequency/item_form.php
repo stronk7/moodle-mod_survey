@@ -42,7 +42,7 @@ class survey_chooseitemform extends moodleform {
         // only fields
         // no matter for the page
         // elenco dei campi che l'utente vuole vedere nel file esportato
-        $itemssql = 'SELECT si.id, si.fieldname, si.plugin, si.content
+        $itemssql = 'SELECT si.id, si.variable, si.plugin, si.content
                         FROM {survey_item} si
                         WHERE si.surveyid = :surveyid
                             AND si.type = "'.SURVEY_TYPEFIELD.'"

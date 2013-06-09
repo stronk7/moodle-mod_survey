@@ -177,10 +177,10 @@ class surveyitem_baseform extends moodleform {
         }
 
         // ----------------------------------------
-        // newitem::fieldname
+        // newitem::variable
         // ----------------------------------------
         // for SURVEY_TYPEFIELD only
-        $fieldname = 'fieldname';
+        $fieldname = 'variable';
         if ($item->item_form_requires[$fieldname]) {
             $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'), array('class' => 'longfield'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');

@@ -66,7 +66,7 @@ class mod_survey_exportmanager {
         // only fields
         // no matter for the page
         // elenco dei campi che l'utente vuole vedere nel file esportato
-        $itemlistsql = 'SELECT si.id, si.fieldname, si.plugin
+        $itemlistsql = 'SELECT si.id, si.variable, si.plugin
                         FROM {survey_item} si
                         WHERE si.surveyid = :surveyid
                             AND si.type = "'.SURVEY_TYPEFIELD.'"'; // <-- ONLY FIELDS hold data, COLELCTION_FORMAT items do not hold data
@@ -95,7 +95,7 @@ class mod_survey_exportmanager {
             $richsubmissionssql .= 'u.id as userid, u.firstname,  u.lastname, ';
         }
         $richsubmissionssql .= 'ud.id as userdataid, ud.itemid, ud.content,
-                si.sortindex, si.fieldname, si.plugin
+                si.sortindex, si.variable, si.plugin
             FROM {survey_submissions} s
                 INNER JOIN {user} u ON s.userid = u.id
                 INNER JOIN {survey_userdata} ud ON ud.submissionid = s.id
@@ -198,7 +198,7 @@ class mod_survey_exportmanager {
             $recordtoexport[] = get_string('lastname');
         }
         foreach ($fieldidlist as $singlefield) {
-            $recordtoexport[] = empty($singlefield->fieldname) ? $singlefield->plugin.'_'.$singlefield->id : $singlefield->fieldname;
+            $recordtoexport[] = empty($singlefield->variable) ? $singlefield->plugin.'_'.$singlefield->id : $singlefield->variable;
         }
         $recordtoexport[] = get_string('timecreated', 'survey');
         $recordtoexport[] = get_string('timemodified', 'survey');
