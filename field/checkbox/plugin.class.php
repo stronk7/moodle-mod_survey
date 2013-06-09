@@ -151,14 +151,15 @@ class surveyfield_checkbox extends surveyitem_base {
     }
 
     /*
-     * item_parent_content_encode_value
-     * starting from the user input, this function stores to the db the value as it is stored during survey submission
+     * itemparent_content_encode_value
+     * This method is used by items handled as parent
+     * starting from the user input, this method stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
      * (take care: here we are not submitting a survey but we are submitting an item)
      * @param $parentcontent
      * @return
      */
-    public function item_parent_content_encode_value($parentcontent) {
+    public function itemparent_content_encode_value($parentcontent) {
         $arraycontent = survey_textarea_to_array($parentcontent);
         $parentcontent = implode("\n", $arraycontent);
 

@@ -231,19 +231,6 @@ class surveyfield_autofill extends surveyitem_base {
     }
 
     /*
-     * item_parent_content_encode_value
-     * starting from the user input, this function stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_encode_value($parentcontent) {
-        // $this->flag->couldbeparent = false
-        // this method is never called
-    }
-
-    /*
      * item_get_plugin_values
      * @param $pluginstructure
      * @param $pluginsid
@@ -305,7 +292,7 @@ class surveyfield_autofill extends surveyitem_base {
                 $referencearray[] = constant('SURVEYFIELD_AUTOFILL_CONTENTELEMENT'.sprintf('%02d', $i));
             }
 
-            $label = $this->survey_autofill_mform_label();
+            $label = $this->userform_calculate_content();
             if ($this->showfield) {
                 // class doesn't work for this mform element
                 // $mform->addElement('static', 'dummyfieldname', $elementlabel, $label, array('class' => 'indent-'.$this->indent));
@@ -326,17 +313,6 @@ class surveyfield_autofill extends surveyitem_base {
      */
     public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
         // nothing to do here
-    }
-
-    /*
-     * userform_get_parent_disabilitation_info
-     * from child_parentcontent defines syntax for disabledIf
-     * @param: $child_parentcontent
-     * @return
-     */
-    public function userform_get_parent_disabilitation_info($child_parentcontent) {
-        // $this->flag->couldbeparent = false
-        // this method is never called
     }
 
     /*
@@ -435,11 +411,11 @@ class surveyfield_autofill extends surveyitem_base {
     }
 
     /*
-     * survey_autofill_mform_label
+     * userform_calculate_content
      * @param $item
      * @return
      */
-    function survey_autofill_mform_label() {
+    function userform_calculate_content() {
         global $USER, $COURSE, $survey;
 
         $label = '';

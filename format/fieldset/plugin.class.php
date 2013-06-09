@@ -141,19 +141,6 @@ class surveyformat_fieldset extends surveyitem_base {
     }
 
     /*
-     * item_parent_content_encode_value
-     * starting from the user input, this function stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_encode_value($parentcontent) {
-        // $this->flag->couldbeparent = false
-        // this method is never called
-    }
-
-    /*
      * item_get_plugin_values
      * @param $pluginstructure
      * @param $pluginsid
@@ -212,17 +199,6 @@ class surveyformat_fieldset extends surveyitem_base {
      */
     public function userform_db_to_export($itemvalue) {
         return '';
-    }
-
-    /*
-     * userform_display_as_read_only
-     * @param
-     * @return
-     */
-    public function userform_display_as_read_only($itemvalue) { // no longer used - obsolete
-        echo '<fieldset class="clearfix">
-            <legend class="ftoggler">'.strip_tags($this->content).'</legend>';
-        // la chiusura è gestita in /forms/submissions/readonly.php righe 62+
     }
 
     /*

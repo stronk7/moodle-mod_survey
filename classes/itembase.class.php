@@ -293,7 +293,11 @@ class surveyitem_base {
         // $record->extrarow = (isset($record->extrarow)) ? 1 : 0; // extrarow is advcheckbox so doesn't need my intervention
 
         // hideinstructions
-        $record->hideinstructions = (isset($record->hideinstructions)) ? 1 : 0;
+        if ($this->item_form_requires['hideinstructions']) {
+            $record->hideinstructions = isset($record->hideinstructions) ? 1 : 0;
+        } else {
+            $record->hideinstructions = null;
+        }
 
         // hide
         // hide/regular part 1
@@ -318,7 +322,7 @@ class surveyitem_base {
             $itemclass = 'surveyfield_'.$parentplugin;
             $parentitem = new $itemclass($record->parentid);
 
-            $record->parentvalue = $parentitem->item_parent_content_encode_value($record->parentcontent);
+            $record->parentvalue = $parentitem->itemparent_content_encode_value($record->parentcontent);
         }
 
         // $userfeedback
@@ -792,11 +796,10 @@ class surveyitem_base {
      * @return
      */
     public function item_mandatory_is_allowed() {
-        // ATTENZIONE:
-        //     c'è differenza fra un default vuoto
-        //     e il default pari a SURVEY_NOANSWERDEFAULT
-        // il primo prevede una risposta senza un default (questa opzione è compatibile con le domande obbligatorie)
-        // il secondo prevede la prewsenza della checkbox == no answer CHE NON HA SENSO per le domande obbligatorie
+        // TAKE CARE:
+        // a mandatory field is allowed ONLY if
+        //     -> !isset($this->defaultoption)
+        //     -> $this->defaultoption != SURVEY_NOANSWERDEFAULT
         if (isset($this->defaultoption)) {
             return ($this->defaultoption != SURVEY_NOANSWERDEFAULT);
         } else {
@@ -805,23 +808,17 @@ class surveyitem_base {
     }
 
     /*
-     * item_parentcontent_format_validation
-     * checks whether the format of the "parentcontent" content is correct
-     *
-     * I loaded this class as the class of the parent item.
-     * My final goal is to check whether the content of the "parentcontent" field (of the child item) is correct
-     * At first it may seem I may need to validate format and content both. This is not true because...
-     * I only need to validate the format because the content does not matter.
-     * The content does not matter because it has to match the allowed answers of a different question.
-     * Even if I successfull check for the content match (between the "parentcontent" here and the allowed answers in the parent question)...
-     * ... I can still edit the parent question later and change the list of allowed answers. So the content validation is useless, here.
-     * I will perform it in the "Validate branching" age only whether requested.
+     * itemparent_content_encode_value
+     * This method is used by items handled as parent
+     * starting from the user input, this method stores to the db the value as it is stored during survey submission
+     * this method manages the $parentcontent of its child item, not its own $parentcontent
+     * (take care: here we are not submitting a survey but we are submitting an item)
      * @param $parentcontent
      * @return
      */
-    public function item_parentcontent_format_validation($parentcontent) {
-        // whether not overridden by specific class method, return false
-        return false; // no format validation error has been found
+    public function itemparent_content_encode_value($parentcontent) {
+        // whether not overridden by specific class method, return true
+        return true; // nothing to do!
     }
 
     /*
@@ -1450,30 +1447,6 @@ class surveyitem_base {
     }
 
     /*
-     * userform_display_as_read_only
-     * @param
-     * @return
-     */
-    public function userform_display_as_read_only($itemvalue) { // no longer used - obsolete
-
-        $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
-
-        $missinganswer = get_string('missinganswer', 'survey');
-        $submitted = empty($itemvalue->content) ? $missinganswer : $this->userform_db_to_export($itemvalue);
-        echo '<div class="fitem">
-            <div class="fitemtitle">
-                <div class="fstaticlabel">
-                    <label>'.$elementlabel.'</label>
-                </div>
-            </div>
-            <div class="felement fstatic">'.
-                $submitted.'
-            </div>
-        </div>';
-    }
-
-    /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
      * @param $richsubmission
@@ -1489,13 +1462,8 @@ class surveyitem_base {
      * @return list of contraints of the plugin in text format
      */
     public function item_list_constraints() {
-        /* nothing to do here because
-         * if (the item has $this->flag->couldbeparent = true;)
-         *     it uses its own method overriding this
-         * } else {
-         *     it does not need it and, eventually, comes here to do nothing.
-         * }
-         */
+        // whether not overridden by specific class method...
+        // nothing to do!
     }
 
     /*
@@ -1504,13 +1472,8 @@ class surveyitem_base {
      * @return status of child relation
      */
     public function item_parent_validate_child_constraints($childvalue) {
-        /* nothing to do here because
-         * if (the item has $this->flag->couldbeparent = true;)
-         *     it uses its own method overriding this
-         * } else {
-         *     it does not need it and, eventually, comes here to do nothing.
-         * }
-         */
+        // whether not overridden by specific class method...
+        // nothing to do!
     }
 
 }

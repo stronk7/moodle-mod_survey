@@ -191,37 +191,15 @@ class surveyfield_boolean extends surveyitem_base {
     }
 
     /*
-     * item_parentcontent_format_validation
-     * checks whether the format of the "parentcontent" content is correct
-     *
-     * I loaded this class as the class of the parent item.
-     * My final goal is to check whether the content of the "parentcontent" field (of the child item) is correct
-     * At first it may seem I may need to validate format and content both. This is not true because...
-     * I only need to validate the format because the content does not matter.
-     * The content does not matter because it has to match the allowed answers of a different question.
-     * Even if I successfull check for the content match (between the "parentcontent" here and the allowed answers in the parent question)...
-     * ... I can still edit the parent question later and change the list of allowed answers. So the content validation is useless, here.
-     * I will perform it in the "Validate branching" age only whether requested.
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parentcontent_format_validation($parentcontent) {
-        // '[0] or [1]';
-        if (($parentcontent !== '0') && ($parentcontent !== '1')) {
-            $format = get_string('parentformat', 'surveyfield_boolean');
-            return (get_string('invalidformat_err', 'survey', $format));
-        }
-    }
-
-    /*
-     * item_parent_content_encode_value
-     * starting from the user input, this function stores to the db the value as it is stored during survey submission
+     * itemparent_content_encode_value
+     * This method is used by items handled as parent
+     * starting from the user input, this method stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
      * (take care: here we are not submitting a survey but we are submitting an item)
      * @param $parentcontent
      * @return
      */
-    public function item_parent_content_encode_value($parentcontent) {
+    public function itemparent_content_encode_value($parentcontent) {
         return $parentcontent;
     }
 
@@ -238,15 +216,6 @@ class surveyfield_boolean extends surveyitem_base {
         $constraints[] = $optionstr.': 1';
 
         return implode($constraints, '<br />');
-    }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        return true;
     }
 
     /*

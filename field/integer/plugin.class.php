@@ -198,19 +198,6 @@ class surveyfield_integer extends surveyitem_base {
     }
 
     /*
-     * item_parent_content_encode_value
-     * starting from the user input, this function stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_encode_value($parentcontent) {
-        // $this->flag->couldbeparent = false
-        // this method is never called
-    }
-
-    /*
      * item_get_filling_instructions
      * @param
      * @return

@@ -405,9 +405,6 @@ class surveyitem_baseform extends moodleform {
             require_once($CFG->dirroot.'/mod/survey/field/'.$plugin.'/plugin.class.php');
             $itemclass = 'surveyfield_'.$plugin;
             $parentitem = new $itemclass($data['parentid']);
-            if ($errormessage = $parentitem->item_parentcontent_format_validation($data['parentcontent'])) {
-                $errors['parentcontent'] = $errormessage;
-            }
 
             // verify $parentitem is in the basicform as of this item
             $childbasicform = $data['basicform'];

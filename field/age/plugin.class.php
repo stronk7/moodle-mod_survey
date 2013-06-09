@@ -236,19 +236,6 @@ class surveyfield_age extends surveyitem_base {
     }
 
     /*
-     * item_parent_content_encode_value
-     * starting from the user input, this function stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     * @param $parentcontent
-     * @return
-     */
-    public function item_parent_content_encode_value($parentcontent) {
-        // $this->flag->couldbeparent = false
-        // this method is never called
-    }
-
-    /*
      * item_atomize_parent_content
      * starting from parentcontent, this function returns it splitted into an array
      * @param $parentcontent
@@ -479,17 +466,6 @@ class surveyfield_age extends surveyitem_base {
         if ($hasupperbound && ($userinput > $this->upperbound)) {
             $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_age');
         }
-    }
-
-    /*
-     * userform_get_parent_disabilitation_info
-     * from child_parentcontent defines syntax for disabledIf
-     * @param: $child_parentcontent
-     * @return
-     */
-    public function userform_get_parent_disabilitation_info($child_parentcontent) {
-        // $this->flag->couldbeparent = false
-        // this method is never called
     }
 
     /*
