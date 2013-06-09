@@ -143,22 +143,6 @@ class surveyfield_multiselect extends surveyitem_base {
     }
 
     /*
-     * itemparent_content_encode_value
-     * This method is used by items handled as parent
-     * starting from the user input, this method stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     * @param $parentcontent
-     * @return
-     */
-    public function itemparent_content_encode_value($parentcontent) {
-        $arraycontent = survey_textarea_to_array($parentcontent);
-        $parentcontent = implode("\n", $arraycontent);
-
-        return $parentcontent;
-    }
-
-    /*
      * item_list_constraints
      * @param
      * @return list of contraints of the plugin in text format
@@ -176,11 +160,29 @@ class surveyfield_multiselect extends surveyitem_base {
     }
 
     /*
-     * item_parent_validate_child_constraints
+     * item_get_plugin_values
+     * @param $pluginstructure
+     * @param $pluginsid
+     * @return
+     */
+    public function item_get_plugin_values($pluginstructure, $pluginsid) {
+        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
+
+        // just a check before assuming all has been done correctly
+        $errindex = array_search('err', $values, true);
+        if ($errindex !== false) {
+            throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
+        }
+
+        return $values;
+    }
+
+    /*
+     * parent_validate_child_constraints
      * @param
      * @return status of child relation
      */
-    public function item_parent_validate_child_constraints($childvalue) {
+    public function parent_validate_child_constraints($childvalue) {
         $childvalue = survey_textarea_to_array($childvalue);
 
         $valuelabel = $this->item_get_value_label_array('options');
@@ -208,21 +210,19 @@ class surveyfield_multiselect extends surveyitem_base {
     }
 
     /*
-     * item_get_plugin_values
-     * @param $pluginstructure
-     * @param $pluginsid
+     * parent_encode_content_to_value
+     * This method is used by items handled as parent
+     * starting from the user input, this method stores to the db the value as it is stored during survey submission
+     * this method manages the $parentcontent of its child item, not its own $parentcontent
+     * (take care: here we are not submitting a survey but we are submitting an item)
+     * @param $parentcontent
      * @return
      */
-    public function item_get_plugin_values($pluginstructure, $pluginsid) {
-        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
+    public function parent_encode_content_to_value($parentcontent) {
+        $arraycontent = survey_textarea_to_array($parentcontent);
+        $parentcontent = implode("\n", $arraycontent);
 
-        // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, true);
-        if ($errindex !== false) {
-            throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
-        }
-
-        return $values;
+        return $parentcontent;
     }
 
     /*

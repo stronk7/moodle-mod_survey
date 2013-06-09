@@ -209,19 +209,6 @@ class surveyfield_select extends surveyitem_base {
     }
 
     /*
-     * itemparent_content_encode_value
-     * This method is used by items handled as parent
-     * starting from the user input, this method stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     * @param $parentcontent
-     * @return
-     */
-    public function itemparent_content_encode_value($parentcontent) {
-        return $parentcontent;
-    }
-
-    /*
      * item_list_constraints
      * @param
      * @return list of contraints of the plugin in text format
@@ -242,22 +229,6 @@ class surveyfield_select extends surveyitem_base {
     }
 
     /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        $valuelabel = $this->item_get_value_label_array('options');
-
-        $status = true;
-        if (empty($this->labelother)) {
-            $status = $status && array_key_exists($childvalue, $valuelabel);
-        }
-
-        return $status;
-    }
-
-    /*
      * item_get_plugin_values
      * @param $pluginstructure
      * @param $pluginsid
@@ -273,6 +244,35 @@ class surveyfield_select extends surveyitem_base {
         }
 
         return $values;
+    }
+
+    /*
+     * parent_validate_child_constraints
+     * @param
+     * @return status of child relation
+     */
+    public function parent_validate_child_constraints($childvalue) {
+        $valuelabel = $this->item_get_value_label_array('options');
+
+        $status = true;
+        if (empty($this->labelother)) {
+            $status = $status && array_key_exists($childvalue, $valuelabel);
+        }
+
+        return $status;
+    }
+
+    /*
+     * parent_encode_content_to_value
+     * This method is used by items handled as parent
+     * starting from the user input, this method stores to the db the value as it is stored during survey submission
+     * this method manages the $parentcontent of its child item, not its own $parentcontent
+     * (take care: here we are not submitting a survey but we are submitting an item)
+     * @param $parentcontent
+     * @return
+     */
+    public function parent_encode_content_to_value($parentcontent) {
+        return $parentcontent;
     }
 
     /*

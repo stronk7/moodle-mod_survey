@@ -322,7 +322,7 @@ class surveyitem_base {
             $itemclass = 'surveyfield_'.$parentplugin;
             $parentitem = new $itemclass($record->parentid);
 
-            $record->parentvalue = $parentitem->itemparent_content_encode_value($record->parentcontent);
+            $record->parentvalue = $parentitem->parent_encode_content_to_value($record->parentcontent);
         }
 
         // $userfeedback
@@ -808,20 +808,6 @@ class surveyitem_base {
     }
 
     /*
-     * itemparent_content_encode_value
-     * This method is used by items handled as parent
-     * starting from the user input, this method stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     * @param $parentcontent
-     * @return
-     */
-    public function itemparent_content_encode_value($parentcontent) {
-        // whether not overridden by specific class method, return true
-        return true; // nothing to do!
-    }
-
-    /*
      * item_get_type
      * @param
      * @return
@@ -1264,6 +1250,30 @@ class surveyitem_base {
     }
 
     /*
+     * parent_validate_child_constraints
+     * @param
+     * @return status of child relation
+     */
+    public function parent_validate_child_constraints($childvalue) {
+        // whether not overridden by specific class method...
+        // nothing to do!
+    }
+
+    /*
+     * parent_encode_content_to_value
+     * This method is used by items handled as parent
+     * starting from the user input, this method stores to the db the value as it is stored during survey submission
+     * this method manages the $parentcontent of its child item, not its own $parentcontent
+     * (take care: here we are not submitting a survey but we are submitting an item)
+     * @param $parentcontent
+     * @return
+     */
+    public function parent_encode_content_to_value($parentcontent) {
+        // whether not overridden by specific class method, return true
+        return true; // nothing to do!
+    }
+
+    /*
      * userform_child_item_allowed_static
      * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
      * ----------------------------------------------------------------------
@@ -1465,15 +1475,4 @@ class surveyitem_base {
         // whether not overridden by specific class method...
         // nothing to do!
     }
-
-    /*
-     * item_parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function item_parent_validate_child_constraints($childvalue) {
-        // whether not overridden by specific class method...
-        // nothing to do!
-    }
-
 }

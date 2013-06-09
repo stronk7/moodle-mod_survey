@@ -968,7 +968,7 @@ class mod_survey_itemelement {
 
             // *************************************** status
             if ($item->parentid) {
-                $status = $parentitem->item_parent_validate_child_constraints($item->parentvalue);
+                $status = $parentitem->parent_validate_child_constraints($item->parentvalue);
                 if ($status === true) {
                     $tablerow[] = $okstring;
                 } else {

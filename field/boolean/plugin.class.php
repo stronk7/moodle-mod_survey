@@ -191,7 +191,18 @@ class surveyfield_boolean extends surveyitem_base {
     }
 
     /*
-     * itemparent_content_encode_value
+     * parent_validate_child_constraints
+     * @param
+     * @return status of child relation
+     */
+    public function parent_validate_child_constraints($childvalue) {
+        $status = (($childvalue == 0) || ($childvalue == 1));
+
+        return $status;
+    }
+
+    /*
+     * parent_encode_content_to_value
      * This method is used by items handled as parent
      * starting from the user input, this method stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
@@ -199,7 +210,7 @@ class surveyfield_boolean extends surveyitem_base {
      * @param $parentcontent
      * @return
      */
-    public function itemparent_content_encode_value($parentcontent) {
+    public function parent_encode_content_to_value($parentcontent) {
         return $parentcontent;
     }
 
