@@ -60,8 +60,14 @@ $context = context_module::instance($cm->id);
 $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 switch ($action) {
     case SURVEY_NOACTION:
-        $currentpage = SURVEY_SUBMISSION_NEW; // needed by tabs.php
-        require_capability('mod/survey:submit', $context);
+        if (has_capability('mod/survey:submit', $context, null, true)) {
+            // user is not an admin
+            $currentpage = SURVEY_SUBMISSION_NEW; // needed by tabs.php
+        } else {
+            // user may be an admin
+            $currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
+            require_capability('mod/survey:preview', $context);
+        }
         break;
     case SURVEY_EDITRESPONSE:
         $currentpage = SURVEY_SUBMISSION_EDIT; // needed by tabs.php

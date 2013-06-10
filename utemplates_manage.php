@@ -61,13 +61,14 @@ require_capability('mod/survey:manageusertemplates', $context);
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$utemplate_manager = new mod_survey_usertemplate($survey, $action, $confirm);
+$utemplate_manager = new mod_survey_usertemplate($survey, $confirm);
 $utemplate_manager->utemplateid = optional_param('fid', 0, PARAM_INT);
 
-$utemplate_manager->action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $utemplate_manager->canexportutemplates = has_capability('mod/survey:exportusertemplates', $context, null, true);
 $utemplate_manager->candeleteutemplates = has_capability('mod/survey:deleteusertemplates', $context, null, true);
-$utemplate_manager->manage_actions();
+if ($action == SURVEY_EXPORTUTEMPLATE) {
+    $utemplate_manager->export_utemplate();
+}
 
 // ////////////////////////////////////////////////////////////
 // Output starts here
@@ -84,6 +85,9 @@ echo $OUTPUT->header();
 
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
+if ($action == SURVEY_DELETEUTEMPLATE) {
+    $utemplate_manager->delete_utemplate();
+}
 $utemplate_manager->manage_utemplates();
 
 // Finish the page

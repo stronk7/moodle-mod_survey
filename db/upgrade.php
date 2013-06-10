@@ -119,7 +119,9 @@ function xmldb_survey_upgrade($oldversion) {
         $field = new xmldb_field('hidehardinfo', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'required');
 
         // Launch rename field hidehardinfo.
-        $dbman->rename_field($table, $field, 'hideinstructions');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'hideinstructions');
+        }
 
         // Survey savepoint reached.
         upgrade_mod_savepoint(true, 2013060903, 'survey');

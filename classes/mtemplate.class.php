@@ -478,18 +478,6 @@ class mod_survey_mastertemplate extends mod_survey_template {
     }
 
     /*
-     * get_utemplate_content
-     * @param
-     * @return
-     */
-    public function get_utemplate_content() {
-        $fs = get_file_storage();
-        $xmlfile = $fs->get_file_by_id($this->utemplateid);
-
-        return $xmlfile->get_content();
-    }
-
-    /*
      * wrap_line
      * @param $values, $lineindent=20
      * @return
@@ -602,55 +590,6 @@ class mod_survey_mastertemplate extends mod_survey_template {
                 }
             }
             $itemseeds->close();
-        }
-    }
-
-    /*
-     * add_items_from_template
-     * @param $templateid
-     * @return
-     */
-    public function add_items_from_template($templateid) {
-        global $DB;
-
-        $templatecontent = $this->get_utemplate_content();
-
-        $xmltext = simplexml_load_string($templatecontent);
-
-        // echo '<h2>Items saved in the file ('.count($xmltext->item).')</h2>';
-
-        $sortindexoffset = $DB->get_field('survey_item', 'MAX(sortindex)', array('surveyid' => $this->survey->id));
-        foreach ($xmltext->children() as $item) {
-            // echo '<h3>Count of tables for the current item: '.count($item->children()).'</h3>';
-            foreach ($item->children() as $table) {
-                $tablename = $table->getName();
-                // echo '<h4>Count of fields of the table '.$tablename.': '.count($table->children()).'</h4>';
-                $record = array();
-                foreach ($table->children() as $field) {
-                    $fieldname = $field->getName();
-                    $fieldvalue = (string)$field;
-                    // echo '<div>Table: '.$table->getName().', Field: '.$fieldname.', content: '.$field.'</div>';
-                    if ($fieldvalue == SURVEY_EMPTYTEMPLATEFIELD) {
-                        $record[$fieldname] = null;
-                    } else {
-                        $record[$fieldname] = $fieldvalue;
-                    }
-                }
-
-                unset($record['id']);
-                $record['surveyid'] = $this->survey->id;
-                if ($tablename == 'survey_item') {
-                    $record['sortindex'] += $sortindexoffset;
-                    if (!empty($record['parentid'])) {
-                        $sqlparams = array('surveyid' => $this->survey->id, 'sortindex' => ($record['parentid'] + $sortindexoffset));
-                        $record['parentid'] = $DB->get_field('survey_item', 'id', $sqlparams, MUST_EXIST);
-                    }
-                    $itemid = $DB->insert_record($tablename, $record);
-                } else {
-                    $record['itemid'] = $itemid;
-                    $DB->insert_record($tablename, $record, false);
-                }
-            }
         }
     }
 }

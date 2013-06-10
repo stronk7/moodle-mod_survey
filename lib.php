@@ -840,7 +840,6 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
             $navnode->add(get_string('tabutemplatepage4', 'survey'), new moodle_url('/mod/survey/utemplate_apply.php', $paramurl), navigation_node::TYPE_SETTING);
         }
     }
-    // $navref->add(SURVEY_TAB3NAME, new moodle_url('/mod/survey/view.php', array('s' => $cm->instance, 'tab' => SURVEY_TABUTEMPLATES)));
 
     /*
      * SURVEY_TABMTEMPLATES
@@ -848,14 +847,14 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     if ($cancreatemastertemplate || (!$hassubmissions && $canapplymastertemplate)) {
         // PARENT
         $paramurl = array('s' => $cm->instance);
-        $navref->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/mtemplate.php', $paramurl), navigation_node::TYPE_CONTAINER);
+        $navnode = $navref->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/mtemplate.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
         // CHILDREN
         if ($cancreatemastertemplate) {
-            $navnode->add(get_string('tabutemplatepage1', 'survey'), new moodle_url('/mod/survey/mtemplate_create.php', $paramurl), navigation_node::TYPE_SETTING);
+            $navnode->add(get_string('tabmtemplatepage1', 'survey'), new moodle_url('/mod/survey/mtemplate_create.php', $paramurl), navigation_node::TYPE_SETTING);
         }
         if (!$hassubmissions && $canapplymastertemplate) {
-            $navnode->add(get_string('tabutemplatepage2', 'survey'), new moodle_url('/mod/survey/mtemplate_apply.php', $paramurl), navigation_node::TYPE_SETTING);
+            $navnode->add(get_string('tabmtemplatepage2', 'survey'), new moodle_url('/mod/survey/mtemplate_apply.php', $paramurl), navigation_node::TYPE_SETTING);
         }
     }
 }

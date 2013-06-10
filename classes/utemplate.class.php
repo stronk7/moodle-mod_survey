@@ -32,11 +32,6 @@ require_once($CFG->dirroot.'/mod/survey/classes/template.class.php');
 
 class mod_survey_usertemplate extends mod_survey_template {
     /*
-     * $action: the action required by the user;
-     */
-    public $action = SURVEY_NOACTION;
-
-    /*
      * $utemplateid: the ID of the current working user template
      */
     public $utemplateid = 0;
@@ -70,9 +65,8 @@ class mod_survey_usertemplate extends mod_survey_template {
     /*
      * Class constructor
      */
-    public function __construct($survey, $action, $confirm) {
+    public function __construct($survey, $confirm) {
         $this->survey = $survey;
-        $this->action = $action;
         $this->confirm = $confirm;
     }
 
@@ -102,7 +96,7 @@ class mod_survey_usertemplate extends mod_survey_template {
         print $content;
         fclose($xmlfile);
         unlink($exportdir.'/'.$exportfilename);
-        exit(0);
+        die;
     }
 
     /*
@@ -385,26 +379,6 @@ class mod_survey_usertemplate extends mod_survey_template {
     }
 
     /*
-     * manage_actions
-     * @param
-     * @return
-     */
-    public function manage_actions() {
-        switch ($this->action) {
-            case SURVEY_NOACTION:
-                break;
-            case SURVEY_DELETEUTEMPLATE:
-                $this->delete_utemplate();
-                break;
-            case SURVEY_EXPORTUTEMPLATE:
-                $this->export_utemplate();
-                break;
-            default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
-        }
-    }
-
-    /*
      * manage_utemplates
      * @param
      * @return
@@ -635,70 +609,17 @@ class mod_survey_usertemplate extends mod_survey_template {
         $this->utemplateid = $this->formdata->itemset;
         if (!empty($this->utemplateid)) { // something was selected
             // BEGIN: add records from template
-            $this->add_items_from_template();
+            $this->add_items_from_utemplate();
             // END: add records from template
         }
     }
 
     /*
-     * survey_add_items_from_plugin
-     * @param $externalname
-     * @return
-     */
-    public function add_items_from_plugin($externalname) {
-        global $DB;
-
-        $dbman = $DB->get_manager();
-
-        if ($itemseeds = $DB->get_recordset('survey_item', array('surveyid' => 0, 'externalname' => $externalname), 'id', 'id, plugin')) {
-            $sortindexoffset = $DB->get_field('survey_item', 'MAX(sortindex)', array('surveyid' => $this->survey->id));
-            foreach ($itemseeds as $itemseed) {
-                $plugintable = 'survey_'.$itemseed->plugin;
-                if ($dbman->table_exists($plugintable)) {
-                    $sql = 'SELECT *
-                            FROM {survey_item} si
-                                JOIN {'.$plugintable.'} plugin ON plugin.itemid = si.id
-                            WHERE si.surveyid = 0
-                                AND si.id = :surveyitemid
-                                AND si.externalname = :externalname';
-                } else {
-                    $sql = 'SELECT *
-                            FROM {survey_item} si
-                            WHERE si.surveyid = 0
-                                AND si.id = :surveyitemid
-                                AND si.externalname = :externalname';
-                }
-                $record = $DB->get_record_sql($sql, array('surveyitemid' => $itemseed->id, 'externalname' => $externalname));
-
-                unset($record->id);
-                $record->surveyid = $this->survey->id;
-                $record->sortindex += $sortindexoffset;
-                // recalculate parentid that is still pointing to the record with surveyid = 0
-                if (!empty($record->parentid)) {
-                    // in the atabase, records of plugins (the ones with surveyid = 0) store sortorder in the parentid field. This for portability reasons.
-                    $newsortindex = $record->parentid + $sortindexoffset;
-                    $sqlparams = array('surveyid' => $this->survey->id, 'externalname' => $externalname, 'sortindex' => $newsortindex);
-                    $record->parentid = $DB->get_field('survey_item', 'id', $sqlparams, MUST_EXIST);
-                }
-
-                // survey_item
-                $record->itemid = $DB->insert_record('survey_item', $record);
-
-                // $plugintable
-                if ($dbman->table_exists($plugintable)) {
-                    $DB->insert_record($plugintable, $record, false);
-                }
-            }
-            $itemseeds->close();
-        }
-    }
-
-    /*
-     * add_items_from_template
+     * add_items_from_utemplate
      * @param $templateid
      * @return
      */
-    public function add_items_from_template() {
+    public function add_items_from_utemplate() {
         global $DB;
 
         $templatecontent = $this->get_utemplate_content();
@@ -747,9 +668,10 @@ class mod_survey_usertemplate extends mod_survey_template {
      * @param
      * @return
      */
-    public function get_utemplate_content() {
+    public function get_utemplate_content($utemplateid=0) {
         $fs = get_file_storage();
-        $xmlfile = $fs->get_file_by_id($this->utemplateid);
+        $utemplateid = ($utemplateid) ? $utemplateid : $this->utemplateid;
+        $xmlfile = $fs->get_file_by_id($utemplateid);
 
         return $xmlfile->get_content();
     }

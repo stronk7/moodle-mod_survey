@@ -92,7 +92,7 @@ class survey_importutemplateform extends moodleform {
             $uploadedfiles[] = $xmlfilename;
             try {
                 $xmlfileid = $file->get_id();
-                $templatecontent = survey_get_template_content($xmlfileid);
+                $templatecontent = $utemplate_manager->get_utemplate_content($xmlfileid);
                 $xml = @new SimpleXMLElement($templatecontent);
             } catch (Exception $e) {
                 $errors['importfile_filemanager'] = get_string('invalidtemplate', 'survey', $xmlfilename);

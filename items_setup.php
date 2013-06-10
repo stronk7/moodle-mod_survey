@@ -57,6 +57,7 @@ $type = optional_param('type', null, PARAM_TEXT);
 
 $hassubmissions = survey_has_submissions($survey->id, SURVEY_STATUSCLOSED);
 
+$context = context_module::instance($cm->id);
 require_capability('mod/survey:additems', $context);
 
 // ////////////////////////////////////////////////////////////
