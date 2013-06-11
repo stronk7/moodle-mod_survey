@@ -237,15 +237,6 @@ class mod_survey_submissionmanager {
         $table->initialbars(true);
 
         $paramurl = array('id' => $cm->id);
-        if ($this->searchfields_get) {
-            if ($submissionidlist = $this->get_filtered_id_list()) {
-                $paramurl['searchquery'] = $this->searchfields_get;
-            } else {
-                $table->print_nothing_to_display();
-                echo $OUTPUT->footer();
-                die;
-            }
-        }
         $table->define_baseurl(new moodle_url('view_manage.php', $paramurl));
 
         $tablecolumns = array();
@@ -320,32 +311,51 @@ class mod_survey_submissionmanager {
         list($where, $params) = $table->get_sql_where();
 
         $userfields = user_picture::fields('u');
-        $sql = 'SELECT s.*, s.id as submissionid,'.$userfields.'
-                FROM {survey_submissions} s
-                    JOIN {user} u ON (s.userid = u.id)';
-        if (!$this->canmanageallsubmissions) {
-            if ($mygroups) {
-                $i = 0;
-                $relations = array();
-                foreach ($mygroups as $mygroup) {
-                    $i++;
-                    $relations[] = '(gm.groupid = :groupid'.$i.')';
-                    $params['groupid'.$i] = $mygroup;
-                }
-                $sql .= ' JOIN {groups_members} gm ON (gm.userid = u.id AND ('.implode(' OR ', $relations).'))';
+
+        $sql = 'SELECT s.*, s.id as submissionid, '.$userfields.'
+                FROM {survey_submissions} s ';
+
+        // write $userdata_transposed whether necessary
+        if ($this->searchfields_get) {
+            // this will be re-send to URL for next page reload, whether requested with a sort, for instance
+            $paramurl['searchquery'] = $this->searchfields_get;
+
+            $search_restrictions = unserialize($this->searchfields_get);
+// $search_restrictions:
+//   1053 => string '1' (length=1)
+//   1054 => string '6.32' (length=4)
+//   1055 => string '90' (length=2)
+//   1065 => string 'Wine' (length=4)
+
+            $userdata_transposed = 'SELECT submissionid, '."\n";
+            $sqlrow = array();
+            foreach ($search_restrictions as $itemid => $search_restriction) {
+                $sqlrow[] = 'MAX(IF(itemid = \''.$itemid.'\', content, NULL)) AS \'c_'.$itemid.'\'';
+            }
+            $userdata_transposed .= implode(', ', $sqlrow)."\n";
+            $userdata_transposed .= 'FROM {survey_userdata} '."\n";
+            $userdata_transposed .= 'GROUP BY submissionid';
+
+            $sql .= '    JOIN ('.$userdata_transposed.') userdata ON userdata.submissionid = s.id ';
+        }
+        $sql .= '    JOIN {user} u ON (s.userid = u.id)
+                WHERE s.surveyid = :surveyid';
+        $params['surveyid'] = $this->survey->id;
+
+        // specific restrictions over {survey_userdata}
+        if ($this->searchfields_get) {
+            foreach ($search_restrictions as $itemid => $search_restriction) {
+                $sql .= ' AND userdata.c_'.$itemid.' = :c_'.$itemid;
+                $params['c_'.$itemid] = $search_restriction;
             }
         }
-        $sql .= ' WHERE s.surveyid = :surveyid';
-        $params['surveyid'] = $this->survey->id;
-        if ($this->searchfields_get) {
-            // I am sure $submissionidlist exists otherwise execution is stopped before
-            $sql .= 'WHERE s.id IN ('.implode(',', $submissionidlist).')';
-        }
 
+        // specific restrictions coming from $table->get_sql_where()
         if ($where) {
             $sql .= ' AND '.$where;
         }
 
+        // sort coming from $table->get_sql_sort()
         if ($table->get_sql_sort()) {
             $sql .= ' ORDER BY '.$table->get_sql_sort();
         } else {
@@ -439,81 +449,5 @@ class mod_survey_submissionmanager {
 
         $table->summary = get_string('submissionslist', 'survey');
         $table->print_html();
-    }
-
-    /*
-     * survey_find_submissions
-     * @param
-     * @return
-     */
-    public function get_filtered_id_list() {
-        global $DB;
-
-        $search_restrictions = unserialize($this->searchfields_get);
-
-        // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-        // echo '$search_restrictions (prima):';
-        // var_dump($search_restrictions);
-
-        foreach ($search_restrictions as $itemid => $valuesarray) {
-            // I am interested only to non empty fields BUT different from SURVEY_NOANSWERVALUE
-            if ($valuesarray == SURVEY_NOANSWERVALUE) {
-                unset($search_restrictions[$itemid]);
-            }
-        }
-        // echo '$search_restrictions (dopo):';
-        // var_dump($search_restrictions);
-        // die;
-
-        // the search process is tricky
-        // the procedure is:
-        // step 1:
-        //     get the set of submissions matching the first condition
-        // step 2:
-        //     check the found set for all the other conditions
-        //     if at least one condition does not match, delete the submission id from the starting set
-        //     Whatever will not be deleted, is the submission matching ALL submitted requests
-
-        // if the search form is empty (has no conditions) return all the submissions
-        if (!$search_restrictions) {
-            return;
-        }
-
-        $keys = array_keys($search_restrictions);
-        $firstitemid = $keys[0];
-        $firstcontent = $search_restrictions[$firstitemid];
-
-        unset($search_restrictions[$firstitemid]); // drop the first element of $search_restrictions
-
-        // should work but does not: MDL-27629
-        // $submissionidlist = $DB->get_records('survey_userdata', array('itemid' => $firstitemid, $DB->sql_compare_text('content') => $firstcontent), 'submissionid');
-
-        $where = 'itemid = :itemid AND '.$DB->sql_compare_text('content').' = :content';
-        $params = array('itemid' => $firstitemid, 'content' => (string)$firstcontent);
-        if (!$submissionidlist = $DB->get_records_select('survey_userdata', $where, $params, 'submissionid', 'submissionid')) {
-            // nessuna submission soddisfa le richieste
-            return array();
-        } else {
-            $submissionidlist = array_keys($submissionidlist); // list of submission id matching the first constraint
-        }
-
-        if (!$search_restrictions) {
-            // if no more constaints are available, the process is finished
-            return $submissionidlist;
-        }
-
-        foreach ($search_restrictions as $itemid => $valuesarray) {
-            $where = 'submissionid IN ('.implode(',', $submissionidlist).')
-                          AND itemid = :itemid
-                          AND content = :valuesarray';
-            $params = array('itemid' => $itemid, 'content' => (string)$valuesarray);
-            if ($submissionidlist = $DB->get_records_select('survey_userdata', $where, $params, 'submissionid', 'submissionid')) {
-                $submissionidlist = array_keys($submissionidlist);
-            } else {
-                // not any submission meets all the constraints
-                return array();
-            }
-        }
-        return $submissionidlist;
     }
 }

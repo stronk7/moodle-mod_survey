@@ -359,24 +359,28 @@ function survey_get_unixtimedownloadformats() {
  * @return
  */
 function survey_prevent_direct_user_input($survey, $cm, $submissionid, $action) {
-    $mygroups = survey_get_my_groups($cm);
-    $ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $submissionid), IGNORE_MISSING);
-    switch ($action) {
-        case SURVEY_EDITRESPONSE:
-        case SURVEY_DUPLICATERESPONSE:
-            $allowed = ((!$ownerid) || (!survey_i_can_edit($survey, $mygroups, $ownerid)));
-            break;
-        case SURVEY_READONLYRESPONSE:
-            $allowed = ((!$ownerid) || (!survey_i_can_read($survey, $mygroups, $ownerid)));
-            break;
-        case SURVEY_DELETERESPONSE:
-            $allowed = ((!$ownerid) || (!survey_i_can_delete($survey, $mygroups, $ownerid)));
-            break;
-        default:
-            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
-    }
-    if (!$allowed) {
-        print_error('incorrectaccessdetected', 'survey');
+    global $DB;
+
+    if (!$canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $context, null, true)) {
+        $mygroups = survey_get_my_groups($cm);
+        $ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $submissionid), IGNORE_MISSING);
+        switch ($action) {
+            case SURVEY_EDITRESPONSE:
+            case SURVEY_DUPLICATERESPONSE:
+                $allowed = (($ownerid) && (survey_i_can_edit($survey, $mygroups, $ownerid)));
+                break;
+            case SURVEY_READONLYRESPONSE:
+                $allowed = (($ownerid) && (survey_i_can_read($survey, $mygroups, $ownerid)));
+                break;
+            case SURVEY_DELETERESPONSE:
+                $allowed = (($ownerid) && (survey_i_can_delete($survey, $mygroups, $ownerid)));
+                break;
+            default:
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
+        }
+        if (!$allowed) {
+            print_error('incorrectaccessdetected', 'survey');
+        }
     }
 }
 

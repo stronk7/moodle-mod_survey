@@ -55,15 +55,11 @@ class mod_survey_searchmanager {
     }
 
     /*
-     * definesearchparamlist
+     * get_searchparamurl
      * @param
      * @return
      */
     public function get_searchparamurl() {
-        global $PAGE;
-
-        $cm = $PAGE->cm;
-
         $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
 
         $infoperitem = array();
