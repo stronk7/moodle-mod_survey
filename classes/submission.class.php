@@ -327,16 +327,20 @@ class mod_survey_submissionmanager {
 //   1055 => string '90' (length=2)
 //   1065 => string 'Wine' (length=4)
 
-            $userdata_transposed = 'SELECT submissionid, '."\n";
+            // written following http://buysql.com/mysql/14-how-to-automate-pivot-tables.html
+            $userdata_transposed = 'SELECT submissionid, ';
             $sqlrow = array();
             foreach ($search_restrictions as $itemid => $search_restriction) {
                 $sqlrow[] = 'MAX(IF(itemid = \''.$itemid.'\', content, NULL)) AS \'c_'.$itemid.'\'';
             }
-            $userdata_transposed .= implode(', ', $sqlrow)."\n";
-            $userdata_transposed .= 'FROM {survey_userdata} '."\n";
-            $userdata_transposed .= 'GROUP BY submissionid';
+            $userdata_transposed .= implode(', ', $sqlrow);
+            $userdata_transposed .= ' FROM {survey_userdata}';
+            $userdata_transposed .= ' GROUP BY submissionid';
 
-            $sql .= '    JOIN ('.$userdata_transposed.') userdata ON userdata.submissionid = s.id ';
+            $sql .= '    JOIN ('.$userdata_transposed.') udt ON udt.submissionid = s.id '; // udt == user data transposed
+        }
+        if ($mygroups) {
+            $sql .= '    JOIN {groups_members} gm ON gm.userid = s.userid ';
         }
         $sql .= '    JOIN {user} u ON (s.userid = u.id)
                 WHERE s.surveyid = :surveyid';
@@ -345,9 +349,18 @@ class mod_survey_submissionmanager {
         // specific restrictions over {survey_userdata}
         if ($this->searchfields_get) {
             foreach ($search_restrictions as $itemid => $search_restriction) {
-                $sql .= ' AND userdata.c_'.$itemid.' = :c_'.$itemid;
+                $sql .= ' AND udt.c_'.$itemid.' = :c_'.$itemid;
                 $params['c_'.$itemid] = $search_restriction;
             }
+        }
+        if (count($mygroups)) {
+            $grouprow = array();
+            $sql .= ' AND (';
+            foreach ($mygroups as $mygroup) {
+                $grouprow[] = 'gm.groupid = '.$mygroup;
+            }
+            $sql .= implode(' OR ', $grouprow);
+            $sql .= ') ';
         }
 
         // specific restrictions coming from $table->get_sql_where()
@@ -361,6 +374,8 @@ class mod_survey_submissionmanager {
         } else {
             $sql .= ' ORDER BY s.timecreated';
         }
+
+        // echo '$sql = '.$sql.'<br />';
 
         $submissions = $DB->get_recordset_sql($sql, $params, $table->get_sql_sort());
 
