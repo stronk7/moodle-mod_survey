@@ -1,16 +1,18 @@
 -> does it make sense the research per long text?
 -> validate the content of the XML uploaded by the user
--> at uninstall time delete 'mod_survey' files too
--> make a general test as teacher and student too (thanks to JR)
--> The Validate tab should only be displayed if the survey contains
-branching questions. (thanks to JR)
 -> This has lots of features, but the consequence is that the page is
 "cluttered" with too many settings. Obviously a Show/Hide advanced
 button is needed. (thanks to JR)
--> * folder mod/survey/field should be renamed to /questiontypes  (thanks to JR)
 -> * Note: it would be useful to have a "manage question types" feature for
 this module, similar to the Quiz questions manage question types, so
 that an Admin would be able to disable/enable survey question types at
 site level. (thanks to JR)
 -> The Autofill question message "Content will be added at submit time" should not be displayed to the Student when taking the Survey, as it does not mean anything to him. That is a message for Teacher, not Student. (thanks to JR)
 -> Ask how to refresh navigation block from within the module
+-> double instance needs module code?
+-> grades?
+-> survey_get_view_actions()?
+-> survey_get_post_actions()?
+-> survey_get_editor_options()?
+-> survey_scale_used($surveyid, $scaleid)?
+-> survey_scale_used_anywhere($scaleid)?

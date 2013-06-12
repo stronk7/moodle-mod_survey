@@ -366,8 +366,33 @@ function survey_delete_instance($id) {
     }
 
     // Delete any dependent records here
+    $submissions = $DB->get_records('survey_submissions', array('surveyid' => $survey->id), '', 'id');
 
+    // delete all associated survey_userdata
+    $DB->delete_records_list('survey_userdata', 'submissionid', array_keys($submissions));
+
+    // delete all associated survey_submissions
+    $DB->delete_records('survey_submissions', array('surveyid' => $survey->id));
+
+    // get all item_<<plugin>> and format_<<plugin>>
+    $pluginlist = survey_get_plugin_list();
+
+    // delete all associated item_<<plugin>>
+    foreach ($pluginlist as $plugin) {
+        $tablename = 'survey_'.$plugin;
+        $DB->delete_records($tablename, array('surveyid' => $survey->id));
+    }
+
+    // delete all associated survey_items
+    $DB->delete_records('survey_items', array('surveyid' => $survey->id));
+
+    // finally, delete the survey record
     $DB->delete_records('survey', array('id' => $survey->id));
+
+    // ////////////////////////////////////
+    // TODO: Am I supposed to delete files too?
+    // ////////////////////////////////////
+
     // AREAS:
     //     SURVEY_STYLEFILEAREA
     //     SURVEY_TEMPLATEFILEAREA

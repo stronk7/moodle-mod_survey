@@ -110,6 +110,8 @@ class mod_survey_exportmanager {
             $andgroup .= ') ';
         }
 
+        // ////////////////////////////
+        // write the query
         $richsubmissionssql = 'SELECT s.id, s.status, s.timecreated, s.timemodified, ';
         if (empty($this->survey->anonymous)) {
             $richsubmissionssql .= 'u.id as userid, u.firstname,  u.lastname, ';
@@ -138,6 +140,8 @@ class mod_survey_exportmanager {
         }
         $richsubmissionssql .= ' AND si.type = "'.SURVEY_TYPEFIELD.'" ';
         $richsubmissionssql .= ' ORDER BY s.id ASC, si.sortindex ASC';
+        // end of: write the query
+        // ////////////////////////////
 
         $richsubmissions = $DB->get_recordset_sql($richsubmissionssql, $params);
         if ($richsubmissions->valid()) {

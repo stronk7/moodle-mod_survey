@@ -264,14 +264,14 @@ class surveyitem_baseform extends moodleform {
                 //         So I shify the verification of the holding form at the form verification time.
 
                 // build the list only for searchable plugins
-                $pluginarray = survey_get_plugin_list(SURVEY_TYPEFIELD);
-                foreach ($pluginarray as $plugin) {
+                $pluginlist = survey_get_plugin_list(SURVEY_TYPEFIELD);
+                foreach ($pluginlist as $plugin) {
                     $plugintemplate = survey_get_item(null, SURVEY_TYPEFIELD, $plugin);
                     if (!$plugintemplate->flag->couldbeparent) {
-                        unset($pluginarray[$plugin]);
+                        unset($pluginlist[$plugin]);
                     }
                 }
-                $pluginlist = '(\''.implode("','", $pluginarray).'\')';
+                $pluginlist = '(\''.implode("','", $pluginlist).'\')';
 
                 $sql = 'SELECT *
                         FROM {survey_item}
@@ -321,7 +321,7 @@ class surveyitem_baseform extends moodleform {
                 // ----------------------------------------
                 $fieldname = 'parentformat';
                 $a = '<ul>';
-                foreach ($pluginarray as $plugin) {
+                foreach ($pluginlist as $plugin) {
                     $a .= '<li><div>';
                     $a .= '<div class="pluginname">'.get_string('pluginname', 'surveyfield_'.$plugin).': </div>';
                     $a .= '<div class="inputformat">'.get_string('parentformat', 'surveyfield_'.$plugin).'</div>';
