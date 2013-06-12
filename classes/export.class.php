@@ -60,12 +60,24 @@ class mod_survey_exportmanager {
 
         $cm = $PAGE->cm;
 
+        $context = context_module::instance($cm->id);
+
         $params = array();
         $params['surveyid'] = $this->survey->id;
 
-        // only fields
-        // no matter for the page
-        // elenco dei campi che l'utente vuole vedere nel file esportato
+        // ////////////////////////////
+        // do I need to filter groups?
+        $groupmode = groups_get_activity_groupmode($cm);
+        $mygroups = survey_get_my_groups($cm);
+        $filtergroups = true;
+        $filtergroups = $filtergroups && (count($mygroups));
+        $filtergroups = $filtergroups && (!has_capability('moodle/site:accessallgroups', $context));
+        // End of: do I need to filter groups?
+        // ////////////////////////////
+
+        // ////////////////////////////
+        // get the field list
+        //     no matter for the page
         $itemlistsql = 'SELECT si.id, si.variable, si.plugin
                         FROM {survey_item} si
                         WHERE si.surveyid = :surveyid
@@ -85,31 +97,47 @@ class mod_survey_exportmanager {
             return SURVEY_NOFIELDSSELECTED;
             die;
         }
+        // end of: get the field list
+        // ////////////////////////////
 
-    // echo '$fieldidlist:';
-    // var_dump($fieldidlist);
-    // die;
+        if ($filtergroups) {
+            $grouprow = array();
+            $andgroup = ' AND (';
+            foreach ($mygroups as $mygroup) {
+                $grouprow[] = '(gm.groupid = '.$mygroup.')';
+            }
+            $andgroup .= implode(' OR ', $grouprow);
+            $andgroup .= ') ';
+        }
 
         $richsubmissionssql = 'SELECT s.id, s.status, s.timecreated, s.timemodified, ';
         if (empty($this->survey->anonymous)) {
             $richsubmissionssql .= 'u.id as userid, u.firstname,  u.lastname, ';
         }
         $richsubmissionssql .= 'ud.id as userdataid, ud.itemid, ud.content,
-                si.sortindex, si.variable, si.plugin
-            FROM {survey_submissions} s
-                INNER JOIN {user} u ON s.userid = u.id
-                INNER JOIN {survey_userdata} ud ON ud.submissionid = s.id
-                INNER JOIN {survey_item} si ON si.id = ud.itemid
-            WHERE s.surveyid = :surveyid
-                AND si.id IN ('.implode(',', array_keys($fieldidlist)).')';
+                                si.sortindex, si.variable, si.plugin
+                            FROM {survey_submissions} s
+                                INNER JOIN {user} u ON u.id = s.userid
+                                INNER JOIN {survey_userdata} ud ON ud.submissionid = s.id
+                                INNER JOIN {survey_item} si ON si.id = ud.itemid
+                            WHERE s.surveyid = :surveyid';
         if ($this->formdata->basicform == SURVEY_FILLONLY) {
+            // I need records with:
+            //     basicform == SURVEY_FILLONLY OR basicform == SURVEY_FILLANDSEARCH
             $richsubmissionssql .= ' AND si.basicform <> '.SURVEY_NOTPRESENT;
+        }
+        if (!isset($this->formdata->includehidden)) {
+            $richsubmissionssql .= ' AND si.hide = 0';
         }
         if ($this->formdata->status != SURVEY_STATUSALL) {
             $richsubmissionssql .= ' AND s.status = :status';
             $params['status'] = $this->formdata->status;
         }
-        $richsubmissionssql .= ' ORDER BY s.id ASC, s.timecreated ASC, si.sortindex ASC';
+        if ($filtergroups) {
+            $richsubmissionssql .= $andgroup;
+        }
+        $richsubmissionssql .= ' AND si.type = "'.SURVEY_TYPEFIELD.'" ';
+        $richsubmissionssql .= ' ORDER BY s.id ASC, si.sortindex ASC';
 
         $richsubmissions = $DB->get_recordset_sql($richsubmissionssql, $params);
         if ($richsubmissions->valid()) {
@@ -146,7 +174,7 @@ class mod_survey_exportmanager {
             $oldrichsubmissionid = 0;
 
             foreach ($richsubmissions as $richsubmission) {
-                if (!$canmanageallsubmissions && !survey_i_can_read($this->survey, $mygroups, $richsubmission->userid)) {
+                if (!$canmanageallsubmissions && !has_extrapermission('read', $this->survey, $mygroups, $richsubmission->userid)) {
                     continue;
                 }
 

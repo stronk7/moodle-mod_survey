@@ -136,7 +136,7 @@ define('SURVEY_NOANSWERVALUE', '__n0__Answer__');   // user should never guess i
 define('SURVEY_VERTICAL',   0);
 define('SURVEY_HORIZONTAL', 1);
 
-// COLELCTION STATUS
+// SURVEY STATUS
 define('SURVEY_STATUSINPROGRESS', 1);
 define('SURVEY_STATUSCLOSED'    , 0);
 define('SURVEY_STATUSALL'       , 2);

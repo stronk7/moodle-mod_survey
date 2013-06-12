@@ -54,9 +54,9 @@ class survey_exportform extends moodleform {
         }
 
         // ----------------------------------------
-        // submissionexport::includehide
+        // submissionexport::includehidden
         // ----------------------------------------
-        $fieldname = 'includehide';
+        $fieldname = 'includehidden';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         $mform->setType($fieldname, PARAM_INT);
 

@@ -399,8 +399,9 @@ class mod_survey_userpagemanager {
 
         $context = context_course::instance($COURSE->id);
 
-        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {   // Separate groups are being used
-            if ($mygroups = survey_get_my_groups($cm)) { // se non appartengo ad un gruppo, non ho compagni di gruppo
+        $mygroups = survey_get_my_groups($cm);
+        if (count($mygroups)) {
+            if ($this->survey->notifyrole) {
                 $roles = explode(',', $this->survey->notifyrole);
                 $receivers = array();
                 foreach ($mygroups as $mygroup) {
@@ -411,31 +412,34 @@ class mod_survey_userpagemanager {
                             $roledata = $groupmemberroles[$role];
 
                             foreach ($roledata->users as $member) {
-                                $shortmember = new stdClass();
-                                $shortmember->id = $member->id;
-                                $shortmember->firstname = $member->firstname;
-                                $shortmember->lastname = $member->lastname;
-                                $shortmember->email = $member->email;
-                                $receivers[] = $shortmember;
+                                $singleuser = new stdClass();
+                                $singleuser->id = $member->id;
+                                $singleuser->firstname = $member->firstname;
+                                $singleuser->lastname = $member->lastname;
+                                $singleuser->email = $member->email;
+                                $receivers[] = $singleuser;
                             }
                         }
                     }
                 }
             } else {
+                // notification was not requested
                 $receivers = array();
             }
         } else {
-            // get_enrolled_users($courseid, $options = array()) <-- role is missing
-            // get_users_from_role_on_context($role, $context);  <-- this is ok but it makes one query per time, below I make the query once all together
             if ($this->survey->notifyrole) {
+                // get_enrolled_users($courseid, $options = array()) <-- role is missing
+                // get_users_from_role_on_context($role, $context);  <-- this is ok but I need to call it once per $role, below I make the query once all together
+                $roles = explode(',', $this->survey->notifyrole);
                 $sql = 'SELECT DISTINCT ra.userid, u.firstname, u.lastname, u.email
                         FROM (SELECT *
                               FROM {role_assignments}
                               WHERE contextid = '.$context->id.'
-                                  AND roleid IN ('.$this->survey->notifyrole.')) ra
+                                  AND roleid IN ('.$roles.')) ra
                         JOIN {user} u ON u.id = ra.userid';
                 $receivers = $DB->get_records_sql($sql);
             } else {
+                // notification was not requested
                 $receivers = array();
             }
         }

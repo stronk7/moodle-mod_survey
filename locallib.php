@@ -166,14 +166,18 @@ function survey_add_regular_item_node(&$tohidelist, &$sortindextohidelist, $newb
 }
 
 /*
- * survey_i_can_read
+ * has_extrapermission
+ * advancedpermissions
  * @param $survey, $mygroups, $ownerid
  * @return whether I am allowed to see the survey submitted by the user belonging to $ownergroup
  */
-function survey_i_can_read($survey, $mygroups, $ownerid) {
+function has_extrapermission($extrapermission, $survey, $mygroups, $ownerid) {
     global $USER, $COURSE;
 
-    switch ($survey->readaccess) {
+    if (!in_array($extrapermission, array('read', 'edit', 'delete'))) {
+        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $extrapermission = '.$extrapermission);
+    }
+    switch ($survey->{$extrapermission.'access'}) {
         case SURVEY_NONE:
             return false;
             break;
@@ -182,7 +186,7 @@ function survey_i_can_read($survey, $mygroups, $ownerid) {
             break;
         case SURVEY_GROUP:
             $return = false;
-            // $ownergroupid is the group ID of the owner of the submitted survey record
+            // $ownergroupid is the ID of the group of the owner of the submitted survey record
             $ownergroup = groups_get_user_groups($COURSE->id, $ownerid);
             foreach ($ownergroup[0] as $ownergroupid) { // [0] is for all groupings combined
                 if (in_array($ownergroupid, $mygroups)) {
@@ -201,77 +205,6 @@ function survey_i_can_read($survey, $mygroups, $ownerid) {
 }
 
 /*
- * survey_i_can_edit
- * @param $survey, $mygroups, $ownerid
- * @return whether I am allowed to edit the survey submitted by the user belonging to $ownergroup
- */
-function survey_i_can_edit($survey, $mygroups, $ownerid) {
-    global $USER, $COURSE;
-
-    switch ($survey->editaccess) {
-        case SURVEY_NONE:
-            return false;
-            break;
-        case SURVEY_OWNER:
-            return ($USER->id == $ownerid);
-            break;
-        case SURVEY_GROUP:
-            $return = false;
-            // $ownergroupid the group ID of the owner of the submitted survey record
-            $ownergroup = groups_get_user_groups($COURSE->id, $ownerid);
-            foreach ($ownergroup[0] as $ownergroupid) { // [0] is for all groupings combined
-                if (in_array($ownergroupid, $mygroups)) {
-                    $return = true;
-                    break;
-                }
-            }
-            return $return;
-            break;
-        case SURVEY_ALL:
-            return true;
-            break;
-        default:
-            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $survey->editaccess = '.$survey->editaccess);
-    }
-}
-
-/*
- * survey_i_can_delete
- * @param $survey, $mygroups, $ownerid
- * @return whether I am allowed to delete the survey submitted by the user belonging to $ownergroup
- */
-function survey_i_can_delete($survey, $mygroups, $ownerid) {
-    global $USER, $COURSE;
-
-    switch ($survey->deleteaccess) {
-        case SURVEY_NONE:
-            return false;
-            break;
-        case SURVEY_OWNER:
-            return ($USER->id == $ownerid);
-            break;
-        case SURVEY_GROUP:
-            $return = false;
-            // $ownergroupid the group ID of the owner of the submitted survey record
-            $ownergroup = groups_get_user_groups($COURSE->id, $ownerid);
-            foreach ($ownergroup[0] as $ownergroupid) { // [0] is for all groupings combined
-                if (in_array($ownergroupid, $mygroups)) {
-                    $return = true;
-                    break;
-                }
-            }
-            return $return;
-            break;
-        case SURVEY_ALL:
-            return true;
-            break;
-        default:
-            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $survey->deleteaccess = '.$survey->deleteaccess);
-    }
-}
-
-
-/*
  * survey_get_my_groups
  * @param $cm
  * @return
@@ -279,15 +212,10 @@ function survey_i_can_delete($survey, $mygroups, $ownerid) {
 function survey_get_my_groups($cm) {
     if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {   // Separate groups are being used
         $mygroupslist = groups_get_user_groups($cm->course); // this is 0 whether no groups are set
-        $mygroups = array();
-        foreach ($mygroupslist[0] as $mygroupid) { // [0] is for all groupings combined
-            $mygroups[] = $mygroupid;
-        }
+        return $mygroupslist[0]; // [0] is for all groupings combined
     } else {
-        $mygroups = array();
+        return array();
     }
-
-    return $mygroups;
 }
 
 /*
@@ -361,19 +289,20 @@ function survey_get_unixtimedownloadformats() {
 function survey_prevent_direct_user_input($survey, $cm, $submissionid, $action) {
     global $DB;
 
+    $context = context_module::instance($cm->id);
     if (!$canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $context, null, true)) {
         $mygroups = survey_get_my_groups($cm);
         $ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $submissionid), IGNORE_MISSING);
         switch ($action) {
             case SURVEY_EDITRESPONSE:
             case SURVEY_DUPLICATERESPONSE:
-                $allowed = (($ownerid) && (survey_i_can_edit($survey, $mygroups, $ownerid)));
+                $allowed = (($ownerid) && (has_extrapermission('edit', $survey, $mygroups, $ownerid)));
                 break;
             case SURVEY_READONLYRESPONSE:
-                $allowed = (($ownerid) && (survey_i_can_read($survey, $mygroups, $ownerid)));
+                $allowed = (($ownerid) && (has_extrapermission('read', $survey, $mygroups, $ownerid)));
                 break;
             case SURVEY_DELETERESPONSE:
-                $allowed = (($ownerid) && (survey_i_can_delete($survey, $mygroups, $ownerid)));
+                $allowed = (($ownerid) && (has_extrapermission('delete', $survey, $mygroups, $ownerid)));
                 break;
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);

@@ -296,7 +296,15 @@ class mod_survey_submissionmanager {
             die;
         }
 
+        // ////////////////////////////
+        // do I need to filter groups?
+        $groupmode = groups_get_activity_groupmode($cm);
         $mygroups = survey_get_my_groups($cm);
+        $filtergroups = true;
+        $filtergroups = $filtergroups && (count($mygroups));
+        $filtergroups = $filtergroups && (!has_capability('moodle/site:accessallgroups', $context));
+        // End of: do I need to filter groups?
+        // ////////////////////////////
 
         $status = array(SURVEY_STATUSINPROGRESS => get_string('statusinprogress', 'survey'),
                         SURVEY_STATUSCLOSED => get_string('statusclosed', 'survey'));
@@ -310,6 +318,8 @@ class mod_survey_submissionmanager {
 
         list($where, $params) = $table->get_sql_where();
 
+        // ////////////////////////////
+        // write sql to get correct submissions
         $userfields = user_picture::fields('u');
 
         $sql = 'SELECT s.*, s.id as submissionid, '.$userfields.'
@@ -339,7 +349,7 @@ class mod_survey_submissionmanager {
 
             $sql .= '    JOIN ('.$userdata_transposed.') udt ON udt.submissionid = s.id '; // udt == user data transposed
         }
-        if ($mygroups) {
+        if ($filtergroups) {
             $sql .= '    JOIN {groups_members} gm ON gm.userid = s.userid ';
         }
         $sql .= '    JOIN {user} u ON (s.userid = u.id)
@@ -353,11 +363,11 @@ class mod_survey_submissionmanager {
                 $params['c_'.$itemid] = $search_restriction;
             }
         }
-        if (count($mygroups)) {
+        if ($filtergroups) {
             $grouprow = array();
             $sql .= ' AND (';
             foreach ($mygroups as $mygroup) {
-                $grouprow[] = 'gm.groupid = '.$mygroup;
+                $grouprow[] = '(gm.groupid = '.$mygroup.')';
             }
             $sql .= implode(' OR ', $grouprow);
             $sql .= ') ';
@@ -377,6 +387,9 @@ class mod_survey_submissionmanager {
 
         // echo '$sql = '.$sql.'<br />';
 
+        // end of: write sql to get correct submissions
+        // ////////////////////////////
+
         $submissions = $DB->get_recordset_sql($sql, $params, $table->get_sql_sort());
 
         if ($submissions->valid()) {
@@ -390,7 +403,7 @@ class mod_survey_submissionmanager {
             }
 
             foreach ($submissions as $submission) {
-                if (!$this->canmanageallsubmissions && !survey_i_can_read($this->survey, $mygroups, $submission->userid)) {
+                if (!$this->canmanageallsubmissions && !has_extrapermission('read', $this->survey, $mygroups, $submission->userid)) {
                     continue;
                 }
 
@@ -419,7 +432,7 @@ class mod_survey_submissionmanager {
 
                 // actions
                 $paramurl['submissionid'] = $submission->submissionid;
-                if (survey_i_can_edit($this->survey, $mygroups, $submission->userid) || $this->canmanageallsubmissions) {     // "edit" or "edit as new"
+                if ($this->canmanageallsubmissions || has_extrapermission('edit', $this->survey, $mygroups, $submission->userid)) {     // "edit" or "edit as new"
                     if ($submission->status == SURVEY_STATUSCLOSED) {
                         if ($this->survey->history) {
                             $paramurl['act'] = SURVEY_DUPLICATERESPONSE;
@@ -447,7 +460,7 @@ class mod_survey_submissionmanager {
                     $icons .= '<img src="'.$OUTPUT->pix_url('t/preview').'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
                 }
 
-                if (survey_i_can_delete($this->survey, $mygroups, $submission->userid) || $this->canmanageallsubmissions) { // delete
+                if ($this->canmanageallsubmissions || has_extrapermission('delete', $this->survey, $mygroups, $submission->userid)) { // delete
                     $paramurl['act'] = SURVEY_DELETERESPONSE;
                     $basepath = new moodle_url('view_manage.php', $paramurl);
                     $icons .= '&nbsp;<a class="editing_update" title="'.$deletetitle.'" href="'.$basepath.'">';
