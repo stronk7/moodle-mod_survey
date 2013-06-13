@@ -16,3 +16,4 @@ site level. (thanks to JR)
 -> survey_get_editor_options()?
 -> survey_scale_used($surveyid, $scaleid)?
 -> survey_scale_used_anywhere($scaleid)?
+-> Allow users to download their submissions, one by one, in PDF

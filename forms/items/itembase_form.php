@@ -271,7 +271,7 @@ class surveyitem_baseform extends moodleform {
                         unset($pluginlist[$plugin]);
                     }
                 }
-                $pluginlist = '(\''.implode("','", $pluginlist).'\')';
+                $pluginwhere = '(\''.implode("','", $pluginlist).'\')';
 
                 $sql = 'SELECT *
                         FROM {survey_item}
@@ -281,7 +281,7 @@ class surveyitem_baseform extends moodleform {
                     $sql .= ' AND sortindex < :sortindex';
                     $sqlparams['sortindex'] = $item->sortindex;
                 }
-                $sql .= ' AND plugin IN '.$pluginlist.'
+                $sql .= ' AND plugin IN '.$pluginwhere.'
                             ORDER BY sortindex';
                 $records = $DB->get_recordset_sql($sql, $sqlparams);
 

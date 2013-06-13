@@ -580,7 +580,9 @@ class surveyitem_base {
             }
         } else {
             if ($CFG->survey_fillinginstructioninsearch) {
-                $fillinginstruction = $this->item_get_filling_instructions();
+                if (!$this->hideinstructions) {
+                    $fillinginstruction = $this->item_get_filling_instructions();
+                }
             }
             if ($CFG->survey_extranoteinsearch) {
                 $extranote = strip_tags($this->extranote);

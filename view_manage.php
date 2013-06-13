@@ -49,7 +49,7 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 
-$context = context_system::instance();
+$context = context_module::instance($cm->id);
 
 $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 $currentpage = SURVEY_SUBMISSION_MANAGE; // needed by tabs.php
@@ -66,6 +66,9 @@ switch ($action) {
         break;
     case SURVEY_DELETEALLRESPONSES:
         require_capability('mod/survey:deleteallsubmissions', $context);
+        break;
+    case SURVEY_DELETERESPONSE:
+        survey_prevent_direct_user_input($survey, $cm, $submissionid, SURVEY_DELETERESPONSE);
         break;
     default:
         debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
