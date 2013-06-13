@@ -84,6 +84,8 @@ class surveyformat_pagebreak extends surveyitem_base {
         $this->item_form_requires['extranote'] = false;
         $this->item_form_requires['required'] = false;
         $this->item_form_requires['variable'] = false;
+        $this->item_form_requires['basicform'] = false;
+        $this->item_form_requires['advancedsearch'] = false;
         $this->item_form_requires['indent'] = false;
         $this->item_form_requires['hideinstructions'] = false;
 
@@ -113,6 +115,8 @@ class surveyformat_pagebreak extends surveyitem_base {
         // //////////////////////////////////
 
         $record->content = SURVEYFORMAT_PAGEBREAK_CONTENT;
+        $record->basicform = SURVEY_FILLONLY;
+        $record->advancedsearch = SURVEY_ADVFILLONLY;
 
         // Do parent item saving stuff here (surveyitem_base::item_save($record)))
         return parent::item_save($record);

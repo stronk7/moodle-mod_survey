@@ -1012,6 +1012,9 @@ function survey_fetch_items_seeds($canaccessadvancedform, $searchform, $filterty
             }
         }
     }
+    if ($searchform) { // advanced search
+        $return .= ' AND si.plugin <> "pagebreak"';
+    }
     if ($filtertype) {
         $return .= ' AND si.type = :type';
     }
