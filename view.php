@@ -58,28 +58,23 @@ $submissionid = optional_param('submissionid', 0, PARAM_INT);
 
 $context = context_module::instance($cm->id);
 $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+// get $currentpage
 switch ($action) {
     case SURVEY_NOACTION:
-        if (has_capability('mod/survey:submit', $context, null, true)) {
-            // user is not an admin
-            $currentpage = SURVEY_SUBMISSION_NEW; // needed by tabs.php
-        } else {
-            // user may be an admin
-            $currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
-            require_capability('mod/survey:preview', $context);
-        }
-        break;
-    case SURVEY_EDITRESPONSE:
-        $currentpage = SURVEY_SUBMISSION_EDIT; // needed by tabs.php
-        survey_prevent_direct_user_input($survey, $cm, $submissionid, SURVEY_EDITRESPONSE);
-        break;
-    case SURVEY_READONLYRESPONSE:
-        $currentpage = SURVEY_SUBMISSION_READONLY; // needed by tabs.php
-        survey_prevent_direct_user_input($survey, $cm, $submissionid, SURVEY_READONLYRESPONSE);
+        $currentpage = SURVEY_SUBMISSION_NEW; // needed by tabs.php
         break;
     case SURVEY_PREVIEWSURVEY:
         $currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
-        require_capability('mod/survey:preview', $context);
+        break;
+    case SURVEY_EDITRESPONSE:
+    case SURVEY_DUPLICATERESPONSE:
+        $currentpage = SURVEY_SUBMISSION_EDIT; // needed by tabs.php
+        break;
+    case SURVEY_READONLYRESPONSE:
+        $currentpage = SURVEY_SUBMISSION_READONLY; // needed by tabs.php
+        break;
+    case SURVEY_PREVIEWSURVEY:
+        $currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
         break;
     default:
         debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
@@ -96,6 +91,8 @@ survey_add_custom_css($survey->id, $cm->id);
 $userpage_manager = new mod_survey_userpagemanager($survey);
 $userpage_manager->formpage = $formpage;
 $userpage_manager->submissionid = $submissionid;
+$userpage_manager->action = $action;
+$userpage_manager->prevent_direct_user_input($cm, $context);
 $userpage_manager->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $context, null, true);
 $userpage_manager->canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
 
@@ -105,6 +102,7 @@ if ($action == SURVEY_DUPLICATERESPONSE) {
     $redirecturl = new moodle_url('view.php', $paramurl);
     redirect($redirecturl);
 }
+
 // ////////////////////////////
 // assign items to pages in the basicform and in the advancedform
 $userpage_manager->assign_pages();

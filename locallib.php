@@ -282,34 +282,20 @@ function survey_get_unixtimedownloadformats() {
 }
 
 /*
- * survey_prevent_direct_user_input
+ * survey_need_group_filtering
+ * this function answer the question: do I Need to filter group in my next task?
  * @param
  * @return
  */
-function survey_prevent_direct_user_input($survey, $cm, $submissionid, $action) {
-    global $DB;
+function survey_need_group_filtering($cm, $context) {
+    // do I need to filter groups?
+    $groupmode = groups_get_activity_groupmode($cm);
+    $mygroups = survey_get_my_groups($cm);
 
-    $context = context_module::instance($cm->id);
-    if (!$canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $context, null, true)) {
-        $mygroups = survey_get_my_groups($cm);
-        $ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $submissionid), IGNORE_MISSING);
-        switch ($action) {
-            case SURVEY_EDITRESPONSE:
-            case SURVEY_DUPLICATERESPONSE:
-                $allowed = (($ownerid) && (has_extrapermission('edit', $survey, $mygroups, $ownerid)));
-                break;
-            case SURVEY_READONLYRESPONSE:
-                $allowed = (($ownerid) && (has_extrapermission('read', $survey, $mygroups, $ownerid)));
-                break;
-            case SURVEY_DELETERESPONSE:
-                $allowed = (($ownerid) && (has_extrapermission('delete', $survey, $mygroups, $ownerid)));
-                break;
-            default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
-        }
-        if (!$allowed) {
-            print_error('incorrectaccessdetected', 'survey');
-        }
-    }
+    $filtergroups = true;
+    $filtergroups = $filtergroups && ($groupmode == SEPARATEGROUPS);
+    $filtergroups = $filtergroups && (count($mygroups));
+    $filtergroups = $filtergroups && (!has_capability('moodle/site:accessallgroups', $context));
+
+    return $filtergroups;
 }
-

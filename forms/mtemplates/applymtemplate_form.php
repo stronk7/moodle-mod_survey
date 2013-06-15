@@ -48,9 +48,9 @@ class survey_applymtemplateform extends moodleform {
         }
 
         // ----------------------------------------
-        // applymtemplate::itemset
+        // applymtemplate::mastertemplate
         // ----------------------------------------
-        $fieldname = 'itemset';
+        $fieldname = 'mastertemplate';
         if (count($mtemplates)) {
             $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $mtemplates);
             $mform->addHelpButton($fieldname, $fieldname, 'survey');

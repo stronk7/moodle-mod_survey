@@ -113,7 +113,7 @@ echo $OUTPUT->header();
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $a = new stdClass();
-$a->itemset = get_string('itemset', 'survey');
+$a->usertemplate = get_string('usertemplate', 'survey');
 $a->none = get_string('notanyset', 'survey');
 $a->actionoverother = get_string('actionoverother', 'survey');
 $a->delete = get_string('delete', 'survey');

@@ -75,20 +75,21 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
         mod/survey:manageallsubmissions
         mod/survey:managesubmissions <-- USELESS I think.
                                          Each user is allowed to manage submissions.
-                                         At worst, none depending on general module advanced permissions.
+                                         At worst none depending on general module advanced permissions.
 
     SUB-TAB == SURVEY_SUBMISSION_EDIT
     SUB-TAB == SURVEY_SUBMISSION_READONLY
         $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
         mod/survey:readsubmissions   <-- USELESS I think.
                                          Each user is allowed to manage submissions.
-                                         At worst, none depending on general module advanced permissions.
+                                         At worst none depending on general module advanced permissions.
         mod/survey:editsubmissions   <-- USELESS I think.
                                          Each user is allowed to manage submissions.
-                                         At worst, none depending on general module advanced permissions.
+                                         At worst none depending on general module advanced permissions.
         mod/survey:deletesubmissions <-- USELESS I think.
                                          Each user is allowed to manage submissions.
-                                         At worst, none depending on general module advanced permissions.
+                                         At worst none depending on general module advanced permissions.
+        mod/survey:submissiontopdf
 
     SUB-TAB == SURVEY_SUBMISSION_SEARCH
         $elementurl = new moodle_url('/mod/survey/view_search.php', $paramurl);
@@ -237,6 +238,17 @@ $capabilities = array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:submissiontopdf' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
         )
     ),
 

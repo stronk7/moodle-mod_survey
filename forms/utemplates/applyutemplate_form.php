@@ -61,9 +61,9 @@ class survey_applyutemplateform extends moodleform {
         asort($templatesfiles);
 
         // ----------------------------------------
-        // applyutemplate::itemset
+        // applyutemplate::usertemplate
         // ----------------------------------------
-        $fieldname = 'itemset';
+        $fieldname = 'usertemplate';
         $templatesfiles = array(get_string('notanyset', 'survey')) + $templatesfiles;
         $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $templatesfiles);
         $mform->addHelpButton($fieldname, $fieldname, 'survey');

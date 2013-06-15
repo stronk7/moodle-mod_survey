@@ -63,11 +63,21 @@ require_capability('mod/survey:manageusertemplates', $context);
 // ////////////////////////////////////////////////////////////
 $utemplate_manager = new mod_survey_usertemplate($survey, $confirm);
 $utemplate_manager->utemplateid = optional_param('fid', 0, PARAM_INT);
-
 $utemplate_manager->canexportutemplates = has_capability('mod/survey:exportusertemplates', $context, null, true);
 $utemplate_manager->candeleteutemplates = has_capability('mod/survey:deleteusertemplates', $context, null, true);
-if ($action == SURVEY_EXPORTUTEMPLATE) {
-    $utemplate_manager->export_utemplate();
+
+switch ($action) {
+    case SURVEY_NOACTION:
+        break;
+    case SURVEY_EXPORTUTEMPLATE:
+        require_capability('mod/survey:exportusertemplates', $context);
+        $utemplate_manager->export_utemplate();
+        break;
+    case SURVEY_DELETEUTEMPLATE:
+        require_capability('mod/survey:deleteusertemplates', $context);
+        break;
+    default:
+        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
 }
 
 // ////////////////////////////////////////////////////////////

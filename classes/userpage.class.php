@@ -68,6 +68,11 @@ class mod_survey_userpagemanager {
     public $status = null;
 
     /*
+     * $action
+     */
+    public $action = SURVEY_NOACTION;
+
+    /*
      * $formpage: the form page as recalculated according to the first non empty page
      * do not confuse this properties with $this->formdata->formpage
      */
@@ -592,11 +597,11 @@ class mod_survey_userpagemanager {
     public function noitem_stopexecution() {
         global $COURSE, $OUTPUT;
 
-        $message = ($this->canaccessadvancedform) ? get_string('noadvanceditemsfound', 'survey') : get_string('nouseritemsfound', 'survey');
+        $message = ($this->canaccessadvancedform) ? get_string('noadvanceditemsfound', 'survey') : get_string('nobasicitemsfound', 'survey');
         echo $OUTPUT->notification($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
 
         if ($this->canmanageitems) {
-            $continueurl = new moodle_url('/mod/survey/items_manage.php', array('s' => $this->survey->id));
+            $continueurl = new moodle_url('/mod/survey/items_add.php', array('s' => $this->survey->id));
         } else {
             $continueurl = new moodle_url('/course/view.php', array('id' => $COURSE->id));
         }
@@ -770,7 +775,7 @@ class mod_survey_userpagemanager {
      * @param
      * @return
      */
-    function drop_unexpected_values() {
+    public function drop_unexpected_values() {
         // BEGIN: delete all the bloody values that were NOT supposed to be returned: MDL-34815
         $dirtydata = (array)$this->formdata;
         $indexes = array_keys($dirtydata);
@@ -842,6 +847,39 @@ class mod_survey_userpagemanager {
                     }
                 }
             }
+        }
+    }
+
+    /*
+     * prevent_direct_user_input
+     * @param
+     * @return
+     */
+    public function prevent_direct_user_input($cm, $context) {
+        global $DB;
+
+        $allowed = true;
+        $mygroups = survey_get_my_groups($cm);
+        $ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $this->submissionid), IGNORE_MISSING);
+        switch ($this->action) {
+            case SURVEY_NOACTION:
+                require_capability('mod/survey:submit', $context);
+                break;
+            case SURVEY_PREVIEWSURVEY:
+                require_capability('mod/survey:preview', $context);
+                break;
+            case SURVEY_EDITRESPONSE:
+            case SURVEY_DUPLICATERESPONSE:
+                $allowed = (($ownerid) && (has_extrapermission('edit', $this->survey, $mygroups, $ownerid)));
+                break;
+            case SURVEY_READONLYRESPONSE:
+                $allowed = (($ownerid) && (has_extrapermission('read', $this->survey, $mygroups, $ownerid)));
+                break;
+            default:
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->action = '.$this->action);
+        }
+        if (!$allowed) {
+            print_error('incorrectaccessdetected', 'survey');
         }
     }
 

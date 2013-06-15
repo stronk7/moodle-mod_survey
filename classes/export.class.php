@@ -65,15 +65,8 @@ class mod_survey_exportmanager {
         $params = array();
         $params['surveyid'] = $this->survey->id;
 
-        // ////////////////////////////
         // do I need to filter groups?
-        $groupmode = groups_get_activity_groupmode($cm);
-        $mygroups = survey_get_my_groups($cm);
-        $filtergroups = true;
-        $filtergroups = $filtergroups && (count($mygroups));
-        $filtergroups = $filtergroups && (!has_capability('moodle/site:accessallgroups', $context));
-        // End of: do I need to filter groups?
-        // ////////////////////////////
+        $filtergroups = survey_need_group_filtering($cm, $context);
 
         // ////////////////////////////
         // get the field list

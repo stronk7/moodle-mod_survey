@@ -58,31 +58,20 @@ $submissionid = optional_param('submissionid', 0, PARAM_INT);
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $confirm = optional_param('cnf' , 0, PARAM_INT); // confirm submission deletion
 
-switch ($action) {
-    case SURVEY_NOACTION:
-        break;
-    case SURVEY_DUPLICATERESPONSE:
-        survey_prevent_direct_user_input($survey, $cm, $submissionid, SURVEY_DUPLICATERESPONSE);
-        break;
-    case SURVEY_DELETEALLRESPONSES:
-        require_capability('mod/survey:deleteallsubmissions', $context);
-        break;
-    case SURVEY_DELETERESPONSE:
-        survey_prevent_direct_user_input($survey, $cm, $submissionid, SURVEY_DELETERESPONSE);
-        break;
-    default:
-        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
-}
-
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
 $submission_manager = new mod_survey_submissionmanager($survey);
+$submission_manager->action = $action;
 $submission_manager->submissionid = $submissionid;
 $submission_manager->confirm = $confirm;
+$submission_manager->prevent_direct_user_input($cm, $context);
+if ($action == SURVEY_RESPONSETOPDF) {
+    $submission_manager->submission_to_pdf($context);
+    //die;
+}
 $submission_manager->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $context, null, true);
 $submission_manager->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $context, null, true);
-$submission_manager->action = $action;
 $submission_manager->searchfields_get = optional_param('searchquery', '', PARAM_RAW);
 
 // ////////////////////////////////////////////////////////////

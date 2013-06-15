@@ -102,7 +102,6 @@ $record->surveyid = $survey->id;
 $create_utemplate->set_data($record);
 $create_utemplate->display();
 
-
 // Finish the page
 echo $OUTPUT->footer();
 

@@ -89,7 +89,7 @@ class survey_pluginform extends surveyitem_baseform {
 
         if ( ($data['defaultoption'] == SURVEY_NOANSWERDEFAULT) && isset($data['required']) ) {
             $a = get_string('noanswer', 'survey');
-            $errors['defaultvalue'] = get_string('notalloweddefault', 'survey', $a);
+            $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);
         }
 
         return $errors;

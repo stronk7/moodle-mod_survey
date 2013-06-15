@@ -606,7 +606,7 @@ class mod_survey_usertemplate extends mod_survey_template {
 
         }
 
-        $this->utemplateid = $this->formdata->itemset;
+        $this->utemplateid = $this->formdata->usertemplate;
         if (!empty($this->utemplateid)) { // something was selected
             // BEGIN: add records from template
             $this->add_items_from_utemplate();

@@ -296,18 +296,12 @@ class mod_survey_submissionmanager {
             die;
         }
 
-        // ////////////////////////////
         // do I need to filter groups?
-        $groupmode = groups_get_activity_groupmode($cm);
-        $mygroups = survey_get_my_groups($cm);
-        $filtergroups = true;
-        $filtergroups = $filtergroups && (count($mygroups));
-        $filtergroups = $filtergroups && (!has_capability('moodle/site:accessallgroups', $context));
-        // End of: do I need to filter groups?
-        // ////////////////////////////
+        $filtergroups = survey_need_group_filtering($cm, $context);
 
         $status = array(SURVEY_STATUSINPROGRESS => get_string('statusinprogress', 'survey'),
                         SURVEY_STATUSCLOSED => get_string('statusclosed', 'survey'));
+        $downloadpdftitle = get_string('downloadpdf', 'survey');
         $deletetitle = get_string('delete');
         $neverstring = get_string('never');
         $restrictedaccess = get_string('restrictedaccess', 'survey');
@@ -467,6 +461,12 @@ class mod_survey_submissionmanager {
                     $icons .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$deletetitle.'" title="'.$deletetitle.'" /></a>';
                 }
 
+                // if I am here I am sure I can see this submission
+                $paramurl['act'] = SURVEY_RESPONSETOPDF;
+                $basepath = new moodle_url('view_manage.php', $paramurl);
+                $icons .= '&nbsp;<a class="editing_update" title="'.$downloadpdftitle.'" href="'.$basepath.'">';
+                $icons .= '<img src="'.$OUTPUT->pix_url('i/export').'" class="iconsmall" alt="'.$downloadpdftitle.'" title="'.$downloadpdftitle.'" /></a>';
+
                 $tablerow[] = $icons;
 
                 // add row to the table
@@ -477,5 +477,206 @@ class mod_survey_submissionmanager {
 
         $table->summary = get_string('submissionslist', 'survey');
         $table->print_html();
+    }
+
+    /*
+     * prevent_direct_user_input
+     * @param
+     * @return
+     */
+    function prevent_direct_user_input($cm, $context) {
+        global $DB;
+
+        if ($this->action == SURVEY_NOACTION) {
+            return;
+        }
+        if (has_capability('mod/survey:manageallsubmissions', $context, null, true)) {
+            return;
+        }
+
+        $allowed = true;
+        $mygroups = survey_get_my_groups($cm);
+        $ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $this->submissionid), IGNORE_MISSING);
+        switch ($this->action) {
+            case SURVEY_EDITRESPONSE:
+            case SURVEY_DUPLICATERESPONSE:
+                $allowed = (($ownerid) && (has_extrapermission('edit', $this->survey, $mygroups, $ownerid)));
+                break;
+            case SURVEY_READONLYRESPONSE:
+                $allowed = (($ownerid) && (has_extrapermission('read', $this->survey, $mygroups, $ownerid)));
+                break;
+            case SURVEY_DELETERESPONSE:
+                $allowed = (($ownerid) && (has_extrapermission('delete', $this->survey, $mygroups, $ownerid)));
+                break;
+            case SURVEY_RESPONSETOPDF:
+                require_capability('mod/survey:submissiontopdf', $context);
+                break;
+            case SURVEY_DELETEALLRESPONSES:
+                require_capability('mod/survey:deleteallsubmissions', $context);
+                break;
+            default:
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->action = '.$this->action);
+        }
+        if (!$allowed) {
+            print_error('incorrectaccessdetected', 'survey');
+        }
+    }
+
+    /*
+     * submission_to_pdf
+     * @param $allpages
+     * @return
+     */
+    public function submission_to_pdf($context) {
+        global $CFG, $DB;
+
+        require_once($CFG->libdir.'/tcpdf/tcpdf.php');
+        require_once($CFG->libdir.'/tcpdf/config/tcpdf_config.php');
+
+        $submission = $DB->get_record('survey_submissions', array('id' => $this->submissionid));
+        $user = $DB->get_record('user', array('id' => $submission->userid));
+        $userdatarecord = $DB->get_records('survey_userdata', array('submissionid' => $this->submissionid), '', 'itemid, content');
+
+        $searchform = true;
+        $filtertype = false;
+        $allpages = true;
+        $sql = survey_fetch_items_seeds($this->canaccessadvancedform, $searchform, $filtertype, $allpages);
+        $params = array('surveyid' => $this->survey->id);
+        $itemseeds = $DB->get_recordset_sql($sql, $params);
+
+        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+
+        // set document information
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('moodle-mod_survey');
+        $pdf->SetTitle('User response');
+        $pdf->SetSubject('Single response in PDF');
+
+        // set default header data
+        $textheader = get_string('responseauthor', 'survey');
+        $textheader .= fullname($user);
+        $textheader .= "\n";
+        $textheader .= get_string('responsetimecreated', 'survey');
+        $textheader .= userdate($submission->timecreated);
+        if ($submission->timemodified) {
+            $textheader .= get_string('responsetimemodified', 'survey');
+            $textheader .= userdate($submission->timemodified);
+        }
+
+        $pdf->SetHeaderData('', 0, $this->survey->name, $textheader, array(0,64,255), array(0,64,128));
+        $pdf->setFooterData(array(0, 64, 0), array(0, 64, 128));
+
+        // set header and footer fonts
+        $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+        // set margins
+        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+        $pdf->SetDrawColorArray(array(0, 64, 128));
+        // set auto page breaks
+        $pdf->SetAutoPageBreak(true, PDF_MARGIN_BOTTOM);
+
+        $pdf->AddPage();
+
+        $col1nunit = 1;
+        $col2nunit = 3;
+        $col3nunit = 4;
+        $firstcolwidth = $pdf->getPageWidth();
+        $firstcolwidth -= PDF_MARGIN_LEFT;
+        $firstcolwidth -= PDF_MARGIN_RIGHT;
+        $unitsum = $col1nunit + $col2nunit + $col3nunit;
+
+        $firstcolwidth = number_format($col1nunit*100/$unitsum,2);
+        $secondcolwidth = number_format($col2nunit*100/$unitsum,2);
+        $thirdcolwidth = number_format($col3nunit*100/$unitsum,2);
+        $lasttwocolumns = $secondcolwidth + $thirdcolwidth;
+
+// 0: to the right (or left for RTL language)
+// 1: to the beginning of the next line
+// 2: below
+
+        $htmllabel = '<table style="width:100%;"><tr><td style="width:'.$firstcolwidth.'%;text-align:right;">@@col1@@</td>';
+        $htmllabel .= '<td style="width:'.$lasttwocolumns.'%;text-align:left;">@@col2@@</td></tr></table>';
+
+        $htmlregular = '<table style="width:100%;"><tr><td style="width:'.$firstcolwidth.'%;text-align:right;">@@col1@@</td>';
+        $htmlregular .= '<td style="width:'.$secondcolwidth.'%;text-align:left;">@@col2@@</td>';
+        $htmlregular .= '<td style="width:'.$thirdcolwidth.'%;text-align:left;">@@col3@@</td></tr></table>';
+
+        $border = array('T' => array('width' => 0.2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 1, 'color' => array(179, 219, 181)));
+        foreach($itemseeds as $itemseed) {
+            $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
+
+            if (($item->plugin == 'pagebreak') || ($item->plugin == 'fieldset')) {
+                continue;
+            }
+            if ($item->plugin == 'label') {
+                // first row
+                $html = $htmllabel;
+                $content = ($item->customnumber) ? $item->customnumber.': ' : '';
+                $html = str_replace('@@col1@@', $content, $html);
+
+                // colspan = 2
+                $content = trim(strip_tags($item->content), " \t\n\r\0\x0B\xC2\xA0");
+                $html = str_replace('@@col2@@', $content, $html);
+                $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true); // this is like span 2
+                continue;
+            }
+
+
+            if ($item->extrarow) {
+                // first row
+                // first column
+                $html = $htmllabel;
+                $content = ($item->customnumber) ? $item->customnumber.': ' : '';
+                $html = str_replace('@@col1@@', $content, $html);
+
+                // second column
+                // colspan = 2
+                $content = trim(strip_tags($item->content), " \t\n\r\0\x0B\xC2\xA0");
+                $html = str_replace('@@col2@@', $content, $html);
+                $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, 'R', true);
+
+                // second row
+                // first column
+                $html = $htmlregular;
+                $html = str_replace('@@col1@@', '', $html);
+
+                // second column
+                $html = str_replace('@@col2@@', '', $html);
+
+                // third column
+                if (isset($userdatarecord[$item->itemid])) {
+                    $content = strip_tags($userdatarecord[$item->itemid]->content);
+                } else {
+                    $content = '';
+                }
+                $html = str_replace('@@col3@@', $content, $html);
+                $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true);
+            } else { // I need to draw two cells in the same row
+                // first row
+                // first column
+                $html = $htmlregular;
+                $content = ($item->customnumber) ? $item->customnumber.': ' : '';
+                $html = str_replace('@@col1@@', $content, $html);
+
+                $content = trim(strip_tags($item->content), " \t\n\r\0\x0B\xC2\xA0");
+                $html = str_replace('@@col2@@', $content, $html);
+
+                if (isset($userdatarecord[$item->itemid])) {
+                    $content = strip_tags($userdatarecord[$item->itemid]->content);
+                } else {
+                    $content = '';
+                }
+                $html = str_replace('@@col3@@', $content, $html);
+                $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true);
+            }
+        }
+
+        $filename = $this->survey->name.'_'.$this->submissionid.'.pdf';
+        $pdf->Output($filename, 'D');
+        die;
     }
 }

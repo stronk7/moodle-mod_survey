@@ -533,7 +533,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
         }
 
-        $this->mtemplatename = $this->formdata->itemset;
+        $this->mtemplatename = $this->formdata->mastertemplate;
 
         // BEGIN: add records from survey plugin
         $this->add_items_from_plugin();

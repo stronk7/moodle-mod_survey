@@ -90,29 +90,29 @@ define('SURVEY_TYPEFIELD' , 'field');
 define('SURVEY_TYPEFORMAT', 'format');
 
 // ACTIONS
-define('SURVEY_NOACTION'          , '0');
-// -> ITEM section
-define('SURVEY_EDITITEM'          , '1');
-define('SURVEY_HIDEITEM'          , '2');
-define('SURVEY_SHOWITEM'          , '3');
-define('SURVEY_DELETEITEM'        , '4');
-// -> ITEM section
-define('SURVEY_CHANGEORDERASK'    , '5');
-define('SURVEY_CHANGEORDER'       , '6');
-define('SURVEY_REQUIREDOFF'       , '7');
-define('SURVEY_REQUIREDON'        , '8');
-define('SURVEY_CHANGEINDENT'      , '9');
-// -> RESPONSES section
-define('SURVEY_EDITRESPONSE'      , '10');
-define('SURVEY_DUPLICATERESPONSE' , '11');
-define('SURVEY_READONLYRESPONSE'  , '12');
-define('SURVEY_DELETERESPONSE'    , '13');
-define('SURVEY_DELETEALLRESPONSES', '14');
-// -> SURVEY section
-define('SURVEY_PREVIEWSURVEY'     , '15');
-// -> UTEMPLATE section
-define('SURVEY_DELETEUTEMPLATE'   , '16');
-define('SURVEY_EXPORTUTEMPLATE'   , '17');
+    define('SURVEY_NOACTION'          , '0');
+    // ITEM MANAGEMENT section
+    define('SURVEY_EDITITEM'          , '1');
+    define('SURVEY_CHANGEORDERASK'    , '2');
+    define('SURVEY_CHANGEORDER'       , '3');
+    define('SURVEY_HIDEITEM'          , '4');
+    define('SURVEY_SHOWITEM'          , '5');
+    define('SURVEY_DELETEITEM'        , '6');
+    define('SURVEY_REQUIREDOFF'       , '7');
+    define('SURVEY_REQUIREDON'        , '8');
+    define('SURVEY_CHANGEINDENT'      , '9');
+    // RESPONSES section
+    define('SURVEY_EDITRESPONSE'      , '10');
+    define('SURVEY_DUPLICATERESPONSE' , '11');
+    define('SURVEY_READONLYRESPONSE'  , '12');
+    define('SURVEY_DELETERESPONSE'    , '13');
+    define('SURVEY_DELETEALLRESPONSES', '14');
+    define('SURVEY_RESPONSETOPDF'     , '15');
+    // SURVEY section
+    define('SURVEY_PREVIEWSURVEY'     , '16');
+    // UTEMPLATE section
+    define('SURVEY_DELETEUTEMPLATE'   , '17');
+    define('SURVEY_EXPORTUTEMPLATE'   , '18');
 
 // SAVESTATUS
 define('SURVEY_NOFEEDBACK', 0);
