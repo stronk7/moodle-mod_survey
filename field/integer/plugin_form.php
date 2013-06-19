@@ -34,15 +34,16 @@ require_once($CFG->dirroot.'/mod/survey/field/integer/lib.php');
 
 class survey_pluginform extends surveyitem_baseform {
 
-    function definition() {
+    public function definition() {
         $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
 
         // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
-        $hassubmissions = $this->_customdata->hassubmissions;
+        // $survey = $this->_customdata->survey;
+        // $hassubmissions = $this->_customdata->hassubmissions;
 
         // -------------------------------------------------------------------------------
-        // comincio con la "sezione" comune della form
+        // I start with the common "section" form
         parent::definition();
 
         // -------------------------------------------------------------------------------
@@ -69,34 +70,37 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname, $item->lowerbound);
         }
 
-        if (!$hassubmissions) {
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
-            // here I open a new fieldset
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
-            $fieldname = 'validation';
-            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // here I open a new fieldset
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        $fieldname = 'validation';
+        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-            // ----------------------------------------
-            // newitem::lowerbound
-            // ----------------------------------------
-            $fieldname = 'lowerbound';
-            $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_integer'), $integers);
-            $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_integer');
-            $mform->setDefault($fieldname, '0');
+        // ----------------------------------------
+        // newitem::lowerbound
+        // ----------------------------------------
+        $fieldname = 'lowerbound';
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_integer'), $integers);
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_integer');
+        $mform->setDefault($fieldname, '0');
 
-            // ----------------------------------------
-            // newitem::upperbound
-            // ----------------------------------------
-            $fieldname = 'upperbound';
-            $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_integer'), $integers);
-            $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_integer');
-            $mform->setDefault($fieldname, $maximuminteger);
-        }
+        // ----------------------------------------
+        // newitem::upperbound
+        // ----------------------------------------
+        $fieldname = 'upperbound';
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_integer'), $integers);
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_integer');
+        $mform->setDefault($fieldname, $maximuminteger);
 
         $this->add_item_buttons();
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
+        // -------------------------------------------------------------------------------
+        $item = $this->_customdata->item;
+        // $survey = $this->_customdata->survey;
+        // $hassubmissions = $this->_customdata->hassubmissions;
+
         $errors = parent::validation($data, $files);
 
         // constrain default between boundaries

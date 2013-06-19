@@ -198,53 +198,6 @@ class surveyfield_integer extends surveyitem_base {
     }
 
     /*
-     * item_get_filling_instructions
-     * @param
-     * @return
-     */
-    public function item_get_filling_instructions() {
-
-        $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
-
-        $haslowerbound = ($this->lowerbound != 0);
-        $hasupperbound = ($this->upperbound != $maximuminteger);
-
-        $a = '';
-        $lowerbound = $this->lowerbound;
-        $upperbound = $this->upperbound;
-
-        if ($haslowerbound) {
-            if (!empty($this->lowerbound)) {
-                $a .= $this->lowerbound;
-            }
-        }
-
-        if ($haslowerbound && $hasupperbound) {
-            $a .= get_string('and', 'surveyfield_integer');
-        }
-
-        if ($hasupperbound) {
-            if (!empty($this->upperbound)) {
-                $a .= $this->upperbound;
-            }
-        }
-
-        if ($haslowerbound && $hasupperbound) {
-            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_integer', $a);
-        } else {
-            $fillinginstruction = '';
-            if ($haslowerbound) {
-                $fillinginstruction = get_string('restriction_lower', 'surveyfield_integer', $a);
-            }
-            if ($hasupperbound) {
-                $fillinginstruction = get_string('restriction_upper', 'surveyfield_integer', $a);
-            }
-        }
-
-        return $fillinginstruction;
-    }
-
-    /*
      * item_list_constraints
      * @param
      * @return list of contraints of the plugin in text format
@@ -404,6 +357,49 @@ class surveyfield_integer extends surveyitem_base {
         if ($hasupperbound && ($userinput > $this->upperbound)) {
             $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_integer');
         }
+    }
+
+    /*
+     * userform_get_filling_instructions
+     * @param
+     * @return
+     */
+    public function userform_get_filling_instructions() {
+
+        $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
+
+        $haslowerbound = ($this->lowerbound != 0);
+        $hasupperbound = ($this->upperbound != $maximuminteger);
+
+        $a = new StdClass();
+        $lowerbound = $this->lowerbound;
+        $upperbound = $this->upperbound;
+
+        if ($haslowerbound) {
+            if (!empty($this->lowerbound)) {
+                $a->lowerbound = $this->lowerbound;
+            }
+        }
+
+        if ($hasupperbound) {
+            if (!empty($this->upperbound)) {
+                $a->upperbound = $this->upperbound;
+            }
+        }
+
+        if ($haslowerbound && $hasupperbound) {
+            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_integer', $a);
+        } else {
+            $fillinginstruction = '';
+            if ($haslowerbound) {
+                $fillinginstruction = get_string('restriction_lower', 'surveyfield_integer', $a->lowerbound);
+            }
+            if ($hasupperbound) {
+                $fillinginstruction = get_string('restriction_upper', 'surveyfield_integer', $a->upperbound);
+            }
+        }
+
+        return $fillinginstruction;
     }
 
     /*

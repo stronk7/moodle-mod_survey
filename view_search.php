@@ -50,9 +50,6 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 
-$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
-$currentpage = SURVEY_SUBMISSION_SEARCH; // needed by tabs.php
-
 $formpage = optional_param('formpage' , 1, PARAM_INT); // form page number
 
 $context = context_module::instance($cm->id);
@@ -61,8 +58,7 @@ require_capability('mod/survey:searchsubmissions', $context);
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$search_manager = new mod_survey_searchmanager($survey);
-$search_manager->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $context, null, true);
+$search_manager = new mod_survey_searchmanager($survey, $context);
 
 // ////////////////////////////
 // define $search_form return url
@@ -90,7 +86,7 @@ if ($search_manager->formdata = $search_form->get_data()) { // $search_form, her
     $paramurl = array('id' => $cm->id);
     // remember to select submissions by groupsmates ONLY
     $paramurl['searchquery'] = $search_manager->get_searchparamurl();
-    $returnurl = new moodle_url('view_manage.php', $paramurl);
+    $returnurl = new moodle_url('view_submissions.php', $paramurl);
     redirect($returnurl);
 }
 // end of: manage form submission
@@ -108,6 +104,9 @@ $PAGE->set_heading($course->shortname);
 // $PAGE->set_focuscontrol('some-html-id');
 
 echo $OUTPUT->header();
+
+$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+$currentpage = SURVEY_SUBMISSION_SEARCH; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 if (!$search_manager->count_search_items()) {

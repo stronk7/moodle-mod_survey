@@ -151,25 +151,6 @@ class surveyfield_fileupload extends surveyitem_base {
     }
 
     /*
-     * item_get_filling_instructions
-     * @param
-     * @return
-     */
-    public function item_get_filling_instructions() {
-
-        if ($this->filetypes != '*') {
-            // $filetypelist = preg_replace('/([a-zA-Z0-9]+,)([^\s])/', "$1 $2", $this->filetypes);
-            $filetypelist = preg_replace('~,(?! )~', ', ', $this->filetypes); // Credits to Sam Marshall
-
-            $fillinginstruction = get_string('allowedtypes', 'surveyfield_fileupload').$filetypelist;
-        } else {
-            $fillinginstruction = '';
-        }
-
-        return $fillinginstruction;
-    }
-
-    /*
      * item_get_plugin_values
      * @param $pluginstructure
      * @param $pluginsid
@@ -243,6 +224,25 @@ class surveyfield_fileupload extends surveyitem_base {
     }
 
     /*
+     * userform_get_filling_instructions
+     * @param
+     * @return
+     */
+    public function userform_get_filling_instructions() {
+
+        if ($this->filetypes != '*') {
+            // $filetypelist = preg_replace('/([a-zA-Z0-9]+,)([^\s])/', "$1 $2", $this->filetypes);
+            $filetypelist = preg_replace('~,(?! )~', ', ', $this->filetypes); // Credits to Sam Marshall
+
+            $fillinginstruction = get_string('allowedtypes', 'surveyfield_fileupload').$filetypelist;
+        } else {
+            $fillinginstruction = '';
+        }
+
+        return $fillinginstruction;
+    }
+
+    /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
@@ -300,7 +300,7 @@ class surveyfield_fileupload extends surveyitem_base {
      * @param $richsubmission
      * @return
      */
-    public function userform_db_to_export($itemvalue) {
+    public function userform_db_to_export($itemvalue, $format='') {
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $itemvalue->id);
         $filename = array();

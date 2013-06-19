@@ -163,7 +163,7 @@ class surveyfield_date extends surveyitem_base {
 
     /*
      * item_custom_fields_to_form
-     * translates the date class property $fieldlist in $field.'_year' and $field.'_month'
+     * translates the date class property $fieldlist in $field.'_year' $field.'_month' and $field.'_day
      * @param
      * @return
      */
@@ -249,49 +249,6 @@ class surveyfield_date extends surveyitem_base {
     }
 
     /*
-     * item_get_filling_instructions
-     * @param
-     * @return
-     */
-    public function item_get_filling_instructions() {
-        global $survey;
-
-        $haslowerbound = ($this->lowerbound != $this->item_date_to_unix_time($survey->startyear, 1, 1));
-        $hasupperbound = ($this->upperbound != $this->item_date_to_unix_time($survey->stopyear, 12, 31));
-
-        $format = get_string('strftimedate', 'langconfig');
-        if ($haslowerbound && $hasupperbound) {
-            $a = userdate($this->lowerbound, $format, 0).get_string('and', 'surveyfield_date').userdate($this->upperbound, $format, 0);
-            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_date', $a);
-        } else {
-            $fillinginstruction = '';
-            if ($haslowerbound) {
-                $a = userdate($this->lowerbound, $format, 0);
-                $fillinginstruction = get_string('restriction_lower', 'surveyfield_date', $a);
-            }
-            if ($hasupperbound) {
-                $a = userdate($this->upperbound, $format, 0);
-                $fillinginstruction = get_string('restriction_upper', 'surveyfield_date', $a);
-            }
-        }
-
-        return $fillinginstruction;
-    }
-
-    /*
-     * item_date_to_text
-     * starting from a datearray returns the corresponding date in text format
-     * @param $datearray
-     * @return
-     */
-    public function item_date_to_text($unixtime) {
-        $return = userdate($unixtime, '%d/%m/%y', 0);
-        //$return = $datearray['mday'].'/'.$datearray['mon'].'/'.$datearray['year'];
-
-        return $return;
-    }
-
-    /*
      * item_get_plugin_values
      * @param $pluginstructure
      * @param $pluginsid
@@ -307,6 +264,25 @@ class surveyfield_date extends surveyitem_base {
         }
 
         return $values;
+    }
+
+    /*
+     * item_get_downloadformats
+     * @param
+     * @return
+     */
+    public function item_get_downloadformats() {
+        $option = array();
+        $timenow = time();
+
+        $option[''] = get_string('unixtime', 'survey');
+        $option['strftime1'] = userdate($timenow, get_string('strftime1', 'surveyfield_date')); // 17 Giugno 2013
+        $option['strftime2'] = userdate($timenow, get_string('strftime2', 'surveyfield_date')); // 17 Giugno
+        $option['strftime3'] = userdate($timenow, get_string('strftime3', 'surveyfield_date')); // Lunedì 17 Giugno
+        $option['strftime4'] = userdate($timenow, get_string('strftime4', 'surveyfield_date')); // Lunedì 17 Giugno
+        $option['strftime5'] = userdate($timenow, get_string('strftime5', 'surveyfield_date')); // Lunedì 17 Giugno
+
+        return $option;
     }
 
     // MARK userform
@@ -455,6 +431,38 @@ class surveyfield_date extends surveyitem_base {
     }
 
     /*
+     * userform_get_filling_instructions
+     * @param
+     * @return
+     */
+    public function userform_get_filling_instructions() {
+        global $survey;
+
+        $haslowerbound = ($this->lowerbound != $this->item_date_to_unix_time($survey->startyear, 1, 1));
+        $hasupperbound = ($this->upperbound != $this->item_date_to_unix_time($survey->stopyear, 12, 31));
+
+        $format = get_string('strftimedate', 'langconfig');
+        if ($haslowerbound && $hasupperbound) {
+            $a = new StdClass();
+            $a->lowerbound = userdate($this->lowerbound, $format, 0);
+            $a->upperbound = userdate($this->upperbound, $format, 0);
+            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_date', $a);
+        } else {
+            $fillinginstruction = '';
+            if ($haslowerbound) {
+                $a = userdate($this->lowerbound, $format, 0);
+                $fillinginstruction = get_string('restriction_lower', 'surveyfield_date', $a);
+            }
+            if ($hasupperbound) {
+                $a = userdate($this->upperbound, $format, 0);
+                $fillinginstruction = get_string('restriction_upper', 'surveyfield_date', $a);
+            }
+        }
+
+        return $fillinginstruction;
+    }
+
+    /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
@@ -510,15 +518,19 @@ class surveyfield_date extends surveyitem_base {
      * @param $richsubmission
      * @return
      */
-    public function userform_db_to_export($itemvalue) {
+    public function userform_db_to_export($itemvalue, $format='') {
         $content = $itemvalue->content;
-        if (!$this->downloadformat) { // return unixtime
-            return $content;
+        if (!$content) {
+            return get_string('answerisnoanswer', 'survey');
+        }
+        if (!empty($format)) {
+            return userdate($content, $format, 0);
         } else {
-            // TODO: is userdate correct?
-            // if I fill the survey from a different timezone and I write 5pm,
-            // the teacher has to get the same date not a different one
-            return userdate($content, get_string($this->downloadformat, 'core_langconfig'), 0);
+            if (!$this->downloadformat) { // return unixtime
+                return $content;
+            } else {
+                return userdate($content, get_string($this->downloadformat, 'surveyfield_date'), 0);
+            }
         }
     }
 

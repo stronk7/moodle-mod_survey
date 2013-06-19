@@ -37,11 +37,6 @@ class mod_survey_mastertemplate extends mod_survey_template {
     public $survey = null;
 
     /*
-     * $formdata: the form content as submitted by the user
-     */
-    public $formdata = null;
-
-    /*
      * $libcontent: the content of the file lib.php that is going to populate the master template
      */
     public $libcontent = '';
@@ -60,6 +55,11 @@ class mod_survey_mastertemplate extends mod_survey_template {
      * $mtemplatename: name of the master template to work with
      */
     public $mtemplatename = '';
+
+    /********************** this will be provided later
+     * $formdata: the form content as submitted by the user
+     */
+    public $formdata = null;
 
     /*
      * Class constructor
@@ -371,7 +371,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * lib_write_intro_si_values
-     * @param $si_sid
+     * @param
      * @return
      */
     public function lib_write_intro_si_values($si_sid) {
@@ -381,6 +381,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
         $this->libcontent .= '    // survey_item'."\n";
         $this->libcontent .= '    /*------------------------------------------------*/'."\n";
 
+        // TODO: where do I assign a valur to $this->si_sid?
         foreach ($si_sid as $singlesid) {
             $this->libcontent .= $indent.'    $'.$singlesid.'++;'."\n";
         }

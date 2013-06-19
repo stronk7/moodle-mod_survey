@@ -81,8 +81,16 @@ class mod_survey_submissionmanager {
     /*
      * Class constructor
      */
-    public function __construct($survey) {
+    public function __construct($cm, $survey, $submissionid, $action, $confirm, $searchfields_get) {
+        $this->cm = $cm;
+        $this->context = context_module::instance($cm->id);
         $this->survey = $survey;
+        $this->submissionid = $submissionid;
+        $this->action = $action;
+        $this->confirm = $confirm;
+        $this->searchfields_get = $searchfields_get;
+        $this->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $this->context, null, true);
+        $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
     }
 
     /*
@@ -91,7 +99,7 @@ class mod_survey_submissionmanager {
      * @return
      */
     public function manage_actions() {
-        switch ($this->action) {
+       switch ($this->action) {
             case SURVEY_NOACTION:
             case SURVEY_EDITRESPONSE:
             case SURVEY_READONLYRESPONSE:
@@ -113,9 +121,7 @@ class mod_survey_submissionmanager {
      * @return
      */
     public function manage_submission_deletion() {
-        global $USER, $DB, $OUTPUT, $PAGE;
-
-        $cm = $PAGE->cm;
+        global $USER, $DB, $OUTPUT;
 
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             // ask for confirmation
@@ -139,14 +145,14 @@ class mod_survey_submissionmanager {
                 }
             }
 
-            $optionbase = array('id' => $cm->id, 'act' => SURVEY_DELETERESPONSE);
+            $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_DELETERESPONSE);
 
             $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'submissionid' => $this->submissionid);
-            $urlyes = new moodle_url('view_manage.php', $optionsyes);
+            $urlyes = new moodle_url('view_submissions.php', $optionsyes);
             $buttonyes = new single_button($urlyes, get_string('confirmsurveydeletion', 'survey'));
 
             $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
-            $urlno = new moodle_url('view_manage.php', $optionsno);
+            $urlno = new moodle_url('view_submissions.php', $optionsno);
             $buttonno = new single_button($urlno, get_string('no'));
 
             echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
@@ -184,11 +190,11 @@ class mod_survey_submissionmanager {
             $optionbase = array('s' => $this->survey->id, 'surveyid' => $this->survey->id, 'act' => SURVEY_DELETEALLRESPONSES);
 
             $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES);
-            $urlyes = new moodle_url('view_manage.php', $optionsyes);
+            $urlyes = new moodle_url('view_submissions.php', $optionsyes);
             $buttonyes = new single_button($urlyes, get_string('confirmallsurveysdeletion', 'survey'));
 
             $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
-            $urlno = new moodle_url('view_manage.php', $optionsno);
+            $urlno = new moodle_url('view_submissions.php', $optionsno);
             $buttonno = new single_button($urlno, get_string('no'));
 
             echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
@@ -225,19 +231,15 @@ class mod_survey_submissionmanager {
      * @return
      */
     public function manage_submissions() {
-        global $PAGE, $USER, $OUTPUT, $CFG, $DB, $COURSE;
+        global $USER, $OUTPUT, $CFG, $DB, $COURSE;
 
         require_once($CFG->libdir.'/tablelib.php');
-
-        $cm = $PAGE->cm;
-
-        $context = context_module::instance($cm->id);
 
         $table = new flexible_table('submissionslist');
         $table->initialbars(true);
 
-        $paramurl = array('id' => $cm->id);
-        $table->define_baseurl(new moodle_url('view_manage.php', $paramurl));
+        $paramurl = array('id' => $this->cm->id);
+        $table->define_baseurl(new moodle_url('view_submissions.php', $paramurl));
 
         $tablecolumns = array();
         $tablecolumns[] = 'picture';
@@ -297,7 +299,7 @@ class mod_survey_submissionmanager {
         }
 
         // do I need to filter groups?
-        $filtergroups = survey_need_group_filtering($cm, $context);
+        $filtergroups = survey_need_group_filtering($this->cm, $this->context);
 
         $status = array(SURVEY_STATUSINPROGRESS => get_string('statusinprogress', 'survey'),
                         SURVEY_STATUSCLOSED => get_string('statusclosed', 'survey'));
@@ -307,13 +309,14 @@ class mod_survey_submissionmanager {
         $restrictedaccess = get_string('restrictedaccess', 'survey');
 
         $paramurl = array();
-        $paramurl['id'] = $cm->id;
+        $paramurl['id'] = $this->cm->id;
         $basepath = new moodle_url('view.php', $paramurl);
 
         list($where, $params) = $table->get_sql_where();
 
         // ////////////////////////////
         // write sql to get correct submissions
+        $mygroups = survey_get_my_groups($this->cm);
         $userfields = user_picture::fields('u');
 
         $sql = 'SELECT s.*, s.id as submissionid, '.$userfields.'
@@ -391,7 +394,7 @@ class mod_survey_submissionmanager {
                 $paramurl = array();
                 $paramurl['s'] = $this->survey->id;
                 $paramurl['act'] = SURVEY_DELETEALLRESPONSES;
-                $url = new moodle_url('/mod/survey/view_manage.php', $paramurl);
+                $url = new moodle_url('/mod/survey/view_submissions.php', $paramurl);
                 $caption = get_string('deleteallsubmissions', 'survey');
                 echo $OUTPUT->single_button($url, $caption, 'get');
             }
@@ -426,14 +429,13 @@ class mod_survey_submissionmanager {
 
                 // actions
                 $paramurl['submissionid'] = $submission->submissionid;
-                if ($this->canmanageallsubmissions || has_extrapermission('edit', $this->survey, $mygroups, $submission->userid)) {     // "edit" or "edit as new"
+                if ($this->canmanageallsubmissions || has_extrapermission('edit', $this->survey, $mygroups, $submission->userid)) { // "edit" or "edit as new"
                     if ($submission->status == SURVEY_STATUSCLOSED) {
+                        $paramurl['act'] = SURVEY_EDITRESPONSE;
                         if ($this->survey->history) {
-                            $paramurl['act'] = SURVEY_DUPLICATERESPONSE;
                             $icontitle = get_string('duplicate');
                             $iconpath = 't/copy';
                         } else {
-                            $paramurl['act'] = SURVEY_EDITRESPONSE;
                             $icontitle = get_string('edit');
                             $iconpath = 't/edit';
                         }
@@ -446,7 +448,7 @@ class mod_survey_submissionmanager {
                     $basepath = new moodle_url('view.php', $paramurl);
                     $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
-                } else {                                                                                                   // read only
+                } else { // read only
                     $paramurl['act'] = SURVEY_READONLYRESPONSE;
                     $basepath = new moodle_url('view.php', $paramurl);
                     $icontitle = $restrictedaccess;
@@ -456,14 +458,14 @@ class mod_survey_submissionmanager {
 
                 if ($this->canmanageallsubmissions || has_extrapermission('delete', $this->survey, $mygroups, $submission->userid)) { // delete
                     $paramurl['act'] = SURVEY_DELETERESPONSE;
-                    $basepath = new moodle_url('view_manage.php', $paramurl);
+                    $basepath = new moodle_url('view_submissions.php', $paramurl);
                     $icons .= '&nbsp;<a class="editing_update" title="'.$deletetitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$deletetitle.'" title="'.$deletetitle.'" /></a>';
                 }
 
                 // if I am here I am sure I can see this submission
                 $paramurl['act'] = SURVEY_RESPONSETOPDF;
-                $basepath = new moodle_url('view_manage.php', $paramurl);
+                $basepath = new moodle_url('view_submissions.php', $paramurl);
                 $icons .= '&nbsp;<a class="editing_update" title="'.$downloadpdftitle.'" href="'.$basepath.'">';
                 $icons .= '<img src="'.$OUTPUT->pix_url('i/export').'" class="iconsmall" alt="'.$downloadpdftitle.'" title="'.$downloadpdftitle.'" /></a>';
 
@@ -484,35 +486,36 @@ class mod_survey_submissionmanager {
      * @param
      * @return
      */
-    function prevent_direct_user_input($cm, $context) {
+    public function prevent_direct_user_input() {
         global $DB;
 
         if ($this->action == SURVEY_NOACTION) {
-            return;
+            return true;
         }
-        if (has_capability('mod/survey:manageallsubmissions', $context, null, true)) {
-            return;
+        if ($this->canmanageallsubmissions) {
+            return true;
+        }
+        if (!$ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $this->submissionid), IGNORE_MISSING)) {
+            print_error('incorrectaccessdetected', 'survey');
         }
 
         $allowed = true;
-        $mygroups = survey_get_my_groups($cm);
-        $ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $this->submissionid), IGNORE_MISSING);
+        $mygroups = survey_get_my_groups($this->cm);
         switch ($this->action) {
             case SURVEY_EDITRESPONSE:
-            case SURVEY_DUPLICATERESPONSE:
-                $allowed = (($ownerid) && (has_extrapermission('edit', $this->survey, $mygroups, $ownerid)));
+                $allowed = has_extrapermission('edit', $this->survey, $mygroups, $ownerid);
                 break;
             case SURVEY_READONLYRESPONSE:
-                $allowed = (($ownerid) && (has_extrapermission('read', $this->survey, $mygroups, $ownerid)));
+                $allowed = has_extrapermission('read', $this->survey, $mygroups, $ownerid);
                 break;
             case SURVEY_DELETERESPONSE:
-                $allowed = (($ownerid) && (has_extrapermission('delete', $this->survey, $mygroups, $ownerid)));
+                $allowed = has_extrapermission('delete', $this->survey, $mygroups, $ownerid);
                 break;
             case SURVEY_RESPONSETOPDF:
-                require_capability('mod/survey:submissiontopdf', $context);
+                require_capability('mod/survey:submissiontopdf', $this->context);
                 break;
             case SURVEY_DELETEALLRESPONSES:
-                require_capability('mod/survey:deleteallsubmissions', $context);
+                require_capability('mod/survey:deleteallsubmissions', $this->context);
                 break;
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->action = '.$this->action);
@@ -524,11 +527,15 @@ class mod_survey_submissionmanager {
 
     /*
      * submission_to_pdf
-     * @param $allpages
+     * @param
      * @return
      */
-    public function submission_to_pdf($context) {
+    public function submission_to_pdf() {
         global $CFG, $DB;
+
+        if ($this->action != SURVEY_RESPONSETOPDF) {
+            return;
+        }
 
         require_once($CFG->libdir.'/tcpdf/tcpdf.php');
         require_once($CFG->libdir.'/tcpdf/config/tcpdf_config.php');
@@ -613,12 +620,12 @@ class mod_survey_submissionmanager {
                 continue;
             }
             if ($item->plugin == 'label') {
-                // first row
+                // first column
                 $html = $htmllabel;
                 $content = ($item->customnumber) ? $item->customnumber.': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
-                // colspan = 2
+                // second column: colspan 2
                 $content = trim(strip_tags($item->content), " \t\n\r\0\x0B\xC2\xA0");
                 $html = str_replace('@@col2@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true); // this is like span 2
@@ -633,8 +640,7 @@ class mod_survey_submissionmanager {
                 $content = ($item->customnumber) ? $item->customnumber.': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
-                // second column
-                // colspan = 2
+                // second column: colspan 2
                 $content = trim(strip_tags($item->content), " \t\n\r\0\x0B\xC2\xA0");
                 $html = str_replace('@@col2@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, 'R', true);
@@ -649,7 +655,7 @@ class mod_survey_submissionmanager {
 
                 // third column
                 if (isset($userdatarecord[$item->itemid])) {
-                    $content = strip_tags($userdatarecord[$item->itemid]->content);
+                    $content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
                 } else {
                     $content = '';
                 }
@@ -662,11 +668,13 @@ class mod_survey_submissionmanager {
                 $content = ($item->customnumber) ? $item->customnumber.': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
+                // second column
                 $content = trim(strip_tags($item->content), " \t\n\r\0\x0B\xC2\xA0");
                 $html = str_replace('@@col2@@', $content, $html);
 
+                // third column
                 if (isset($userdatarecord[$item->itemid])) {
-                    $content = strip_tags($userdatarecord[$item->itemid]->content);
+                    $content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
                 } else {
                     $content = '';
                 }

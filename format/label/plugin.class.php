@@ -225,7 +225,7 @@ class surveyformat_label extends surveyitem_base {
      * @param $richsubmission
      * @return
      */
-    public function userform_db_to_export($itemvalue) {
+    public function userform_db_to_export($itemvalue, $format='') {
         return '';
     }
 

@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['parentcontentinvaliddate_err'] = 'Provided data is not a regular date';
+$string['parentcontentinvaliddate_err'] = 'Provided date is not a regular date';
 $string['parentcontentdateoutofrange_err'] = 'Provided date is out of the range requested to the choosen item';
 $string['pluginname'] = 'Date';
 $string['userfriendlypluginname'] = 'Date [dd/mm/yyyy]';
@@ -35,12 +35,11 @@ $string['lowerbound'] = 'Lower bound';
 $string['upperbound_help'] = 'The upper date the user will be allowed to enter';
 $string['upperbound'] = 'Upper bound';
 $string['outofrangedefault'] = 'Default does not fall within the specified range';
-$string['and'] = ' and ';
-$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a}';
+$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a->lowerbound} and {$a->upperbound}';
 $string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
 $string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
-$string['uerr_lowerthanminimum'] = 'Provided date is too small';
-$string['uerr_greaterthanmaximum'] = 'Provided date is too high';
+$string['uerr_lowerthanminimum'] = 'Provided value is lower than minimum required';
+$string['uerr_greaterthanmaximum'] = 'Provided value is greater than maximum required';
 $string['customdefault'] = 'Custom';
 $string['currentdatedefault'] = 'Current date';
 $string['invitationday'] = 'Choose a day';
@@ -50,3 +49,8 @@ $string['uerr_datenotsetrequired'] = 'Please define a date';
 $string['uerr_datenotset'] = 'Please define a date or select the "{$a}" checkbox';
 $string['downloadformat'] = 'Download format';
 $string['downloadformat_help'] = 'Choose the format of the answer as it appear once user attempts are downloaded';
+$string['strftime1'] = '%A, %d %B %Y';
+$string['strftime2'] = '%a, %d %b %Y';
+$string['strftime3'] = '%d %B %Y';
+$string['strftime4'] = '%d %b %Y';
+$string['strftime5'] = '%d/%m/%y';

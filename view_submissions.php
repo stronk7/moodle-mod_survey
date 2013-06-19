@@ -49,30 +49,17 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 
-$context = context_module::instance($cm->id);
-
-$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
-$currentpage = SURVEY_SUBMISSION_MANAGE; // needed by tabs.php
-
 $submissionid = optional_param('submissionid', 0, PARAM_INT);
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $confirm = optional_param('cnf' , 0, PARAM_INT); // confirm submission deletion
+$searchfields_get = optional_param('searchquery', '', PARAM_RAW);
 
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$submission_manager = new mod_survey_submissionmanager($survey);
-$submission_manager->action = $action;
-$submission_manager->submissionid = $submissionid;
-$submission_manager->confirm = $confirm;
-$submission_manager->prevent_direct_user_input($cm, $context);
-if ($action == SURVEY_RESPONSETOPDF) {
-    $submission_manager->submission_to_pdf($context);
-    //die;
-}
-$submission_manager->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $context, null, true);
-$submission_manager->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $context, null, true);
-$submission_manager->searchfields_get = optional_param('searchquery', '', PARAM_RAW);
+$submission_manager = new mod_survey_submissionmanager($cm, $survey, $submissionid, $action, $confirm, $searchfields_get);
+$submission_manager->prevent_direct_user_input();
+$submission_manager->submission_to_pdf();
 
 // ////////////////////////////////////////////////////////////
 // Output starts here
@@ -86,6 +73,9 @@ $PAGE->set_heading($course->shortname);
 // $PAGE->set_focuscontrol('some-html-id');
 
 echo $OUTPUT->header();
+
+$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+$currentpage = SURVEY_SUBMISSION_MANAGE; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $submission_manager->manage_actions();

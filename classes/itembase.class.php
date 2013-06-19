@@ -563,56 +563,6 @@ class surveyitem_base {
     }
 
     /*
-     * item_get_full_info == extranote + fillinginstruction
-     * provides extra description THAT IS NOT SAVED IN THE DATABASE but is shown in the "Add"/"Search" form
-     * @param
-     * @return
-     */
-    public function item_get_full_info($searchform) {
-        global $CFG;
-
-        if (!$searchform) {
-            if (!$this->hideinstructions) {
-               $fillinginstruction = $this->item_get_filling_instructions();
-            }
-            if (isset($this->extranote)) {
-                $extranote = strip_tags($this->extranote);
-            }
-        } else {
-            if ($CFG->survey_fillinginstructioninsearch) {
-                if (!$this->hideinstructions) {
-                    $fillinginstruction = $this->item_get_filling_instructions();
-                }
-            }
-            if ($CFG->survey_extranoteinsearch) {
-                $extranote = strip_tags($this->extranote);
-            }
-        }
-        if (isset($fillinginstruction) && $fillinginstruction && isset($extranote) && $extranote) {
-            return ($fillinginstruction.'<br />'.$extranote);
-        } else {
-            if (isset($fillinginstruction) && $fillinginstruction) {
-                return $fillinginstruction;
-            }
-            if (isset($extranote) && $extranote) {
-                return $extranote;
-            }
-        }
-    }
-
-    /*
-     * item_get_filling_instructions
-     * provides extra fillinginstruction THAT IS NOT SAVED IN THE DATABASE but is shown in the "Add"/"Search" form
-     * @param
-     * @return
-     */
-    public function item_get_filling_instructions() {
-        // if this method is not handled at plugin level,
-        // it means it is supposed to return an empty fillinginstruction
-        return '';
-    }
-
-    /*
      * item_split_unix_time
      * @param $time
      * @return
@@ -1277,6 +1227,58 @@ class surveyitem_base {
         return true; // nothing to do!
     }
 
+    // MARK userform
+
+    /*
+     * userform_get_full_info == extranote + fillinginstruction
+     * provides extra description THAT IS NOT SAVED IN THE DATABASE but is shown in the "Add"/"Search" form
+     * @param
+     * @return
+     */
+    public function userform_get_full_info($searchform) {
+        global $CFG;
+
+        if (!$searchform) {
+            if (!$this->hideinstructions) {
+               $fillinginstruction = $this->userform_get_filling_instructions();
+            }
+            if (isset($this->extranote)) {
+                $extranote = strip_tags($this->extranote);
+            }
+        } else {
+            if ($CFG->survey_fillinginstructioninsearch) {
+                if (!$this->hideinstructions) {
+                    $fillinginstruction = $this->userform_get_filling_instructions();
+                }
+            }
+            if ($CFG->survey_extranoteinsearch) {
+                $extranote = strip_tags($this->extranote);
+            }
+        }
+        if (isset($fillinginstruction) && $fillinginstruction && isset($extranote) && $extranote) {
+            return ($fillinginstruction.'<br />'.$extranote);
+        } else {
+            if (isset($fillinginstruction) && $fillinginstruction) {
+                return $fillinginstruction;
+            }
+            if (isset($extranote) && $extranote) {
+                return $extranote;
+            }
+        }
+    }
+
+    /*
+     * userform_get_filling_instructions
+     * provides extra fillinginstruction THAT IS NOT SAVED IN THE DATABASE but is shown in the "Add"/"Search" form
+     * @param
+     * @return
+     */
+    public function userform_get_filling_instructions() {
+        // if this method is not handled at plugin level,
+        // it means it is supposed to return an empty fillinginstruction
+        return '';
+    }
+
     /*
      * userform_child_item_allowed_static
      * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
@@ -1291,7 +1293,7 @@ class surveyitem_base {
      * @param: $parentcontent, $parentsubmitted
      * @return
      */
-    function userform_child_item_allowed_static($submissionid, $childitemrecord) {
+    public function userform_child_item_allowed_static($submissionid, $childitemrecord) {
         global $DB;
 
         if (!$childitemrecord->parentid) {
@@ -1466,8 +1468,12 @@ class surveyitem_base {
      * @param $richsubmission
      * @return
      */
-    public function userform_db_to_export($itemvalue) {
-        return $itemvalue->content;
+    public function userform_db_to_export($itemvalue, $format='') {
+        $content = $itemvalue->content;
+        if (!$content) {
+            return get_string('answerisnoanswer', 'survey');
+        }
+        return $content;
     }
 
     /*

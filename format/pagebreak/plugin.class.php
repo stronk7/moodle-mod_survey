@@ -137,6 +137,15 @@ class surveyformat_pagebreak extends surveyitem_base {
         return $values;
     }
 
+    /*
+     * item_get_main_text
+     * returns the content of the field defined as main
+     * @param
+     * @return
+     */
+    public function item_get_main_text() {
+        return SURVEYFORMAT_PAGEBREAK_CONTENT;
+    }
 
     // MARK userform
 
@@ -180,7 +189,7 @@ class surveyformat_pagebreak extends surveyitem_base {
      * @param $richsubmission
      * @return
      */
-    public function userform_db_to_export($itemvalue) {
+    public function userform_db_to_export($itemvalue, $format='') {
         return '';
     }
 
@@ -192,15 +201,5 @@ class surveyformat_pagebreak extends surveyitem_base {
      */
     public function userform_mform_element_is_group() {
         return false;
-    }
-
-    /*
-     * item_get_main_text
-     * returns the content of the field defined as main
-     * @param
-     * @return
-     */
-    public function item_get_main_text() {
-        return SURVEYFORMAT_PAGEBREAK_CONTENT;
     }
 }

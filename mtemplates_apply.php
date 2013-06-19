@@ -50,9 +50,6 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "mtemplates.php?id=$cm->id", $survey->name, $cm->id);
 
-$currenttab = SURVEY_TABMTEMPLATES; // needed by tabs.php
-$currentpage = SURVEY_MTEMPLATES_APPLY; // needed by tabs.php
-
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:applymastertemplate', $context);
 
@@ -105,6 +102,9 @@ $PAGE->set_heading($course->shortname);
 // $PAGE->set_focuscontrol('some-html-id');
 
 echo $OUTPUT->header();
+
+$currenttab = SURVEY_TABMTEMPLATES; // needed by tabs.php
+$currentpage = SURVEY_MTEMPLATES_APPLY; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $message = get_string('applymtemplateinfo', 'survey');
@@ -114,4 +114,3 @@ $apply_mtemplate->display();
 
 // Finish the page
 echo $OUTPUT->footer();
-

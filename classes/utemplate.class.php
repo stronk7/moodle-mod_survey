@@ -32,6 +32,21 @@ require_once($CFG->dirroot.'/mod/survey/classes/template.class.php');
 
 class mod_survey_usertemplate extends mod_survey_template {
     /*
+     * $cm
+     */
+    public $cm = null;
+
+    /*
+     * $context
+     */
+    public $context = null;
+
+    /*
+     * $survey: the record of this survey
+     */
+    public $survey = null;
+
+    /*
      * $utemplateid: the ID of the current working user template
      */
     public $utemplateid = 0;
@@ -40,16 +55,6 @@ class mod_survey_usertemplate extends mod_survey_template {
      * $confirm: is the action confirmed by the user?
      */
     public $confirm = SURVEY_UNCONFIRMED;
-
-    /*
-     * $formdata: the form content as submitted by the user
-     */
-    public $formdata = null;
-
-    /*
-     * $userfeedback
-     */
-    public $userfeedback = SURVEY_NOFEEDBACK;
 
     /*
      * $canexportutemplates
@@ -61,13 +66,24 @@ class mod_survey_usertemplate extends mod_survey_template {
      */
     public $candeleteutemplates = false;
 
+    /********************** this will be provided later
+     * $formdata: the form content as submitted by the user
+     */
+    public $formdata = null;
+
 
     /*
      * Class constructor
      */
-    public function __construct($survey, $confirm) {
+    public function __construct($cm, $survey, $context, $utemplateid, $action, $confirm) {
+        $this->cm = $cm;
+        $this->context = $context;
         $this->survey = $survey;
         $this->confirm = $confirm;
+        $this->utemplateid = $utemplateid;
+        $this->action = $action;
+        $this->canexportutemplates = has_capability('mod/survey:exportusertemplates', $context, null, true);
+        $this->candeleteutemplates = has_capability('mod/survey:deleteusertemplates', $context, null, true);
     }
 
     public function export_utemplate() {
@@ -105,7 +121,7 @@ class mod_survey_usertemplate extends mod_survey_template {
      * @return
      */
     public function write_utemplate() {
-        global $CFG, $DB;
+        global $DB;
 
         $sql = 'SELECT si.id, si.type, si.plugin
                 FROM {survey_item} si
@@ -190,10 +206,14 @@ class mod_survey_usertemplate extends mod_survey_template {
 
     /*
      * get_contextid_from_sharinglevel
-     * @param none
+     * @param sharinglevel
      * @return $filemanager_options
      */
-    public function get_contextid_from_sharinglevel($sharinglevel) {
+    public function get_contextid_from_sharinglevel($sharinglevel='') {
+        if (empty($sharinglevel)) {
+            $sharinglevel = $this->formdata->sharinglevel;
+        }
+
         $parts = explode('_', $sharinglevel);
         $contextlevel = $parts[0];
         $contextid = $parts[1];
@@ -268,13 +288,13 @@ class mod_survey_usertemplate extends mod_survey_template {
     /*
      * upload_utemplate
      *
-     * @param $survey, $context
+     * @param
      * @return null
      */
     public function upload_utemplate() {
 
         $template_options = $this->get_filemanager_options();
-        $contextid = $this->get_contextid_from_sharinglevel($this->formdata->sharinglevel);
+        $contextid = $this->get_contextid_from_sharinglevel();
         $fs = get_file_storage();
 
         /*
@@ -363,7 +383,7 @@ class mod_survey_usertemplate extends mod_survey_template {
         $fs = get_file_storage();
         $filerecord = new stdClass;
 
-        $contextid = $this->get_contextid_from_sharinglevel($this->formdata->sharinglevel);
+        $contextid = $this->get_contextid_from_sharinglevel();
         $filerecord->contextid = $contextid;
 
         $filerecord->component = 'mod_survey';
@@ -384,22 +404,20 @@ class mod_survey_usertemplate extends mod_survey_template {
      * @return
      */
     public function manage_utemplates() {
-        global $PAGE, $USER, $OUTPUT, $CFG;
+        global $USER, $OUTPUT, $CFG;
 
         require_once($CFG->libdir.'/tablelib.php');
-
-        $cm = $PAGE->cm;
 
         // /////////////////////////////////////////////////
         // $paramurl definition
         $paramurl = array();
-        $paramurl['id'] = $cm->id;
+        $paramurl['id'] = $this->cm->id;
         // end of $paramurl definition
         // /////////////////////////////////////////////////
 
         $table = new flexible_table('templatelist');
 
-        $table->define_baseurl(new moodle_url('utemplates_manage.php', array('id' => $cm->id)));
+        $table->define_baseurl(new moodle_url('utemplates_manage.php', array('id' => $this->cm->id)));
 
         $tablecolumns = array();
         $tablecolumns[] = 'templatename';
@@ -435,7 +453,7 @@ class mod_survey_usertemplate extends mod_survey_template {
         $deletetitle = get_string('delete');
         $exporttitle = get_string('exporttemplate', 'survey');
 
-        $options = $this->get_sharinglevel_options($cm->id);
+        $options = $this->get_sharinglevel_options($this->cm->id);
 
         // echo '$options:';
         // var_dump($options);
@@ -504,6 +522,9 @@ class mod_survey_usertemplate extends mod_survey_template {
     public function delete_utemplate() {
         global $OUTPUT, $PAGE;
 
+        if ($this->action != SURVEY_DELETEUTEMPLATE) {
+            return;
+        }
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             // ask for confirmation
             $a = $this->get_utemplate_name();
@@ -545,14 +566,12 @@ class mod_survey_usertemplate extends mod_survey_template {
      * @return null
      */
     public function get_sharinglevel_options() {
-        global $DB, $COURSE, $USER, $PAGE;
-
-        $cm = $PAGE->cm;
+        global $DB, $COURSE, $USER;
 
         $options = array();
         $options[CONTEXT_USER.'_'.$USER->id] = get_string('user').': '.fullname($USER);
 
-        $options[CONTEXT_MODULE.'_'.$cm->id] = get_string('module', 'survey').': '.$this->survey->name;
+        $options[CONTEXT_MODULE.'_'.$this->cm->id] = get_string('module', 'survey').': '.$this->survey->name;
 
         $options[CONTEXT_COURSE.'_'.$COURSE->id] = get_string('course').': '.$COURSE->shortname;
 

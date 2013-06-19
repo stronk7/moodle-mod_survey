@@ -138,7 +138,6 @@ class surveyfield_boolean extends surveyitem_base {
 
     /*
      * item_custom_fields_to_form
-     * translates the date class property $fieldlist in $field.'_year' and $field.'_month'
      * @param
      * @return
      */
@@ -188,32 +187,6 @@ class surveyfield_boolean extends surveyitem_base {
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $record->defaultoption = '.$record->defaultoption);
         }
-    }
-
-    // MARK parent
-
-    /*
-     * parent_validate_child_constraints
-     * @param
-     * @return status of child relation
-     */
-    public function parent_validate_child_constraints($childvalue) {
-        $status = (($childvalue == 0) || ($childvalue == 1));
-
-        return $status;
-    }
-
-    /*
-     * parent_encode_content_to_value
-     * This method is used by items handled as parent
-     * starting from the user input, this method stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     * @param $parentcontent
-     * @return
-     */
-    public function parent_encode_content_to_value($parentcontent) {
-        return $parentcontent;
     }
 
     /*
@@ -269,6 +242,49 @@ class surveyfield_boolean extends surveyitem_base {
         }
 
         return $values;
+    }
+
+    /*
+     * item_get_downloadformats
+     * @param
+     * @return
+     */
+    public function item_get_downloadformats() {
+        $option = array();
+        $option['strfbool1'] = get_string('strfbool1', 'surveyfield_boolean'); // yes/no
+        $option['strfbool2'] = get_string('strfbool2', 'surveyfield_boolean'); // y/n
+        $option['strfbool3'] = get_string('strfbool3', 'surveyfield_boolean'); // up/down
+        $option['strfbool4'] = get_string('strfbool4', 'surveyfield_boolean'); // true/false
+        $option['strfbool5'] = get_string('strfbool5', 'surveyfield_boolean'); // 0/1
+        $option['strfbool6'] = get_string('strfbool6', 'surveyfield_boolean'); // +/-
+
+        return $option;
+    }
+
+    // MARK parent
+
+    /*
+     * parent_validate_child_constraints
+     * @param
+     * @return status of child relation
+     */
+    public function parent_validate_child_constraints($childvalue) {
+        $status = (($childvalue == 0) || ($childvalue == 1));
+
+        return $status;
+    }
+
+    /*
+     * parent_encode_content_to_value
+     * This method is used by items handled as parent
+     * starting from the user input, this method stores to the db the value as it is stored during survey submission
+     * this method manages the $parentcontent of its child item, not its own $parentcontent
+     * (take care: here we are not submitting a survey but we are submitting an item)
+     * @param $parentcontent
+     * @return
+     */
+    public function parent_encode_content_to_value($parentcontent) {
+        return $parentcontent;
     }
 
     // MARK userform
@@ -445,9 +461,17 @@ class surveyfield_boolean extends surveyitem_base {
      * @param $richsubmission
      * @return
      */
-    public function userform_db_to_export($itemvalue) {
+    public function userform_db_to_export($itemvalue, $format='') {
         $content = $itemvalue->content;
-        $return = ($content) ? 'true' : 'false';
+        if (!$content) {
+            return get_string('answerisnoanswer', 'survey');
+        }
+        if (!empty($format)) {
+            $answers = explode('/', get_string($format, 'surveyfield_boolean'));
+        } else {
+            $answers = explode('/', get_string($this->downloadformat, 'surveyfield_boolean'));
+        }
+        $return = ($content) ? $answers[0] : $answers[1];
 
         return $return;
     }

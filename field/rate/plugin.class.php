@@ -179,7 +179,6 @@ class surveyfield_rate extends surveyitem_base {
 
     /*
      * item_custom_fields_to_form
-     * translates the date class property $fieldlist in $field.'_year' and $field.'_month'
      * @param
      * @return
      */
@@ -261,22 +260,6 @@ class surveyfield_rate extends surveyitem_base {
             }
             return implode("\n", $default);
         }
-    }
-
-    /*
-     * item_get_filling_instructions
-     * @param
-     * @return
-     */
-    public function item_get_filling_instructions() {
-
-        if (!empty($this->forcedifferentrates)) {
-            $fillinginstruction = get_string('diffratesrequired', 'surveyfield_rate');
-        } else {
-            $fillinginstruction = '';
-        }
-
-        return $fillinginstruction;
     }
 
     /*
@@ -479,6 +462,22 @@ class surveyfield_rate extends surveyitem_base {
                 $errors[$elementname] = get_string('uerr_duplicaterate', 'surveyfield_rate');
             }
         }
+    }
+
+    /*
+     * userform_get_filling_instructions
+     * @param
+     * @return
+     */
+    public function userform_get_filling_instructions() {
+
+        if (!empty($this->forcedifferentrates)) {
+            $fillinginstruction = get_string('diffratesrequired', 'surveyfield_rate');
+        } else {
+            $fillinginstruction = '';
+        }
+
+        return $fillinginstruction;
     }
 
     /*

@@ -48,13 +48,16 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 
-$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
-$currentpage = SURVEY_SUBMISSION_REPORT; // needed by tabs.php
-
 $reportname = optional_param('rname', '', PARAM_ALPHA);
 $hassubmissions = survey_has_submissions($survey->id);
 
+$context = context_module::instance($cm->id);
 require_capability('mod/survey:accessreports', $context);
+
+// ////////////////////////////////////////////////////////////
+// calculations
+// ////////////////////////////////////////////////////////////
+// nothing to do here ;-)
 
 // ////////////////////////////////////////////////////////////
 // Output starts here
@@ -68,6 +71,8 @@ $PAGE->set_heading($course->shortname);
 // $PAGE->set_focuscontrol('some-html-id');
 
 echo $OUTPUT->header();
+$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+$currentpage = SURVEY_SUBMISSION_REPORT; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 // prevent manual addressing in the addressbar

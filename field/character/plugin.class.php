@@ -150,31 +150,23 @@ class surveyfield_character extends surveyitem_base {
 
     /*
      * item_custom_fields_to_form
-     * translates the date class property $fieldlist in $field.'_year' and $field.'_month'
      * @param
      * @return
      */
     public function item_custom_fields_to_form() {
         // 1. special management for fields equipped with "free" checkbox
-        // here, at local level (in survey_character ONLY) I manage the <not standard> "pattern" field
-        // $this->pattern_text and $this->pattern_check don't exist in the database
-        $options = array(SURVEYFIELD_CHARACTER_EMAILPATTERN, SURVEYFIELD_CHARACTER_URLPATTERN); // SURVEYFIELD_CHARACTER_CUSTOMPATTERN can not be used
-
-        $fieldlist = $this->item_fields_with_free_checkbox();
-        foreach ($fieldlist as $field) {
-            if (!isset($this->{$field})) {
-                $this->{$field.'_check'} = 1;
-            } else {
-                $this->{$field.'_check'} = 0;
-                if (!in_array($this->{$field}, $options)) {
-                    $this->{$field.'_text'} = $this->{$field};
-                    $this->{$field} = SURVEYFIELD_CHARACTER_CUSTOMPATTERN;
-                }
-            }
-        }
+        // nothing to do: they don't exist in this plugin
 
         // 2. special management for composite fields
-        // nothing to do: they don't exist in this plugin
+        switch ($this->pattern) {
+            case SURVEYFIELD_CHARACTER_FREEPATTERN:
+            case SURVEYFIELD_CHARACTER_EMAILPATTERN:
+            case SURVEYFIELD_CHARACTER_URLPATTERN:
+                break;
+            default:
+                $this->pattern_text = $this->pattern;
+                $this->pattern = SURVEYFIELD_CHARACTER_CUSTOMPATTERN;
+        }
 
         // 3. special management for defaultvalue
         // nothing to do: defaultvalue doesn't need any further care
@@ -188,33 +180,15 @@ class surveyfield_character extends surveyitem_base {
      */
     public function item_custom_fields_to_db($record) {
         // 1. special management for fields equipped with "free" checkbox
-        $fieldlist = $this->item_fields_with_free_checkbox();
-        foreach ($fieldlist as $field) {
-            if (isset($record->{$field.'_check'})) {
-                $record->{$field} = null;
-                $record->{$field.'_text'} = null;
-            } else {
-                if ($record->{$field} == SURVEYFIELD_CHARACTER_CUSTOMPATTERN) {
-                    $record->{$field} = $record->pattern_text;
-                }
-            }
-        }
+        // nothing to do: they don't exist in this plugin
 
         // 2. special management for composite fields
-        // nothing to do: they don't exist in this plugin
+        if ($record->pattern == SURVEYFIELD_CHARACTER_CUSTOMPATTERN) {
+            $record->pattern = $record->pattern_text;
+        }
 
         // 3. special management for defaultvalue
         // nothing to do: defaultvalue doesn't need any further care
-    }
-
-    /*
-     * item_fields_with_free_checkbox
-     * get the list of composite fields
-     * @param
-     * @return
-     */
-    public function item_fields_with_free_checkbox() {
-        return array('pattern');
     }
 
     /*
@@ -230,48 +204,6 @@ class surveyfield_character extends surveyitem_base {
                 $record->{$fieldbase.'_text'} = null;
             }
         }
-    }
-
-    /*
-     * item_get_filling_instructions
-     * @param
-     * @return
-     */
-    public function item_get_filling_instructions() {
-
-        if (is_null($this->pattern)) {
-            if ($this->minlength) {
-                if ($this->maxlength) {
-                    $a = new stdClass();
-                    $a->minlength = $this->minlength;
-                    $a->maxlength = $this->maxlength;
-                    $fillinginstruction = get_string('restrictions_minmax', 'surveyfield_character', $a);
-                } else {
-                    $a = $this->minlength;
-                    $fillinginstruction = get_string('restrictions_min', 'surveyfield_character', $a);
-                }
-            } else {
-                if ($this->maxlength) {
-                    $a = $this->maxlength;
-                    $fillinginstruction = get_string('restrictions_max', 'surveyfield_character', $a);
-                } else {
-                    $fillinginstruction = '';
-                }
-            }
-        } else {
-            switch ($this->pattern) {
-                case SURVEYFIELD_CHARACTER_EMAILPATTERN:
-                    $fillinginstruction = get_string('restrictions_email', 'surveyfield_character');
-                    break;
-                case SURVEYFIELD_CHARACTER_URLPATTERN:
-                    $fillinginstruction = get_string('restrictions_url', 'surveyfield_character');
-                    break;
-                default:
-                    $fillinginstruction = get_string('restrictions_custom', 'surveyfield_character', $this->pattern_text);
-            }
-        }
-
-        return $fillinginstruction;
     }
 
     /*
@@ -406,6 +338,48 @@ class surveyfield_character extends surveyitem_base {
             }
         }
         // return $errors; is not needed because $errors is passed by reference
+    }
+
+    /*
+     * userform_get_filling_instructions
+     * @param
+     * @return
+     */
+    public function userform_get_filling_instructions() {
+
+        if (is_null($this->pattern)) {
+            if ($this->minlength) {
+                if ($this->maxlength) {
+                    $a = new stdClass();
+                    $a->minlength = $this->minlength;
+                    $a->maxlength = $this->maxlength;
+                    $fillinginstruction = get_string('restrictions_minmax', 'surveyfield_character', $a);
+                } else {
+                    $a = $this->minlength;
+                    $fillinginstruction = get_string('restrictions_min', 'surveyfield_character', $a);
+                }
+            } else {
+                if ($this->maxlength) {
+                    $a = $this->maxlength;
+                    $fillinginstruction = get_string('restrictions_max', 'surveyfield_character', $a);
+                } else {
+                    $fillinginstruction = '';
+                }
+            }
+        } else {
+            switch ($this->pattern) {
+                case SURVEYFIELD_CHARACTER_EMAILPATTERN:
+                    $fillinginstruction = get_string('restrictions_email', 'surveyfield_character');
+                    break;
+                case SURVEYFIELD_CHARACTER_URLPATTERN:
+                    $fillinginstruction = get_string('restrictions_url', 'surveyfield_character');
+                    break;
+                default:
+                    $fillinginstruction = get_string('restrictions_custom', 'surveyfield_character', $this->pattern_text);
+            }
+        }
+
+        return $fillinginstruction;
     }
 
     /*

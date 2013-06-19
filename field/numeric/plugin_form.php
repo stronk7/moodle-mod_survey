@@ -34,13 +34,14 @@ require_once($CFG->dirroot.'/mod/survey/field/numeric/lib.php');
 
 class survey_pluginform extends surveyitem_baseform {
 
-    function definition() {
+    public function definition() {
         // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
-        $hassubmissions = $this->_customdata->hassubmissions;
+        // $survey = $this->_customdata->survey;
+        // $hassubmissions = $this->_customdata->hassubmissions;
 
         // -------------------------------------------------------------------------------
-        // comincio con la "sezione" comune della form
+        // I start with the common "section" form
         parent::definition();
 
         // -------------------------------------------------------------------------------
@@ -54,68 +55,53 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
         $mform->setType($fieldname, PARAM_TEXT); // maybe I use ',' as decimal separator so it is not a INT and not a FLOAT
 
-        if (!$hassubmissions) {
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
-            // here I open a new fieldset
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
-            $fieldname = 'validation';
-            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // here I open a new fieldset
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        $fieldname = 'validation';
+        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-            // ----------------------------------------
-            // newitem::signed
-            // ----------------------------------------
-            $fieldname = 'signed';
-            $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'surveyfield_numeric'));
-            $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
-            $mform->setType($fieldname, PARAM_INT);
+        // ----------------------------------------
+        // newitem::signed
+        // ----------------------------------------
+        $fieldname = 'signed';
+        $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'surveyfield_numeric'));
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
+        $mform->setType($fieldname, PARAM_INT);
 
-            // ----------------------------------------
-            // newitem::decimals
-            // ----------------------------------------
-            $fieldname = 'decimals';
-            $elementgroup = array();
-            $elementgroup[] = $mform->createElement('text', $fieldname, '');
-            $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_check', '', get_string('free', 'survey'));
-            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_numeric'), ' ', false);
-            $mform->disabledIf($fieldname.'_group', $fieldname.'_check', 'checked');
-            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_numeric');
-            // $mform->setDefault($fieldname, 2);
-            // $mform->setDefault($fieldname.'_check', 1);
-            $mform->setType($fieldname, PARAM_INT);
+        // ----------------------------------------
+        // newitem::decimals
+        // ----------------------------------------
+        $fieldname = 'decimals';
+        $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_numeric'));
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
+        $mform->setType($fieldname, PARAM_INT);
 
-            // ----------------------------------------
-            // newitem::lowerbound
-            // ----------------------------------------
-            $fieldname = 'lowerbound';
-            $elementgroup = array();
-            $elementgroup[] = $mform->createElement('text', $fieldname, '');
-            $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_check', '', get_string('free', 'survey'));
-            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_numeric'), ' ', false);
-            $mform->disabledIf($fieldname.'_group', $fieldname.'_check', 'checked');
-            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_numeric');
-            // $mform->setDefault($fieldname, 0);
-            $mform->setDefault($fieldname.'_check', 1);
-            $mform->setType($fieldname, PARAM_INT);
+        // ----------------------------------------
+        // newitem::lowerbound
+        // ----------------------------------------
+        $fieldname = 'lowerbound';
+        $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_numeric'));
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
+        $mform->setType($fieldname, PARAM_ALPHA);
 
-            // ----------------------------------------
-            // newitem::upperbound
-            // ----------------------------------------
-            $fieldname = 'upperbound';
-            $elementgroup = array();
-            $elementgroup[] = $mform->createElement('text', $fieldname, '');
-            $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_check', '', get_string('free', 'survey'));
-            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_numeric'), ' ', false);
-            $mform->disabledIf($fieldname.'_group', $fieldname.'_check', 'checked');
-            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_numeric');
-            // $mform->setDefault($fieldname, 99);
-            $mform->setDefault($fieldname.'_check', 1);
-            $mform->setType($fieldname, PARAM_INT);
-        }
+        // ----------------------------------------
+        // newitem::upperbound
+        // ----------------------------------------
+        $fieldname = 'upperbound';
+        $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_numeric'));
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
+        $mform->setType($fieldname, PARAM_ALPHA);
 
         $this->add_item_buttons();
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
+        // -------------------------------------------------------------------------------
+        $item = $this->_customdata->item;
+        // $survey = $this->_customdata->survey;
+        // $hassubmissions = $this->_customdata->hassubmissions;
+
         $errors = parent::validation($data, $files);
 
         // constrain default between boundaries
@@ -124,23 +110,23 @@ class survey_pluginform extends surveyitem_baseform {
                 $errors['defaultvalue'] = get_string('default_notanumber', 'surveyfield_numeric');
             } else {
                 // if it is < 0 but has been defined as unsigned, shouts
-                if (isset($data['signed']) && ($thenumber < 0)) {
+                if ((!$data['signed']) && ($thenumber < 0)) {
                     $errors['defaultvalue'] = get_string('defaultsignnotunallowed', 'surveyfield_numeric');
                 }
 
                 // if it is < $this->lowerbound, shouts
-                if (!isset($data['lowerbound_check']) && ($thenumber < $data['lowerbound'])) {
+                if (!empty($data['lowerbound']) && ($thenumber < $data['lowerbound'])) {
                     $errors['defaultvalue'] = get_string('default_outofrange', 'surveyfield_numeric');
                 }
 
                 // if it is > $this->upperbound, shouts
-                if (!isset($data['upperbound_check']) && ($thenumber > $data['upperbound'])) {
+                if (!empty($data['upperbound']) && ($thenumber > $data['upperbound'])) {
                     $errors['defaultvalue'] = get_string('default_outofrange', 'surveyfield_numeric');
                 }
 
                 $is_integer = (bool)(strval(intval($thenumber)) == strval($thenumber));
                 // if it has decimal but has been defined as integer, shouts
-                if (!isset($data['decimals_check']) && ($data['decimals'] == 0) && (!$is_integer)) {
+                if ( ($data['decimals'] == 0) && (!$is_integer) ) {
                     $errors['defaultvalue'] = get_string('default_notinteger', 'surveyfield_numeric');
                 }
             }

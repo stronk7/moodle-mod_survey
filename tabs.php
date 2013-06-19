@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 // prevention is done in each working page according to actions
 
 $hassubmissions = survey_has_submissions($survey->id);
+$context = context_module::instance($cm->id);
 
 $canpreview = has_capability('mod/survey:preview', $context, null, true);
 $cansubmit = has_capability('mod/survey:submit', $context, null, true);
@@ -70,7 +71,7 @@ $paramurl = array('id' => $cm->id);
 if ($cansubmit) {
     $elementurl = new moodle_url('/mod/survey/view.php', $paramurl);
 } else {
-    $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
+    $elementurl = new moodle_url('/mod/survey/view_submissions.php', $paramurl);
 }
 $row[] = new tabobject(SURVEY_TAB1NAME, $elementurl->out(), SURVEY_TAB1NAME);
 
@@ -142,7 +143,7 @@ switch ($currenttab) {
         }
 
         // manage data
-        $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
+        $elementurl = new moodle_url('/mod/survey/view_submissions.php', $paramurl);
         $strlabel = get_string('tabsubmissionspage3', 'survey');
         $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
 

@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 
 class surveyitem_baseform extends moodleform {
 
-    function definition() {
+    public function definition() {
         global $DB;
 
         // -------------------------------------------------------------------------------
@@ -196,13 +196,11 @@ class surveyitem_baseform extends moodleform {
         // ----------------------------------------
         // newitem::hide
         // ----------------------------------------
-        if (!$hassubmissions) {
-            $fieldname = 'hide';
-            if ($item->item_form_requires[$fieldname]) {
-                $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
-                $mform->addHelpButton($fieldname, $fieldname, 'survey');
-                $mform->setType($fieldname, PARAM_INT);
-            }
+        $fieldname = 'hide';
+        if ($item->item_form_requires[$fieldname]) {
+            $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
+            $mform->addHelpButton($fieldname, $fieldname, 'survey');
+            $mform->setType($fieldname, PARAM_INT);
         }
 
         // ----------------------------------------
@@ -245,91 +243,90 @@ class surveyitem_baseform extends moodleform {
             }
         }
 
-        if (!$hassubmissions) {
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
-            // here I open a new fieldset
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
-            $fieldname = 'branching_fs';
-            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // here I open a new fieldset
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        $fieldname = 'branching_fs';
+        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-            // ----------------------------------------
-            // newitem::parentid
-            // ----------------------------------------
-            $fieldname = 'parentid';
-            if ($item->item_form_requires[$fieldname]) {
-                // create the list of each item with:
-                //     sortindex lower than mine (whether already exists)
-                //     $plugintemplate->flag->couldbeparent == true
-                //     basicform == my one <-- I jump this verification because the survey creator can, at every time, change the basicform of the current item
-                //         So I shify the verification of the holding form at the form verification time.
+        // ----------------------------------------
+        // newitem::parentid
+        // ----------------------------------------
+        $fieldname = 'parentid';
+        if ($item->item_form_requires[$fieldname]) {
+            // create the list of each item with:
+            //     sortindex lower than mine (whether already exists)
+            //     $plugintemplate->flag->couldbeparent == true
+            //     basicform == my one <-- I jump this verification because the survey creator can, at every time, change the basicform of the current item
+            //         So I shify the verification of the holding form at the form verification time.
 
-                // build the list only for searchable plugins
-                $pluginlist = survey_get_plugin_list(SURVEY_TYPEFIELD);
-                foreach ($pluginlist as $plugin) {
-                    $plugintemplate = survey_get_item(null, SURVEY_TYPEFIELD, $plugin);
-                    if (!$plugintemplate->flag->couldbeparent) {
-                        unset($pluginlist[$plugin]);
-                    }
+            // build the list only for searchable plugins
+            $pluginlist = survey_get_plugin_list(SURVEY_TYPEFIELD);
+            foreach ($pluginlist as $plugin) {
+                $plugintemplate = survey_get_item(null, SURVEY_TYPEFIELD, $plugin);
+                if (!$plugintemplate->flag->couldbeparent) {
+                    unset($pluginlist[$plugin]);
                 }
-                $pluginwhere = '(\''.implode("','", $pluginlist).'\')';
-
-                $sql = 'SELECT *
-                        FROM {survey_item}
-                        WHERE surveyid = :surveyid';
-                $sqlparams = array('surveyid' => $survey->id);
-                if ($item->item_has_sortindex()) {
-                    $sql .= ' AND sortindex < :sortindex';
-                    $sqlparams['sortindex'] = $item->sortindex;
-                }
-                $sql .= ' AND plugin IN '.$pluginwhere.'
-                            ORDER BY sortindex';
-                $records = $DB->get_recordset_sql($sql, $sqlparams);
-
-                $quickform = new HTML_QuickForm();
-                $select = $quickform->createElement('select', $fieldname, get_string($fieldname, 'survey'));
-                $select->addOption(get_string('choosedots'), 0);
-                $maxlength = 80;
-                foreach ($records as $record) {
-                    $star = ($record->basicform == SURVEY_NOTPRESENT) ? '(*) ' : '';
-                    $thiscontent = survey_get_sid_field_content($record);
-
-                    $content = $star.get_string('pluginname', 'surveyfield_'.$record->plugin).' ['.$record->sortindex.']: '.strip_tags($thiscontent);
-                    if (strlen($content) > $maxlength) {
-                        $content = substr($content, 0, $maxlength);
-                    }
-                    $disabled = ($record->hide == 1) ? array('disabled' => 'disabled') : null;
-                    $select->addOption($content, $record->id, $disabled);
-                }
-                $records->close();
-
-                $mform->addElement($select);
-                $mform->addHelpButton($fieldname, $fieldname, 'survey');
-                $mform->setType($fieldname, PARAM_INT);
             }
+            $pluginwhere = '(\''.implode("','", $pluginlist).'\')';
 
-            // ----------------------------------------
-            // newitem::parentcontent
-            // ----------------------------------------
-            $fieldname = 'parentcontent';
-            if ($item->item_form_requires[$fieldname]) {
-                $mform->addElement('textarea', $fieldname, get_string($fieldname, 'survey'), array('wrap' => 'virtual', 'rows' => '5', 'cols' => '45'));
-                $mform->addHelpButton($fieldname, $fieldname, 'survey');
-                $mform->setType($fieldname, PARAM_RAW);
-
-                // ----------------------------------------
-                // newitem::parentformat
-                // ----------------------------------------
-                $fieldname = 'parentformat';
-                $a = '<ul>';
-                foreach ($pluginlist as $plugin) {
-                    $a .= '<li><div>';
-                    $a .= '<div class="pluginname">'.get_string('pluginname', 'surveyfield_'.$plugin).': </div>';
-                    $a .= '<div class="inputformat">'.get_string('parentformat', 'surveyfield_'.$plugin).'</div>';
-                    $a .= '</div></li>'."\n";
-                }
-                $a .= '</ul>';
-                $mform->addElement('static', $fieldname, get_string('note', 'survey'), get_string($fieldname, 'survey', $a));
+            $sql = 'SELECT *
+                    FROM {survey_item}
+                    WHERE surveyid = :surveyid';
+            $sqlparams = array('surveyid' => $survey->id);
+            if ($item->item_has_sortindex()) {
+                $sql .= ' AND sortindex < :sortindex';
+                $sqlparams['sortindex'] = $item->sortindex;
             }
+            $sql .= ' AND plugin IN '.$pluginwhere.'
+                        ORDER BY sortindex';
+            $records = $DB->get_recordset_sql($sql, $sqlparams);
+
+            $maxlength = 80;
+            $quickform = new HTML_QuickForm();
+            $select = $quickform->createElement('select', $fieldname, get_string($fieldname, 'survey'));
+            $select->addOption(get_string('choosedots'), 0);
+            foreach ($records as $record) {
+                $star = ($record->basicform == SURVEY_NOTPRESENT) ? '(*) ' : '';
+                $thiscontent = survey_get_sid_field_content($record);
+
+                $content = $star.get_string('pluginname', 'surveyfield_'.$record->plugin).' ['.$record->sortindex.']: '.strip_tags($thiscontent);
+                if (strlen($content) > $maxlength) {
+                    $content = substr($content, 0, $maxlength);
+                }
+                $disabled = ($record->hide == 1) ? array('disabled' => 'disabled') : null;
+                $select->addOption($content, $record->id, $disabled);
+            }
+            $records->close();
+
+            $mform->addElement($select);
+            $mform->addHelpButton($fieldname, $fieldname, 'survey');
+            $mform->setType($fieldname, PARAM_INT);
+        }
+
+        // ----------------------------------------
+        // newitem::parentcontent
+        // ----------------------------------------
+        $fieldname = 'parentcontent';
+        if ($item->item_form_requires[$fieldname]) {
+            $params = array('wrap' => 'virtual', 'rows' => '5', 'cols' => '45');
+            $mform->addElement('textarea', $fieldname, get_string($fieldname, 'survey'), $params);
+            $mform->addHelpButton($fieldname, $fieldname, 'survey');
+            $mform->setType($fieldname, PARAM_RAW);
+
+            // ----------------------------------------
+            // newitem::parentformat
+            // ----------------------------------------
+            $fieldname = 'parentformat';
+            $a = '<ul>';
+            foreach ($pluginlist as $plugin) {
+                $a .= '<li><div>';
+                $a .= '<div class="pluginname">'.get_string('pluginname', 'surveyfield_'.$plugin).': </div>';
+                $a .= '<div class="inputformat">'.get_string('parentformat', 'surveyfield_'.$plugin).'</div>';
+                $a .= '</div></li>'."\n";
+            }
+            $a .= '</ul>';
+            $mform->addElement('static', $fieldname, get_string('note', 'survey'), get_string($fieldname, 'survey', $a));
         }
 
         if ($item->item_get_type() == SURVEY_TYPEFIELD) {
@@ -342,12 +339,12 @@ class surveyitem_baseform extends moodleform {
         }
     }
 
-    function add_item_buttons() {
+    public function add_item_buttons() {
         $mform = $this->_form;
 
         // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
-        $survey = $this->_customdata->survey;
+        // $survey = $this->_customdata->survey;
         $hassubmissions = $this->_customdata->hassubmissions;
 
         // -------------------------------------------------------------------------------
@@ -367,13 +364,13 @@ class surveyitem_baseform extends moodleform {
         }
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         global $CFG, $DB;
 
         // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
-        $survey = $this->_customdata->survey;
-        $hassubmissions = $this->_customdata->hassubmissions;
+        // $survey = $this->_customdata->survey;
+        // $hassubmissions = $this->_customdata->hassubmissions;
 
         $errors = array();
 
@@ -383,18 +380,16 @@ class surveyitem_baseform extends moodleform {
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);
         }
 
-        if (!$hassubmissions) {
-            // you choosed a parentid but you are missing the parentcontent
-            if (empty($data['parentid']) && ($data['parentcontent'] != '')) { // $data['parentcontent'] can be = 0
-                $a = get_string('parentcontent', 'survey');
-                $errors['parentcontent'] = get_string('missingparentid_err', 'survey', $a);
-            }
+        // you choosed a parentid but you are missing the parentcontent
+        if (empty($data['parentid']) && ($data['parentcontent'] != '')) { // $data['parentcontent'] can be = 0
+            $a = get_string('parentcontent', 'survey');
+            $errors['parentcontent'] = get_string('missingparentid_err', 'survey', $a);
+        }
 
-            // you did not choose a parent item but you entered an answer
-            if (!empty($data['parentid']) && ($data['parentcontent'] == '')) { // $data['parentcontent'] can be = 0
-                $a = get_string('parentid', 'survey');
-                $errors['parentid'] = get_string('missingparentcontent_err', 'survey', $a);
-            }
+        // you did not choose a parent item but you entered an answer
+        if (!empty($data['parentid']) && ($data['parentcontent'] == '')) { // $data['parentcontent'] can be = 0
+            $a = get_string('parentid', 'survey');
+            $errors['parentid'] = get_string('missingparentcontent_err', 'survey', $a);
         }
 
         // now validate the format of the "parentcontent" fields against the format of the parent item

@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['and'] = ' and ';
 $string['customdefault'] = 'Custom';
 $string['defaultvalue_help'] = 'This is the integer the remote user will find answered by default. The default for this type of question is mandatory.';
 $string['defaultvalue'] = 'Default';
@@ -35,12 +34,12 @@ $string['outofrangedefault'] = 'Default does not fall within the specified range
 $string['parentformat'] = '[an integer]';
 $string['pluginname'] = 'Integer';
 $string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
-$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a}';
+$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a->lowerbound} and {$a->upperbound}';
 $string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
-$string['uerr_greaterthanmaximum'] = 'Provided integer is too big';
+$string['uerr_greaterthanmaximum'] = 'Provided value is greater than maximum required';
 $string['uerr_integernotset'] = 'Please choose an integer or the last item: "{$a}"';
 $string['uerr_integernotsetrequired'] = 'Please choose an integer';
-$string['uerr_lowerthanminimum'] = 'Provided integer is too small';
+$string['uerr_lowerthanminimum'] = 'Provided value is lower than minimum required';
 $string['upperbound_help'] = 'The upper integer the user will be allowed to enter';
 $string['upperbound'] = 'Upper bound';
 $string['userfriendlypluginname'] = 'Integer';

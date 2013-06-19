@@ -34,7 +34,7 @@ require_once($CFG->dirroot.'/mod/survey/field/character/lib.php');
 
 class survey_pluginform extends surveyitem_baseform {
 
-    function definition() {
+    public function definition() {
         // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
 
@@ -65,16 +65,15 @@ class survey_pluginform extends surveyitem_baseform {
         // ----------------------------------------
         $fieldname = 'pattern';
         $options = array();
+        $options[SURVEYFIELD_CHARACTER_FREEPATTERN] = get_string('free', 'surveyfield_character');
         $options[SURVEYFIELD_CHARACTER_EMAILPATTERN] = get_string('mail', 'surveyfield_character');
         $options[SURVEYFIELD_CHARACTER_URLPATTERN] = get_string('url', 'surveyfield_character');
         $options[SURVEYFIELD_CHARACTER_CUSTOMPATTERN] = get_string('custompattern', 'surveyfield_character');
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('select', $fieldname, '', $options);
         $elementgroup[] = $mform->createElement('text', $fieldname.'_text', '');
-        $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_check', '', get_string('free', 'survey'));
         $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_character'), ' ', false);
         $mform->disabledIf($fieldname.'_text', $fieldname, 'neq', SURVEYFIELD_CHARACTER_CUSTOMPATTERN);
-        $mform->disabledIf($fieldname.'_group', $fieldname.'_check', 'checked');
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_character');
         $mform->setType($fieldname, PARAM_RAW);
         $mform->setType($fieldname.'_text', PARAM_ALPHANUMEXT);
@@ -103,7 +102,7 @@ class survey_pluginform extends surveyitem_baseform {
         $this->add_item_buttons();
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         // Minimum characters <= Maximum characters
@@ -137,6 +136,8 @@ class survey_pluginform extends surveyitem_baseform {
             // default has to match the text pattern
             if (!isset($data['pattern_check'])) {
                 switch ($data['pattern']) {
+                    case SURVEYFIELD_CHARACTER_FREEPATTERN:
+                        break;
                     case SURVEYFIELD_CHARACTER_EMAILPATTERN:
                         if (!validate_email($data['defaultvalue'])) {
                             $errors['defaultvalue'] = get_string('ierr_defaultisnotemail', 'surveyfield_character');

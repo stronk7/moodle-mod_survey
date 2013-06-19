@@ -34,12 +34,12 @@ require_once($CFG->dirroot.'/mod/survey/field/select/lib.php');
 
 class survey_pluginform extends surveyitem_baseform {
 
-    function definition() {
+    public function definition() {
         // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
-        // comincio con la "sezione" comune della form
+        // I start with the common "section" form
         parent::definition();
 
         // -------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ class survey_pluginform extends surveyitem_baseform {
         $this->add_item_buttons();
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         // clean inputs

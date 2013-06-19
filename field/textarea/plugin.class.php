@@ -73,7 +73,7 @@ class surveyfield_textarea extends surveyitem_base {
     /*
      * $maxlength = the maximum allowed text length
      */
-    public $maxlength = '1024';
+    public $maxlength = '0';
 
     /*
      * $context = context as it is always required to dial with editors
@@ -186,14 +186,7 @@ class surveyfield_textarea extends surveyitem_base {
      */
     public function item_custom_fields_to_form() {
         // 1. special management for fields equipped with "free" checkbox
-        $fieldlist = $this->item_fields_with_free_checkbox();
-        foreach ($fieldlist as $field) {
-            if (!isset($this->{$field})) {
-                $this->{$field.'_check'} = 1; // may not even exist
-            } else {
-                $this->{$field.'_check'} = 0; // may not even exist
-            }
-        }
+        // nothing to do: they don't exist in this plugin
 
         // 2. special management for composite fields
         // nothing to do: they don't exist in this plugin
@@ -210,55 +203,37 @@ class surveyfield_textarea extends surveyitem_base {
      */
     public function item_custom_fields_to_db($record) {
         // 1. special management for fields equipped with "free" checkbox
-        $fieldlist = $this->item_fields_with_free_checkbox();
-        foreach ($fieldlist as $field) {
-            if (isset($record->{$field.'_check'})) { // may not even exist
-                $record->{$field} = null;
-            }
-        }
+        // nothing to do: they don't exist in this plugin
 
         // 2. special management for composite fields
         // nothing to do: they don't exist in this plugin
+        if (strlen($record->minlength) == 0) {
+            $record->minlength = 0;
+        }
+        if (strlen($record->maxlength) == 0) {
+            $record->maxlength = 0;
+        }
 
         // 3. special management for defaultvalue
         // nothing to do: defaultvalue doesn't need any further care
     }
 
     /*
-     * item_fields_with_free_checkbox
-     * get the list of composite fields
-     * @param
+     * item_get_plugin_values
+     * @param $pluginstructure
+     * @param $pluginsid
      * @return
      */
-    public function item_fields_with_free_checkbox() {
-        return array('maxlength');
-    }
+    public function item_get_plugin_values($pluginstructure, $pluginsid) {
+        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
 
-    /*
-     * item_get_filling_instructions
-     * @param
-     * @return
-     */
-    public function item_get_filling_instructions() {
-
-        if (!empty($this->minlength)) {
-            $a = $this->minlength;
-            if (!empty($this->maxlength)) {
-                $a .= get_string('and', 'surveyfield_textarea').$this->maxlength;
-                $fillinginstruction = get_string('hasminmaxlength', 'surveyfield_textarea', $a);
-            } else {
-                $fillinginstruction = get_string('hasminlength', 'surveyfield_textarea', $a);
-            }
-        } else {
-            if (!empty($this->maxlength)) {
-                $a = $this->maxlength;
-                $fillinginstruction = get_string('hasmaxlength', 'surveyfield_textarea', $a);
-            } else {
-                $fillinginstruction = '';
-            }
+        // just a check before assuming all has been done correctly
+        $errindex = array_search('err', $values, true);
+        if ($errindex !== false) {
+            throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
         }
 
-        return $fillinginstruction;
+        return $values;
     }
 
     // MARK userform
@@ -337,7 +312,7 @@ class surveyfield_textarea extends surveyitem_base {
             $itemcontent = $data[$fieldname];
         }
 
-        if ( !is_null($this->maxlength) && (strlen($itemcontent) > $this->maxlength) ) {
+        if ( ($this->maxlength) && (strlen($itemcontent) > $this->maxlength) ) {
             $errors[$errorkey] = get_string('texttoolong', 'surveyfield_textarea');
         }
         if (strlen($itemcontent) < $this->minlength) {
@@ -346,21 +321,32 @@ class surveyfield_textarea extends surveyitem_base {
     }
 
     /*
-     * item_get_plugin_values
-     * @param $pluginstructure
-     * @param $pluginsid
+     * userform_get_filling_instructions
+     * @param
      * @return
      */
-    public function item_get_plugin_values($pluginstructure, $pluginsid) {
-        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
+    public function userform_get_filling_instructions() {
 
-        // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, true);
-        if ($errindex !== false) {
-            throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
+        if ($this->minlength > 0) {
+            if ($this->maxlength > 0) {
+                $a = new StadClass();
+                $a->minlength = $this->minlength;
+                $a->maxlength = $this->maxlength;
+                $fillinginstruction = get_string('hasminmaxlength', 'surveyfield_textarea', $a);
+            } else {
+                $a = $this->minlength;
+                $fillinginstruction = get_string('hasminlength', 'surveyfield_textarea', $a);
+            }
+        } else {
+            if (!empty($this->maxlength)) {
+                $a = $this->maxlength;
+                $fillinginstruction = get_string('hasmaxlength', 'surveyfield_textarea', $a);
+            } else {
+                $fillinginstruction = '';
+            }
         }
 
-        return $values;
+        return $fillinginstruction;
     }
 
     /*

@@ -103,16 +103,15 @@ define('SURVEY_TYPEFORMAT', 'format');
     define('SURVEY_CHANGEINDENT'      , '9');
     // RESPONSES section
     define('SURVEY_EDITRESPONSE'      , '10');
-    define('SURVEY_DUPLICATERESPONSE' , '11');
-    define('SURVEY_READONLYRESPONSE'  , '12');
-    define('SURVEY_DELETERESPONSE'    , '13');
-    define('SURVEY_DELETEALLRESPONSES', '14');
-    define('SURVEY_RESPONSETOPDF'     , '15');
+    define('SURVEY_READONLYRESPONSE'  , '11');
+    define('SURVEY_DELETERESPONSE'    , '12');
+    define('SURVEY_DELETEALLRESPONSES', '13');
+    define('SURVEY_RESPONSETOPDF'     , '14');
     // SURVEY section
-    define('SURVEY_PREVIEWSURVEY'     , '16');
+    define('SURVEY_PREVIEWSURVEY'     , '15');
     // UTEMPLATE section
-    define('SURVEY_DELETEUTEMPLATE'   , '17');
-    define('SURVEY_EXPORTUTEMPLATE'   , '18');
+    define('SURVEY_DELETEUTEMPLATE'   , '16');
+    define('SURVEY_EXPORTUTEMPLATE'   , '17');
 
 // SAVESTATUS
 define('SURVEY_NOFEEDBACK', 0);
@@ -802,7 +801,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     if ($cansubmit) {
         $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_CONTAINER);
     } else {
-        $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
+        $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view_submissions.php', $paramurl), navigation_node::TYPE_CONTAINER);
     }
 
     // CHILDREN
@@ -813,7 +812,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     if ($cansubmit) {
         $navnode->add(get_string('tabsubmissionspage2', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
     }
-    $navnode->add(get_string('tabsubmissionspage3', 'survey'), new moodle_url('/mod/survey/view_manage.php', $paramurl), navigation_node::TYPE_SETTING);
+    $navnode->add(get_string('tabsubmissionspage3', 'survey'), new moodle_url('/mod/survey/view_submissions.php', $paramurl), navigation_node::TYPE_SETTING);
     if ($cansearch) {
         $navnode->add(get_string('tabsubmissionspage6', 'survey'), new moodle_url('/mod/survey/view_search.php', $paramurl), navigation_node::TYPE_SETTING);
     }

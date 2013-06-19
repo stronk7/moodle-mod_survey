@@ -154,7 +154,6 @@ class surveyfield_select extends surveyitem_base {
 
     /*
      * item_custom_fields_to_form
-     * translates the date class property $fieldlist in $field.'_year' and $field.'_month'
      * @param
      * @return
      */

@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 
 class survey_utemplatecreateform extends moodleform {
 
-    function definition() {
+    public function definition() {
         $mform = $this->_form;
 
         $cmid = $this->_customdata->cmid;
@@ -79,7 +79,7 @@ class survey_utemplatecreateform extends moodleform {
         $this->add_action_buttons(false, get_string('continue'));
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         $mform = $this->_form;
 
         $cmid = $this->_customdata->cmid;

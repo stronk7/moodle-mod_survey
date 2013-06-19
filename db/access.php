@@ -71,7 +71,7 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
         mod/survey:submit
 
     SUB-TAB == SURVEY_SUBMISSION_MANAGE
-        $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
+        $elementurl = new moodle_url('/mod/survey/view_submissions.php', $paramurl);
         mod/survey:manageallsubmissions
         mod/survey:managesubmissions <-- USELESS I think.
                                          Each user is allowed to manage submissions.

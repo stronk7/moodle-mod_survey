@@ -34,7 +34,7 @@ require_once($CFG->dirroot.'/mod/survey/format/fieldset/lib.php');
 
 class survey_pluginform extends surveyitem_baseform {
 
-    function definition() {
+    public function definition() {
         // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
 

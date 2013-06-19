@@ -68,12 +68,12 @@ class surveyfield_numeric extends surveyitem_base {
     /*
      * $lowerbound = the minimun allowed value
      */
-    public $lowerbound = 0;
+    public $lowerbound = '';
 
     /*
      * $upperbound = the maximum allowed value
      */
-    public $upperbound = 0;
+    public $upperbound = '';
 
     /*
      * $decimals = number of decimals allowed for this number
@@ -160,13 +160,19 @@ class surveyfield_numeric extends surveyitem_base {
 
         // float numbers need more attention because I can write them using , or .
         if (!empty($this->defaultvalue)) {
-            $this->defaultvalue = unformat_float($this->defaultvalue);
+            $record->defaultvalue = unformat_float($this->defaultvalue);
+        } else {
+            $record->defaultvalue = null;
         }
         if (!empty($this->lowerbound)) {
-            $this->lowerbound = unformat_float($this->lowerbound);
+            $record->lowerbound = unformat_float($this->lowerbound);
+        } else {
+            $record->lowerbound = null;
         }
         if (!empty($this->upperbound)) {
-            $this->upperbound = unformat_float($this->upperbound);
+            $record->upperbound = unformat_float($this->upperbound);
+        } else {
+            $record->upperbound = null;
         }
 
         // multilang save support for builtin survey
@@ -185,14 +191,7 @@ class surveyfield_numeric extends surveyitem_base {
      */
     public function item_custom_fields_to_form() {
         // 1. special management for fields equipped with "free" checkbox
-        $fieldlist = $this->item_fields_with_free_checkbox();
-        foreach ($fieldlist as $field) {
-            if (!isset($this->{$field})) {
-                $this->{$field.'_check'} = 1;
-            } else {
-                $this->{$field.'_check'} = 0;
-            }
-        }
+        // nothing to do: they don't exist in this plugin
 
         // 2. special management for composite fields
         // nothing to do: they don't exist in this plugin
@@ -209,12 +208,7 @@ class surveyfield_numeric extends surveyitem_base {
      */
     public function item_custom_fields_to_db($record) {
         // 1. special management for fields equipped with "free" checkbox
-        $fieldlist = $this->item_fields_with_free_checkbox();
-        foreach ($fieldlist as $field) {
-            if (isset($record->{$field.'_check'})) {
-                $record->{$field} = null;
-            }
-        }
+        // nothing to do: they don't exist in this plugin
 
         // 2. special management for composite fields
         // nothing to do: they don't exist in this plugin
@@ -224,16 +218,6 @@ class surveyfield_numeric extends surveyitem_base {
         if ($record->defaultvalue === '') {
             $record->defaultvalue = null;
         }
-    }
-
-    /*
-     * item_fields_with_free_checkbox
-     * get the list of composite fields
-     * @param
-     * @return
-     */
-    public function item_fields_with_free_checkbox() {
-        return array('decimals', 'lowerbound', 'upperbound');
     }
 
     /*
@@ -247,47 +231,6 @@ class surveyfield_numeric extends surveyitem_base {
         preg_match($pattern, $parentcontent, $matches);
 
         return $matches;
-    }
-
-    /*
-     * item_get_filling_instructions
-     * @param
-     * @return
-     */
-    public function item_get_filling_instructions() {
-
-        $fillinginstruction = array();
-
-        if (!empty($this->signed)) {
-            $fillinginstruction[] = get_string('hassign', 'surveyfield_numeric');
-        }
-        if (!empty($this->lowerbound)) {
-            $a = $this->lowerbound;
-            $fillinginstruction[] = get_string('hasminvalue', 'surveyfield_numeric', $a);
-        }
-        if (!empty($this->upperbound)) {
-            $a = $this->upperbound;
-            $fillinginstruction[] = get_string('hasmaxvalue', 'surveyfield_numeric', $a);
-        }
-        if (!empty($this->decimals)) {
-            $a = $this->decimals;
-            $fillinginstruction[] = get_string('hasdecimals', 'surveyfield_numeric', $a);
-            $fillinginstruction[] = get_string('decimalautofix', 'surveyfield_numeric');
-        } else {
-            $fillinginstruction[] = get_string('isinteger', 'surveyfield_numeric');
-        }
-        if (!empty($this->decimals)) {
-            // this sentence talks about decimal separator not about the expected value
-            // so I leave it as last sentence
-            $fillinginstruction[] = get_string('declaredecimalseparator', 'surveyfield_numeric', $this->decimalseparator);
-        }
-        if (count($fillinginstruction)) {
-            $fillinginstruction = get_string('number', 'surveyfield_numeric').implode(', ', $fillinginstruction);
-        } else {
-            $fillinginstruction = '';
-        }
-
-        return $fillinginstruction;
     }
 
     /*
@@ -399,6 +342,47 @@ class surveyfield_numeric extends surveyitem_base {
                 }
             }
         }
+    }
+
+    /*
+     * userform_get_filling_instructions
+     * @param
+     * @return
+     */
+    public function userform_get_filling_instructions() {
+
+        $fillinginstruction = array();
+
+        if (!empty($this->signed)) {
+            $fillinginstruction[] = get_string('hassign', 'surveyfield_numeric');
+        }
+        if (!empty($this->lowerbound)) {
+            $a = $this->lowerbound;
+            $fillinginstruction[] = get_string('hasminvalue', 'surveyfield_numeric', $a);
+        }
+        if (!empty($this->upperbound)) {
+            $a = $this->upperbound;
+            $fillinginstruction[] = get_string('hasmaxvalue', 'surveyfield_numeric', $a);
+        }
+        if (!empty($this->decimals)) {
+            $a = $this->decimals;
+            $fillinginstruction[] = get_string('hasdecimals', 'surveyfield_numeric', $a);
+            $fillinginstruction[] = get_string('decimalautofix', 'surveyfield_numeric');
+        } else {
+            $fillinginstruction[] = get_string('isinteger', 'surveyfield_numeric');
+        }
+        if (!empty($this->decimals)) {
+            // this sentence dials about decimal separator not about the expected value
+            // so I leave it as last sentence
+            $fillinginstruction[] = get_string('declaredecimalseparator', 'surveyfield_numeric', $this->decimalseparator);
+        }
+        if (count($fillinginstruction)) {
+            $fillinginstruction = get_string('number', 'surveyfield_numeric').implode(', ', $fillinginstruction);
+        } else {
+            $fillinginstruction = '';
+        }
+
+        return $fillinginstruction;
     }
 
     /*

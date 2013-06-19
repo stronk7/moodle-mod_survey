@@ -24,7 +24,7 @@
  */
 
 $string['pluginname'] = 'Short text';
-$string['userfriendlypluginname'] = 'Short text';
+$string['userfriendlypluginname'] = 'Text (short)';
 $string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';
 $string['defaultvalue_help'] = 'This is the value the remote user will find answered by default';
 $string['defaultvalue'] = 'Default';
@@ -36,6 +36,7 @@ $string['minlength_help'] = 'The minimum number of characters allowed for the an
 $string['minlength'] = 'Minimum characters';
 $string['pattern_help'] = 'If the answer is supposed to fit a specific pattern, define it here using <ul><li>"A" for upper case characters;</li><li>"a" for lower case characters;</li><li>"0" for numbers;</li><li>"*" for to include upper case, lower case, numbers or any other character like, for instance: ,_%."$!\' or spaces</li></ul>';
 $string['pattern'] = 'Text pattern';
+$string['free'] = 'free pattern';
 $string['mail'] = 'email address';
 $string['url'] = 'web page URL';
 $string['custompattern'] = 'custom';

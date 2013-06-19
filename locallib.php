@@ -219,23 +219,6 @@ function survey_get_my_groups($cm) {
 }
 
 /*
- * survey_add_custom_css
- * @param $surveyid, $cmid
- * @return
- */
-function survey_add_custom_css($surveyid, $cmid) {
-    global $PAGE;
-
-    $filearea = SURVEY_STYLEFILEAREA;
-    $context = context_module::instance($cmid);
-
-    $fs = get_file_storage();
-    if ($files = $fs->get_area_files($context->id, 'mod_survey', $filearea, 0, 'sortorder', false)) {
-        $PAGE->requires->css('/mod/survey/userstyle.php?id='.$surveyid.'&amp;cmid='.$cmid); // not overridable via themes!
-    }
-}
-
-/*
  * survey_get_sid_field_content
  * @param $record
  * @return
@@ -252,33 +235,6 @@ function survey_get_sid_field_content($record) {
 
         return $return;
     }
-}
-
-/*
- * survey_get_downloadformats
- * @param
- * @return
- */
-function survey_get_unixtimedownloadformats() {
-    $option = array();
-    $timenow = time();
-
-    $option[''] = get_string('unixtime', 'survey');
-    $option['strftimedate'] = userdate($timenow, get_string('strftimedate', 'core_langconfig'));
-    $option['strftimedatefullshort'] = userdate($timenow, get_string('strftimedatefullshort', 'core_langconfig'));
-    $option['strftimedateshort'] = userdate($timenow, get_string('strftimedateshort', 'core_langconfig'));
-    $option['strftimedatetime'] = userdate($timenow, get_string('strftimedatetime', 'core_langconfig'));
-    $option['strftimedatetimeshort'] = userdate($timenow, get_string('strftimedatetimeshort', 'core_langconfig'));
-    $option['strftimedaydate'] = userdate($timenow, get_string('strftimedaydate', 'core_langconfig'));
-    $option['strftimedaydatetime'] = userdate($timenow, get_string('strftimedaydatetime', 'core_langconfig'));
-    $option['strftimedayshort'] = userdate($timenow, get_string('strftimedayshort', 'core_langconfig'));
-    $option['strftimedaytime'] = userdate($timenow, get_string('strftimedaytime', 'core_langconfig'));
-    $option['strftimemonthyear'] = userdate($timenow, get_string('strftimemonthyear', 'core_langconfig'));
-    $option['strftimerecent'] = userdate($timenow, get_string('strftimerecent', 'core_langconfig'));
-    $option['strftimerecentfull'] = userdate($timenow, get_string('strftimerecentfull', 'core_langconfig'));
-    $option['strftimetime'] = userdate($timenow, get_string('strftimetime', 'core_langconfig'));
-
-    return $option;
 }
 
 /*

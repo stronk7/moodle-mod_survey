@@ -33,14 +33,40 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_survey_userpagemanager {
     /*
+     * $cm
+     */
+    public $cm = null;
+
+    /*
+     * $context
+     */
+    public $context = null;
+
+    /*
      * $survey: the record of this survey
      */
     public $survey = null;
 
     /*
-     * $lastformpage: the last page of the user form (survey)
+     * $submissionid: the ID of the saved surbey_submission
      */
-    public $lastformpage = 0;
+    public $submissionid = 0;
+
+    /*
+     * $formpage: the form page as recalculated according to the first non empty page
+     * do not confuse this properties with $this->formdata->formpage
+     */
+    public $formpage = null;
+
+    /*
+     * $action
+     */
+    public $action = SURVEY_NOACTION;
+
+    /*
+     * $canmanageallsubmissions
+     */
+    public $canmanageallsubmissions = false;
 
     /*
      * $canaccessadvancedform
@@ -52,39 +78,65 @@ class mod_survey_userpagemanager {
      */
     public $canmanageitems = false;
 
-    /*
+    /********************** this will be provided later
      * $formdata: the form content as submitted by the user
      */
     public $formdata = null;
-
-    /*
-     * $submissionid: the ID of the saved surbey_submission
-     */
-    public $submissionid = 0;
-
-    /*
-     * $status: the form content as submitted by the user
-     */
-    public $status = null;
-
-    /*
-     * $action
-     */
-    public $action = SURVEY_NOACTION;
-
-    /*
-     * $formpage: the form page as recalculated according to the first non empty page
-     * do not confuse this properties with $this->formdata->formpage
-     */
-    public $formpage = null;
 
 
 
     /*
      * Class constructor
      */
-    public function __construct($survey) {
+    public function __construct($cm, $survey, $submissionid, $formpage, $action) {
+        $this->cm = $cm;
+        $this->context = context_module::instance($cm->id);
         $this->survey = $survey;
+        $this->submissionid = $submissionid;
+        $this->formpage = $formpage;
+        $this->action = $action;
+        $this->get_page_from_action();
+        $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
+        $this->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $this->context, null, true);
+        $this->canmanageitems = has_capability('mod/survey:manageitems', $this->context, null, true);
+    }
+
+    function get_page_from_action() {
+        switch ($this->action) {
+            case SURVEY_NOACTION:
+                $this->currentpage = SURVEY_SUBMISSION_NEW; // needed by tabs.php
+                break;
+            case SURVEY_PREVIEWSURVEY:
+                $this->currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
+                break;
+            case SURVEY_EDITRESPONSE:
+                $this->currentpage = SURVEY_SUBMISSION_EDIT; // needed by tabs.php
+                break;
+            case SURVEY_READONLYRESPONSE:
+                $this->currentpage = SURVEY_SUBMISSION_READONLY; // needed by tabs.php
+                break;
+            case SURVEY_PREVIEWSURVEY:
+                $this->currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
+                break;
+            default:
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
+        }
+    }
+
+    /*
+     * survey_add_custom_css
+     * @param
+     * @return
+     */
+    function survey_add_custom_css() {
+        global $PAGE;
+
+        $filearea = SURVEY_STYLEFILEAREA;
+
+        $fs = get_file_storage();
+        if ($files = $fs->get_area_files($this->context->id, 'mod_survey', $filearea, 0, 'sortorder', false)) {
+            $PAGE->requires->css('/mod/survey/userstyle.php?id='.$this->survey->id.'&amp;cmid='.$this->cm->id); // not overridable via themes!
+        }
     }
 
     /*
@@ -389,7 +441,7 @@ class mod_survey_userpagemanager {
      * @return
      */
     public function notifyroles() {
-        global $CFG, $DB, $COURSE, $PAGE;
+        global $CFG, $DB, $COURSE;
 
         require_once($CFG->dirroot.'/group/lib.php');
 
@@ -400,11 +452,10 @@ class mod_survey_userpagemanager {
             return;
         }
 
-        $cm = $PAGE->cm;
-
+        // course context used locally to get groups
         $context = context_course::instance($COURSE->id);
 
-        $mygroups = survey_get_my_groups($cm);
+        $mygroups = survey_get_my_groups($this->cm);
         if (count($mygroups)) {
             if ($this->survey->notifyrole) {
                 $roles = explode(',', $this->survey->notifyrole);
@@ -648,15 +699,13 @@ class mod_survey_userpagemanager {
      * @return
      */
     public function submissions_exceeded_stopexecution() {
-        global $OUTPUT, $PAGE;
-
-        $cm = $PAGE->cm;
+        global $OUTPUT;
 
         $message = get_string('nomorerecordsallowed', 'survey', $this->survey->maxentries);
         echo $OUTPUT->notification($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
 
-        $params = array('id' => $cm->id);
-        $continueurl = new moodle_url('view_manage.php', $params);
+        $params = array('id' => $this->cm->id);
+        $continueurl = new moodle_url('view_submissions.php', $params);
 
         echo $OUTPUT->continue_button($continueurl);
         echo $OUTPUT->footer();
@@ -686,32 +735,28 @@ class mod_survey_userpagemanager {
      * @return
      */
     public function show_thanks_page() {
-        global $DB, $OUTPUT, $USER, $PAGE;
-
-        $cm = $PAGE->cm;
+        global $DB, $OUTPUT, $USER;
 
         if (!empty($this->survey->thankshtml)) {
-            $context = context_module::instance($cm->id);
-
-            $message = file_rewrite_pluginfile_urls($this->survey->thankshtml, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_THANKSHTMLFILEAREA, $this->survey->id);
+            $message = file_rewrite_pluginfile_urls($this->survey->thankshtml, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_THANKSHTMLFILEAREA, $this->survey->id);
         } else {
             $message = get_string('defaultthanksmessage', 'survey');
         }
 
-        $paramurl = array('id' => $cm->id);
+        $paramurl = array('id' => $this->cm->id);
         // just to save a query
         $alreadysubmitted = empty($this->survey->maxentries) ? 0 : $DB->count_records('survey_submissions', array('surveyid' => $this->survey->id, 'userid' => $USER->id));
         if (($alreadysubmitted < $this->survey->maxentries) || empty($this->survey->maxentries)) { // if the user is allowed to submit one more survey
             $buttonurl = new moodle_url('view.php', $paramurl);
             $onemore = new single_button($buttonurl, get_string('onemorerecord', 'survey'));
 
-            $buttonurl = new moodle_url('view_manage.php', $paramurl);
+            $buttonurl = new moodle_url('view_submissions.php', $paramurl);
             $gotolist = new single_button($buttonurl, get_string('gotolist', 'survey'));
 
             echo $OUTPUT->confirm($message, $onemore, $gotolist);
         } else {
             echo $OUTPUT->box($message, 'notice centerpara');
-            $buttonurl = new moodle_url('view_manage.php', $paramurl);
+            $buttonurl = new moodle_url('view_submissions.php', $paramurl);
             echo $OUTPUT->single_button($buttonurl, get_string('gotolist', 'survey'));
         }
     }
@@ -765,6 +810,17 @@ class mod_survey_userpagemanager {
                 $prefill = array_merge($prefill, $singleprefill);
             }
             $itemseeds->close();
+        }
+
+        // TAKE CARE: if history is required, do not copy the submissionid when the submission is SURVEY_STATUSCLOSED
+        //            this forces a new submission creation
+        if ($this->survey->history) {
+            $status = $DB->get_field('survey_submissions', 'status', array('id' => $this->submissionid));
+            if ($status == SURVEY_STATUSINPROGRESS) {
+                $prefill['submissionid'] = $this->submissionid;
+            }
+        } else {
+            $prefill['submissionid'] = $this->submissionid;
         }
 
         return $prefill;
@@ -855,25 +911,33 @@ class mod_survey_userpagemanager {
      * @param
      * @return
      */
-    public function prevent_direct_user_input($cm, $context) {
+    public function prevent_direct_user_input() {
         global $DB;
 
+        if ($this->action == SURVEY_NOACTION) {
+            return true;
+        }
+        if ($this->canmanageallsubmissions) {
+            return true;
+        }
+        if (!$ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $this->submissionid), IGNORE_MISSING)) {
+            print_error('incorrectaccessdetected', 'survey');
+        }
+
         $allowed = true;
-        $mygroups = survey_get_my_groups($cm);
-        $ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $this->submissionid), IGNORE_MISSING);
+        $mygroups = survey_get_my_groups($this->cm);
         switch ($this->action) {
             case SURVEY_NOACTION:
-                require_capability('mod/survey:submit', $context);
+                require_capability('mod/survey:submit', $this->context);
                 break;
             case SURVEY_PREVIEWSURVEY:
-                require_capability('mod/survey:preview', $context);
+                require_capability('mod/survey:preview', $this->context);
                 break;
             case SURVEY_EDITRESPONSE:
-            case SURVEY_DUPLICATERESPONSE:
-                $allowed = (($ownerid) && (has_extrapermission('edit', $this->survey, $mygroups, $ownerid)));
+                $allowed = has_extrapermission('edit', $this->survey, $mygroups, $ownerid);
                 break;
             case SURVEY_READONLYRESPONSE:
-                $allowed = (($ownerid) && (has_extrapermission('read', $this->survey, $mygroups, $ownerid)));
+                $allowed = has_extrapermission('read', $this->survey, $mygroups, $ownerid);
                 break;
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->action = '.$this->action);

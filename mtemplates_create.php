@@ -50,9 +50,6 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "mtemplates.php?id=$cm->id", $survey->name, $cm->id);
 
-$currenttab = SURVEY_TABMTEMPLATES; // needed by tabs.php
-$currentpage = SURVEY_MTEMPLATES_BUILD; // needed by tabs.php
-
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:createmastertemplate', $context);
 
@@ -61,10 +58,16 @@ require_capability('mod/survey:createmastertemplate', $context);
 // ////////////////////////////////////////////////////////////
 $mtemplate_manager = new mod_survey_mastertemplate($survey);
 
+// ////////////////////////////
+// define $create_utemplate return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('mtemplates_create.php', $paramurl);
 $create_utemplate = new survey_mtemplatecreateform($formurl);
+// define $create_utemplate return url
+// ////////////////////////////
 
+// ////////////////////////////
+// manage form submission
 if ($mtemplate_manager->formdata = $create_utemplate->get_data()) {
     $exportfile = $mtemplate_manager->create_mtemplate();
     $exportfilename = basename($exportfile);
@@ -79,6 +82,8 @@ if ($mtemplate_manager->formdata = $create_utemplate->get_data()) {
     unlink($exportfile);
     exit(0);
 }
+// manage form submission
+// ////////////////////////////
 
 // ////////////////////////////////////////////////////////////
 // Output starts here
@@ -92,6 +97,9 @@ $PAGE->set_heading($course->shortname);
 // $PAGE->set_focuscontrol('some-html-id');
 
 echo $OUTPUT->header();
+
+$currenttab = SURVEY_TABMTEMPLATES; // needed by tabs.php
+$currentpage = SURVEY_MTEMPLATES_BUILD; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 echo $OUTPUT->notification(get_string('currenttotemplate', 'survey'), 'generaltable generalbox boxaligncenter boxwidthwide');

@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 
 class survey_submissionform extends moodleform {
 
-    function definition() {
+    public function definition() {
         global $DB, $CFG;
 
         $mform = $this->_form;
@@ -127,7 +127,7 @@ class survey_submissionform extends moodleform {
 
                     $item->userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem);
 
-                    if ($fullinfo = $item->item_get_full_info(false)) {
+                    if ($fullinfo = $item->userform_get_full_info(false)) {
                         $mform->addElement('static', $item->itemname.'_info', get_string('note', 'survey'), $fullinfo);
                     }
 
@@ -184,7 +184,7 @@ class survey_submissionform extends moodleform {
         }
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         $mform = $this->_form;
 
         // $cmid = $this->_customdata->cmid;

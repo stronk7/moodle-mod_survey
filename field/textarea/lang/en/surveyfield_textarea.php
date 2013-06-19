@@ -24,7 +24,7 @@
  */
 
 $string['pluginname'] = 'Text area';
-$string['userfriendlypluginname'] = 'Long text (essay)';
+$string['userfriendlypluginname'] = 'Text (long)';
 $string['useeditor_help'] = 'Is the answer supposed to be in plain text or in html?';
 $string['useeditor'] = 'Use html editor';
 $string['areacols_help'] = 'Define a custom width for the text area';
@@ -33,11 +33,10 @@ $string['arearows_help'] = 'Define a custom width for the text area';
 $string['arearows'] = 'Area heigh in rows';
 $string['minlength_help'] = 'The minimun number of allowed characters for the answer to this question';
 $string['minlength'] = 'Minimum length';
-$string['maxlength_help'] = 'The maximun number of allowed characters for the answer to this question';
+$string['maxlength_help'] = 'The maximun number of allowed characters for the answer. Zero for unlimited length.';
 $string['maxlength'] = 'Maximum length';
-$string['hasminmaxlength'] = 'Text is supposed to fit between {$a} characters';
+$string['hasminmaxlength'] = 'Text is supposed to fit between {$a->minlength} and {$a->maxlength} characters';
 $string['hasminlength'] = 'Text is supposed to be longer than {$a} characters';
 $string['hasmaxlength'] = 'Text is supposed to be shorter than {$a} characters';
-$string['and'] = ' and ';
 $string['texttoolong'] = 'Text is too long';
 $string['texttooshort'] = 'Text is too short';

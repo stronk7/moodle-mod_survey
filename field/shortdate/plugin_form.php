@@ -34,17 +34,18 @@ require_once($CFG->dirroot.'/mod/survey/field/shortdate/lib.php');
 
 class survey_pluginform extends surveyitem_baseform {
 
-    function definition() {
+    public function definition() {
         // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
-        // comincio con la "sezione" comune della form
+        // I start with the common "section" form
         parent::definition();
 
         // -------------------------------------------------------------------------------
         $mform = $this->_form;
-        $hassubmissions = $this->_customdata->hassubmissions;
+        // $survey = $this->_customdata->survey;
+        // $hassubmissions = $this->_customdata->hassubmissions;
 
         // -------------------------------------------------------------------------------
         $startyear = $this->_customdata->survey->startyear;
@@ -59,7 +60,7 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'defaultvalue';
         $months = array();
         for ($i=1; $i<=12; $i++) {
-            $months[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), "%B"); // january, february, march...
+            $months[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), "%B", 0); // january, february, march...
         }
         $years = array_combine(range($startyear, $stopyear), range($startyear, $stopyear));
 
@@ -87,48 +88,48 @@ class survey_pluginform extends surveyitem_baseform {
         // newitem::downloadformat
         // ----------------------------------------
         $fieldname = 'downloadformat';
-        $options = survey_get_unixtimedownloadformats();
+        $options = $item->item_get_downloadformats();
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_shortdate'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_shortdate');
 
-        if (!$hassubmissions) {
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
-            // here I open a new fieldset
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
-            $fieldname = 'validation';
-            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // here I open a new fieldset
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        $fieldname = 'validation';
+        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-            // ----------------------------------------
-            // newitem::lowerbound
-            // ----------------------------------------
-            $fieldname = 'lowerbound';
-            $elementgroup = array();
-            $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
-            $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
-            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_shortdate'), ' ', false);
-            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_shortdate');
-            $mform->setDefault($fieldname.'_month', 1);
-            $mform->setDefault($fieldname.'_year', $startyear);
+        // ----------------------------------------
+        // newitem::lowerbound
+        // ----------------------------------------
+        $fieldname = 'lowerbound';
+        $elementgroup = array();
+        $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
+        $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_shortdate'), ' ', false);
+        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_shortdate');
+        $mform->setDefault($fieldname.'_month', 1);
+        $mform->setDefault($fieldname.'_year', $startyear);
 
-            // ----------------------------------------
-            // newitem::upperbound
-            // ----------------------------------------
-            $fieldname = 'upperbound';
-            $elementgroup = array();
-            $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
-            $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
-            $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_shortdate'), ' ', false);
-            $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_shortdate');
-            $mform->setDefault($fieldname.'_month', 12);
-            $mform->setDefault($fieldname.'_year', $stopyear);
-        }
+        // ----------------------------------------
+        // newitem::upperbound
+        // ----------------------------------------
+        $fieldname = 'upperbound';
+        $elementgroup = array();
+        $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
+        $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_shortdate'), ' ', false);
+        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_shortdate');
+        $mform->setDefault($fieldname.'_month', 12);
+        $mform->setDefault($fieldname.'_year', $stopyear);
 
         $this->add_item_buttons();
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
+        // $survey = $this->_customdata->survey;
+        // $hassubmissions = $this->_customdata->hassubmissions;
 
         $errors = parent::validation($data, $files);
 

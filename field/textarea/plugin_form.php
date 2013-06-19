@@ -34,12 +34,12 @@ require_once($CFG->dirroot.'/mod/survey/field/textarea/lib.php');
 
 class survey_pluginform extends surveyitem_baseform {
 
-    function definition() {
+    public function definition() {
         // -------------------------------------------------------------------------------
         $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
-        // comincio con la "sezione" comune della form
+        // I start with the common "section" form
         parent::definition();
 
         // -------------------------------------------------------------------------------
@@ -90,19 +90,14 @@ class survey_pluginform extends surveyitem_baseform {
         // newitem::maxlength
         // ----------------------------------------
         $fieldname = 'maxlength';
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('text', $fieldname, '');
-        $elementgroup[] = $mform->createElement('checkbox', $fieldname.'_check', '', get_string('free', 'survey'));
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_textarea'), ' ', false);
-        $mform->disabledIf($fieldname.'_group', $fieldname.'_check', 'checked');
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_textarea');
+        $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_textarea'));
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_textarea');
         $mform->setType($fieldname, PARAM_INT);
-        // $mform->setDefault($fieldname.'_check', 1);
 
         $this->add_item_buttons();
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         return $errors;

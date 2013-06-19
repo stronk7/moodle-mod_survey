@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 
 class survey_importutemplateform extends moodleform {
 
-    function definition() {
+    public function definition() {
         $mform = $this->_form;
 
         $cmid = $this->_customdata->cmid;
@@ -70,7 +70,7 @@ class survey_importutemplateform extends moodleform {
         $this->add_action_buttons(false, get_string('templateimport', 'survey'));
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         global $USER;
 
         $mform = $this->_form;

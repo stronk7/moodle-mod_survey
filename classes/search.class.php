@@ -33,6 +33,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_survey_searchmanager {
     /*
+     * $context
+     */
+    public $context = null;
+
+    /*
      * $survey: the record of this survey
      */
     public $survey = null;
@@ -42,7 +47,7 @@ class mod_survey_searchmanager {
      */
     public $canaccessadvancedform = false;
 
-    /*
+    /********************** this will be provided later
      * $formdata: the form content as submitted by the user
      */
     public $formdata = null;
@@ -50,8 +55,9 @@ class mod_survey_searchmanager {
     /*
      * Class constructor
      */
-    public function __construct($survey) {
+    public function __construct($survey, $context) {
         $this->survey = $survey;
+        $this->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $context, null, true);
     }
 
     /*
@@ -144,7 +150,7 @@ class mod_survey_searchmanager {
 
         echo $OUTPUT->notification(get_string('emptysearchform', 'survey'), 'generaltable generalbox boxaligncenter boxwidthnormal');
 
-        $continueurl = new moodle_url('/mod/survey/view_manage.php', array('s' => $this->survey->id));
+        $continueurl = new moodle_url('/mod/survey/view_submissions.php', array('s' => $this->survey->id));
         echo $OUTPUT->continue_button($continueurl);
 
         echo $OUTPUT->footer();

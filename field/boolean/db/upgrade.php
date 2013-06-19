@@ -34,5 +34,20 @@ function xmldb_surveyfield_boolean_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    if ($oldversion < 2013061801) {
+
+        // Define field downloadformat to be added to survey_boolean.
+        $table = new xmldb_table('survey_boolean');
+        $field = new xmldb_field('downloadformat', XMLDB_TYPE_CHAR, '32', null, null, null, null, 'defaultvalue');
+
+        // Conditionally launch add field downloadformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013061801, 'surveyfield_boolean', 'survey');
+    }
+
     return true;
 }

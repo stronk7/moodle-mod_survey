@@ -259,67 +259,6 @@ class surveyfield_age extends surveyitem_base {
     }
 
     /*
-     * item_get_filling_instructions
-     * @param
-     * @return
-     */
-    public function item_get_filling_instructions() {
-        $maximumage = get_config('surveyfield_age', 'maximumage');
-
-        $haslowerbound = ($this->lowerbound != $this->item_age_to_unix_time(0, 0));
-        $hasupperbound = ($this->upperbound != $this->item_age_to_unix_time($maximumage, 11));
-
-        $strmonths = ' '.get_string('months', 'surveyfield_age');
-        $stryears = ' '.get_string('years');
-
-        $a = '';
-        $lowerbound = $this->item_split_unix_time($this->lowerbound);
-        $upperbound = $this->item_split_unix_time($this->upperbound);
-
-        if ($haslowerbound) {
-            if (!empty($lowerbound['year'])) {
-                $a .= $lowerbound['year'].$stryears;
-                if (!empty($lowerbound['mon'])) {
-                    $a .= get_string('and', 'surveyfield_age').$lowerbound['mon'].$strmonths;
-                }
-            } else {
-                $a .= $lowerbound['mon'].$strmonths;
-            }
-        }
-
-        if ($haslowerbound && $hasupperbound) {
-            $a .= get_string('and', 'surveyfield_age');
-        }
-
-        if ($hasupperbound) {
-            if (!empty($upperbound['year'])) {
-                $a .= $upperbound['year'].$stryears;
-                if (!empty($upperbound['mon'])) {
-                    $a .= get_string('and', 'surveyfield_age').$upperbound['mon'].$strmonths;
-                }
-            } else {
-                if (!empty($upperbound['mon'])) {
-                    $a .= $upperbound['mon'].$strmonths;
-                }
-            }
-        }
-
-        if ($haslowerbound && $hasupperbound) {
-            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_age', $a);
-        } else {
-            $fillinginstruction = '';
-            if ($haslowerbound) {
-                $fillinginstruction = get_string('restriction_lower', 'surveyfield_age', $a);
-            }
-            if ($hasupperbound) {
-                $fillinginstruction = get_string('restriction_upper', 'surveyfield_age', $a);
-            }
-        }
-
-        return $fillinginstruction;
-    }
-
-    /*
      * item_age_to_text
      * starting from an agearray returns the corresponding age in text format
      * @param $agearray
@@ -471,6 +410,67 @@ class surveyfield_age extends surveyitem_base {
     }
 
     /*
+     * userform_get_filling_instructions
+     * @param
+     * @return
+     */
+    public function userform_get_filling_instructions() {
+        $maximumage = get_config('surveyfield_age', 'maximumage');
+
+        $haslowerbound = ($this->lowerbound != $this->item_age_to_unix_time(0, 0));
+        $hasupperbound = ($this->upperbound != $this->item_age_to_unix_time($maximumage, 11));
+
+        $strmonths = ' '.get_string('months', 'surveyfield_age');
+        $stryears = ' '.get_string('years');
+
+        $a = '';
+        $lowerbound = $this->item_split_unix_time($this->lowerbound);
+        $upperbound = $this->item_split_unix_time($this->upperbound);
+
+        if ($haslowerbound) {
+            if (!empty($lowerbound['year'])) {
+                $a .= $lowerbound['year'].$stryears;
+                if (!empty($lowerbound['mon'])) {
+                    $a .= get_string('and', 'surveyfield_age').$lowerbound['mon'].$strmonths;
+                }
+            } else {
+                $a .= $lowerbound['mon'].$strmonths;
+            }
+        }
+
+        if ($haslowerbound && $hasupperbound) {
+            $a .= get_string('and', 'surveyfield_age');
+        }
+
+        if ($hasupperbound) {
+            if (!empty($upperbound['year'])) {
+                $a .= $upperbound['year'].$stryears;
+                if (!empty($upperbound['mon'])) {
+                    $a .= get_string('and', 'surveyfield_age').$upperbound['mon'].$strmonths;
+                }
+            } else {
+                if (!empty($upperbound['mon'])) {
+                    $a .= $upperbound['mon'].$strmonths;
+                }
+            }
+        }
+
+        if ($haslowerbound && $hasupperbound) {
+            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_age', $a);
+        } else {
+            $fillinginstruction = '';
+            if ($haslowerbound) {
+                $fillinginstruction = get_string('restriction_lower', 'surveyfield_age', $a);
+            }
+            if ($hasupperbound) {
+                $fillinginstruction = get_string('restriction_upper', 'surveyfield_age', $a);
+            }
+        }
+
+        return $fillinginstruction;
+    }
+
+    /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
@@ -526,8 +526,11 @@ class surveyfield_age extends surveyitem_base {
      * @return
      * TODO: perché gli passo $itemvalue? non basterebbe $this->content o $this->item_get_main_text
      */
-    public function userform_db_to_export($itemvalue) {
+    public function userform_db_to_export($itemvalue, $format='') {
         $content = $itemvalue->content;
+        if (!$content) {
+            return get_string('answerisnoanswer', 'survey');
+        }
         $agearray = $this->item_split_unix_time($content);
 
         return $this->item_age_to_text($agearray);

@@ -50,9 +50,7 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "utemplates.php?id=$cm->id", $survey->name, $cm->id);
 
-$currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
-$currentpage = SURVEY_UTEMPLATES_APPLY; // needed by tabs.php
-
+$utemplateid = optional_param('fid', 0, PARAM_INT);
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
 
@@ -62,7 +60,7 @@ require_capability('mod/survey:applyusertemplates', $context);
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$utemplate_manager = new mod_survey_usertemplate($survey, $action, $confirm);
+$utemplate_manager = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid, $action, $confirm);
 
 // ////////////////////////////
 // define $apply_utemplate return url
@@ -110,6 +108,8 @@ $PAGE->set_heading($course->shortname);
 
 echo $OUTPUT->header();
 
+$currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
+$currentpage = SURVEY_UTEMPLATES_APPLY; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $a = new stdClass();

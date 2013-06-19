@@ -49,11 +49,17 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "elements.php?id=$cm->id", $survey->name, $cm->id);
 
-$currenttab = SURVEY_TABITEMS; // needed by tabs.php
-$currentpage = SURVEY_ITEMS_MANAGE; // needed by tabs.php
-
-$plugin = optional_param('plugin', null, PARAM_TEXT);
 $type = optional_param('type', null, PARAM_TEXT);
+$plugin = optional_param('plugin', null, PARAM_TEXT);
+$itemid = optional_param('itemid', 0, PARAM_INT);
+$action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
+$itemtomove = optional_param('itm', 0, PARAM_INT);
+$lastitembefore = optional_param('lib', 0, PARAM_INT);
+$confirm = optional_param('cnf', 0, PARAM_INT);
+$nextindent = optional_param('ind', 0, PARAM_INT);
+$parentid = optional_param('pit', 0, PARAM_INT);
+$userfeedback = optional_param('ufd', SURVEY_NOFEEDBACK, PARAM_INT);
+$saveasnew = optional_param('saveasnew', null, PARAM_TEXT);
 
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:manageitems', $context);
@@ -61,19 +67,8 @@ require_capability('mod/survey:manageitems', $context);
 // ////////////////////////////////////////////////////////////
 // manager definition
 // ////////////////////////////////////////////////////////////
-$item_manager = new mod_survey_itemelement($survey, $type, $plugin);
-
-$item_manager->itemid = optional_param('itemid', 0, PARAM_INT);
-$item_manager->action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
-$item_manager->itemtomove = optional_param('itm', 0, PARAM_INT); // itm == Item To Move (sortindex of the item to move)
-$item_manager->lastitembefore = optional_param('lib', 0, PARAM_INT); // lib == Last Item Before the place where the moving item has to go
-
-$item_manager->confirm = optional_param('cnf', 0, PARAM_INT);
-$item_manager->nextindent = optional_param('ind', 0, PARAM_INT);
-$item_manager->parentid = optional_param('pit', 0, PARAM_INT);
-$item_manager->userfeedback = optional_param('ufd', SURVEY_NOFEEDBACK, PARAM_INT);
-
-$item_manager->hassubmissions = survey_has_submissions($survey->id, SURVEY_STATUSCLOSED);;
+$item_manager = new mod_survey_itemelement($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
+                                           $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
 
 // ////////////////////////////////////////////////////////////
 // calculations
@@ -93,6 +88,8 @@ $PAGE->set_heading($course->shortname);
 
 echo $OUTPUT->header();
 
+$currenttab = SURVEY_TABITEMS; // needed by tabs.php
+$currentpage = SURVEY_ITEMS_MANAGE; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $item_manager->manage_actions();

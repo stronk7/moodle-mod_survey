@@ -417,7 +417,7 @@ class surveyfield_autofill extends surveyitem_base {
      * @param $item
      * @return
      */
-    function userform_calculate_content() {
+    public function userform_calculate_content() {
         global $USER, $COURSE, $survey;
 
         $label = '';

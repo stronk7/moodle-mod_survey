@@ -47,20 +47,18 @@ if (!empty($id)) {
 }
 
 require_course_login($course, true, $cm);
+
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:exportdata', $context);
 
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
-
-$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
-$currentpage = SURVEY_SUBMISSION_EXPORT; // needed by tabs.php
 
 require_capability('mod/survey:exportdata', $context);
 
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$export_manager = new mod_survey_exportmanager($survey);
+$export_manager = new mod_survey_exportmanager($cm, $survey);
 
 // ////////////////////////////
 // define $mform return url
@@ -103,6 +101,9 @@ $PAGE->set_heading($course->shortname);
 // $PAGE->set_focuscontrol('some-html-id');
 
 echo $OUTPUT->header();
+
+$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+$currentpage = SURVEY_SUBMISSION_EXPORT; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 if ($exportoutcome == SURVEY_NOFIELDSSELECTED) {

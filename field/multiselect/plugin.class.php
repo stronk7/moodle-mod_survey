@@ -331,7 +331,7 @@ class surveyfield_multiselect extends surveyitem_base {
      * @param: $parentcontent, $parentsubmitted
      * @return
      */
-    function userform_child_item_allowed_static($submissionid, $childitemrecord) {
+    public function userform_child_item_allowed_static($submissionid, $childitemrecord) {
         global $DB;
 
         if (!$childitemrecord->parentid) {

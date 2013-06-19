@@ -53,55 +53,16 @@ add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, 
 $formpage = optional_param('formpage' , 1, PARAM_INT); // form page number
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $submissionid = optional_param('submissionid', 0, PARAM_INT);
-// whether it comes from the form or from the redirect in GET, $submissionid is fetched here
-// if the form (once submitted) send $submissionid == 0, the value will be overwritten later in if ($userpage_manager->formdata = $userpage_form->get_data()) {
-
-$context = context_module::instance($cm->id);
-$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
-// get $currentpage
-switch ($action) {
-    case SURVEY_NOACTION:
-        $currentpage = SURVEY_SUBMISSION_NEW; // needed by tabs.php
-        break;
-    case SURVEY_PREVIEWSURVEY:
-        $currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
-        break;
-    case SURVEY_EDITRESPONSE:
-    case SURVEY_DUPLICATERESPONSE:
-        $currentpage = SURVEY_SUBMISSION_EDIT; // needed by tabs.php
-        break;
-    case SURVEY_READONLYRESPONSE:
-        $currentpage = SURVEY_SUBMISSION_READONLY; // needed by tabs.php
-        break;
-    case SURVEY_PREVIEWSURVEY:
-        $currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
-        break;
-    default:
-        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
-}
-
-$cansubmit = ($currentpage != SURVEY_SUBMISSION_READONLY);
-$cansubmit = $cansubmit && ($currentpage != SURVEY_SUBMISSION_PREVIEW);
-
-survey_add_custom_css($survey->id, $cm->id);
 
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$userpage_manager = new mod_survey_userpagemanager($survey);
-$userpage_manager->formpage = $formpage;
-$userpage_manager->submissionid = $submissionid;
-$userpage_manager->action = $action;
-$userpage_manager->prevent_direct_user_input($cm, $context);
-$userpage_manager->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $context, null, true);
-$userpage_manager->canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
+$userpage_manager = new mod_survey_userpagemanager($cm, $survey, $submissionid, $formpage, $action);
+$userpage_manager->prevent_direct_user_input();
+$userpage_manager->survey_add_custom_css();
 
-if ($action == SURVEY_DUPLICATERESPONSE) {
-    $userpage_manager->duplicate_submission();
-    $paramurl = array('id' => $cm->id, 'submissionid' => $userpage_manager->submissionid);
-    $redirecturl = new moodle_url('view.php', $paramurl);
-    redirect($redirecturl);
-}
+$cansubmit = ($userpage_manager->currentpage != SURVEY_SUBMISSION_READONLY);
+$cansubmit = $cansubmit && ($userpage_manager->currentpage != SURVEY_SUBMISSION_PREVIEW);
 
 // ////////////////////////////
 // assign items to pages in the basicform and in the advancedform
@@ -126,8 +87,8 @@ $formparams->submissionid = $submissionid;
 $formparams->lastformpage = $userpage_manager->lastformpage;
 $formparams->canaccessadvancedform = $userpage_manager->canaccessadvancedform; // Help selecting the fields to show
 $formparams->formpage = $formpage;
-$formparams->currentpage = $currentpage;
-if ($currentpage == SURVEY_SUBMISSION_READONLY) {
+$formparams->currentpage = $userpage_manager->currentpage;
+if ($action == SURVEY_READONLYRESPONSE) {
     $userpage_form = new survey_submissionform($formurl, $formparams, 'post', '', null, false);
 } else {
     $userpage_form = new survey_submissionform($formurl, $formparams);
@@ -138,7 +99,7 @@ if ($currentpage == SURVEY_SUBMISSION_READONLY) {
 // ////////////////////////////
 // manage form submission
 if ($userpage_form->is_cancelled()) {
-    $redirecturl = new moodle_url('view_manage.php', $paramurl);
+    $redirecturl = new moodle_url('view_submissions.php', $paramurl);
     redirect($redirecturl, get_string('usercanceled', 'survey'));
 }
 
@@ -155,7 +116,7 @@ if ($userpage_manager->formdata = $userpage_form->get_data()) {
 
         // if "pause" button has been pressed, redirect
         if ($pausebutton) {
-            $redirecturl = new moodle_url('view_manage.php', $paramurl);
+            $redirecturl = new moodle_url('view_submissions.php', $paramurl);
             redirect($redirecturl); // -> go somewhere
         }
     }
@@ -191,6 +152,9 @@ $PAGE->set_heading($course->shortname);
 // $PAGE->set_focuscontrol('some-html-id');
 
 echo $OUTPUT->header();
+
+$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+$currentpage = $userpage_manager->currentpage; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 // ////////////////////////////
@@ -221,7 +185,7 @@ if ($cansubmit) {
 
 // ////////////////////////////
 // display an alert to explain why buttons are missing
-if ($currentpage == SURVEY_SUBMISSION_PREVIEW) {
+if ($userpage_manager->currentpage == SURVEY_SUBMISSION_PREVIEW) {
     $userpage_manager->message_preview_mode();
 }
 // end of: display an alert to explain why buttons are missing
@@ -239,7 +203,6 @@ $userpage_manager->message_current_page();
 if ($cansubmit) {
     if (!empty($submissionid)) {
         $prefill = $userpage_manager->get_prefill_data(false);
-        $prefill['submissionid'] = $submissionid;
     }
 }
 // go to populate the hidden field of the form
@@ -252,7 +215,7 @@ $userpage_form->display();
 
 // ////////////////////////////
 // display an alert to explain why buttons are missing
-if ($currentpage == SURVEY_SUBMISSION_PREVIEW) {
+if ($userpage_manager->currentpage == SURVEY_SUBMISSION_PREVIEW) {
     $userpage_manager->message_preview_mode();
 }
 // end of: display an alert to explain why buttons are missing

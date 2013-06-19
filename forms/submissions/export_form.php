@@ -21,7 +21,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 
 class survey_exportform extends moodleform {
 
-    function definition() {
+    public function definition() {
         global $CFG, $DB;
 
         $mform = $this->_form;

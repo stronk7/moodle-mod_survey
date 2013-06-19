@@ -33,6 +33,21 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_survey_itemelement {
     /*
+     * $cm
+     */
+    public $cm = null;
+
+    /*
+     * $context
+     */
+    public $context = null;
+
+    /*
+     * $survey: the record of this survey
+     */
+    public $survey = null;
+
+    /*
      * $type
      */
     public $type = '';
@@ -85,10 +100,30 @@ class mod_survey_itemelement {
     /*
      * Class constructor
      */
-    public function __construct($survey, $type, $plugin) {
+    public function __construct($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
+                                $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew) {
+        $this->cm = $cm;
+        $this->context = $context;
         $this->survey = $survey;
-        $this->type = $type;
-        $this->plugin = $plugin;
+        if (preg_match('~^('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_(\w+)$~', $plugin, $match)) {
+            // execution comes from /forms/items/itemtype.php
+            $this->type = $match[1]; // field or format
+            $this->plugin = $match[2]; // boolean or char ... or fieldset ...
+        } else {
+            // execution comes from /forms/items/manageitems.php
+            $this->type = $type;
+            $this->plugin = $plugin;
+        }
+        $this->itemid = $itemid;
+        $this->action = $action;
+        $this->itemtomove = $itemtomove; // itm == Item To Move (sortindex of the item to move)
+        $this->lastitembefore = $lastitembefore; // lib == Last Item Before the place where the moving item has to go
+        $this->confirm = $confirm;
+        $this->nextindent = $nextindent;
+        $this->parentid = $parentid;
+        $this->userfeedback = $userfeedback;
+        $this->saveasnew = $saveasnew;
+        $this->hassubmissions = survey_has_submissions($survey->id, SURVEY_STATUSCLOSED);
     }
 
     /*
@@ -141,17 +176,13 @@ class mod_survey_itemelement {
      * @return
      */
     public function manage_items() {
-        global $PAGE, $CFG, $DB, $OUTPUT;
-
-        $cm = $PAGE->cm;
+        global $CFG, $DB, $OUTPUT;
 
         require_once($CFG->libdir.'/tablelib.php');
 
-        $context = context_module::instance($cm->id);
-
         $table = new flexible_table('itemslist');
 
-        $paramurl = array('id' => $cm->id);
+        $paramurl = array('id' => $this->cm->id);
         $table->define_baseurl(new moodle_url('items_manage.php', $paramurl));
 
         $tablecolumns = array();
@@ -227,14 +258,14 @@ class mod_survey_itemelement {
         // /////////////////////////////////////////////////
         // $paramurl_move definition
         $paramurl_move = array();
-        $paramurl_move['id'] = $cm->id;
+        $paramurl_move['id'] = $this->cm->id;
         $paramurl_move['act'] = SURVEY_CHANGEORDER;
         $paramurl_move['itm'] = $this->itemtomove;
         // end of $paramurl_move definition
         // /////////////////////////////////////////////////
 
         if ($this->hassubmissions) {
-            echo $OUTPUT->box(get_string('hassubmissions', 'survey'));
+            echo $OUTPUT->notification(get_string('hassubmissions_general', 'survey'));
         }
 
         $sql = 'SELECT si.*, si.id as itemid, si.plugin, si.type
@@ -373,7 +404,7 @@ class mod_survey_itemelement {
             $item->contentformat = FORMAT_HTML;
             $item->contenttrust = 1;
 
-            $output = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
+            $output = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
             $tablerow[] = $output;
 
             // *************************************** customnumber
@@ -392,7 +423,7 @@ class mod_survey_itemelement {
                 // /////////////////////////////////////////////////
                 // $paramurl_base definition
                 $paramurl_base = array();
-                $paramurl_base['id'] = $cm->id;
+                $paramurl_base['id'] = $this->cm->id;
                 $paramurl_base['itemid'] = $item->itemid;
                 $paramurl_base['type'] = $item->type;
                 $paramurl_base['plugin'] = $item->plugin;
@@ -548,9 +579,7 @@ class mod_survey_itemelement {
      * @return
      */
     public function manage_item_hide() {
-        global $DB, $OUTPUT, $PAGE;
-
-        $cm = $PAGE->cm;
+        global $DB, $OUTPUT;
 
         // build tohidelist
         // here I must select the whole tree down
@@ -561,15 +590,14 @@ class mod_survey_itemelement {
         $itemstoprocess = count($tohidelist);
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             if (count($tohidelist) > 1) { // ask for confirmation
-                $context = context_module::instance($cm->id);
                 $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);
 
                 $a = new stdClass();
-                $a->parentid = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+                $a->parentid = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
                 $a->dependencies = implode(', ', $sortindextohidelist);
                 $message = get_string('askitemstohide', 'survey', $a);
 
-                $optionbase = array('id' => $cm->id, 'act' => SURVEY_HIDEITEM);
+                $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_HIDEITEM);
 
                 $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'type' => $this->type);
                 $urlyes = new moodle_url('items_manage.php', $optionsyes);
@@ -584,7 +612,7 @@ class mod_survey_itemelement {
                 die;
             } else { // hide without asking
                 $DB->set_field('survey_item', 'hide', 1, array('id' => $this->itemid));
-                survey_reset_items_pages($cm->instance);
+                survey_reset_items_pages($this->cm->instance);
             }
         } else {
             switch ($this->confirm) {
@@ -593,7 +621,7 @@ class mod_survey_itemelement {
                     foreach ($tohidelist as $tohideitemid) {
                         $DB->set_field('survey_item', 'hide', 1, array('id' => $tohideitemid));
                     }
-                    survey_reset_items_pages($cm->instance);
+                    survey_reset_items_pages($this->cm->instance);
                     break;
                 case SURVEY_CONFIRMED_NO:
                     $itemstoprocess = 0;
@@ -613,9 +641,7 @@ class mod_survey_itemelement {
      * @return
      */
     public function manage_item_show() {
-        global $DB, $OUTPUT, $PAGE;
-
-        $cm = $PAGE->cm;
+        global $DB, $OUTPUT;
 
         // build toshowlist
         $toshowlist = array($this->itemid);
@@ -630,15 +656,14 @@ class mod_survey_itemelement {
         $itemstoprocess = count($toshowlist);
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             if ($itemstoprocess > 1) { // ask for confirmation
-                $context = context_module::instance($cm->id);
                 $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);
 
                 $a = new stdClass();
-                $a->lastitem = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+                $a->lastitem = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
                 $a->ancestors = implode(', ', $sortindextoshowlist);
                 $message = get_string('askitemsshow', 'survey', $a);
 
-                $optionbase = array('id' => $cm->id, 'act' => SURVEY_SHOWITEM, 'itemid' => $this->itemid);
+                $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_SHOWITEM, 'itemid' => $this->itemid);
 
                 $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'type' => $this->type);
                 $urlyes = new moodle_url('items_manage.php', $optionsyes);
@@ -653,7 +678,7 @@ class mod_survey_itemelement {
                 die;
             } else { // show without asking
                 $DB->set_field('survey_item', 'hide', 0, array('id' => $this->itemid));
-                survey_reset_items_pages($cm->instance);
+                survey_reset_items_pages($this->cm->instance);
             }
         } else {
             switch ($this->confirm) {
@@ -662,7 +687,7 @@ class mod_survey_itemelement {
                     foreach ($toshowlist as $toshowitemid) {
                         $DB->set_field('survey_item', 'hide', 0, array('id' => $toshowitemid));
                     }
-                    survey_reset_items_pages($cm->instance);
+                    survey_reset_items_pages($this->cm->instance);
                     break;
                 case SURVEY_CONFIRMED_NO:
                     $itemstoprocess = 0;
@@ -682,17 +707,13 @@ class mod_survey_itemelement {
      * @return
      */
     public function manage_item_deletion() {
-        global $CFG, $DB, $OUTPUT, $PAGE;
-
-        $cm = $PAGE->cm;
+        global $CFG, $DB, $OUTPUT;
 
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             // ask for confirmation
             // in the frame of the confirmation I need to declare whether some child will break the link
-            $context = context_module::instance($cm->id);
-
             $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);
-            $a = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+            $a = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
             if (empty($a)) {
                 $a = get_string('userfriendlypluginname', 'surveyformat_'.$plugin);
             }
@@ -708,7 +729,7 @@ class mod_survey_itemelement {
                 $labelyes = get_string('yes');
             }
 
-            $optionbase = array('id' => $cm->id, 'act' => SURVEY_DELETEITEM);
+            $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_DELETEITEM);
 
             $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'plugin' => $this->plugin, 'type' => $this->type, 'itemid' => $this->itemid, 'itm' => $this->itemtomove);
             $urlyes = new moodle_url('items_manage.php', $optionsyes);
@@ -725,7 +746,7 @@ class mod_survey_itemelement {
             switch ($this->confirm) {
                 case SURVEY_CONFIRMED_YES:
                     $deleted = array();
-                    $maxsortindex = $DB->get_field('survey_item', 'MAX(sortindex)', array('surveyid' => $cm->instance));
+                    $maxsortindex = $DB->get_field('survey_item', 'MAX(sortindex)', array('surveyid' => $this->cm->instance));
                     if ($childrenseeds = $DB->get_records('survey_item', array('parentid' => $this->itemid), 'id', 'id, type, plugin')) {
                         // deleting an item with children
                         // I can not reorder - cancel - reorder - cancel
@@ -740,8 +761,6 @@ class mod_survey_itemelement {
                     }
 
                     // get the content of the item for the closing message
-                    $context = context_module::instance($cm->id);
-
                     $deletingrecord = $DB->get_record('survey_item', array('id' => $this->itemid), 'id, content, content_sid, externalname, sortindex', MUST_EXIST);
                     $killedsortindex = $deletingrecord->sortindex;
 
@@ -836,17 +855,13 @@ class mod_survey_itemelement {
      * @return
      */
     public function validate_relations() {
-        global $CFG, $PAGE, $DB, $OUTPUT;
+        global $CFG, $DB, $OUTPUT;
 
         require_once($CFG->libdir.'/tablelib.php');
 
-        $cm = $PAGE->cm;
-
-        $context = context_module::instance($cm->id);
-
         $table = new flexible_table('itemslist');
 
-        $paramurl = array('id' => $cm->id);
+        $paramurl = array('id' => $this->cm->id);
         $table->define_baseurl(new moodle_url('items_validate.php', $paramurl));
 
         $tablecolumns = array();
@@ -942,7 +957,7 @@ class mod_survey_itemelement {
             $item->contentformat = FORMAT_HTML;
             $item->contenttrust = 1;
 
-            $output = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
+            $output = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
             $tablerow[] = $output;
 
             // *************************************** sortindex
@@ -990,7 +1005,7 @@ class mod_survey_itemelement {
             // /////////////////////////////////////////////////
             // $paramurl_base definition
             $paramurl_base = array();
-            $paramurl_base['id'] = $cm->id;
+            $paramurl_base['id'] = $this->cm->id;
             $paramurl_base['itemid'] = $item->itemid;
             $paramurl_base['type'] = $item->type;
             $paramurl_base['plugin'] = $item->plugin;

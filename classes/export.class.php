@@ -33,11 +33,26 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_survey_exportmanager {
     /*
+     * $cm
+     */
+    public $cm = null;
+
+    /*
+     * $context
+     */
+    public $context = null;
+
+    /*
      * $survey: the record of this survey
      */
     public $survey = null;
 
     /*
+     * $canmanageallsubmissions
+     */
+    public $canmanageallsubmissions = false;
+
+    /********************** this will be provided later
      * $formdata: the form content as submitted by the user
      */
     public $formdata = null;
@@ -46,8 +61,11 @@ class mod_survey_exportmanager {
     /*
      * Class constructor
      */
-    public function __construct($survey) {
+    public function __construct($cm, $survey) {
+        $this->cm = $cm;
+        $this->context = context_module::instance($cm->id);
         $this->survey = $survey;
+        $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
     }
 
     /*
@@ -55,18 +73,14 @@ class mod_survey_exportmanager {
      * @param
      * @return
      */
-    function survey_export() {
-        global $CFG, $DB, $PAGE;
-
-        $cm = $PAGE->cm;
-
-        $context = context_module::instance($cm->id);
+    public function survey_export() {
+        global $CFG, $DB;
 
         $params = array();
         $params['surveyid'] = $this->survey->id;
 
         // do I need to filter groups?
-        $filtergroups = survey_need_group_filtering($cm, $context);
+        $filtergroups = survey_need_group_filtering($this->cm, $this->context);
 
         // ////////////////////////////
         // get the field list
@@ -165,13 +179,12 @@ class mod_survey_exportmanager {
             // var_dump($placeholders);
 
             // get user group (to filter survey to download)
-            $mygroups = survey_get_my_groups($cm);
-            $canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $context, null, true);
+            $mygroups = survey_get_my_groups($this->cm);
 
             $oldrichsubmissionid = 0;
 
             foreach ($richsubmissions as $richsubmission) {
-                if (!$canmanageallsubmissions && !has_extrapermission('read', $this->survey, $mygroups, $richsubmission->userid)) {
+                if (!$this->canmanageallsubmissions && !has_extrapermission('read', $this->survey, $mygroups, $richsubmission->userid)) {
                     continue;
                 }
 
@@ -215,7 +228,7 @@ class mod_survey_exportmanager {
      * @param $fieldidlist, $worksheet
      * @return
      */
-    function export_print_header($fieldidlist, $worksheet) {
+    public function export_print_header($fieldidlist, $worksheet) {
         // write the names of the fields in the header of the file to export
         $recordtoexport = array();
         if (empty($this->survey->anonymous)) {
@@ -244,7 +257,7 @@ class mod_survey_exportmanager {
      * @param $recordtoexport, $worksheet
      * @return
      */
-    function export_close_record($recordtoexport, $worksheet) {
+    public function export_close_record($recordtoexport, $worksheet) {
         static $row = 0;
 
         if ($this->formdata->downloadtype == SURVEY_DOWNLOADCSV) {
@@ -265,7 +278,7 @@ class mod_survey_exportmanager {
      * @param $richsubmission
      * @return
      */
-    function decode_content($richsubmission) {
+    public function decode_content($richsubmission) {
         global $CFG;
 
         $plugin = $richsubmission->plugin;

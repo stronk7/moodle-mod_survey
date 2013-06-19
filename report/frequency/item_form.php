@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 
 class survey_chooseitemform extends moodleform {
 
-    function definition() {
+    public function definition() {
         global $DB;
 
         $mform = $this->_form;
@@ -77,7 +77,7 @@ class survey_chooseitemform extends moodleform {
 
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         // "noanswer" default option is not allowed when the item is mandatory
         $errors = array();
 

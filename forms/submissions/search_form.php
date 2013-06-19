@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 
 class survey_searchform extends moodleform {
 
-    function definition() {
+    public function definition() {
         global $CFG, $DB;
 
         $mform = $this->_form;
@@ -62,7 +62,7 @@ class survey_searchform extends moodleform {
 
             $item->userform_mform_element($mform, $survey, $canaccessadvancedform, null, true);
 
-            if ($fullinfo = $item->item_get_full_info(true)) {
+            if ($fullinfo = $item->userform_get_full_info(true)) {
                 $mform->addElement('static', $item->itemname.'_info', get_string('note', 'survey'), $fullinfo);
             }
         }
