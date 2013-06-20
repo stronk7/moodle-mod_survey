@@ -544,10 +544,20 @@ class mod_survey_submissionmanager {
         $user = $DB->get_record('user', array('id' => $submission->userid));
         $userdatarecord = $DB->get_records('survey_userdata', array('submissionid' => $this->submissionid), '', 'itemid, content');
 
-        $searchform = true;
+        $searchform = false;
         $filtertype = false;
         $allpages = true;
-        $sql = survey_fetch_items_seeds($this->canaccessadvancedform, $searchform, $filtertype, $allpages);
+
+        // which form does he/she filled?
+        $accessedadvancedform = has_capability('mod/survey:accessadvancedform', $this->context, $user->id, true);
+        $sql = survey_fetch_items_seeds($accessedadvancedform, $searchform, $filtertype, $allpages);
+
+        // I am not allowed to get ONLY answers from survey_userdata
+        // because I also need to gather info about fieldset and label
+        // $sql = 'SELECT *, s.id as submissionid, ud.id as userdataid, ud.itemid as id
+        //         FROM {survey_submissions} s
+        //             JOIN {survey_userdata} ud ON ud.submissionid = s.id
+        //         WHERE s.id = :submissionid';
         $params = array('surveyid' => $this->survey->id);
         $itemseeds = $DB->get_recordset_sql($sql, $params);
 
@@ -615,7 +625,6 @@ class mod_survey_submissionmanager {
         $border = array('T' => array('width' => 0.2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 1, 'color' => array(179, 219, 181)));
         foreach($itemseeds as $itemseed) {
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
-
             if (($item->plugin == 'pagebreak') || ($item->plugin == 'fieldset')) {
                 continue;
             }
@@ -654,11 +663,12 @@ class mod_survey_submissionmanager {
                 $html = str_replace('@@col2@@', '', $html);
 
                 // third column
-                if (isset($userdatarecord[$item->itemid])) {
-                    $content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
-                } else {
-                    $content = '';
-                }
+                //if (isset($userdatarecord[$item->itemid])) {
+                    // $content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
+                    $content = $item->userform_db_to_export($itemseed);
+                //} else {
+                    //$content = '';
+                //}
                 $html = str_replace('@@col3@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true);
             } else { // I need to draw two cells in the same row
@@ -673,11 +683,12 @@ class mod_survey_submissionmanager {
                 $html = str_replace('@@col2@@', $content, $html);
 
                 // third column
-                if (isset($userdatarecord[$item->itemid])) {
-                    $content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
-                } else {
-                    $content = '';
-                }
+                //if (isset($userdatarecord[$item->itemid])) {
+                    //$content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
+                    $content = $item->userform_db_to_export($itemseed);
+                //} else {
+                    //$content = '';
+                //}
                 $html = str_replace('@@col3@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true);
             }

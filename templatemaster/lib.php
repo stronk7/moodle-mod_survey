@@ -33,9 +33,8 @@ defined('MOODLE_INTERNAL') || die();
 function surveytemplate_surveyTemplatePluginNamePlaceholder_add() {
     global $DB, $CFG;
 
-    $externalname = 'surveyTemplatePluginNamePlaceholder'; // it must match the name of the parent folder of this file
+    $externalname = '@@mTemplateNamePlaceholder@@'; // it must match the name of the parent folder of this file
     $timenow = time();
     $sortindex = 0;
 
-    $content_sid = 0;
 }

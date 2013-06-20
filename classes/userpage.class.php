@@ -64,6 +64,11 @@ class mod_survey_userpagemanager {
     public $action = SURVEY_NOACTION;
 
     /*
+     * $currentpage
+     */
+    public $currentpage = '';
+
+    /*
      * $canmanageallsubmissions
      */
     public $canmanageallsubmissions = false;
@@ -95,13 +100,13 @@ class mod_survey_userpagemanager {
         $this->submissionid = $submissionid;
         $this->formpage = $formpage;
         $this->action = $action;
-        $this->get_page_from_action();
+        $this->set_page_from_action();
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
         $this->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $this->context, null, true);
         $this->canmanageitems = has_capability('mod/survey:manageitems', $this->context, null, true);
     }
 
-    function get_page_from_action() {
+    function set_page_from_action() {
         switch ($this->action) {
             case SURVEY_NOACTION:
                 $this->currentpage = SURVEY_SUBMISSION_NEW; // needed by tabs.php
@@ -114,9 +119,6 @@ class mod_survey_userpagemanager {
                 break;
             case SURVEY_READONLYRESPONSE:
                 $this->currentpage = SURVEY_SUBMISSION_READONLY; // needed by tabs.php
-                break;
-            case SURVEY_PREVIEWSURVEY:
-                $this->currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
                 break;
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
@@ -147,7 +149,6 @@ class mod_survey_userpagemanager {
     public function assign_pages() {
         global $DB;
 
-        // were pages assigned?
         if ($this->canaccessadvancedform) {
             $pagefield = 'advancedformpage';
             $whereclause = 'surveyid = :surveyid AND hide = 0';
@@ -158,6 +159,7 @@ class mod_survey_userpagemanager {
         $whereparams = array('surveyid' => $this->survey->id);
         $pagenumber = $DB->get_field_select('survey_item', 'MAX('.$pagefield.')', $whereclause, $whereparams);
 
+        // were pages assigned?
         if (!$pagenumber) {
             $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
             $pagenumber = 1;

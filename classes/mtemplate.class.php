@@ -28,6 +28,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+define('SURVEYMTEMPLATE_NAMEPLACEHOLDER', '@@mTemplateNamePlaceholder@@');
+
 require_once($CFG->dirroot.'/mod/survey/classes/template.class.php');
 
 class mod_survey_mastertemplate extends mod_survey_template {
@@ -92,11 +94,11 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
             $temp_fullpath = $CFG->tempdir.'/'.$temp_path;
 
-            // echo '<hr />Operate on the file: '.$master_file.'<br />';
-            // echo $master_fileinfo["dirname"] . "<br />";
-            // echo $master_fileinfo["basename"] . "<br />";
-            // echo $master_fileinfo["extension"] . "<br />";
-            // echo dirname($master_file) . "<br />";
+// echo '<hr />Operate on the file: '.$master_file.'<br />';
+// echo $master_fileinfo["dirname"] . "<br />";
+// echo $master_fileinfo["basename"] . "<br />";
+// echo $master_fileinfo["extension"] . "<br />";
+// echo dirname($master_file) . "<br />";
 
             if ($master_fileinfo['basename'] == 'icon.gif') {
                 // copia icon.gif
@@ -118,7 +120,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
                 // drop off the closed brace at the end of the file
                 $this->libcontent = substr($this->libcontent, 0, -1);
                 // replace surveyTemplatePluginMaster with the name of the current survey
-                $this->libcontent = str_replace('surveyTemplatePluginNamePlaceholder', $pluginname, $this->libcontent);
+                $this->libcontent = str_replace(SURVEYMTEMPLATE_NAMEPLACEHOLDER, $pluginname, $this->libcontent);
                 // finalize the libcontent
                 $this->lib_write_content();
                 // open
@@ -147,7 +149,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
                 $filecopyright = file_get_contents($master_basepath.'/lang/en/surveytemplate_pluginname.php');
                 // replace surveyTemplatePluginMaster with the name of the current survey
-                $filecopyright = str_replace('surveyTemplatePluginNamePlaceholder', $pluginname, $filecopyright);
+                $filecopyright = str_replace(SURVEYMTEMPLATE_NAMEPLACEHOLDER, $pluginname, $filecopyright);
 
                 $savedstrings = $filecopyright.$this->extract_original_string();
 
@@ -180,7 +182,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
             // read the master
             $filecontent = file_get_contents($master_basepath.'/'.$master_file);
             // replace surveyTemplatePluginMaster with the name of the current survey
-            $filecontent = str_replace('surveyTemplatePluginNamePlaceholder', $pluginname, $filecontent);
+            $filecontent = str_replace(SURVEYMTEMPLATE_NAMEPLACEHOLDER, $pluginname, $filecontent);
             if ($master_fileinfo['basename'] == 'version.php') {
                 $currentdate = gmdate("Ymd").'01';
                 $filecontent = str_replace('1965100401', $currentdate, $filecontent);
@@ -272,7 +274,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
         }
         $this->libcontent = str_replace('// require_once(_LIBRARIES_);', $librarycall, $this->libcontent);
 
-        // STEP 04: add, at top, the 'item' element
+        // STEP 04: add, at top of $itemseeds, the 'item' element
         $base = new stdClass();
         $base->plugin = 'item';
         $itemseeds = array_merge(array('item' => $base), $itemseeds);
@@ -298,7 +300,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
             }
         }
 
-        $this->lib_write_structure_values_separator($this->libcontent, $pluginname);
+        $this->lib_write_structure_values_separator($pluginname);
 
         // STEP 06: make a list of all itemseeds
         $sql = 'SELECT si.id, si.type, si.plugin
@@ -335,7 +337,6 @@ class mod_survey_mastertemplate extends mod_survey_template {
         }
 
         $this->libcontent .= '}'."\n";
-
     }
 
     /*

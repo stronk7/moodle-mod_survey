@@ -231,8 +231,8 @@ class surveyfield_character extends surveyitem_base {
             case SURVEYFIELD_CHARACTER_URLPATTERN:
                 $values['pattern'] = 'SURVEYFIELD_CHARACTER_URLPATTERN';
                 break;
-            case null:
-                $values['pattern'] = 'null';
+            case SURVEYFIELD_CHARACTER_FREEPATTERN:
+                $values['pattern'] = 'SURVEYFIELD_CHARACTER_FREEPATTERN';
                 break;
             default:
                 $values['pattern'] = '\''.$this->pattern.'\'';
@@ -297,6 +297,10 @@ class surveyfield_character extends surveyitem_base {
             }
         }
 
+        if ($this->pattern == SURVEYFIELD_CHARACTER_FREEPATTERN) {
+            return;
+        }
+
         if (!empty($data[$this->itemname])) {
             $fieldlength = strlen($data[$this->itemname]);
             if ($fieldlength > $this->maxlength) {
@@ -347,7 +351,7 @@ class surveyfield_character extends surveyitem_base {
      */
     public function userform_get_filling_instructions() {
 
-        if (is_null($this->pattern)) {
+        if ($this->pattern == SURVEYFIELD_CHARACTER_FREEPATTERN) {
             if ($this->minlength) {
                 if ($this->maxlength) {
                     $a = new stdClass();

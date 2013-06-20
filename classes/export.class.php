@@ -290,5 +290,4 @@ class mod_survey_exportmanager {
 
         return $return;
     }
-
 }
