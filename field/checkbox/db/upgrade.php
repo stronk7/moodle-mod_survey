@@ -49,5 +49,18 @@ function xmldb_surveyfield_checkbox_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013050801, 'surveyfield_checkbox', 'survey');
     }
 
+    if ($oldversion < 2013062001) {
+
+        // Rename field returnvalue on table survey_checkbox to downloadformat.
+        $table = new xmldb_table('survey_checkbox');
+        $field = new xmldb_field('returnvalue', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'adjustment');
+
+        // Launch rename field returnvalue.
+        $dbman->rename_field($table, $field, 'downloadformat');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013062001, 'surveyfield_checkbox', 'survey');
+    }
+
     return true;
 }

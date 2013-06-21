@@ -552,11 +552,12 @@ class surveyfield_recurrence extends surveyitem_base {
         if (!$content) {
             return get_string('answerisnoanswer', 'survey');
         }
-        if (!empty($format)) {
-            return userdate($content, $format, 0);
-        } else {
-            return userdate($content, get_string($this->downloadformat, 'surveyfield_recurrence'), 0);
+
+        if (empty($format)) {
+            $format = $this->downloadformat;
         }
+
+        return userdate($content, $format, 0);
     }
 
     /*

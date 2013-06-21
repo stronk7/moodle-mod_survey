@@ -506,29 +506,16 @@ class surveyfield_checkbox extends surveyitem_base {
         $return = array();
         $options = $this->item_complete_option_array();
 
-        if ($this->returnvalue == SURVEYFIELD_CHECKBOX_RETURNSELECTION) {
-            foreach ($options as $value => $label) {
-                if (isset($itemdetail["$i"])) {
-                    $return[] = $value;
-                }
-                $i++;
+        foreach ($options as $value => $label) {
+            if (isset($itemdetail["$i"])) {
+                $return[] = '1';
+            } else {
+                $return[] = '0';
             }
-            if (isset($itemdetail['other'])) {
-                $return[] = $itemdetail['text'];
-            }
-        } else { // SURVEYFIELD_CHECKBOX_RETURNPOSITION
-            foreach ($options as $value => $label) {
-                if (isset($itemdetail["$i"])) {
-                    // if ($value === $label) => $value has not been defined
-                    $return[] = ($value === $label) ? '1' : $value;
-                } else {
-                    $return[] = '0';
-                }
-                $i++;
-            }
-            if (!empty($this->labelother)) {
-                $return[] = isset($itemdetail['other']) ? $itemdetail['other'] : '0';
-            }
+            $i++;
+        }
+        if (!empty($this->labelother)) {
+            $return[] = isset($itemdetail['other']) ? $itemdetail['other'] : '0';
         }
 
         if (empty($return)) {
@@ -563,41 +550,74 @@ class surveyfield_checkbox extends surveyitem_base {
                 $prefill[$this->itemname.'_text'] = '';
             }
 
-            if (isset($olduserdata->content)) { // I did not unselect each checkbox
+            if (isset($olduserdata->content)) { // I made some selection
                 // something was set
                 $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $olduserdata->content);
 
-                if ($this->returnvalue == SURVEYFIELD_CHECKBOX_RETURNSELECTION) {
-                    foreach ($answers as $answer) {
-                        $checkboxindex = array_search($answer, $valuelabel);
-                        if ($checkboxindex !== false) {
-                            $uniqueid = $this->itemname.'_'.$checkboxindex;
-                            $prefill[$uniqueid] = 1;
-                        } else {
-                            $prefill[$this->itemname.'_other'] = 1;
-                            $prefill[$this->itemname.'_text'] = $answer;
-                        }
+                // here $answers is an array like: array(1,1,0,0,'dummytext')
+                $checkboxindex = 0;
+                foreach ($answers as $answer) {
+                    if ( ($checkboxindex == $valuelabel[$checkboxindex]) || ($answer == 1)) {
+                        $uniqueid = $this->itemname.'_'.$checkboxindex;
+                        $prefill[$uniqueid] = 1;
                     }
-                } else { // SURVEYFIELD_CHECKBOX_RETURNPOSITION
-                    // here $answers is an array like: array(1,1,0,0,'dummytext')
-                    $checkboxindex = 0;
-                    foreach ($answers as $answer) {
-                        if ( ($checkboxindex == $valuelabel[$checkboxindex]) || ($answer == 1)) {
-                            $uniqueid = $this->itemname.'_'.$checkboxindex;
-                            $prefill[$uniqueid] = 1;
-                        }
-                        $checkboxindex++;
-                    }
-                    if (count($answers) > count($valuelabel)) { // othervalue has been typed in
-                        $answer = end($answers); // probably useless
-                        $prefill[$this->itemname.'_other'] = 1;
-                        $prefill[$this->itemname.'_text'] = $answer;
-                    }
+                    $checkboxindex++;
+                }
+                if (count($answers) > count($valuelabel)) { // othervalue has been typed in
+                    $answer = end($answers); // probably useless
+                    $prefill[$this->itemname.'_other'] = 1;
+                    $prefill[$this->itemname.'_text'] = $answer;
                 }
             }
         }
 
         return $prefill;
+    }
+
+    /*
+     * userform_db_to_export
+     * strating from the info stored in the database, this function returns the corresponding content for the export file
+     * @param $richsubmission
+     * @return
+     */
+    public function userform_db_to_export($itemvalue, $format='') {
+        $content = $itemvalue->content;
+        if (!$content) {
+            return get_string('answerisnoanswer', 'survey');
+        }
+
+        if (empty($format)) {
+            $format = $this->downloadformat;
+        }
+
+        // $answers is an array like: array(1,1,0,0,'dummytext')
+        $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $content);
+        switch ($format) {
+            case SURVEYFIELD_CHECKBOX_RETURNVALUES:
+                $output = array();
+                $valuelabel = array_keys($this->item_get_value_label_array('options'));
+                $standardanswerscount = count($valuelabel);
+                foreach ($valuelabel as $k => $value) {
+                    if ($answers[$k] == 1) {
+                        $output[] = $value;
+                    }
+                }
+                if (!empty($this->labelother)) {
+                    $output[] = end($answers); // last element of the array $answers
+                }
+                $return = implode(SURVEY_OUTPUTMULTIVALUESEPARATOR, $output);
+                break;
+            case SURVEYFIELD_CHECKBOX_RETURNPOSITION:
+                // here I will ALWAYS HAVE 0/1 so each separator is welcome, even ','
+                // I do not want allow to pass the idea that ',' can be a separator so, I do not use it
+                // I even drop the space because usually the separator is only ONE CHARACTER LONG
+                $return = implode(';', $answers);
+                break;
+            default:
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $format = '.$format);
+        }
+
+        return $return;
     }
 
     /*

@@ -41,6 +41,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('survey_useadvancedpermissions', get_string('useadvancedpermissions', 'survey'),
                        get_string('useadvancedpermissions_descr', 'survey'), 0));
 
+    $settings->add(new admin_setting_configcheckbox('survey_forcemodifications', get_string('forcemodifications', 'survey'),
+                       get_string('forcemodifications_descr', 'survey'), 0));
+
     // include  settings of field subplugins
     $surveyplugin = get_plugin_list('surveyfield');
     foreach ($surveyplugin as $field => $path) {

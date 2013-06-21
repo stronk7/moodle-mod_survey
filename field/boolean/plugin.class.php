@@ -466,11 +466,12 @@ class surveyfield_boolean extends surveyitem_base {
         if (!$content) {
             return get_string('answerisnoanswer', 'survey');
         }
-        if (!empty($format)) {
-            $answers = explode('/', get_string($format, 'surveyfield_boolean'));
-        } else {
-            $answers = explode('/', get_string($this->downloadformat, 'surveyfield_boolean'));
+
+        if (empty($format)) {
+            $format = $this->downloadformat;
         }
+
+        $answers = explode('/', get_string($format, 'surveyfield_boolean'));
         $return = ($content) ? $answers[0] : $answers[1];
 
         return $return;

@@ -146,7 +146,8 @@ define('SURVEY_DOWNLOADXLS', 2);
 define('SURVEY_NOFIELDSSELECTED', 1);
 define('SURVEY_NORECORDSFOUND'  , 2);
 
-define('SURVEY_DBMULTIVALUESEPARATOR', ', ');
+define('SURVEY_DBMULTIVALUESEPARATOR', '|');
+define('SURVEY_OUTPUTMULTIVALUESEPARATOR', ' - ');
 
 // CONFIRMATION
 define('SURVEY_UNCONFIRMED',   0);
@@ -835,7 +836,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
 
         // CHILDREN
         $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_SETTING);
-        if (!$hassubmissions) {
+        if (!$hassubmissions || $CFG->survey_forcemodifications) {
             $navnode->add(get_string('tabitemspage2', 'survey'), new moodle_url('/mod/survey/items_add.php', $paramurl), navigation_node::TYPE_SETTING);
         }
         if ($countparents) {

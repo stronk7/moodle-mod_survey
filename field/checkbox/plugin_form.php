@@ -88,15 +88,15 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setDefault($fieldname, SURVEY_VERTICAL);
 
         // ----------------------------------------
-        // newitem::returnvalue
+        // newitem::downloadformat
         // ----------------------------------------
-        $fieldname = 'returnvalue';
-        $options = array(SURVEYFIELD_CHECKBOX_RETURNSELECTION => get_string('returnselection', 'surveyfield_checkbox'),
+        $fieldname = 'downloadformat';
+        $options = array(SURVEYFIELD_CHECKBOX_RETURNVALUES => get_string('returnselection', 'surveyfield_checkbox'),
                          SURVEYFIELD_CHECKBOX_RETURNPOSITION => get_string('returnposition', 'surveyfield_checkbox'));
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_checkbox'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_checkbox');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, SURVEYFIELD_CHECKBOX_RETURNSELECTION);
+        $mform->setDefault($fieldname, SURVEYFIELD_CHECKBOX_RETURNVALUES);
 
         $this->add_item_buttons();
     }

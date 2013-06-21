@@ -195,7 +195,7 @@ switch ($currenttab) {
             $strlabel = get_string('tabitemspage1', 'survey');
             $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
 
-            if (!$hassubmissions) { // add
+            if (!$hassubmissions || $CFG->survey_forcemodifications) { // add
                 $elementurl = new moodle_url('/mod/survey/items_add.php', $paramurl);
                 $strlabel = get_string('tabitemspage2', 'survey');
                 $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);

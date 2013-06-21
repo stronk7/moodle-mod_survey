@@ -523,6 +523,7 @@ class surveyfield_date extends surveyitem_base {
         if (!$content) {
             return get_string('answerisnoanswer', 'survey');
         }
+
         if (!empty($format)) {
             return userdate($content, $format, 0);
         } else {

@@ -519,8 +519,7 @@ class surveyitem_base {
         }
 
         if (is_null($fields)) {
-            $fields = array();
-            $fields[] = 'content';
+            $fields = array('content');
         }
         if (!is_array($fields)) {
             throw new moodle_exception('Array or null are expected in item_builtin_string_save_support');
@@ -528,7 +527,7 @@ class surveyitem_base {
 
         if (in_array('content', $fields)) {
             // special care for content editor
-            if (!is_null($this->content_sid)) { // se è previsto che il campo 'content' sia multilang
+            if (!is_null($this->content_sid)) { // if 'content' is supposed to be multilang
                 $stringindex = 'content'.sprintf('%02d', $this->content_sid);
                 $referencestring = get_string($stringindex, 'surveytemplate_'.$this->externalname);
 

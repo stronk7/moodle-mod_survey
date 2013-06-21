@@ -542,7 +542,7 @@ class mod_survey_submissionmanager {
 
         $submission = $DB->get_record('survey_submissions', array('id' => $this->submissionid));
         $user = $DB->get_record('user', array('id' => $submission->userid));
-        $userdatarecord = $DB->get_records('survey_userdata', array('submissionid' => $this->submissionid), '', 'itemid, content');
+        $userdatarecord = $DB->get_records('survey_userdata', array('submissionid' => $this->submissionid), '', 'itemid, id, content');
 
         $searchform = false;
         $filtertype = false;
@@ -606,14 +606,14 @@ class mod_survey_submissionmanager {
         $firstcolwidth -= PDF_MARGIN_RIGHT;
         $unitsum = $col1nunit + $col2nunit + $col3nunit;
 
-        $firstcolwidth = number_format($col1nunit*100/$unitsum,2);
-        $secondcolwidth = number_format($col2nunit*100/$unitsum,2);
-        $thirdcolwidth = number_format($col3nunit*100/$unitsum,2);
+        $firstcolwidth = number_format($col1nunit*100/$unitsum, 2);
+        $secondcolwidth = number_format($col2nunit*100/$unitsum, 2);
+        $thirdcolwidth = number_format($col3nunit*100/$unitsum, 2);
         $lasttwocolumns = $secondcolwidth + $thirdcolwidth;
 
-// 0: to the right (or left for RTL language)
-// 1: to the beginning of the next line
-// 2: below
+        // 0: to the right (or left for RTL language)
+        // 1: to the beginning of the next line
+        // 2: below
 
         $htmllabel = '<table style="width:100%;"><tr><td style="width:'.$firstcolwidth.'%;text-align:right;">@@col1@@</td>';
         $htmllabel .= '<td style="width:'.$lasttwocolumns.'%;text-align:left;">@@col2@@</td></tr></table>';
@@ -663,12 +663,11 @@ class mod_survey_submissionmanager {
                 $html = str_replace('@@col2@@', '', $html);
 
                 // third column
-                //if (isset($userdatarecord[$item->itemid])) {
-                    // $content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
-                    $content = $item->userform_db_to_export($itemseed);
-                //} else {
-                    //$content = '';
-                //}
+                if (isset($userdatarecord[$item->itemid])) {
+                    $content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
+                } else {
+                    $content = '';
+                }
                 $html = str_replace('@@col3@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true);
             } else { // I need to draw two cells in the same row
@@ -683,12 +682,11 @@ class mod_survey_submissionmanager {
                 $html = str_replace('@@col2@@', $content, $html);
 
                 // third column
-                //if (isset($userdatarecord[$item->itemid])) {
-                    //$content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
-                    $content = $item->userform_db_to_export($itemseed);
-                //} else {
-                    //$content = '';
-                //}
+                if (isset($userdatarecord[$item->itemid])) {
+                    $content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
+                } else {
+                    $content = '';
+                }
                 $html = str_replace('@@col3@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true);
             }
