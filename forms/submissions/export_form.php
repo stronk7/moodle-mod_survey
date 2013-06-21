@@ -65,6 +65,7 @@ class survey_exportform extends moodleform {
         // ----------------------------------------
         $fieldname = 'downloadtype';
         $pluginlist = array(SURVEY_DOWNLOADCSV => get_string('downloadtocsv', 'survey'),
+                            SURVEY_DOWNLOADTSV => get_string('downloadtotsv', 'survey'),
                             SURVEY_DOWNLOADXLS => get_string('downloadtoxls', 'survey'));
         $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $pluginlist);
 

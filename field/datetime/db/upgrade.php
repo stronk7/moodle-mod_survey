@@ -62,5 +62,19 @@ function xmldb_surveyfield_datetime_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013052401, 'surveyfield_datetime', 'survey');
     }
 
+    if ($oldversion < 2013062104) {
+        // replace each occurrence of strftimex in surveyfield_date.downloadformat with strftime0x
+        $condition = array();
+        $select = '('.$DB->sql_compare_text('downloadformat').' = :oldcontent)';
+        for ( $i = 1; $i < 10; $i++ ) { // never greater than nine, only one digit long names need update
+            $condition['oldcontent'] = $DB->sql_compare_text('strftime'.$i);
+            $newcontent = 'strftime'.str_pad($i, 2, '0', STR_PAD_LEFT);
+            $DB->set_field_select('survey_datetime', 'downloadformat', $newcontent, $select, $condition);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013062104, 'surveyfield_datetime', 'survey');
+    }
+
     return true;
 }

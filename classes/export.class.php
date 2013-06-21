@@ -152,13 +152,7 @@ class mod_survey_exportmanager {
 
         $richsubmissions = $DB->get_recordset_sql($richsubmissionssql, $params);
         if ($richsubmissions->valid()) {
-            if ($this->formdata->downloadtype == SURVEY_DOWNLOADCSV) {
-                header('Content-Transfer-Encoding: utf-8');
-                header('Content-Disposition: attachment; filename='.str_replace(' ', '_', $this->survey->name).'.csv');
-                header('Content-Type: text/comma-separated-values');
-
-                $worksheet = null;
-            } else { // SURVEY_DOWNLOADXLS
+            if ($this->formdata->downloadtype == SURVEY_DOWNLOADXLS) {
                 require_once($CFG->libdir.'/excellib.class.php');
                 $filename = str_replace(' ', '_', $this->survey->name).'.xls';
                 $workbook = new MoodleExcelWorkbook('-');
@@ -166,6 +160,12 @@ class mod_survey_exportmanager {
 
                 $worksheet = array();
                 $worksheet[0] = $workbook->add_worksheet(get_string('survey', 'survey'));
+            } else { // SURVEY_DOWNLOADCSV or SURVEY_DOWNLOADCTV
+                header('Content-Transfer-Encoding: utf-8');
+                header('Content-Disposition: attachment; filename='.str_replace(' ', '_', $this->survey->name).'.csv');
+                header('Content-Type: text/comma-separated-values');
+
+                $worksheet = null;
             }
 
             $this->export_print_header($fieldidlist, $worksheet);
@@ -241,14 +241,15 @@ class mod_survey_exportmanager {
         $recordtoexport[] = get_string('timecreated', 'survey');
         $recordtoexport[] = get_string('timemodified', 'survey');
 
-        if ($this->formdata->downloadtype == SURVEY_DOWNLOADCSV) {
-            echo implode(',', $recordtoexport)."\n";
-        } else { // SURVEY_DOWNLOADXLS
+        if ($this->formdata->downloadtype == SURVEY_DOWNLOADXLS) {
             $col = 0;
             foreach ($recordtoexport as $header) {
                 $worksheet[0]->write(0, $col, $header, '');
                 $col++;
             }
+        } else { // SURVEY_DOWNLOADCSV or SURVEY_DOWNLOADTSV
+            $separator = ($this->formdata->downloadtype == SURVEY_DOWNLOADCSV) ? ',' : "\t";
+            echo implode($separator, $recordtoexport)."\n";
         }
     }
 
@@ -260,16 +261,16 @@ class mod_survey_exportmanager {
     public function export_close_record($recordtoexport, $worksheet) {
         static $row = 0;
 
-        if ($this->formdata->downloadtype == SURVEY_DOWNLOADCSV) {
-            echo implode(',', $recordtoexport)."\n";
-        } else {
-            // SURVEY_DOWNLOADXLS
+        if ($this->formdata->downloadtype == SURVEY_DOWNLOADXLS) {
             $row++;
             $col = 0;
             foreach ($recordtoexport as $value) {
                 $worksheet[0]->write($row, $col, $value, '');
                 $col++;
             }
+        } else { // SURVEY_DOWNLOADCSV or SURVEY_DOWNLOADTSV
+            $separator = ($this->formdata->downloadtype == SURVEY_DOWNLOADCSV) ? ',' : "\t";
+            echo implode($separator, $recordtoexport)."\n";
         }
     }
 
