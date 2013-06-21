@@ -281,17 +281,25 @@ class surveyfield_datetime extends surveyitem_base {
         $timenow = time();
 
         $option[''] = get_string('unixtime', 'survey');
-        $option['strftime0'] = userdate($timenow, get_string('strftime0', 'surveyfield_datetime')); // Lunedì 17 Giugno, 05.15
-        $option['strftime1'] = userdate($timenow, get_string('strftime1', 'surveyfield_datetime')); // Lunedì 17 Giugno, 5.15 am
-        $option['strftime2'] = userdate($timenow, get_string('strftime2', 'surveyfield_datetime')); // 17 Giu, 5:15
-        $option['strftime3'] = userdate($timenow, get_string('strftime3', 'surveyfield_datetime')); // 17 Giu, 5:15
-        $option['strftime4'] = userdate($timenow, get_string('strftime4', 'surveyfield_datetime')); // 17/6/2013 5.15
-        $option['strftime5'] = userdate($timenow, get_string('strftime5', 'surveyfield_datetime')); // Lunedì, 17 Giugno 2013, 5:15
-        $option['strftime6'] = userdate($timenow, get_string('strftime6', 'surveyfield_datetime')); // 17 Giu, 5:15
-        $option['strftime7'] = userdate($timenow, get_string('strftime7', 'surveyfield_datetime')); // 17 Giu, 5:15
-        $option['strftime8'] = userdate($timenow, get_string('strftime8', 'surveyfield_datetime')); // Lunedì, 17 Giugno 2013, 5:15
-        $option['strftime9'] = userdate($timenow, get_string('strftime9', 'surveyfield_datetime')); // Lun, 17 Giu 2013, 5:15
-
+        for ( $i = 1; $i < 13; $i++ ) {
+            $strname = 'strftime'.str_pad($i, 2, '0', STR_PAD_LEFT);
+            $option[$strname] = userdate($timenow, get_string($strname, 'surveyfield_datetime')); // Lunedì 17 Giugno, 05.15
+        }
+        /*
+         * unix time
+         * Venerdì, 21 Giugno 2013, 08:14
+         * Venerdì, 21 Giugno 2013, 8:14 am
+         * Ven, 21 Giu 2013, 8:14 am
+         * Ven, 21 Giu 2013, 08:14
+         * 21 Giugno 2013, 08:14
+         * 21 Giugno 2013, 8:14 am
+         * 21 Giu, 08:14
+         * 21 Giu, 8:14 am
+         * 21/06/13, 08:14
+         * 21/06/13, 8:14 am
+         * 21/06/2013, 08:14
+         * 21/06/2013, 8:14 am
+         */
         return $option;
     }
 

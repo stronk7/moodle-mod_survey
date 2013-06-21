@@ -274,12 +274,19 @@ class surveyfield_shortdate extends surveyitem_base {
         $timenow = time();
 
         $option[''] = get_string('unixtime', 'survey');
-        $option['strftime1'] = userdate($timenow, get_string('strftime1', 'surveyfield_shortdate')); // Giugno 2013
-        $option['strftime2'] = userdate($timenow, get_string('strftime2', 'surveyfield_shortdate')); // Giugno '13
-        $option['strftime3'] = userdate($timenow, get_string('strftime3', 'surveyfield_shortdate')); // Giu 2013
-        $option['strftime4'] = userdate($timenow, get_string('strftime4', 'surveyfield_shortdate')); // Giu 13
-        $option['strftime5'] = userdate($timenow, get_string('strftime5', 'surveyfield_shortdate')); // 06/13
-
+        for ( $i = 1; $i < 7; $i++ ) {
+            $strname = 'strftime'.$i;
+            $option[$strname] = userdate($timenow, get_string($strname, 'surveyfield_shortdate')); // Lunedì 17 Giugno, 05.15
+        }
+        /*
+	     * unix time
+	     * Giugno 2013
+         * Giugno '13
+         * Giu 2013
+         * Giu '13
+         * 06/2013
+         * 06/13
+        */
         return $option;
     }
 

@@ -276,11 +276,23 @@ class surveyfield_date extends surveyitem_base {
         $timenow = time();
 
         $option[''] = get_string('unixtime', 'survey');
-        $option['strftime1'] = userdate($timenow, get_string('strftime1', 'surveyfield_date')); // 17 Giugno 2013
-        $option['strftime2'] = userdate($timenow, get_string('strftime2', 'surveyfield_date')); // 17 Giugno
-        $option['strftime3'] = userdate($timenow, get_string('strftime3', 'surveyfield_date')); // Lunedì 17 Giugno
-        $option['strftime4'] = userdate($timenow, get_string('strftime4', 'surveyfield_date')); // Lunedì 17 Giugno
-        $option['strftime5'] = userdate($timenow, get_string('strftime5', 'surveyfield_date')); // Lunedì 17 Giugno
+        for ( $i = 1; $i < 11; $i++ ) {
+            $strname = 'strftime'.str_pad($i, 2, '0', STR_PAD_LEFT);
+            $option[$strname] = userdate($timenow, get_string($strname, 'surveyfield_date')); // Lunedì 17 Giugno, 05.15
+        }
+        /*
+         * unix time
+         * Venerdì, 21 Giugno 2013
+         * Venerdì, 21 Giugno '13
+         * Ven, 21 Giu 2013
+         * Ven, 21 Giu '13
+         * 21 Giugno 2013
+         * 21 Giugno '13
+         * 21 Giu 2013
+         * 21 Giu '13
+         * 21/06/2013
+         * 21/06/13
+         */
 
         return $option;
     }

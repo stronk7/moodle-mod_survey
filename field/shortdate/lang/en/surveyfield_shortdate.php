@@ -48,7 +48,8 @@ $string['strftime1'] = '%B %Y';
 $string['strftime2'] = '%B \'%y';
 $string['strftime3'] = '%b %Y';
 $string['strftime4'] = '%b \'%y';
-$string['strftime5'] = '%m/%y';
+$string['strftime5'] = '%m/%Y';
+$string['strftime6'] = '%m/%y';
 
 $string['currentshortdatedefault'] = 'Current short date';
 $string['invitationmonth'] = 'Choose a month';

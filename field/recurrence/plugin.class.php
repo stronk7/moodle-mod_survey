@@ -274,9 +274,9 @@ class surveyfield_recurrence extends surveyitem_base {
         $timenow = time();
 
         $option[''] = get_string('unixtime', 'survey');
-        $option['strftime1'] = userdate($timenow, get_string('strftime1', 'surveyfield_recurrence')); // Lunedì 17 Giugno
-        $option['strftime2'] = userdate($timenow, get_string('strftime2', 'surveyfield_recurrence')); // Lunedì 17 Giugno
-        $option['strftime3'] = userdate($timenow, get_string('strftime3', 'surveyfield_recurrence')); // Lunedì 17 Giugno
+        $option['strftime1'] = userdate($timenow, get_string('strftime1', 'surveyfield_recurrence')); // 21 Giugno
+        $option['strftime2'] = userdate($timenow, get_string('strftime2', 'surveyfield_recurrence')); // 21 Giu
+        $option['strftime3'] = userdate($timenow, get_string('strftime3', 'surveyfield_recurrence')); // 21/06
 
         return $option;
     }
