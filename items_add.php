@@ -93,6 +93,10 @@ $currenttab = SURVEY_TABITEMS; // needed by tabs.php
 $currentpage = SURVEY_ITEMS_ADD; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
+if ($item_manager->hassubmissions) {
+    echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
+}
+
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('items_setup.php', $paramurl);
 

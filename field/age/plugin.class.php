@@ -474,14 +474,14 @@ class surveyfield_age extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata
+     * @param $answer, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata) {
-        if (isset($itemdetail['noanswer'])) {
+    public function userform_save_preprocessing($answer, $olduserdata) {
+        if (isset($answer['noanswer'])) {
             $olduserdata->content = null;
         } else {
-            $olduserdata->content = $this->item_age_to_unix_time($itemdetail['year'], $itemdetail['month']);
+            $olduserdata->content = $this->item_age_to_unix_time($answer['year'], $answer['month']);
         }
     }
 
@@ -490,18 +490,18 @@ class surveyfield_age extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
-     * @param $olduserdata
+     * @param $fromdb
      * @return
      */
-    public function userform_set_prefill($olduserdata) {
+    public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            if (isset($olduserdata->content)) {
-                if ($olduserdata->content == SURVEY_NOANSWERVALUE) {
+        if ($fromdb) { // $fromdb may be boolean false for not existing data
+            if (isset($fromdb->content)) {
+                if ($fromdb->content == SURVEY_NOANSWERVALUE) {
                     $prefill[$this->itemname.'_noanswer'] = 1;
                 } else {
-                    $datearray = $this->item_split_unix_time($olduserdata->content);
+                    $datearray = $this->item_split_unix_time($fromdb->content);
                     $prefill[$this->itemname.'_month'] = $datearray['mon'];
                     $prefill[$this->itemname.'_year'] = $datearray['year'];
                 }
@@ -512,7 +512,7 @@ class surveyfield_age extends surveyitem_base {
 
             // _noanswer
             if (!$this->required) { // if this item foresaw the $this->itemname.'_noanswer'
-                $prefill[$this->itemname.'_noanswer'] = is_null($olduserdata->content) ? 1 : 0;
+                $prefill[$this->itemname.'_noanswer'] = is_null($fromdb->content) ? 1 : 0;
             }
         } // else use item defaults
 
@@ -522,12 +522,11 @@ class surveyfield_age extends surveyitem_base {
     /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
-     * @param $richsubmission
+     * @param $answers, $format
      * @return
-     * TODO: perché gli passo $itemvalue? non basterebbe $this->content o $this->item_get_main_text
      */
-    public function userform_db_to_export($itemvalue, $format='') {
-        $content = $itemvalue->content;
+    public function userform_db_to_export($answer, $format='') {
+        $content = $answer->content;
         if (!$content) {
             return get_string('answerisnoanswer', 'survey');
         }

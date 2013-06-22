@@ -93,6 +93,17 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname, $item->item_generate_standard_default());
         }
 
+        // ----------------------------------------
+        // newitem::downloadformat
+        // ----------------------------------------
+        $fieldname = 'downloadformat';
+        $options = array(SURVEYFIELD_RATE_RETURNVALUES => get_string('returnselection', 'surveyfield_rate'),
+                         SURVEYFIELD_RATE_RETURNPOSITION => get_string('returnposition', 'surveyfield_rate'));
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_rate'), $options);
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_rate');
+        $mform->setType($fieldname, PARAM_INT);
+        $mform->setDefault($fieldname, SURVEYFIELD_RATE_RETURNVALUES);
+
         // /////////////////////////////////////////////////////////////////////////////////////////////////
         // here I open a new fieldset
         // /////////////////////////////////////////////////////////////////////////////////////////////////

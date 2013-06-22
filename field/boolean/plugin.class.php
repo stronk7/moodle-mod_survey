@@ -430,11 +430,11 @@ class surveyfield_boolean extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata
+     * @param $answer, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata) {
-        $olduserdata->content = $itemdetail['mainelement'];
+    public function userform_save_preprocessing($answer, $olduserdata) {
+        $olduserdata->content = $answer['mainelement'];
     }
 
     /*
@@ -442,14 +442,14 @@ class surveyfield_boolean extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
-     * @param $olduserdata
+     * @param $fromdb
      * @return
      */
-    public function userform_set_prefill($olduserdata) {
+    public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            $prefill[$this->itemname] = $olduserdata->content;
+        if ($fromdb) { // $fromdb may be boolean false for not existing data
+            $prefill[$this->itemname] = $fromdb->content;
         } // else use item defaults
 
         return $prefill;
@@ -458,12 +458,12 @@ class surveyfield_boolean extends surveyitem_base {
     /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
-     * @param $richsubmission
+     * @param $answers, $format
      * @return
      */
-    public function userform_db_to_export($itemvalue, $format='') {
-        $content = $itemvalue->content;
-        if (!$content) {
+    public function userform_db_to_export($answer, $format='') {
+        $content = $answer->content;
+        if (strlen($content) == 0) {
             return get_string('answerisnoanswer', 'survey');
         }
 

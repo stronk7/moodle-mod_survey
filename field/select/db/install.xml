@@ -6,18 +6,18 @@
   <TABLES>
     <TABLE NAME="survey_select" COMMENT="Select type surveyfield">
       <FIELDS>
-        <FIELD NAME="id"               TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"              SEQUENCE="true"                                NEXT="surveyid"/>
-        <FIELD NAME="surveyid"         TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="id"                 NEXT="itemid"/>
-        <FIELD NAME="itemid"           TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"           NEXT="options_sid"/>
+        <FIELD NAME="id"               TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"             SEQUENCE="true"                                NEXT="surveyid"/>
+        <FIELD NAME="surveyid"         TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id"                 NEXT="itemid"/>
+        <FIELD NAME="itemid"           TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"           NEXT="options_sid"/>
 
-        <FIELD NAME="options_sid"      TYPE="int"  LENGTH="4"      NOTNULL="false"                              SEQUENCE="false" PREVIOUS="itemid"             NEXT="options"/>
-        <FIELD NAME="options"          TYPE="text" LENGTH="medium" NOTNULL="false"                              SEQUENCE="false" PREVIOUS="options_sid"        NEXT="labelother_sid"/>
-        <FIELD NAME="labelother_sid"   TYPE="int"  LENGTH="4"      NOTNULL="false"                              SEQUENCE="false" PREVIOUS="options"            NEXT="labelother"/>
-        <FIELD NAME="labelother"       TYPE="char" LENGTH="64"     NOTNULL="false"                              SEQUENCE="false" PREVIOUS="labelother_sid"     NEXT="defaultoption"/>
+        <FIELD NAME="options_sid"      TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="itemid"             NEXT="options"/>
+        <FIELD NAME="options"          TYPE="text" LENGTH="medium" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="options_sid"        NEXT="labelother_sid"/>
+        <FIELD NAME="labelother_sid"   TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="options"            NEXT="labelother"/>
+        <FIELD NAME="labelother"       TYPE="char" LENGTH="64"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="labelother_sid"     NEXT="defaultoption"/>
 
-        <FIELD NAME="defaultoption"    TYPE="int"  LENGTH="2"       NOTNULL="true" UNSIGNED="false" DEFAULT="2" SEQUENCE="false" PREVIOUS="labelother"         NEXT="defaultvalue_sid"/>
-        <FIELD NAME="defaultvalue_sid" TYPE="int"  LENGTH="4"      NOTNULL="false"                              SEQUENCE="false" PREVIOUS="defaultoption"      NEXT="defaultvalue"/>
-        <FIELD NAME="defaultvalue"     TYPE="char" LENGTH="32"     NOTNULL="false"                              SEQUENCE="false" PREVIOUS="defaultvalue_sid"/>
+        <FIELD NAME="defaultoption"    TYPE="int"  LENGTH="2"       NOTNULL="true" UNSIGNED="true" DEFAULT="2" SEQUENCE="false" PREVIOUS="labelother"         NEXT="defaultvalue_sid"/>
+        <FIELD NAME="defaultvalue_sid" TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="defaultoption"      NEXT="defaultvalue"/>
+        <FIELD NAME="defaultvalue"     TYPE="char" LENGTH="32"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="defaultvalue_sid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

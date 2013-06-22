@@ -1464,14 +1464,15 @@ class surveyitem_base {
     /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
-     * @param $richsubmission
+     * @param $answers, $format
      * @return
      */
-    public function userform_db_to_export($itemvalue, $format='') {
-        $content = $itemvalue->content;
+    public function userform_db_to_export($answer, $format='') {
+        $content = $answer->content;
         if (!$content) {
             return get_string('answerisnoanswer', 'survey');
         }
+
         return $content;
     }
 

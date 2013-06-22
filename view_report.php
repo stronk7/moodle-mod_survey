@@ -71,6 +71,7 @@ $PAGE->set_heading($course->shortname);
 // $PAGE->set_focuscontrol('some-html-id');
 
 echo $OUTPUT->header();
+
 $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 $currentpage = SURVEY_SUBMISSION_REPORT; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');

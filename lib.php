@@ -147,7 +147,7 @@ define('SURVEY_DOWNLOADXLS', 3);
 define('SURVEY_NOFIELDSSELECTED', 1);
 define('SURVEY_NORECORDSFOUND'  , 2);
 
-define('SURVEY_DBMULTIVALUESEPARATOR', '|');
+define('SURVEY_DBMULTIVALUESEPARATOR', ';');
 define('SURVEY_OUTPUTMULTIVALUESEPARATOR', ' - ');
 
 // CONFIRMATION
@@ -803,7 +803,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     if ($cansubmit) {
         $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_CONTAINER);
     } else {
-        $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view_submissions.php', $paramurl), navigation_node::TYPE_CONTAINER);
+        $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
     }
 
     // CHILDREN
@@ -814,7 +814,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     if ($cansubmit) {
         $navnode->add(get_string('tabsubmissionspage2', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
     }
-    $navnode->add(get_string('tabsubmissionspage3', 'survey'), new moodle_url('/mod/survey/view_submissions.php', $paramurl), navigation_node::TYPE_SETTING);
+    $navnode->add(get_string('tabsubmissionspage3', 'survey'), new moodle_url('/mod/survey/view_manage.php', $paramurl), navigation_node::TYPE_SETTING);
     if ($cansearch) {
         $navnode->add(get_string('tabsubmissionspage6', 'survey'), new moodle_url('/mod/survey/view_search.php', $paramurl), navigation_node::TYPE_SETTING);
     }
@@ -854,7 +854,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
         $navnode = $navref->add(SURVEY_TAB3NAME,  new moodle_url('/mod/survey/utemplates_create.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
         // CHILDREN
-        if (!$hassubmissions) {
+        if (!$hassubmissions || $CFG->survey_forcemodifications) {
             $navnode->add(get_string('tabutemplatepage1', 'survey'), new moodle_url('/mod/survey/utemplates_manage.php', $paramurl), navigation_node::TYPE_SETTING);
         }
         if ($cancreateusertemplates) {
@@ -863,7 +863,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
         if ($canimportusertemplates) {
             $navnode->add(get_string('tabutemplatepage3', 'survey'), new moodle_url('/mod/survey/utemplates_import.php', $paramurl), navigation_node::TYPE_SETTING);
         }
-        if (!$hassubmissions && $canapplyusertemplates) {
+        if ( (!$hassubmissions || $CFG->survey_forcemodifications) && $canapplyusertemplates ) {
             $navnode->add(get_string('tabutemplatepage4', 'survey'), new moodle_url('/mod/survey/utemplates_apply.php', $paramurl), navigation_node::TYPE_SETTING);
         }
     }
@@ -871,18 +871,16 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     /*
      * SURVEY_TABMTEMPLATES
      */
-    if ($cancreatemastertemplate || (!$hassubmissions && $canapplymastertemplate)) {
-        // PARENT
-        $paramurl = array('s' => $cm->instance);
-        $navnode = $navref->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/mtemplates_create.php', $paramurl), navigation_node::TYPE_CONTAINER);
+    // PARENT
+    $paramurl = array('s' => $cm->instance);
+    $navnode = $navref->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/mtemplates_create.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
-        // CHILDREN
-        if ($cancreatemastertemplate) {
-            $navnode->add(get_string('tabmtemplatepage1', 'survey'), new moodle_url('/mod/survey/mtemplates_create.php', $paramurl), navigation_node::TYPE_SETTING);
-        }
-        if (!$hassubmissions && $canapplymastertemplate) {
-            $navnode->add(get_string('tabmtemplatepage2', 'survey'), new moodle_url('/mod/survey/mtemplates_apply.php', $paramurl), navigation_node::TYPE_SETTING);
-        }
+    // CHILDREN
+    if ($cancreatemastertemplate) {
+        $navnode->add(get_string('tabmtemplatepage1', 'survey'), new moodle_url('/mod/survey/mtemplates_create.php', $paramurl), navigation_node::TYPE_SETTING);
+    }
+    if ( (!$hassubmissions || $CFG->survey_forcemodifications) && $canapplymastertemplate ) {
+        $navnode->add(get_string('tabmtemplatepage2', 'survey'), new moodle_url('/mod/survey/mtemplates_apply.php', $paramurl), navigation_node::TYPE_SETTING);
     }
 }
 

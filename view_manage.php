@@ -28,8 +28,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
-require_once($CFG->dirroot.'/mod/survey/classes/utemplate.class.php');
-require_once($CFG->dirroot.'/mod/survey/forms/utemplates/applyutemplate_form.php');
+require_once($CFG->dirroot.'/mod/survey/classes/view_manage.class.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $s = optional_param('s', 0, PARAM_INT);  // survey instance ID
@@ -48,57 +47,24 @@ if (!empty($id)) {
 
 require_course_login($course, true, $cm);
 
-add_to_log($course->id, 'survey', 'view', "utemplates.php?id=$cm->id", $survey->name, $cm->id);
+add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 
-$utemplateid = optional_param('fid', 0, PARAM_INT);
+$submissionid = optional_param('submissionid', 0, PARAM_INT);
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
-$confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
-
-$context = context_module::instance($cm->id);
-require_capability('mod/survey:applyusertemplates', $context);
+$confirm = optional_param('cnf' , 0, PARAM_INT); // confirm submission deletion
+$searchfields_get = optional_param('searchquery', '', PARAM_RAW);
 
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$utemplate_manager = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid, $action, $confirm);
-
-// ////////////////////////////
-// define $apply_utemplate return url
-$paramurl = array('id' => $cm->id);
-$formurl = new moodle_url('utemplates_apply.php', $paramurl);
-// end of: define $apply_utemplate return url
-// ////////////////////////////
-
-// ////////////////////////////
-// prepare params for the form
-$formparams = new stdClass();
-$formparams->cmid = $cm->id;
-$formparams->survey = $survey;
-$formparams->utemplate_manager = $utemplate_manager;
-$apply_utemplate = new survey_applyutemplateform($formurl, $formparams);
-// end of: prepare params for the form
-// ////////////////////////////
-
-// ////////////////////////////
-// manage form submission
-if ($apply_utemplate->is_cancelled()) {
-    $returnurl = new moodle_url('items_add.php', $paramurl);
-    redirect($returnurl);
-}
-
-if ($utemplate_manager->formdata = $apply_utemplate->get_data()) {
-    $utemplate_manager->apply_utemplate();
-
-    $redirecturl = new moodle_url('items_manage.php', $paramurl);
-    redirect($redirecturl);
-}
-// end of: manage form submission
-// ////////////////////////////
+$submission_manager = new mod_survey_submissionmanager($cm, $survey, $submissionid, $action, $confirm, $searchfields_get);
+$submission_manager->prevent_direct_user_input();
+$submission_manager->submission_to_pdf();
 
 // ////////////////////////////////////////////////////////////
 // Output starts here
 // ////////////////////////////////////////////////////////////
-$PAGE->set_url('/mod/survey/utemplates.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
 
@@ -108,24 +74,13 @@ $PAGE->set_heading($course->shortname);
 
 echo $OUTPUT->header();
 
-$currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
-$currentpage = SURVEY_UTEMPLATES_APPLY; // needed by tabs.php
+$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+$currentpage = SURVEY_SUBMISSION_MANAGE; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-if (survey_has_submissions($survey->id, SURVEY_STATUSCLOSED)) {
-    echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
-}
+$submission_manager->manage_actions();
 
-$a = new stdClass();
-$a->usertemplate = get_string('usertemplate', 'survey');
-$a->none = get_string('notanyset', 'survey');
-$a->actionoverother = get_string('actionoverother', 'survey');
-$a->delete = get_string('delete', 'survey');
-
-$message = get_string('applyutemplateinfo', 'survey', $a);
-echo $OUTPUT->box($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
-
-$apply_utemplate->display();
+$submission_manager->manage_submissions();
 
 // Finish the page
 echo $OUTPUT->footer();

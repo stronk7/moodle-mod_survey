@@ -28,7 +28,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
-require_once($CFG->dirroot.'/mod/survey/classes/search.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/view_search.class.php');
 require_once($CFG->dirroot.'/mod/survey/forms/submissions/search_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
@@ -58,7 +58,7 @@ require_capability('mod/survey:searchsubmissions', $context);
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$search_manager = new mod_survey_searchmanager($survey, $context);
+$search_manager = new mod_survey_searchmanager($cm, $survey, $context);
 
 // ////////////////////////////
 // define $search_form return url
@@ -86,7 +86,7 @@ if ($search_manager->formdata = $search_form->get_data()) { // $search_form, her
     $paramurl = array('id' => $cm->id);
     // remember to select submissions by groupsmates ONLY
     $paramurl['searchquery'] = $search_manager->get_searchparamurl();
-    $returnurl = new moodle_url('view_submissions.php', $paramurl);
+    $returnurl = new moodle_url('view_manage.php', $paramurl);
     redirect($returnurl);
 }
 // end of: manage form submission

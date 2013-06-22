@@ -28,7 +28,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
-require_once($CFG->dirroot.'/mod/survey/classes/export.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/view_export.class.php');
 require_once($CFG->dirroot.'/mod/survey/forms/submissions/export_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or

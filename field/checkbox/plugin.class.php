@@ -498,24 +498,23 @@ class surveyfield_checkbox extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata
+     * @param $answer, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata) {
-        $i = 0;
-        $return = array();
-        $options = $this->item_complete_option_array();
+    public function userform_save_preprocessing($answer, $olduserdata) {
 
-        foreach ($options as $value => $label) {
-            if (isset($itemdetail["$i"])) {
+        $return = array();
+        $options = array_keys($this->item_complete_option_array());
+
+        foreach ($options as $k => $value) {
+            if (isset($answer["$k"])) {
                 $return[] = '1';
             } else {
                 $return[] = '0';
             }
-            $i++;
         }
         if (!empty($this->labelother)) {
-            $return[] = isset($itemdetail['other']) ? $itemdetail['other'] : '0';
+            $return[] = isset($answer['other']) ? $answer['text'] : '';
         }
 
         if (empty($return)) {
@@ -530,14 +529,14 @@ class surveyfield_checkbox extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
-     * @param $olduserdata
+     * @param $fromdb
      * @return
      */
-    public function userform_set_prefill($olduserdata) {
+    public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        // I start from a list of comma separated values
-        if ($olduserdata) { // $olduserdata may be boolean false for not existing data
+        if (isset($fromdb->content)) { // I made some selection
+            // I start from a list of semicolon separated values
             $valuelabel = array_keys($this->item_get_value_label_array('options'));
 
             // initialize $prefill array
@@ -549,24 +548,29 @@ class surveyfield_checkbox extends surveyitem_base {
                 $prefill[$this->itemname.'_other'] = 0;
                 $prefill[$this->itemname.'_text'] = '';
             }
+            // end of: initialize $prefill array
 
-            if (isset($olduserdata->content)) { // I made some selection
-                // something was set
-                $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $olduserdata->content);
+            // count of answers is == count of checkboxes
+            $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $fromdb->content);
 
-                // here $answers is an array like: array(1,1,0,0,'dummytext')
-                $checkboxindex = 0;
-                foreach ($answers as $answer) {
-                    if ( ($checkboxindex == $valuelabel[$checkboxindex]) || ($answer == 1)) {
-                        $uniqueid = $this->itemname.'_'.$checkboxindex;
-                        $prefill[$uniqueid] = 1;
-                    }
-                    $checkboxindex++;
-                }
-                if (count($answers) > count($valuelabel)) { // othervalue has been typed in
-                    $answer = end($answers); // probably useless
+            // here $answers is an array like: array(1,1,0,0,'dummytext')
+            foreach ($answers as $checkboxindex => $checkboxvalue) {
+                $uniqueid = $this->itemname.'_'.$checkboxindex;
+                $prefill[$uniqueid] = ($checkboxvalue == 1) ? 1 : 0;
+            }
+            if ($this->labelother) {
+                // delete last item of $prefill
+                unset($prefill[$uniqueid]);
+
+                // add last element of the $prefill
+                $lastanswer = end($answers);
+
+                if (strlen($lastanswer)) {
                     $prefill[$this->itemname.'_other'] = 1;
-                    $prefill[$this->itemname.'_text'] = $answer;
+                    $prefill[$this->itemname.'_text'] = $lastanswer;
+                } else {
+                    $prefill[$this->itemname.'_other'] = 0;
+                    $prefill[$this->itemname.'_text'] = '';
                 }
             }
         }
@@ -577,11 +581,11 @@ class surveyfield_checkbox extends surveyitem_base {
     /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
-     * @param $richsubmission
+     * @param $answers, $format
      * @return
      */
-    public function userform_db_to_export($itemvalue, $format='') {
-        $content = $itemvalue->content;
+    public function userform_db_to_export($answer, $format='') {
+        $content = $answer->content;
         if (!$content) {
             return get_string('answerisnoanswer', 'survey');
         }
@@ -591,9 +595,9 @@ class surveyfield_checkbox extends surveyitem_base {
         }
 
         // $answers is an array like: array(1,1,0,0,'dummytext')
-        $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $content);
         switch ($format) {
             case SURVEYFIELD_CHECKBOX_RETURNVALUES:
+                $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $content);
                 $output = array();
                 $valuelabel = array_keys($this->item_get_value_label_array('options'));
                 $standardanswerscount = count($valuelabel);
@@ -609,9 +613,8 @@ class surveyfield_checkbox extends surveyitem_base {
                 break;
             case SURVEYFIELD_CHECKBOX_RETURNPOSITION:
                 // here I will ALWAYS HAVE 0/1 so each separator is welcome, even ','
-                // I do not want allow to pass the idea that ',' can be a separator so, I do not use it
-                // I even drop the space because usually the separator is only ONE CHARACTER LONG
-                $return = implode(';', $answers);
+                // I do not like pass the idea that ',' can be a separator so, I do not use it
+                $return = $content;
                 break;
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $format = '.$format);

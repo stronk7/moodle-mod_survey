@@ -390,17 +390,17 @@ class surveyfield_character extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata
+     * @param $answer, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata) {
-        if (isset($itemdetail['noanswer'])) {
+    public function userform_save_preprocessing($answer, $olduserdata) {
+        if (isset($answer['noanswer'])) {
             $olduserdata->content = null;
             return;
         }
 
-        if (isset($itemdetail['mainelement'])) {
-            $olduserdata->content = $itemdetail['mainelement'];
+        if (isset($answer['mainelement'])) {
+            $olduserdata->content = $answer['mainelement'];
             return;
         }
 
@@ -415,11 +415,11 @@ class surveyfield_character extends surveyitem_base {
      * @param $olduserdata
      * @return
      */
-    public function userform_set_prefill($olduserdata) {
+    public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            $prefill[$this->itemname] = $olduserdata->content;
+        if ($fromdb) { // $fromdb may be boolean false for not existing data
+            $prefill[$this->itemname] = $fromdb->content;
         } // else use item defaults
 
         return $prefill;

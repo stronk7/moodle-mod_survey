@@ -238,13 +238,18 @@ class surveyfield_multiselect extends surveyitem_base {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
-        $valuelabel = $this->item_get_value_label_array('options');
-        $defaults = $this->item_get_one_word_per_row('defaultvalue');
+        $valuelabel = array_keys(array_flip($this->item_get_value_label_array('options')));
 
         $select = $mform->addElement('select', $this->itemname, $elementlabel, $valuelabel, array('size' => $this->heightinrows));
         $select->setMultiple(true);
-        if ($defaults) {
-            $mform->setDefault($this->itemname, $defaults);
+
+        if ($defaults = $this->item_get_one_word_per_row('defaultvalue')) {
+            $valuelabel_keys = array_keys($this->item_get_value_label_array('options'));
+            $default_keys = array();
+            foreach($defaults as $default) {
+                $default_keys[] = array_search($default, $valuelabel_keys);
+            }
+            $mform->setDefault($this->itemname, $default_keys);
         }
         /* this last item is needed because:
          * the JS validation MAY BE missing even if the field is required
@@ -376,17 +381,17 @@ class surveyfield_multiselect extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata
+     * @param $answer, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata) {
-        if (!is_null($itemdetail['mainelement'])) {
-            $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $itemdetail['mainelement']);
+    public function userform_save_preprocessing($answer, $olduserdata) {
+        if (!is_null($answer['mainelement'])) {
+            $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $answer['mainelement']);
         } else {
             $olduserdata->content = null;
         }
 
-        if (!isset($itemdetail['mainelement'])) {
+        if (!isset($answer['mainelement'])) {
             throw new moodle_exception('unhandled return value from user submission');
         }
     }
@@ -396,20 +401,63 @@ class surveyfield_multiselect extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
-     * @param $olduserdata
+     * @param $fromdb
      * @return
      */
-    public function userform_set_prefill($olduserdata) {
+    public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            if (isset($olduserdata->content)) {
-                $preset = explode(SURVEY_DBMULTIVALUESEPARATOR, $olduserdata->content);
+        if ($fromdb) { // $fromdb may be boolean false for not existing data
+            if (isset($fromdb->content)) {
+                $preset = explode(SURVEY_DBMULTIVALUESEPARATOR, $fromdb->content);
                 $prefill[$this->itemname] = $preset;
             }
         } // else use item defaults
 
         return $prefill;
+    }
+
+    /*
+     * userform_db_to_export
+     * strating from the info stored in the database, this function returns the corresponding content for the export file
+     * @param $answers, $format
+     * @return
+     */
+    public function userform_db_to_export($answer, $format='') {
+        $content = $answer->content;
+        if (!$content) {
+            return get_string('answerisnoanswer', 'survey');
+        }
+
+        if (empty($format)) {
+            $format = $this->downloadformat;
+        }
+
+        // $answers is an array like: array(1,1,0,0)
+        switch ($format) {
+            case SURVEYFIELD_MULTISELECT_RETURNVALUES:
+                $answers = array_flip(explode(SURVEY_DBMULTIVALUESEPARATOR, $content));
+                $output = array();
+                $valuelabel = array_keys($this->item_get_value_label_array('options'));
+
+                $standardanswerscount = count($valuelabel);
+                foreach ($valuelabel as $k => $value) {
+                    if (isset($answers[$k])) {
+                        $output[] = $value;
+                    }
+                }
+                $return = implode(SURVEY_OUTPUTMULTIVALUESEPARATOR, $output);
+                break;
+            case SURVEYFIELD_MULTISELECT_RETURNPOSITION:
+                // here I will ALWAYS HAVE 0/1 so each separator is welcome, even ','
+                // I do not like pass the idea that ',' can be a separator so, I do not use it
+                $return = $content;
+                break;
+            default:
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $format = '.$format);
+        }
+
+        return $return;
     }
 
     /*

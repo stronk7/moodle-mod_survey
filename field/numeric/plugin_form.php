@@ -83,7 +83,7 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'lowerbound';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_numeric'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
-        $mform->setType($fieldname, PARAM_ALPHA);
+        $mform->setType($fieldname, PARAM_ALPHANUM);
 
         // ----------------------------------------
         // newitem::upperbound
@@ -91,7 +91,7 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'upperbound';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_numeric'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
-        $mform->setType($fieldname, PARAM_ALPHA);
+        $mform->setType($fieldname, PARAM_ALPHANUM);
 
         $this->add_item_buttons();
     }

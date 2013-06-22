@@ -49,5 +49,20 @@ function xmldb_surveyfield_multiselect_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013041901, 'surveyfield_multiselect', 'survey');
     }
 
+    if ($oldversion < 2013062201) {
+
+        // Define field downloadformat to be added to survey_multiselect.
+        $table = new xmldb_table('survey_multiselect');
+        $field = new xmldb_field('downloadformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');
+
+        // Conditionally launch add field downloadformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013062201, 'surveyfield_multiselect', 'survey');
+    }
+
     return true;
 }

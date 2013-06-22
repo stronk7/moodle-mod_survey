@@ -265,7 +265,7 @@ class mod_survey_itemelement {
         // /////////////////////////////////////////////////
 
         if ($this->hassubmissions) {
-            echo $OUTPUT->notification(get_string('hassubmissions_general', 'survey'));
+            echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
         }
 
         $sql = 'SELECT si.*, si.id as itemid, si.plugin, si.type
@@ -451,7 +451,7 @@ class mod_survey_itemelement {
                 }
 
                 // *************************************** SURVEY_HIDEITEM/SURVEY_SHOWITEM
-                if (!$this->hassubmissions) {
+                if (!$this->hassubmissions || $CFG->survey_forcemodifications) {
                     $paramurl = $paramurl_base;
                     if (!empty($item->hide)) {
                         $icopath = 't/show';
@@ -469,7 +469,7 @@ class mod_survey_itemelement {
                 }
 
                 // *************************************** SURVEY_DELETEITEM
-                if (!$this->hassubmissions) {
+                if (!$this->hassubmissions || $CFG->survey_forcemodifications) {
                     $paramurl = $paramurl_base + array('act' => SURVEY_DELETEITEM, 'itm' => $item->sortindex);
                     $basepath = new moodle_url('items_manage.php', $paramurl);
 

@@ -28,7 +28,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
-require_once($CFG->dirroot.'/mod/survey/classes/userpage.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/view_userpage.class.php');
 require_once($CFG->dirroot.'/mod/survey/forms/submissions/userpage_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
@@ -61,8 +61,8 @@ $userpage_manager = new mod_survey_userpagemanager($cm, $survey, $submissionid, 
 $userpage_manager->prevent_direct_user_input();
 $userpage_manager->survey_add_custom_css();
 
-$cansubmit = ($userpage_manager->currentpage != SURVEY_SUBMISSION_READONLY);
-$cansubmit = $cansubmit && ($userpage_manager->currentpage != SURVEY_SUBMISSION_PREVIEW);
+$hassubmitbutton = ($userpage_manager->currentpage != SURVEY_SUBMISSION_READONLY);
+$hassubmitbutton = $hassubmitbutton && ($userpage_manager->currentpage != SURVEY_SUBMISSION_PREVIEW);
 
 // ////////////////////////////
 // assign items to pages in the basicform and in the advancedform
@@ -99,26 +99,24 @@ if ($action == SURVEY_READONLYRESPONSE) {
 // ////////////////////////////
 // manage form submission
 if ($userpage_form->is_cancelled()) {
-    $redirecturl = new moodle_url('view_submissions.php', $paramurl);
+    $redirecturl = new moodle_url('view_manage.php', $paramurl);
     redirect($redirecturl, get_string('usercanceled', 'survey'));
 }
 
 if ($userpage_manager->formdata = $userpage_form->get_data()) {
-    if ($cansubmit) {
-        // SAVE unless the "previous" button has been pressed
-        //             and "pause"    button has been pressed
-        $prevbutton = (isset($userpage_manager->formdata->prevbutton) && ($userpage_manager->formdata->prevbutton));
-        $pausebutton = (isset($userpage_manager->formdata->pausebutton) && ($userpage_manager->formdata->pausebutton));
-        if (!$prevbutton && !$pausebutton) {
-            $userpage_manager->save_user_data();
-            $userpage_manager->notifyroles();
-        }
+    // SAVE unless the "previous" button has been pressed
+    //             and "pause"    button has been pressed
+    $prevbutton = (isset($userpage_manager->formdata->prevbutton) && ($userpage_manager->formdata->prevbutton));
+    $pausebutton = (isset($userpage_manager->formdata->pausebutton) && ($userpage_manager->formdata->pausebutton));
+    if (!$prevbutton && !$pausebutton) {
+        $userpage_manager->save_user_data();
+        $userpage_manager->notifyroles();
+    }
 
-        // if "pause" button has been pressed, redirect
-        if ($pausebutton) {
-            $redirecturl = new moodle_url('view_submissions.php', $paramurl);
-            redirect($redirecturl); // -> go somewhere
-        }
+    // if "pause" button has been pressed, redirect
+    if ($pausebutton) {
+        $redirecturl = new moodle_url('view_manage.php', $paramurl);
+        redirect($redirecturl); // -> go somewhere
     }
 
     $paramurl['submissionid'] = $userpage_manager->submissionid;
@@ -167,7 +165,7 @@ if (!$userpage_manager->count_input_items()) {
 
 // ////////////////////////////
 // is the user allowed to submit one more survey?
-if ($cansubmit) {
+if ($hassubmitbutton) {
     if (!$userpage_manager->submissions_allowed()) {
         $userpage_manager->submissions_exceeded_stopexecution();
     }
@@ -177,7 +175,7 @@ if ($cansubmit) {
 
 // ////////////////////////////
 // manage the thanks page
-if ($cansubmit) {
+if ($hassubmitbutton) {
     $userpage_manager->manage_thanks_page();
 }
 // end of: manage the thanks page
@@ -200,7 +198,7 @@ $userpage_manager->message_current_page();
 // ////////////////////////////
 // calculate prefill for fields and prepare standard editors and filemanager
 // if sumission already exists
-if ($cansubmit) {
+if ($hassubmitbutton) {
     if (!empty($submissionid)) {
         $prefill = $userpage_manager->get_prefill_data(false);
     }

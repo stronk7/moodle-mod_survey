@@ -311,30 +311,32 @@ class surveyfield_rate extends surveyitem_base {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
         $options = $this->item_get_one_word_per_row('options');
-        $valuelabel = $this->item_get_value_label_array('rates');
+        $rates = array_keys(array_flip($this->item_get_value_label_array('rates')));
+        $rates_keys = array_keys($this->item_get_value_label_array('rates'));
+        $defaultvalues = $this->item_get_one_word_per_row('defaultvalue');
+
         if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
             if ($this->style == SURVEYFIELD_RATE_USERADIO) {
-                $valuelabel += array(SURVEY_INVITATIONVALUE => get_string('choosedots'));
+                $rates += array(SURVEY_INVITATIONVALUE => get_string('choosedots'));
             } else {
-                $valuelabel = array(SURVEY_INVITATIONVALUE => get_string('choosedots')) + $valuelabel;
+                $rates = array(SURVEY_INVITATIONVALUE => get_string('choosedots')) + $rates;
             }
         }
-        $defaultvalue = $this->item_get_one_word_per_row('defaultvalue');
 
-        $optionindex = 0;
         if ($this->style == SURVEYFIELD_RATE_USERADIO) {
-            foreach ($options as $option) {
+            foreach ($options as $optionindex => $option) {
                 $uniquename = $this->itemname.'_'.$optionindex;
                 $elementgroup = array();
-                foreach ($valuelabel as $value => $label) {
-                    $elementgroup[] = $mform->createElement('radio', $uniquename, '', $label, $value);
+                foreach ($rates as $k => $rate) {
+                    $elementgroup[] = $mform->createElement('radio', $uniquename, '', $rate, $k);
                 }
                 $mform->addGroup($elementgroup, $uniquename.'_group', $option, ' ', false);
 
                 if (!$searchform) {
                     switch ($this->defaultoption) {
                         case SURVEY_CUSTOMDEFAULT:
-                            $mform->setDefault($uniquename, $defaultvalue[$optionindex]);
+                            $defaultindex = array_search($defaultvalues[$optionindex], $rates_keys);
+                            $mform->setDefault($uniquename, $defaultindex);
                             break;
                         case SURVEY_INVITATIONDEFAULT:
                             $mform->setDefault($uniquename, SURVEY_INVITATIONVALUE);
@@ -348,18 +350,17 @@ class surveyfield_rate extends surveyitem_base {
                 } else {
                     $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE); // free
                 }
-
-                $optionindex++;
             }
         } else { // SURVEYFIELD_RATE_USESELECT
-            foreach ($options as $option) {
+            foreach ($options as $optionindex => $option) {
                 $uniquename = $this->itemname.'_'.$optionindex;
-                $mform->addElement('select', $uniquename, $option, $valuelabel, array('class' => 'indent-'.$this->indent));
+                $mform->addElement('select', $uniquename, $option, $rates, array('class' => 'indent-'.$this->indent));
 
                 if (!$searchform) {
                     switch ($this->defaultoption) {
                         case SURVEY_CUSTOMDEFAULT:
-                            $mform->setDefault($uniquename, $defaultvalue[$optionindex]);
+                            $defaultindex = array_search($defaultvalues[$optionindex], $rates_keys);
+                            $mform->setDefault($uniquename, $defaultindex);
                             break;
                         case SURVEY_INVITATIONDEFAULT:
                             $mform->setDefault($uniquename, SURVEY_INVITATIONVALUE);
@@ -484,25 +485,18 @@ class surveyfield_rate extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata
+     * @param $answer, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata) {
-        if (isset($itemdetail['noanswer'])) {
+    public function userform_save_preprocessing($answer, $olduserdata) {
+        if (isset($answer['noanswer'])) {
             $olduserdata->content = null;
         } else {
-            $valuelabel = $this->item_get_value_label_array('options');
-            // var_dump($valuelabel);
-            $optioncount = count($valuelabel);
-            $i = 0;
+            $rates = array_keys($this->item_get_value_label_array('rates'));
             $return = array();
-            foreach ($valuelabel as $value) {
-                if (isset($itemdetail["$i"])) {
-                    $return[] = $value.SURVEYFIELD_RATE_VALUERATE_SEPARATOR.$itemdetail["$i"];
-                }
-                $i++;
+            foreach ($answer as $answeredrate) {
+                $return[] = $answeredrate;
             }
-
             $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $return);
         }
     }
@@ -512,44 +506,78 @@ class surveyfield_rate extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
-     * @param $olduserdata
+     * @param $fromdb
      * @return
      */
-    public function userform_set_prefill($olduserdata) {
+    public function userform_set_prefill($fromdb) {
         // [survey_field_rate_157_0] => italian: 3
         // [survey_field_rate_157_1] => english: 2
         // [survey_field_rate_157_2] => french: 1
         // [survey_field_rate_157_noanswer] => 0
 
-        $prefill = array();
+        $rates_keys = array_keys($this->item_get_value_label_array('rates'));
 
-        if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            if (isset($olduserdata->content)) {
-                if ($olduserdata->content == SURVEY_NOANSWERVALUE) {
+        $prefill = array();
+        if ($fromdb) { // $fromdb may be boolean false for not existing data
+            if (isset($fromdb->content)) {
+                if ($fromdb->content == SURVEY_NOANSWERVALUE) {
                     $prefill[$this->itemname.'_noanswer'] = 1;
                 } else {
-                    $valueindex = 0;
-                    $values = explode(',', $olduserdata->content);
-                    foreach ($values as $rowvalue) {
-                        $uniquename = $this->itemname.'_'.$valueindex;
-                        $rowvalue = trim($rowvalue); // Example: italiano: 3
-                        $value = explode(SURVEYFIELD_RATE_VALUERATE_SEPARATOR, $rowvalue); // 3
-                        $prefill[$uniquename] = $value[1];
-                        $valueindex++;
+                    $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $fromdb->content);
+
+                    foreach ($answers as $optionindex => $value) {
+                        $uniquename = $this->itemname.'_'.$optionindex;
+                        $prefill[$uniquename] = $answers[$optionindex];
                     }
                 }
-            // } else {
-                // nothing was set
-                // do not accept defaults but overwrite them
             }
 
             // _noanswer
             if (!$this->required) { // if this item foresaw the $this->itemname.'_noanswer'
-                $prefill[$this->itemname.'_noanswer'] = is_null($olduserdata->content) ? 1 : 0;
+                $prefill[$this->itemname.'_noanswer'] = is_null($fromdb->content) ? 1 : 0;
             }
         } // else use item defaults
 
         return $prefill;
+    }
+
+    /*
+     * userform_db_to_export
+     * strating from the info stored in the database, this function returns the corresponding content for the export file
+     * @param $answers, $format
+     * @return
+     */
+    public function userform_db_to_export($answer, $format='') {
+        $content = $answer->content;
+        if (!$content) {
+            return get_string('answerisnoanswer', 'survey');
+        }
+
+        if (empty($format)) {
+            $format = $this->downloadformat;
+        }
+
+        // $answers is an array like: array(1,1,0,0)
+        switch ($format) {
+            case SURVEYFIELD_RATE_RETURNVALUES:
+                $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $content);
+                $output = array();
+                $valuelabel = array_keys($this->item_get_value_label_array('options'));
+                foreach ($valuelabel as $k => $value) {
+                    $output[] = $value.SURVEYFIELD_RATE_VALUERATESEPARATOR.$answers[$k];
+                }
+                $return = implode(SURVEY_OUTPUTMULTIVALUESEPARATOR, $output);
+                break;
+            case SURVEYFIELD_RATE_RETURNPOSITION:
+                // here I will ALWAYS HAVE 0;1;6;4;0;7 so each separator is welcome, even ','
+                // I do not like pass the idea that ',' can be a separator so, I do not use it
+                $return = $content;
+                break;
+            default:
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $format = '.$format);
+        }
+
+        return $return;
     }
 
     /*
