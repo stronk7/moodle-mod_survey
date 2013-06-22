@@ -254,15 +254,17 @@ class surveyfield_fileupload extends surveyitem_base {
             $fieldname = $this->itemname.'_filemanager';
 
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-            file_save_draft_area_files($answer['filemanager'], $this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, $attachmentoptions);
+            // last
+            // file_save_draft_area_files($answer['filemanager'], $this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, $attachmentoptions);
             // next
-            // file_save_draft_area_files($answer['filemanager'], $this->context->id, 'surveyfield_fileupload', $fieldname, $olduserdata->id, $attachmentoptions);
+            file_save_draft_area_files($answer['filemanager'], $this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id, $attachmentoptions);
 
             // needed only for export purposes
             $fs = get_file_storage();
-            if ($files = $fs->get_area_files($this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, 'sortorder', false)) {
-            // next
+            // last
             // if ($files = $fs->get_area_files($this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, 'sortorder', false)) {
+            // next
+            if ($files = $fs->get_area_files($this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id, 'sortorder', false)) {
                 foreach ($files as $file) {
                     $oldfiles[] = $file->get_filename();
                 }
@@ -290,7 +292,7 @@ class surveyfield_fileupload extends surveyitem_base {
             // $prefill->id = $fromdb->submissionid;
             $draftitemid = 0;
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_survey', $fieldname, $fromdb->submissionid, $attachmentoptions);
+            file_prepare_draft_area($draftitemid, $this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $fromdb->id, $attachmentoptions);
 
             $prefill[$fieldname] = $draftitemid;
         }
@@ -306,7 +308,7 @@ class surveyfield_fileupload extends surveyitem_base {
      */
     public function userform_db_to_export($answer, $format='') {
         $fs = get_file_storage();
-        $files = $fs->get_area_files($this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $answer->id);
+        $files = $fs->get_area_files($this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $answer->id);
         $filename = array();
         foreach ($files as $file) {
             if ($file->is_directory()) {
