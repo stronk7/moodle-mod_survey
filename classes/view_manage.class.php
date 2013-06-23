@@ -625,32 +625,32 @@ class mod_survey_submissionmanager {
         $border = array('T' => array('width' => 0.2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 1, 'color' => array(179, 219, 181)));
         foreach($itemseeds as $itemseed) {
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
-            if (($item->plugin == 'pagebreak') || ($item->plugin == 'fieldset')) {
+            if (($item->get_plugin() == 'pagebreak') || ($item->get_plugin() == 'fieldset')) {
                 continue;
             }
-            if ($item->plugin == 'label') {
+            if ($item->get_plugin() == 'label') {
                 // first column
                 $html = $htmllabel;
-                $content = ($item->customnumber) ? $item->customnumber.': ' : '';
+                $content = ($item->get_customnumber()) ? $item->get_customnumber().': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
                 // second column: colspan 2
-                $content = trim(strip_tags($item->content), " \t\n\r\0\x0B\xC2\xA0");
+                $content = trim(strip_tags($item->get_content()), " \t\n\r\0\x0B\xC2\xA0");
                 $html = str_replace('@@col2@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true); // this is like span 2
                 continue;
             }
 
 
-            if ($item->extrarow) {
+            if ($item->get_extrarow()) {
                 // first row
                 // first column
                 $html = $htmllabel;
-                $content = ($item->customnumber) ? $item->customnumber.': ' : '';
+                $content = ($item->get_customnumber()) ? $item->customnumber().': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
                 // second column: colspan 2
-                $content = trim(strip_tags($item->content), " \t\n\r\0\x0B\xC2\xA0");
+                $content = trim(strip_tags($item->get_content()), " \t\n\r\0\x0B\xC2\xA0");
                 $html = str_replace('@@col2@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, 'R', true);
 
@@ -663,8 +663,8 @@ class mod_survey_submissionmanager {
                 $html = str_replace('@@col2@@', '', $html);
 
                 // third column
-                if (isset($userdatarecord[$item->itemid])) {
-                    $content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
+                if (isset($userdatarecord[$item->get_itemid()])) {
+                    $content = $item->userform_db_to_export($userdatarecord[$item->get_itemid()]);
                 } else {
                     $content = '';
                 }
@@ -674,16 +674,16 @@ class mod_survey_submissionmanager {
                 // first row
                 // first column
                 $html = $htmlregular;
-                $content = ($item->customnumber) ? $item->customnumber.': ' : '';
+                $content = ($item->get_customnumber()) ? $item->get_customnumber().': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
                 // second column
-                $content = trim(strip_tags($item->content), " \t\n\r\0\x0B\xC2\xA0");
+                $content = trim(strip_tags($item->get_content()), " \t\n\r\0\x0B\xC2\xA0");
                 $html = str_replace('@@col2@@', $content, $html);
 
                 // third column
-                if (isset($userdatarecord[$item->itemid])) {
-                    $content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
+                if (isset($userdatarecord[$item->get_itemid()])) {
+                    $content = $item->userform_db_to_export($userdatarecord[$item->get_itemid()]);
                 } else {
                     $content = '';
                 }

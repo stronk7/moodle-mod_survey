@@ -177,8 +177,9 @@ class mod_survey_userpagemanager {
                         $lastwaspagebreak = false;
                     }
                     if ($this->survey->newpageforchild) {
-                        if (!empty($item->parentid)) {
-                            $parentpage = $DB->get_field('survey_item', $pagefield, array('id' => $item->parentid), MUST_EXIST);
+                        $item_parentid = $item->parentid();
+                        if (!empty($item_parentid)) {
+                            $parentpage = $DB->get_field('survey_item', $pagefield, array('id' => $item->get_parentid()), MUST_EXIST);
                             if ($parentpage == $pagenumber) {
                                 $pagenumber++;
                             }
@@ -807,7 +808,7 @@ class mod_survey_userpagemanager {
             foreach ($itemseeds as $itemseed) {
                 $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
-                $olduserdata = $DB->get_record('survey_userdata', array('submissionid' => $this->submissionid, 'itemid' => $item->itemid));
+                $olduserdata = $DB->get_record('survey_userdata', array('submissionid' => $this->submissionid, 'itemid' => $item->get_itemid()));
                 $singleprefill = $item->userform_set_prefill($olduserdata);
                 $prefill = array_merge($prefill, $singleprefill);
             }

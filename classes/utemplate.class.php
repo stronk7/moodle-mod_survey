@@ -145,33 +145,35 @@ class mod_survey_usertemplate extends mod_survey_template {
             $xmltable = $xmlitem->addChild('survey_item');
             foreach ($structure as $field) {
                 if ($field == 'parentid') {
-                    if ($item->parentid) {
-                        $sqlparams = array('id' => $item->parentid);
+                    if ($item->get_parentid()) {
+                        $sqlparams = array('id' => $item->get_parentid());
                         // I store sortindex instead of parentid, because at restore time parent id will change
                         $val = $DB->get_field('survey_item', 'sortindex', $sqlparams);
                     } else {
                         $val = 0;
                     }
                 } else {
-                    if (is_null($item->{$field})) {
+                    $item_field = get_generic_field($field);
+                    if (is_null($item_field)) { // TODO: how can I get this?
                         $val = SURVEY_EMPTYTEMPLATEFIELD;
                     } else {
-                        $val = $item->{$field};
+                        $val = $item_field; // TODO: how can I get this?
                     }
                 }
                 $xmlfield = $xmltable->addChild($field, $val);
             }
 
-            if ($item->flag->useplugintable) { // only page break does not use the plugin table
+            if ($item->get_useplugintable()) { // only page break does not use the plugin table
                 // child table
                 $structure = $this->get_table_structure('survey_'.$plugin);
 
                 $xmltable = $xmlitem->addChild('survey_'.$plugin);
                 foreach ($structure as $field) {
-                    if (is_null($item->{$field})) {
+                    $item_field = get_generic_field($field);
+                    if (is_null($item_field)) { // TODO: how can I get this?
                         $xmlfield = $xmltable->addChild($field, SURVEY_EMPTYTEMPLATEFIELD);
                     } else {
-                        $xmlfield = $xmltable->addChild($field, $item->{$field});
+                        $xmlfield = $xmltable->addChild($field, $item_field); // TODO: how can I get this?
                     }
                 }
             }

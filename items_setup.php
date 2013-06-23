@@ -119,7 +119,7 @@ if ($fromform = $item_form->get_data()) {
 
     $item->item_save($fromform);
 
-    $paramurl = array('id' => $cm->id, 'ufd' => $item->userfeedback);
+    $paramurl = array('id' => $cm->id, 'ufd' => $userfeedback);
     $returnurl = new moodle_url('items_manage.php', $paramurl);
     redirect($returnurl);
 }

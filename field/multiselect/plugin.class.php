@@ -243,13 +243,17 @@ class surveyfield_multiselect extends surveyitem_base {
         $select = $mform->addElement('select', $this->itemname, $elementlabel, $valuelabel, array('size' => $this->heightinrows));
         $select->setMultiple(true);
 
-        if ($defaults = $this->item_get_one_word_per_row('defaultvalue')) {
-            $valuelabel_keys = array_keys($this->item_get_value_label_array('options'));
-            $default_keys = array();
-            foreach($defaults as $default) {
-                $default_keys[] = array_search($default, $valuelabel_keys);
+        if (!$searchform) {
+            if ($defaults = $this->item_get_one_word_per_row('defaultvalue')) {
+                $valuelabel_keys = array_keys($this->item_get_value_label_array('options'));
+                $default_keys = array();
+                foreach($defaults as $default) {
+                    $default_keys[] = array_search($default, $valuelabel_keys);
+                }
+                $mform->setDefault($this->itemname, $default_keys);
             }
-            $mform->setDefault($this->itemname, $default_keys);
+        // } else {
+            // $mform->setDefault($this->itemname, array());
         }
         /* this last item is needed because:
          * the JS validation MAY BE missing even if the field is required
