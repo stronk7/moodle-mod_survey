@@ -124,13 +124,13 @@ class surveyfield_numeric extends surveyitem_base {
         parent::item_load($itemid);
 
         // float numbers need more attention because I can write them using , or .
-        if (!empty($this->defaultvalue)) {
+        if (strlen($this->defaultvalue)) {
             $this->defaultvalue = format_float($this->defaultvalue, $this->decimals);
         }
-        if (!empty($this->lowerbound)) {
+        if (strlen($this->lowerbound)) {
             $this->lowerbound = format_float($this->lowerbound, $this->decimals);
         }
-        if (!empty($this->upperbound)) {
+        if (strlen($this->upperbound)) {
             $this->upperbound = format_float($this->upperbound, $this->decimals);
         }
 
@@ -160,17 +160,17 @@ class surveyfield_numeric extends surveyitem_base {
 
         // float numbers need more attention because I can write them using , or .
         if (!empty($record->defaultvalue)) {
-            $record->defaultvalue = unformat_float($record->defaultvalue);
+            $record->defaultvalue = unformat_float($record->defaultvalue, true);
         } else {
             $record->defaultvalue = null;
         }
-        if (!empty($record->lowerbound)) {
-            $record->lowerbound = unformat_float($record->lowerbound);
+        if (strlen($record->lowerbound)) {
+            $record->lowerbound = unformat_float($record->lowerbound, true);
         } else {
             $record->lowerbound = null;
         }
-        if (!empty($record->upperbound)) {
-            $record->upperbound = unformat_float($record->upperbound);
+        if (strlen($record->upperbound)) {
+            $record->upperbound = unformat_float($record->upperbound, true);
         } else {
             $record->upperbound = null;
         }
@@ -377,7 +377,7 @@ class surveyfield_numeric extends surveyitem_base {
             $fillinginstruction[] = get_string('declaredecimalseparator', 'surveyfield_numeric', $this->decimalseparator);
         }
         if (count($fillinginstruction)) {
-            $fillinginstruction = get_string('number', 'surveyfield_numeric').implode(', ', $fillinginstruction);
+            $fillinginstruction = get_string('number', 'surveyfield_numeric').implode('; ', $fillinginstruction);
         } else {
             $fillinginstruction = '';
         }

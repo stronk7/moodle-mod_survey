@@ -73,9 +73,9 @@ class survey_pluginform extends surveyitem_baseform {
         // newitem::decimals
         // ----------------------------------------
         $fieldname = 'decimals';
-        $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_numeric'));
+        $options = array_combine(range(0, 8), range(0, 8));
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_numeric'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
-        $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------
         // newitem::lowerbound
@@ -83,7 +83,7 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'lowerbound';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_numeric'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
-        $mform->setType($fieldname, PARAM_ALPHANUM);
+        $mform->setType($fieldname, PARAM_RAW);
 
         // ----------------------------------------
         // newitem::upperbound
@@ -91,7 +91,7 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'upperbound';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_numeric'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
-        $mform->setType($fieldname, PARAM_ALPHANUM);
+        $mform->setType($fieldname, PARAM_RAW);
 
         $this->add_item_buttons();
     }
@@ -106,7 +106,7 @@ class survey_pluginform extends surveyitem_baseform {
 
         // constrain default between boundaries
         if ($data['defaultvalue']) {
-            if (!$thenumber = unformat_float($data['defaultvalue'])) {
+            if (!$thenumber = unformat_float($data['defaultvalue'], true)) {
                 $errors['defaultvalue'] = get_string('default_notanumber', 'surveyfield_numeric');
             } else {
                 // if it is < 0 but has been defined as unsigned, shouts
@@ -115,12 +115,12 @@ class survey_pluginform extends surveyitem_baseform {
                 }
 
                 // if it is < $this->lowerbound, shouts
-                if (!empty($data['lowerbound']) && ($thenumber < $data['lowerbound'])) {
+                if (strlen($data['lowerbound']) && ($thenumber < $data['lowerbound'])) {
                     $errors['defaultvalue'] = get_string('default_outofrange', 'surveyfield_numeric');
                 }
 
                 // if it is > $this->upperbound, shouts
-                if (!empty($data['upperbound']) && ($thenumber > $data['upperbound'])) {
+                if (strlen($data['upperbound']) && ($thenumber > $data['upperbound'])) {
                     $errors['defaultvalue'] = get_string('default_outofrange', 'surveyfield_numeric');
                 }
 
@@ -131,6 +131,21 @@ class survey_pluginform extends surveyitem_baseform {
                 }
             }
         }
+
+        if (false === ($lowerbound = unformat_float($data['lowerbound'], true))) {
+            $errors['lowerbound'] = get_string('lowerbound_notanumber', 'surveyfield_numeric');
+        }
+
+        if (false === ($upperbound = unformat_float($data['upperbound'], true))) {
+            $errors['upperbound'] = get_string('upperbound_notanumber', 'surveyfield_numeric');
+        }
+
+        if (strlen($data['lowerbound']) && strlen($data['upperbound'])) {
+            if (($upperbound) && ($upperbound) && ($upperbound < $lowerbound)) {
+                $errors['upperbound'] = get_string('upperboundlowerthanlowerbound', 'surveyfield_numeric');
+            }
+        }
+
         return $errors;
     }
 }

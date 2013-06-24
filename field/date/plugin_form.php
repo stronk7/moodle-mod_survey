@@ -78,7 +78,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
 
         $mform->setDefault('defaultoption', SURVEY_INVITATIONDEFAULT);
-        if ($item->get_defaultoption() == SURVEY_CUSTOMDEFAULT) {
+        if ($item->defaultoption == SURVEY_CUSTOMDEFAULT) {
             $justadefault = $item->item_split_unix_time($item->lowerbound);
             $mform->setDefault($fieldname.'_day', $justadefault['mday']);
             $mform->setDefault($fieldname.'_month', $justadefault['mon']);

@@ -61,3 +61,6 @@ $string['uerr_wrongseparator'] = 'The used decimal separator is wrong. It is sup
 $string['upperbound_help'] = 'The maximum allowed value. Blank to leave maximum unassigned.';
 $string['upperbound'] = 'Maximum value';
 $string['userfriendlypluginname'] = 'Numeric';
+$string['lowerbound_notanumber'] = 'lowerbound is not an number';
+$string['upperbound_notanumber'] = 'upperbound is not an number';
+$string['upperboundlowerthanlowerbound'] = 'upperbound is lower than lowerbound';
