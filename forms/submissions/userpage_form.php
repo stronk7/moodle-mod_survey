@@ -230,15 +230,15 @@ class survey_submissionform extends moodleform {
                     $parentitem = null;
                 } else {
                     $item_parentid = $item->get_parentid();
-                    if ($item_parentid) {
+                    if (!$item_parentid) {
                         $itemisenabled = true;
                         $parentitem = null;
                     } else {
                         // call its parent
-                        $parentitem = survey_get_item($item->get_parentid());
+                        $parentitem = survey_get_item($item_parentid);
                         // tell parent that his child has parentcontent = 12/4/1968
                         $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
-                        $item_field = get_generic_field($pagefield);
+                        $item_field = $parentitem->get_generic_field($pagefield);
                         if ($parentitem->{$pagefield} == $item_field) { // TODO: how can I get this?
                             $itemisenabled = $parentitem->userform_child_item_allowed_dynamic($item->get_parentcontent(), $data);
                         } else {

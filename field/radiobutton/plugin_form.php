@@ -84,7 +84,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setDefault('defaultoption', SURVEY_INVITATIONDEFAULT);
         $mform->setType($fieldname, PARAM_RAW);
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
-        if (is_null($item->get_defaultvalue())) {
+        if (is_null($item->get_defaultvalue)) {
             $mform->setDefault($fieldname, $item->item_generate_standard_default());
         }
 

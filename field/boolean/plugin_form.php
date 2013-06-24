@@ -75,7 +75,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_boolean');
         $mform->setDefault('defaultoption', SURVEY_INVITATIONDEFAULT);
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
-        if (is_null($item->get_defaultvalue()) || ($item->get_defaultvalue() == SURVEY_INVITATIONDEFAULT)) {
+        if (is_null($item->get_defaultvalue) || ($item->get_defaultvalue == SURVEY_INVITATIONDEFAULT)) {
             $mform->setDefault($fieldname, '1');
         }
 

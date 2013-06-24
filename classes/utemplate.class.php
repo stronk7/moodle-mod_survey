@@ -153,7 +153,7 @@ class mod_survey_usertemplate extends mod_survey_template {
                         $val = 0;
                     }
                 } else {
-                    $item_field = get_generic_field($field);
+                    $item_field = $item->get_generic_field($field);
                     if (is_null($item_field)) { // TODO: how can I get this?
                         $val = SURVEY_EMPTYTEMPLATEFIELD;
                     } else {
@@ -169,7 +169,7 @@ class mod_survey_usertemplate extends mod_survey_template {
 
                 $xmltable = $xmlitem->addChild('survey_'.$plugin);
                 foreach ($structure as $field) {
-                    $item_field = get_generic_field($field);
+                    $item_field = $item->get_generic_field($field);
                     if (is_null($item_field)) { // TODO: how can I get this?
                         $xmlfield = $xmltable->addChild($field, SURVEY_EMPTYTEMPLATEFIELD);
                     } else {
