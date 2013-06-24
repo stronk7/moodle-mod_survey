@@ -648,17 +648,16 @@ class mod_survey_itemelement {
         global $DB, $OUTPUT;
 
         // build toshowlist
+        $parentitem = new StdClass();
         $toshowlist = array($this->itemid);
-        $parentitem = $DB->get_record('survey_item', array('id' => $this->itemid), 'id, parentid, sortindex', MUST_EXIST);
-        $parent_parentid = $parentitem->get_parentid();
-        while (isset($parent_parentid)) {
-            if ($parentitem = $DB->get_record('survey_item', array('id' => $parentitem->get_parentid(), 'hide' => 1), 'id, parentid, sortindex')) { // potrebbe non esistere
-                $toshowlist[] = $parentitem->get_itemid();
-                $sortindextoshowlist[] = $parentitem->get_sortindex();
-            }
+        $parentitem->parentid = $this->itemid;
+
+        while ($parentitem = $DB->get_record('survey_item', array('id' => $parentitem->parentid, 'hide' => 1), 'id, parentid, sortindex')) { // potrebbe non esistere
+            $toshowlist[] = $parentitem->id;
+            $sortindextoshowlist[] = $parentitem->sortindex;
         }
 
-        $itemstoprocess = count($toshowlist);
+        $itemstoprocess = count($sortindextoshowlist);
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             if ($itemstoprocess > 1) { // ask for confirmation
                 $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);

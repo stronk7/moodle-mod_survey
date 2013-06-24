@@ -158,15 +158,14 @@ class mod_survey_userpagemanager {
         }
         $whereparams = array('surveyid' => $this->survey->id);
         $pagenumber = $DB->get_field_select('survey_item', 'MAX('.$pagefield.')', $whereclause, $whereparams);
-
         // were pages assigned?
         if (!$pagenumber) {
             $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
             $pagenumber = 1;
             $items = $DB->get_recordset_select('survey_item', $whereclause, $whereparams, 'sortindex', 'id, type, plugin, parentid, '.$pagefield.', sortindex');
             if ($items) {
-                foreach ($items as $item) {
 
+                foreach ($items as $item) {
                     if ($item->plugin == 'pagebreak') { // it is a page break
                         if (!$lastwaspagebreak) {
                             $pagenumber++;
@@ -177,7 +176,7 @@ class mod_survey_userpagemanager {
                         $lastwaspagebreak = false;
                     }
                     if ($this->survey->newpageforchild) {
-                        $item_parentid = $item->parentid();
+                        $item_parentid = $item->get_parentid();
                         if (!empty($item_parentid)) {
                             $parentpage = $DB->get_field('survey_item', $pagefield, array('id' => $item->get_parentid()), MUST_EXIST);
                             if ($parentpage == $pagenumber) {
