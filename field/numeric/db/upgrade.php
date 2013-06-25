@@ -55,6 +55,7 @@ function xmldb_surveyfield_numeric_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013062401, 'surveyfield_numeric', 'survey');
     }
 
+<<<<<<< HEAD
     if ($oldversion < 2013062501) {
 
         // Changing precision of field defaultvalue on table survey_numeric to ().
@@ -68,5 +69,7 @@ function xmldb_surveyfield_numeric_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013062501, 'surveyfield_numeric', 'survey');
     }
 
+=======
+>>>>>>> bc1da2482d08128fba5b7e1a616f3797f35e860b
     return true;
 }
