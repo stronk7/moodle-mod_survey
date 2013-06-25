@@ -298,12 +298,16 @@ class surveyfield_boolean extends surveyitem_base {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
+        $labels = explode('/', get_string($this->downloadformat, 'surveyfield_boolean'));
+        $yes_label = $labels[0];
+        $no_label = $labels[1];
+
         if ($this->style == SURVEYFIELD_BOOLEAN_USESELECT) {
             $options = array();
             if ( ($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform) ) {
                 $options[SURVEY_INVITATIONVALUE] = get_string('choosedots');
             }
-            $options += array('1' => get_string('yes'), '0' => get_string('no'));
+            $options += array('1' => $yes_label, '0' => $no_label);
 
             if ( (!$this->required) || $searchform ) {
                 $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
@@ -335,9 +339,9 @@ class surveyfield_boolean extends surveyitem_base {
             } else {
                 $class = array('class' => 'indent-'.$this->indent);
             }
-            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('yes'), '1', $class);
+            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $yes_label, '1', $class);
             $class = ($this->style == SURVEYFIELD_BOOLEAN_USERADIOV) ? array('class' => 'indent-'.$this->indent) : '';
-            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('no'), '0', $class);
+            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $no_label, '0', $class);
 
             if (!$searchform) {
                 if ($this->required) {

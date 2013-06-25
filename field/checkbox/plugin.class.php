@@ -262,7 +262,7 @@ class surveyfield_checkbox extends surveyitem_base {
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
         $valuelabel = $this->item_get_value_label_array('options');
-        $defaults = $this->item_get_one_word_per_row('defaultvalue');
+        $defaults = $this->survey_textarea_to_array('defaultvalue');
 
         $elementgroup = array();
         $i = 0;
@@ -504,7 +504,7 @@ class surveyfield_checkbox extends surveyitem_base {
     public function userform_save_preprocessing($answer, $olduserdata) {
 
         $return = array();
-        $options = array_keys($this->item_complete_option_array());
+        $options = array_keys($this->item_get_value_label_array('options'));
 
         foreach ($options as $k => $value) {
             if (isset($answer["$k"])) {

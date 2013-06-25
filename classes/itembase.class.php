@@ -691,41 +691,6 @@ class surveyitem_base {
     }
 
     /*
-     * item_get_one_word_per_row
-     * @param $field='defaultvalue'
-     * @return
-     */
-    public function item_get_one_word_per_row($field='defaultvalue') {
-        // it doesn't matter if default is single- o multi-row
-        // this function works fine in both cases
-
-        $content = survey_textarea_to_array($this->{$field});
-
-        return $content;
-    }
-
-    /*
-     * item_complete_option_array
-     * @param
-     * @return
-     */
-    public function item_complete_option_array() {
-
-        $options = explode("\n", $this->options);
-
-        $return = array();
-        foreach ($options as $option) {
-            if (strpos($option, SURVEY_VALUELABELSEPARATOR) === false) {
-                $return[$option] = $option;
-            } else {
-                $pair = explode(SURVEY_VALUELABELSEPARATOR, $option);
-                $return[$pair[0]] = $pair[1];
-            }
-        }
-        return $return;
-    }
-
-    /*
      * item_mandatory_is_allowed
      * @param
      * @return

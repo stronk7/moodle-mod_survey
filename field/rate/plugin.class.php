@@ -310,10 +310,10 @@ class surveyfield_rate extends surveyitem_base {
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        $options = $this->item_get_one_word_per_row('options');
+        $options = $this->survey_textarea_to_array('options');
         $rates = array_keys(array_flip($this->item_get_value_label_array('rates')));
         $rates_keys = array_keys($this->item_get_value_label_array('rates'));
-        $defaultvalues = $this->item_get_one_word_per_row('defaultvalue');
+        $defaultvalues = $this->survey_textarea_to_array('defaultvalue');
 
         if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
             if ($this->style == SURVEYFIELD_RATE_USERADIO) {
@@ -419,7 +419,7 @@ class surveyfield_rate extends surveyitem_base {
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
         // if different rates were requested, it is time to verify this
-        $options = $this->item_get_one_word_per_row('options');
+        $options = $this->survey_textarea_to_array('options');
 
         if (isset($data[$this->itemname.'_noanswer'])) {
             return; // nothing to validate

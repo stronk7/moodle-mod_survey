@@ -244,7 +244,7 @@ class surveyfield_multiselect extends surveyitem_base {
         $select->setMultiple(true);
 
         if (!$searchform) {
-            if ($defaults = $this->item_get_one_word_per_row('defaultvalue')) {
+            if ($defaults = $this->survey_textarea_to_array('defaultvalue')) {
                 $valuelabel_keys = array_keys($this->item_get_value_label_array('options'));
                 $default_keys = array();
                 foreach($defaults as $default) {
