@@ -353,18 +353,18 @@ class surveyfield_textarea extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata
+     * @param $answer, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata) {
+    public function userform_save_preprocessing($answer, $olduserdata) {
         if (!empty($this->useeditor)) {
-            $olduserdata->{$this->itemname.'_editor'} = $itemdetail['editor'];
+            $olduserdata->{$this->itemname.'_editor'} = $answer['editor'];
 
             $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $this->context);
             $olduserdata = file_postupdate_standard_editor($olduserdata, $this->itemname, $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
             $olduserdata->content = $olduserdata->{$this->itemname};
         } else {
-            $olduserdata->content = $itemdetail['mainelement'];
+            $olduserdata->content = $answer['mainelement'];
         }
     }
 
@@ -373,22 +373,22 @@ class surveyfield_textarea extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
-     * @param $olduserdata
+     * @param $fromdb
      * @return
      */
-    public function userform_set_prefill($olduserdata) {
+    public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            if (isset($olduserdata->content)) {
+        if ($fromdb) { // $fromdb may be boolean false for not existing data
+            if (isset($fromdb->content)) {
                 if (!empty($this->useeditor)) {
                     $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'context' => $this->context);
-                    $olduserdata->contentformat = FORMAT_HTML;
-                    $olduserdata = file_prepare_standard_editor($olduserdata, 'content', $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
+                    $fromdb->contentformat = FORMAT_HTML;
+                    $fromdb = file_prepare_standard_editor($fromdb, 'content', $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $fromdb->id);
 
-                    $prefill[$this->itemname.'_editor'] = $olduserdata->content_editor;
+                    $prefill[$this->itemname.'_editor'] = $fromdb->content_editor;
                 } else {
-                    $prefill[$this->itemname] = $olduserdata->content;
+                    $prefill[$this->itemname] = $fromdb->content;
                 }
             // } else {
                 // nothing was set

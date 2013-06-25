@@ -124,13 +124,13 @@ class surveyfield_numeric extends surveyitem_base {
         parent::item_load($itemid);
 
         // float numbers need more attention because I can write them using , or .
-        if (!empty($this->defaultvalue)) {
+        if (strlen($this->defaultvalue)) {
             $this->defaultvalue = format_float($this->defaultvalue, $this->decimals);
         }
-        if (!empty($this->lowerbound)) {
+        if (strlen($this->lowerbound)) {
             $this->lowerbound = format_float($this->lowerbound, $this->decimals);
         }
-        if (!empty($this->upperbound)) {
+        if (strlen($this->upperbound)) {
             $this->upperbound = format_float($this->upperbound, $this->decimals);
         }
 
@@ -159,18 +159,18 @@ class surveyfield_numeric extends surveyitem_base {
         $record->signed = isset($record->signed) ? 1 : 0;
 
         // float numbers need more attention because I can write them using , or .
-        if (!empty($this->defaultvalue)) {
-            $record->defaultvalue = unformat_float($this->defaultvalue);
+        if (!empty($record->defaultvalue)) {
+            $record->defaultvalue = unformat_float($record->defaultvalue, true);
         } else {
             $record->defaultvalue = null;
         }
-        if (!empty($this->lowerbound)) {
-            $record->lowerbound = unformat_float($this->lowerbound);
+        if (strlen($record->lowerbound)) {
+            $record->lowerbound = unformat_float($record->lowerbound, true);
         } else {
             $record->lowerbound = null;
         }
-        if (!empty($this->upperbound)) {
-            $record->upperbound = unformat_float($this->upperbound);
+        if (strlen($record->upperbound)) {
+            $record->upperbound = unformat_float($record->upperbound, true);
         } else {
             $record->upperbound = null;
         }
@@ -274,8 +274,8 @@ class surveyfield_numeric extends surveyitem_base {
         $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent, 'itemid' => $this->itemid));
         $mform->setType($this->itemname, PARAM_RAW); // see: moodlelib.php lines 133+
         if (!$searchform) {
-            if (is_numeric($this->defaultvalue)) {
-                $mform->setDefault($this->itemname, number_format((double)$this->defaultvalue, $this->decimals, $this->decimalseparator, ''));
+            if (strlen($this->defaultvalue)) {
+                $mform->setDefault($this->itemname, $this->defaultvalue);
             }
 
             if ($this->required) {
@@ -377,7 +377,7 @@ class surveyfield_numeric extends surveyitem_base {
             $fillinginstruction[] = get_string('declaredecimalseparator', 'surveyfield_numeric', $this->decimalseparator);
         }
         if (count($fillinginstruction)) {
-            $fillinginstruction = get_string('number', 'surveyfield_numeric').implode(', ', $fillinginstruction);
+            $fillinginstruction = get_string('number', 'surveyfield_numeric').implode('; ', $fillinginstruction);
         } else {
             $fillinginstruction = '';
         }
@@ -389,17 +389,17 @@ class surveyfield_numeric extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata
+     * @param $answer, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata) {
-        if (strlen($itemdetail['mainelement']) == 0) {
+    public function userform_save_preprocessing($answer, $olduserdata) {
+        if (strlen($answer['mainelement']) == 0) {
             $olduserdata->content = null;
         } else {
             if (empty($this->decimals)) {
-                $olduserdata->content = $itemdetail['mainelement'];
+                $olduserdata->content = $answer['mainelement'];
             } else {
-                $matches = $this->item_atomize_parent_content($itemdetail['mainelement']);
+                $matches = $this->item_atomize_parent_content($answer['mainelement']);
                 $decimals = isset($matches[2]) ? $matches[2] : '';
                 if (strlen($decimals) > $this->decimals) {
                     // round it
@@ -417,7 +417,7 @@ class surveyfield_numeric extends surveyitem_base {
                     // in the SEARCH form the remote user entered something very wrong
                     // remember: the for search form NO VALIDATION IS PERFORMED
                     // user is free to waste his/her time as he/she like
-                    $olduserdata->content = $itemdetail['mainelement'];
+                    $olduserdata->content = $answer['mainelement'];
                 }
             }
         }
@@ -428,15 +428,15 @@ class surveyfield_numeric extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
-     * @param $olduserdata
+     * @param $fromdb
      * @return
      */
-    public function userform_set_prefill($olduserdata) {
+    public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            if (isset($olduserdata->content)) {
-                $prefill[$this->itemname] = number_format((double)$olduserdata->content, $this->decimals, $this->decimalseparator, '');
+        if ($fromdb) { // $fromdb may be boolean false for not existing data
+            if (isset($fromdb->content)) {
+                $prefill[$this->itemname] = number_format((double)$fromdb->content, $this->decimals, $this->decimalseparator, '');
             // } else {
                 // nothing was set
                 // do not accept defaults but overwrite them
@@ -444,6 +444,21 @@ class surveyfield_numeric extends surveyitem_base {
         } // else use item defaults
 
         return $prefill;
+    }
+
+    /*
+     * userform_db_to_export
+     * strating from the info stored in the database, this function returns the corresponding content for the export file
+     * @param $answers, $format
+     * @return
+     */
+    public function userform_db_to_export($answer, $format='') {
+        $content = $answer->content;
+        if (strlen($content) == 0) {
+            return get_string('answerisnoanswer', 'survey');
+        }
+
+        return $content;
     }
 
     /*

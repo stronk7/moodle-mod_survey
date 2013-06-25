@@ -430,15 +430,15 @@ class surveyfield_select extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata
+     * @param $answer, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata) {
-        if (isset($itemdetail['mainelement'])) {
-            if ($itemdetail['mainelement'] == 'other') {
-                $olduserdata->content = $itemdetail['text'];
+    public function userform_save_preprocessing($answer, $olduserdata) {
+        if (isset($answer['mainelement'])) {
+            if ($answer['mainelement'] == 'other') {
+                $olduserdata->content = $answer['text'];
             } else {
-                $olduserdata->content = $itemdetail['mainelement'];
+                $olduserdata->content = $answer['mainelement'];
             }
             return;
         }
@@ -451,26 +451,26 @@ class surveyfield_select extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
-     * @param $olduserdata
+     * @param $fromdb
      * @return
      */
-    public function userform_set_prefill($olduserdata) {
+    public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            if (isset($olduserdata->content)) {
+        if ($fromdb) { // $fromdb may be boolean false for not existing data
+            if (isset($fromdb->content)) {
                 $valuelabel = $this->item_get_value_label_array('options');
-                if (array_key_exists($olduserdata->content, $valuelabel)) {
-                    $prefill[$this->itemname] = $olduserdata->content;
+                if (array_key_exists($fromdb->content, $valuelabel)) {
+                    $prefill[$this->itemname] = $fromdb->content;
                 } else {
                     // deve per forza essere il valore di "other"
                     $prefill[$this->itemname] = 'other';
-                    $prefill[$this->itemname.'_text'] = $olduserdata->content;
+                    $prefill[$this->itemname.'_text'] = $fromdb->content;
                 }
             } else {
                 // nothing was set
                 // do not accept defaults but overwrite them
-                // but... if this is a select, how can it be empty($olduserdata->content)? Because user selected "Not answering"
+                // but... if this is a select, how can it be empty($fromdb->content)? Because user selected "Not answering"
                 $prefill[$this->itemname] = '';
             }
         } // else use item defaults

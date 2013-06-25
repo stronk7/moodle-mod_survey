@@ -320,7 +320,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
             $this->lib_write_si_values($values);
             $this->collect_strings($sid['survey_item'], $item);
 
-            if ($item->flag->useplugintable) { // only page break does not use the plugin table
+            if ($item->get_useplugintable()) { // only page break does not use the plugin table
                 $tablename = 'survey_'.$itemseed->plugin;
                 $currentsid = $sid[$tablename];
                 $currentstructure = $structures[$tablename];

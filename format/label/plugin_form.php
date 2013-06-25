@@ -45,7 +45,7 @@ class survey_pluginform extends surveyitem_baseform {
         // here I open a new fieldset
         // /////////////////////////////////////////////////////////////////////////////////////////////////
         $fieldname = 'specializations';
-        $typename = get_string('pluginname', 'surveyformat_'.$item->plugin);
+        $typename = get_string('pluginname', 'surveyformat_'.$item->get_plugin());
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey', $typename));
 
         // ----------------------------------------

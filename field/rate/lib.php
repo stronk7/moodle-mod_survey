@@ -28,4 +28,8 @@ require_once($CFG->dirroot.'/mod/survey/locallib.php');
 // rates STYLES
 define('SURVEYFIELD_RATE_USERADIO' , 0);
 define('SURVEYFIELD_RATE_USESELECT', 1);
-define('SURVEYFIELD_RATE_VALUERATE_SEPARATOR', ': ');
+
+// formats
+define('SURVEYFIELD_RATE_RETURNVALUES',   0);
+define('SURVEYFIELD_RATE_RETURNPOSITION', 1);
+define('SURVEYFIELD_RATE_VALUERATESEPARATOR', ': ');

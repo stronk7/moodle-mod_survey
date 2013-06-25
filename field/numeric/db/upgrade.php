@@ -34,5 +34,39 @@ function xmldb_surveyfield_numeric_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    if ($oldversion < 2013062401) {
+
+        // Changing precision of field lowerbound on table survey_numeric to ().
+        $table = new xmldb_table('survey_numeric');
+        $field = new xmldb_field('lowerbound', XMLDB_TYPE_FLOAT, null, null, null, null, null, 'signed');
+
+        // Launch change of precision for field lowerbound.
+        $dbman->change_field_precision($table, $field);
+
+
+        // Changing precision of field upperbound on table survey_numeric to ().
+        $table = new xmldb_table('survey_numeric');
+        $field = new xmldb_field('upperbound', XMLDB_TYPE_FLOAT, null, null, null, null, null, 'lowerbound');
+
+        // Launch change of precision for field upperbound.
+        $dbman->change_field_precision($table, $field);
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013062401, 'surveyfield_numeric', 'survey');
+    }
+
+    if ($oldversion < 2013062501) {
+
+        // Changing precision of field defaultvalue on table survey_numeric to ().
+        $table = new xmldb_table('survey_numeric');
+        $field = new xmldb_field('defaultvalue', XMLDB_TYPE_FLOAT, null, null, null, null, null, 'defaultvalue_sid');
+
+        // Launch change of precision for field lowerbound.
+        $dbman->change_field_precision($table, $field);
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013062501, 'surveyfield_numeric', 'survey');
+    }
+
     return true;
 }

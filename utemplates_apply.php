@@ -112,6 +112,10 @@ $currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_UTEMPLATES_APPLY; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
+if (survey_has_submissions($survey->id, SURVEY_STATUSCLOSED)) {
+    echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
+}
+
 $a = new stdClass();
 $a->usertemplate = get_string('usertemplate', 'survey');
 $a->none = get_string('notanyset', 'survey');

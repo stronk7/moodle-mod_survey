@@ -78,6 +78,17 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setDefault($fieldname, 4);
         $mform->setType($fieldname, PARAM_INT);
 
+        // ----------------------------------------
+        // newitem::downloadformat
+        // ----------------------------------------
+        $fieldname = 'downloadformat';
+        $options = array(SURVEYFIELD_MULTISELECT_RETURNVALUES => get_string('returnselection', 'surveyfield_multiselect'),
+                         SURVEYFIELD_MULTISELECT_RETURNPOSITION => get_string('returnposition', 'surveyfield_multiselect'));
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_multiselect'), $options);
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_multiselect');
+        $mform->setType($fieldname, PARAM_INT);
+        $mform->setDefault($fieldname, SURVEYFIELD_MULTISELECT_RETURNVALUES);
+
         $this->add_item_buttons();
     }
 

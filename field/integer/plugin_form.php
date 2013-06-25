@@ -66,8 +66,8 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_integer');
         $mform->setDefault('defaultoption', SURVEY_INVITATIONDEFAULT);
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
-        if (is_null($item->{$fieldname}) || ($item->{$fieldname} == SURVEY_INVITATIONDEFAULT)) {
-            $mform->setDefault($fieldname, $item->lowerbound);
+        if (is_null($item->get_defaultvalue) || ($item->get_defaultvalue == SURVEY_INVITATIONDEFAULT)) {
+            $mform->setDefault($fieldname, $item->get_lowerbound());
         }
 
         // /////////////////////////////////////////////////////////////////////////////////////////////////

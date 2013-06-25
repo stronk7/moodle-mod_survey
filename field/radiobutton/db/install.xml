@@ -15,7 +15,7 @@
         <FIELD NAME="labelother_sid"   TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="options"          NEXT="labelother"/>
         <FIELD NAME="labelother"       TYPE="char" LENGTH="64"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="labelother_sid"   NEXT="defaultoption"/>
 
-        <FIELD NAME="defaultoption"    TYPE="int"  LENGTH="2"      NOTNULL="true" UNSIGNED="false" DEFAULT="2" SEQUENCE="false" PREVIOUS="labelother"       NEXT="defaultvalue_sid"/>
+        <FIELD NAME="defaultoption"    TYPE="int"  LENGTH="2"      NOTNULL="true" UNSIGNED="true"  DEFAULT="2" SEQUENCE="false" PREVIOUS="labelother"       NEXT="defaultvalue_sid"/>
         <FIELD NAME="defaultvalue_sid" TYPE="int"   LENGTH="4"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="defaultoption"    NEXT="defaultvalue"/>
         <FIELD NAME="defaultvalue"     TYPE="char" LENGTH="32"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="defaultvalue_sid" NEXT="adjustment"/>
         <FIELD NAME="adjustment"       TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultvalue"/>

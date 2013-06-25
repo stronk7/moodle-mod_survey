@@ -148,11 +148,11 @@ class mod_survey_submissionmanager {
             $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_DELETERESPONSE);
 
             $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'submissionid' => $this->submissionid);
-            $urlyes = new moodle_url('view_submissions.php', $optionsyes);
+            $urlyes = new moodle_url('view_manage.php', $optionsyes);
             $buttonyes = new single_button($urlyes, get_string('confirmsurveydeletion', 'survey'));
 
             $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
-            $urlno = new moodle_url('view_submissions.php', $optionsno);
+            $urlno = new moodle_url('view_manage.php', $optionsno);
             $buttonno = new single_button($urlno, get_string('no'));
 
             echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
@@ -190,11 +190,11 @@ class mod_survey_submissionmanager {
             $optionbase = array('s' => $this->survey->id, 'surveyid' => $this->survey->id, 'act' => SURVEY_DELETEALLRESPONSES);
 
             $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES);
-            $urlyes = new moodle_url('view_submissions.php', $optionsyes);
+            $urlyes = new moodle_url('view_manage.php', $optionsyes);
             $buttonyes = new single_button($urlyes, get_string('confirmallsurveysdeletion', 'survey'));
 
             $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
-            $urlno = new moodle_url('view_submissions.php', $optionsno);
+            $urlno = new moodle_url('view_manage.php', $optionsno);
             $buttonno = new single_button($urlno, get_string('no'));
 
             echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
@@ -239,7 +239,7 @@ class mod_survey_submissionmanager {
         $table->initialbars(true);
 
         $paramurl = array('id' => $this->cm->id);
-        $table->define_baseurl(new moodle_url('view_submissions.php', $paramurl));
+        $table->define_baseurl(new moodle_url('view_manage.php', $paramurl));
 
         $tablecolumns = array();
         $tablecolumns[] = 'picture';
@@ -394,7 +394,7 @@ class mod_survey_submissionmanager {
                 $paramurl = array();
                 $paramurl['s'] = $this->survey->id;
                 $paramurl['act'] = SURVEY_DELETEALLRESPONSES;
-                $url = new moodle_url('/mod/survey/view_submissions.php', $paramurl);
+                $url = new moodle_url('/mod/survey/view_manage.php', $paramurl);
                 $caption = get_string('deleteallsubmissions', 'survey');
                 echo $OUTPUT->single_button($url, $caption, 'get');
             }
@@ -458,14 +458,14 @@ class mod_survey_submissionmanager {
 
                 if ($this->canmanageallsubmissions || has_extrapermission('delete', $this->survey, $mygroups, $submission->userid)) { // delete
                     $paramurl['act'] = SURVEY_DELETERESPONSE;
-                    $basepath = new moodle_url('view_submissions.php', $paramurl);
+                    $basepath = new moodle_url('view_manage.php', $paramurl);
                     $icons .= '&nbsp;<a class="editing_update" title="'.$deletetitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$deletetitle.'" title="'.$deletetitle.'" /></a>';
                 }
 
                 // if I am here I am sure I can see this submission
                 $paramurl['act'] = SURVEY_RESPONSETOPDF;
-                $basepath = new moodle_url('view_submissions.php', $paramurl);
+                $basepath = new moodle_url('view_manage.php', $paramurl);
                 $icons .= '&nbsp;<a class="editing_update" title="'.$downloadpdftitle.'" href="'.$basepath.'">';
                 $icons .= '<img src="'.$OUTPUT->pix_url('i/export').'" class="iconsmall" alt="'.$downloadpdftitle.'" title="'.$downloadpdftitle.'" /></a>';
 
@@ -625,32 +625,32 @@ class mod_survey_submissionmanager {
         $border = array('T' => array('width' => 0.2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 1, 'color' => array(179, 219, 181)));
         foreach($itemseeds as $itemseed) {
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
-            if (($item->plugin == 'pagebreak') || ($item->plugin == 'fieldset')) {
+            if (($item->get_plugin() == 'pagebreak') || ($item->get_plugin() == 'fieldset')) {
                 continue;
             }
-            if ($item->plugin == 'label') {
+            if ($item->get_plugin() == 'label') {
                 // first column
                 $html = $htmllabel;
-                $content = ($item->customnumber) ? $item->customnumber.': ' : '';
+                $content = ($item->get_customnumber()) ? $item->get_customnumber().': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
                 // second column: colspan 2
-                $content = trim(strip_tags($item->content), " \t\n\r\0\x0B\xC2\xA0");
+                $content = trim(strip_tags($item->get_content()), " \t\n\r\0\x0B\xC2\xA0");
                 $html = str_replace('@@col2@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true); // this is like span 2
                 continue;
             }
 
 
-            if ($item->extrarow) {
+            if ($item->get_extrarow()) {
                 // first row
                 // first column
                 $html = $htmllabel;
-                $content = ($item->customnumber) ? $item->customnumber.': ' : '';
+                $content = ($item->get_customnumber()) ? $item->customnumber().': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
                 // second column: colspan 2
-                $content = trim(strip_tags($item->content), " \t\n\r\0\x0B\xC2\xA0");
+                $content = trim(strip_tags($item->get_content()), " \t\n\r\0\x0B\xC2\xA0");
                 $html = str_replace('@@col2@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, 'R', true);
 
@@ -663,8 +663,8 @@ class mod_survey_submissionmanager {
                 $html = str_replace('@@col2@@', '', $html);
 
                 // third column
-                if (isset($userdatarecord[$item->itemid])) {
-                    $content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
+                if (isset($userdatarecord[$item->get_itemid()])) {
+                    $content = $item->userform_db_to_export($userdatarecord[$item->get_itemid()]);
                 } else {
                     $content = '';
                 }
@@ -674,16 +674,16 @@ class mod_survey_submissionmanager {
                 // first row
                 // first column
                 $html = $htmlregular;
-                $content = ($item->customnumber) ? $item->customnumber.': ' : '';
+                $content = ($item->get_customnumber()) ? $item->get_customnumber().': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
                 // second column
-                $content = trim(strip_tags($item->content), " \t\n\r\0\x0B\xC2\xA0");
+                $content = trim(strip_tags($item->get_content()), " \t\n\r\0\x0B\xC2\xA0");
                 $html = str_replace('@@col2@@', $content, $html);
 
                 // third column
-                if (isset($userdatarecord[$item->itemid])) {
-                    $content = $item->userform_db_to_export($userdatarecord[$item->itemid]);
+                if (isset($userdatarecord[$item->get_itemid()])) {
+                    $content = $item->userform_db_to_export($userdatarecord[$item->get_itemid()]);
                 } else {
                     $content = '';
                 }

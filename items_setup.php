@@ -119,7 +119,7 @@ if ($fromform = $item_form->get_data()) {
 
     $item->item_save($fromform);
 
-    $paramurl = array('id' => $cm->id, 'ufd' => $item->userfeedback);
+    $paramurl = array('id' => $cm->id, 'ufd' => $userfeedback);
     $returnurl = new moodle_url('items_manage.php', $paramurl);
     redirect($returnurl);
 }
@@ -144,7 +144,7 @@ $currentpage = SURVEY_ITEMS_SETUP; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 if ($item_manager->hassubmissions) {
-    echo $OUTPUT->notification(get_string('hassubmissions_detail', 'survey'));
+    echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
 }
 $item_form->set_data($item);
 $item_form->display();

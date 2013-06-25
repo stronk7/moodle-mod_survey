@@ -282,31 +282,15 @@ class surveyitem_base {
         $record->surveyid = $cm->instance;
         $record->timemodified = $timenow;
 
-        // required
-        if ($this->item_form_requires['required']) {
-            $record->required = isset($record->required) ? 1 : 0;
-        } else {
-            $record->required = null;
+        // a routine to manage checkboxes content (special management for advancedsearch just later on)
+        $checkboxessettings = array('extrarow', 'hideinstructions', 'required', 'hide');
+        foreach($checkboxessettings as $checkboxessetting) {
+            if ($this->item_form_requires[$checkboxessetting]) {
+                $record->{$checkboxessetting} = isset($record->{$checkboxessetting}) ? 1 : 0;
+            } else {
+                $record->{$checkboxessetting} = 0;
+            }
         }
-
-        // extrarow
-        // $record->extrarow = (isset($record->extrarow)) ? 1 : 0; // extrarow is advcheckbox so doesn't need my intervention
-
-        // hideinstructions
-        if ($this->item_form_requires['hideinstructions']) {
-            $record->hideinstructions = isset($record->hideinstructions) ? 1 : 0;
-        } else {
-            $record->hideinstructions = null;
-        }
-
-        // hide
-        // hide/regular part 1
-        if ($this->item_form_requires['hide']) {
-            $record->hide = isset($record->hide) ? 1 : 0;
-        } else {
-            $record->hide = null;
-        }
-        // end of: hide/regular part 1
 
         // advancedsearch
         if ($this->item_form_requires['advancedsearch']) {
@@ -759,60 +743,6 @@ class surveyitem_base {
     }
 
     /*
-     * item_get_type
-     * @param
-     * @return
-     */
-    public function item_get_type() {
-        return $this->type;
-    }
-
-    /*
-     * item_get_plugin
-     * @param
-     * @return
-     */
-    public function item_get_plugin() {
-        return $this->plugin;
-    }
-
-    /*
-     * item_get_extrarow
-     * @param
-     * @return
-     */
-    public function item_get_extrarow() {
-        return $this->extrarow;
-    }
-
-    /*
-     * item_is_searchable
-     * @param
-     * @return
-     */
-    public function item_is_searchable() {
-        return $this->flag->issearchable;
-    }
-
-    /*
-     * item_has_sortindex
-     * @param
-     * @return
-     */
-    public function item_has_sortindex() {
-        return !empty($this->sortindex);
-    }
-
-    /*
-     * item_get_sortindex
-     * @param
-     * @return
-     */
-    public function item_get_sortindex() {
-        return $this->sortindex;
-    }
-
-    /*
      * item_get_parent_format
      * @param
      * @return
@@ -1200,6 +1130,226 @@ class surveyitem_base {
         return $values;
     }
 
+    // MARK get
+
+    /*
+     * get_itemid
+     * @param
+     * @return
+     */
+    public function get_generic_field($field) {
+        return $this->{$field};
+    }
+
+    /*
+     * get_itemid
+     * @param
+     * @return
+     */
+    public function get_itemid() {
+        return $this->itemid;
+    }
+
+    /*
+     * get_type
+     * @param
+     * @return
+     */
+    public function get_type() {
+        return $this->type;
+    }
+
+    /*
+     * get_plugin
+     * @param
+     * @return
+     */
+    public function get_plugin() {
+        return $this->plugin;
+    }
+
+    /*
+     * get_content
+     * @param
+     * @return
+     */
+    public function get_content() {
+        return $this->content;
+    }
+
+    /*
+     * get_parentid
+     * @param
+     * @return
+     */
+    public function get_parentid() {
+        return $this->parentid;
+    }
+
+    /*
+     * get_parentcontent
+     * @param
+     * @return
+     */
+    public function get_parentcontent() {
+        return $this->parentcontent;
+    }
+
+    /*
+     * get_sortindex
+     * @param
+     * @return
+     */
+    public function get_sortindex() {
+        return $this->sortindex;
+    }
+
+    /*
+     * get_hide
+     * @param
+     * @return
+     */
+    public function get_hide() {
+        return $this->hide;
+    }
+
+    /*
+     * get_basicform
+     * @param
+     * @return
+     */
+    public function get_basicform() {
+        return $this->basicform;
+    }
+
+    /*
+     * get_basicformpage
+     * @param
+     * @return
+     */
+    public function get_basicformpage() {
+        return $this->basicformpage;
+    }
+
+    /*
+     * get_advancedformpage
+     * @param
+     * @return
+     */
+    public function get_advancedformpage() {
+        return $this->advancedformpage;
+    }
+
+    /*
+     * get_advancedsearch
+     * @param
+     * @return
+     */
+    public function get_advancedsearch() {
+        return $this->advancedsearch;
+    }
+
+    /*
+     * get_customnumber
+     * @param
+     * @return
+     */
+    public function get_customnumber() {
+        return $this->customnumber;
+    }
+
+    /*
+     * get_labelintro
+     * @param
+     * @return
+     */
+    public function get_labelintro() {
+        return $this->labelintro;
+    }
+
+    /*
+     * get_required
+     * @param
+     * @return
+     */
+    public function get_required() {
+        return $this->required;
+    }
+
+    /*
+     * get_indent
+     * @param
+     * @return
+     */
+    public function get_indent() {
+        return $this->indent;
+    }
+
+    /*
+     * get_extrarow
+     * @param
+     * @return
+     */
+    public function get_extrarow() {
+        return $this->extrarow;
+    }
+
+    /*
+     * get_itemname
+     * @param
+     * @return
+     */
+    public function get_itemname() {
+        return $this->itemname;
+    }
+
+    /*
+     * get_useplugintable
+     * @param
+     * @return
+     */
+    public function get_useplugintable() {
+        return $this->flag->useplugintable;
+    }
+
+    /*
+     * get_issearchable
+     * @param
+     * @return
+     */
+    public function get_issearchable() {
+        return $this->flag->issearchable;
+    }
+
+    /*
+     * get_item_form_requires
+     * @param
+     * @return
+     */
+    public function get_item_form_requires($setup_itemform_element) {
+        return $this->item_form_requires[$setup_itemform_element];
+    }
+
+    // MARK set
+
+    /*
+     * set_contentformat
+     * @param
+     * @return
+     */
+    public function set_contentformat($contentformat) {
+        $this->contentformat = $contentformat;
+    }
+
+    /*
+     * set_contenttrust
+     * @param
+     * @return
+     */
+    public function set_contenttrust($contenttrust) {
+        $this->contenttrust = $contenttrust;
+    }
+
     // MARK parent
 
     /*
@@ -1464,14 +1614,15 @@ class surveyitem_base {
     /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
-     * @param $richsubmission
+     * @param $answers, $format
      * @return
      */
-    public function userform_db_to_export($itemvalue, $format='') {
-        $content = $itemvalue->content;
+    public function userform_db_to_export($answer, $format='') {
+        $content = $answer->content;
         if (!$content) {
             return get_string('answerisnoanswer', 'survey');
         }
+
         return $content;
     }
 

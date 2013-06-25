@@ -246,19 +246,25 @@ class surveyfield_fileupload extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata
+     * @param $answer, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata) {
-        if (!empty($itemdetail)) {
+    public function userform_save_preprocessing($answer, $olduserdata) {
+        if (!empty($answer)) {
             $fieldname = $this->itemname.'_filemanager';
 
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-            file_save_draft_area_files($itemdetail['filemanager'], $this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, $attachmentoptions);
+            // last
+            // file_save_draft_area_files($answer['filemanager'], $this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, $attachmentoptions);
+            // next
+            file_save_draft_area_files($answer['filemanager'], $this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id, $attachmentoptions);
 
             // needed only for export purposes
             $fs = get_file_storage();
-            if ($files = $fs->get_area_files($this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, 'sortorder', false)) {
+            // last
+            // if ($files = $fs->get_area_files($this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, 'sortorder', false)) {
+            // next
+            if ($files = $fs->get_area_files($this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id, 'sortorder', false)) {
                 foreach ($files as $file) {
                     $oldfiles[] = $file->get_filename();
                 }
@@ -274,19 +280,19 @@ class surveyfield_fileupload extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
-     * @param $olduserdata
+     * @param $fromdb
      * @return
      */
-    public function userform_set_prefill($olduserdata) {
+    public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($olduserdata) { // $olduserdata may be boolean false for not existing data
+        if ($fromdb) { // $fromdb may be boolean false for not existing data
             $fieldname = $this->itemname.'_filemanager';
 
-            // $prefill->id = $olduserdata->submissionid;
+            // $prefill->id = $fromdb->submissionid;
             $draftitemid = 0;
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, $attachmentoptions);
+            file_prepare_draft_area($draftitemid, $this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $fromdb->id, $attachmentoptions);
 
             $prefill[$fieldname] = $draftitemid;
         }
@@ -297,12 +303,12 @@ class surveyfield_fileupload extends surveyitem_base {
     /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
-     * @param $richsubmission
+     * @param $answers, $format
      * @return
      */
-    public function userform_db_to_export($itemvalue, $format='') {
+    public function userform_db_to_export($answer, $format='') {
         $fs = get_file_storage();
-        $files = $fs->get_area_files($this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $itemvalue->id);
+        $files = $fs->get_area_files($this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $answer->id);
         $filename = array();
         foreach ($files as $file) {
             if ($file->is_directory()) {

@@ -115,20 +115,20 @@ class survey_submissionform extends moodleform {
                 if ($itemaschildisallowed) {
                     $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
-                    if (isset($item->extrarow) && $item->extrarow) {
-                        $elementnumber = $item->customnumber ? $item->customnumber.':' : '';
+                    if ($item->get_extrarow()) {
+                        $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
 
-                        $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
+                        $output = file_rewrite_pluginfile_urls($item->get_content(), 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->get_itemid());
                         //echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
                         //die;
                         //$this->itemname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
-                        $mform->addElement('static', $item->itemname.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
+                        $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->get_indent())); // here I  do not strip tags to content
                     }
 
                     $item->userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem);
 
                     if ($fullinfo = $item->userform_get_full_info(false)) {
-                        $mform->addElement('static', $item->itemname.'_info', get_string('note', 'survey'), $fullinfo);
+                        $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo);
                     }
 
                     if (!$survey->newpageforchild) {
@@ -229,16 +229,18 @@ class survey_submissionform extends moodleform {
                     $itemisenabled = true; // if it is displayed, it is enabled
                     $parentitem = null;
                 } else {
-                    if (empty($item->parentid)) {
+                    $item_parentid = $item->get_parentid();
+                    if (!$item_parentid) {
                         $itemisenabled = true;
                         $parentitem = null;
                     } else {
                         // call its parent
-                        $parentitem = survey_get_item($item->parentid);
+                        $parentitem = survey_get_item($item_parentid);
                         // tell parent that his child has parentcontent = 12/4/1968
                         $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
-                        if ($parentitem->{$pagefield} == $item->{$pagefield}) {
-                            $itemisenabled = $parentitem->userform_child_item_allowed_dynamic($item->parentcontent, $data);
+                        $item_field = $parentitem->get_generic_field($pagefield);
+                        if ($parentitem->{$pagefield} == $item_field) { // TODO: how can I get this?
+                            $itemisenabled = $parentitem->userform_child_item_allowed_dynamic($item->get_parentcontent(), $data);
                         } else {
                             // If ($parentitem is in a previous page) && ($item is displayed because it was found) {
                             //     $item IS ENABLED FOR SURE

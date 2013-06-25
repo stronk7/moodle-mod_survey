@@ -158,15 +158,14 @@ class mod_survey_userpagemanager {
         }
         $whereparams = array('surveyid' => $this->survey->id);
         $pagenumber = $DB->get_field_select('survey_item', 'MAX('.$pagefield.')', $whereclause, $whereparams);
-
         // were pages assigned?
         if (!$pagenumber) {
             $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
             $pagenumber = 1;
             $items = $DB->get_recordset_select('survey_item', $whereclause, $whereparams, 'sortindex', 'id, type, plugin, parentid, '.$pagefield.', sortindex');
             if ($items) {
-                foreach ($items as $item) {
 
+                foreach ($items as $item) {
                     if ($item->plugin == 'pagebreak') { // it is a page break
                         if (!$lastwaspagebreak) {
                             $pagenumber++;
@@ -177,8 +176,9 @@ class mod_survey_userpagemanager {
                         $lastwaspagebreak = false;
                     }
                     if ($this->survey->newpageforchild) {
-                        if (!empty($item->parentid)) {
-                            $parentpage = $DB->get_field('survey_item', $pagefield, array('id' => $item->parentid), MUST_EXIST);
+                        $item_parentid = $item->get_parentid();
+                        if (!empty($item_parentid)) {
+                            $parentpage = $DB->get_field('survey_item', $pagefield, array('id' => $item->get_parentid()), MUST_EXIST);
                             if ($parentpage == $pagenumber) {
                                 $pagenumber++;
                             }
@@ -707,7 +707,7 @@ class mod_survey_userpagemanager {
         echo $OUTPUT->notification($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
 
         $params = array('id' => $this->cm->id);
-        $continueurl = new moodle_url('view_submissions.php', $params);
+        $continueurl = new moodle_url('view_manage.php', $params);
 
         echo $OUTPUT->continue_button($continueurl);
         echo $OUTPUT->footer();
@@ -752,13 +752,13 @@ class mod_survey_userpagemanager {
             $buttonurl = new moodle_url('view.php', $paramurl);
             $onemore = new single_button($buttonurl, get_string('onemorerecord', 'survey'));
 
-            $buttonurl = new moodle_url('view_submissions.php', $paramurl);
+            $buttonurl = new moodle_url('view_manage.php', $paramurl);
             $gotolist = new single_button($buttonurl, get_string('gotolist', 'survey'));
 
             echo $OUTPUT->confirm($message, $onemore, $gotolist);
         } else {
             echo $OUTPUT->box($message, 'notice centerpara');
-            $buttonurl = new moodle_url('view_submissions.php', $paramurl);
+            $buttonurl = new moodle_url('view_manage.php', $paramurl);
             echo $OUTPUT->single_button($buttonurl, get_string('gotolist', 'survey'));
         }
     }
@@ -807,7 +807,7 @@ class mod_survey_userpagemanager {
             foreach ($itemseeds as $itemseed) {
                 $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
-                $olduserdata = $DB->get_record('survey_userdata', array('submissionid' => $this->submissionid, 'itemid' => $item->itemid));
+                $olduserdata = $DB->get_record('survey_userdata', array('submissionid' => $this->submissionid, 'itemid' => $item->get_itemid()));
                 $singleprefill = $item->userform_set_prefill($olduserdata);
                 $prefill = array_merge($prefill, $singleprefill);
             }

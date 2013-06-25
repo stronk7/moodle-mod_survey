@@ -424,14 +424,14 @@ class surveyfield_integer extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $itemdetail, $olduserdata
+     * @param $answer, $olduserdata
      * @return
      */
-    public function userform_save_preprocessing($itemdetail, $olduserdata) {
-        if (isset($itemdetail['noanswer'])) {
+    public function userform_save_preprocessing($answer, $olduserdata) {
+        if (isset($answer['noanswer'])) {
             $olduserdata->content = null;
         } else {
-            $olduserdata->content = $itemdetail['mainelement'];
+            $olduserdata->content = $answer['mainelement'];
         }
     }
 
@@ -440,15 +440,15 @@ class surveyfield_integer extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
-     * @param $olduserdata
+     * @param $fromdb
      * @return
      */
-    public function userform_set_prefill($olduserdata) {
+    public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($olduserdata) { // $olduserdata may be boolean false for not existing data
-            if (isset($olduserdata->content)) {
-                $prefill[$this->itemname] = $olduserdata->content;
+        if ($fromdb) { // $fromdb may be boolean false for not existing data
+            if (isset($fromdb->content)) {
+                $prefill[$this->itemname] = $fromdb->content;
             // } else {
                 // nothing was set
                 // do not accept defaults but overwrite them

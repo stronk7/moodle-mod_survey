@@ -53,17 +53,17 @@ class survey_searchform extends moodleform {
             // is the current item matching the parent value?
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
-            if ($item->extrarow) {
-                $elementnumber = $item->customnumber ? $item->customnumber.':' : '';
+            if ($item->get_extrarow()) {
+                $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
 
-                $output = file_rewrite_pluginfile_urls($item->content, 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid);
-                $mform->addElement('static', $item->itemname.'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->indent)); // here I  do not strip tags to content
+                $output = file_rewrite_pluginfile_urls($item->get_content(), 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->get_itemid());
+                $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->get_indent())); // here I  do not strip tags to content
             }
 
             $item->userform_mform_element($mform, $survey, $canaccessadvancedform, null, true);
 
             if ($fullinfo = $item->userform_get_full_info(true)) {
-                $mform->addElement('static', $item->itemname.'_info', get_string('note', 'survey'), $fullinfo);
+                $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo);
             }
         }
         $itemseeds->close();
