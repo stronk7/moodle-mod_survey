@@ -159,7 +159,7 @@ class surveyfield_rate extends surveyitem_base {
         // set custom fields value as defined for this question plugin
         // drop empty rows and trim edging rows spaces from each textarea field
         $fieldlist = array('options', 'rates', 'defaultvalue');
-        survey_clean_textarea_fields($record, $fieldlist);
+        $this->item_clean_textarea_fields($record, $fieldlist);
 
         // remember: extrarow is mandatory
         $record->extrarow = 1;
@@ -310,10 +310,10 @@ class surveyfield_rate extends surveyitem_base {
     public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        $options = $this->survey_textarea_to_array('options');
+        $options = survey_textarea_to_array('options');
         $rates = array_keys(array_flip($this->item_get_value_label_array('rates')));
         $rates_keys = array_keys($this->item_get_value_label_array('rates'));
-        $defaultvalues = $this->survey_textarea_to_array('defaultvalue');
+        $defaultvalues = survey_textarea_to_array('defaultvalue');
 
         if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
             if ($this->style == SURVEYFIELD_RATE_USERADIO) {
@@ -419,7 +419,7 @@ class surveyfield_rate extends surveyitem_base {
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
         // if different rates were requested, it is time to verify this
-        $options = $this->survey_textarea_to_array('options');
+        $options = survey_textarea_to_array('options');
 
         if (isset($data[$this->itemname.'_noanswer'])) {
             return; // nothing to validate

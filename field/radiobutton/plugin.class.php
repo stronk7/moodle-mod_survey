@@ -144,7 +144,7 @@ class surveyfield_radiobutton extends surveyitem_base {
 
         // drop empty rows and trim edging rows spaces from each textarea field
         $fieldlist = array('options');
-        survey_clean_textarea_fields($record, $fieldlist);
+        $this->item_clean_textarea_fields($record, $fieldlist);
 
         $this->item_custom_fields_to_db($record);
 

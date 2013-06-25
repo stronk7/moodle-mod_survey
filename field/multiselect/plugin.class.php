@@ -132,7 +132,7 @@ class surveyfield_multiselect extends surveyitem_base {
 
         // drop empty rows and trim edging rows spaces from each textarea field
         $fieldlist = array('options', 'defaultvalue');
-        survey_clean_textarea_fields($record, $fieldlist);
+        $this->item_clean_textarea_fields($record, $fieldlist);
 
         // multilang save support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
@@ -244,7 +244,7 @@ class surveyfield_multiselect extends surveyitem_base {
         $select->setMultiple(true);
 
         if (!$searchform) {
-            if ($defaults = $this->survey_textarea_to_array('defaultvalue')) {
+            if ($defaults = survey_textarea_to_array('defaultvalue')) {
                 $valuelabel_keys = array_keys($this->item_get_value_label_array('options'));
                 $default_keys = array();
                 foreach($defaults as $default) {

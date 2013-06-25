@@ -650,6 +650,7 @@ class mod_survey_itemelement {
         // build toshowlist
         $parentitem = new StdClass();
         $toshowlist = array($this->itemid);
+        $sortindextoshowlist = array();
         $parentitem->parentid = $this->itemid;
 
         while ($parentitem = $DB->get_record('survey_item', array('id' => $parentitem->parentid, 'hide' => 1), 'id, parentid, sortindex')) { // potrebbe non esistere

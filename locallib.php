@@ -84,23 +84,6 @@ function survey_textarea_to_array($textareacontent) {
 }
 
 /*
- * survey_clean_textarea_fields
- * @param $record, $fieldlist
- * @return
- */
-function survey_clean_textarea_fields($record, $fieldlist) {
-    foreach ($fieldlist as $field) {
-        // do not forget some item may be undefined causing:
-        // Notice: Undefined property: stdClass::$defaultvalue
-        // as, for instance, disabled $defaultvalue field when $delaultoption == invitation
-        if (isset($record->{$field})) {
-            $temparray = survey_textarea_to_array($record->{$field});
-            $record->{$field} = implode("\n", $temparray);
-        }
-    }
-}
-
-/*
  * survey_add_tree_node
  * @param $confirm, $cm, $itemid, $type
  * @return
@@ -115,52 +98,6 @@ function survey_add_tree_node(&$tohidelist, &$sortindextohidelist) {
             $tohidelist[] = (int)$childitem->id;
             $sortindextohidelist[] = $childitem->sortindex;
             survey_add_tree_node($tohidelist, $sortindextohidelist);
-        }
-    }
-}
-
-/*
- * survey_move_regular_items
- * @param $itemid, $in
- * @return
- */
-function survey_move_regular_items($itemid, $newbasicform) {
-    global $DB;
-
-    // build tohidelist
-    // here I must select the whole tree down
-    $tohidelist = array($itemid);
-    $sortindextohidelist = array();
-    survey_add_regular_item_node($tohidelist, $sortindextohidelist, $newbasicform);
-    array_shift($tohidelist); // $itemid has already been saved
-
-    $itemstoprocess = count($tohidelist);
-
-    foreach ($tohidelist as $tohideitemid) {
-        $DB->set_field('survey_item', 'basicform', $newbasicform, array('id' => $tohideitemid));
-    }
-
-    return $itemstoprocess; // did you do something?
-}
-
-/*
- * survey_add_regular_item_node
- * @param $tohidelist, $sortindextohidelist, $in
- * @return
- */
-function survey_add_regular_item_node(&$tohidelist, &$sortindextohidelist, $newbasicform) {
-    global $DB;
-
-    $i = count($tohidelist);
-    $itemid = $tohidelist[$i-1];
-    $comparison = ($newbasicform == SURVEY_NOTPRESENT) ? '<>' : '=';
-    $where = 'parentid = :parentid AND basicform '.$comparison.' :basicform';
-    $params = array('parentid' => $itemid, 'basicform' => SURVEY_NOTPRESENT);
-    if ($childitems = $DB->get_records_select('survey_item', $where, $params, 'sortindex', 'id, sortindex')) { // potrebbero non esistere
-        foreach ($childitems as $childitem) {
-            $tohidelist[] = (int)$childitem->id;
-            $sortindextohidelist[] = $childitem->sortindex;
-            survey_add_regular_item_node($tohidelist, $sortindextohidelist, $newbasicform);
         }
     }
 }
