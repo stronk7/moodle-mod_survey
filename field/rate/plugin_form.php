@@ -143,18 +143,22 @@ class survey_pluginform extends surveyitem_baseform {
                 $errors['defaultvalue_group'] = get_string('defaults_wrongdefaultsnumber', 'surveyfield_rate');
             }
 
+            $values = array();
+            $labels = array();
             foreach ($clean_rates as $rate) {
                 if (strpos($rate, SURVEY_VALUELABELSEPARATOR) === false) {
                     $values[] = $rate;
+                    $labels[] = $rate;
                 } else {
                     $pair = explode(SURVEY_VALUELABELSEPARATOR, $rate);
                     $values[] = $pair[0];
+                    $labels[] = $pair[1];
                 }
             }
 
-            // values in the default field must all be hold among rates ($values)
+            // values in the default field must all be hold among rates ($labels)
             foreach ($clean_defaultvalue as $default) {
-                if (!in_array($default, $values)) {
+                if (!in_array($default, $labels)) {
                     $errors['defaultvalue_group'] = get_string('default_notamongrates', 'surveyfield_rate', $default);
                     break;
                 }

@@ -76,6 +76,11 @@ class surveyfield_select extends surveyitem_base {
     public $defaultvalue = '';
 
     /*
+     * $downloadformat = the format of the content once downloaded
+     */
+    public $downloadformat = '';
+
+    /*
      * $flag = features describing the object
      */
     public $flag;
@@ -112,6 +117,7 @@ class surveyfield_select extends surveyitem_base {
 
     /*
      * item_load
+     *
      * @param $itemid
      * @return
      */
@@ -129,6 +135,7 @@ class surveyfield_select extends surveyitem_base {
 
     /*
      * item_save
+     *
      * @param $record
      * @return
      */
@@ -154,6 +161,7 @@ class surveyfield_select extends surveyitem_base {
 
     /*
      * item_custom_fields_to_form
+     *
      * @param
      * @return
      */
@@ -171,6 +179,7 @@ class surveyfield_select extends surveyitem_base {
     /*
      * item_custom_fields_to_db
      * sets record field to store the correct value to db for the date custom item
+     *
      * @param $record
      * @return
      */
@@ -190,6 +199,7 @@ class surveyfield_select extends surveyitem_base {
     /*
      * item_generate_standard_default
      * sets record field to store the correct value to db for the date custom item
+     *
      * @param $record
      * @return
      */
@@ -209,16 +219,17 @@ class surveyfield_select extends surveyitem_base {
 
     /*
      * item_list_constraints
+     *
      * @param
      * @return list of contraints of the plugin in text format
      */
     public function item_list_constraints() {
         $constraints = array();
 
-        $valuelabel = $this->item_get_value_label_array('options');
+        $labels = $this->item_get_labels_array('options');
         $optionstr = get_string('option', 'surveyfield_select');
-        foreach ($valuelabel as $value => $label) {
-            $constraints[] = $optionstr.': '.$value;
+        foreach ($labels as $label) {
+            $constraints[] = $optionstr.': '.$label;
         }
         if (!empty($this->labelother)) {
             $constraints[] = get_string('labelother', 'surveyfield_select').': '.get_string('allowed', 'surveyfield_select');
@@ -229,6 +240,7 @@ class surveyfield_select extends surveyitem_base {
 
     /*
      * item_get_plugin_values
+     *
      * @param $pluginstructure
      * @param $pluginsid
      * @return
@@ -249,15 +261,17 @@ class surveyfield_select extends surveyitem_base {
 
     /*
      * parent_validate_child_constraints
+     *
      * @param
      * @return status of child relation
      */
     public function parent_validate_child_constraints($childvalue) {
-        $valuelabel = $this->item_get_value_label_array('options');
+        $labels = $this->item_get_labels_array('options');
 
-        $status = true;
         if (empty($this->labelother)) {
-            $status = $status && array_key_exists($childvalue, $valuelabel);
+            $status = array_search($childvalue, $labels) ? true : false;
+        } else {
+            $status = true;
         }
 
         return $status;
@@ -269,6 +283,7 @@ class surveyfield_select extends surveyitem_base {
      * starting from the user input, this method stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
      * (take care: here we are not submitting a survey but we are submitting an item)
+     *
      * @param $parentcontent
      * @return
      */
@@ -280,43 +295,49 @@ class surveyfield_select extends surveyitem_base {
 
     /*
      * userform_mform_element
+     *
      * @param $mform
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $survey, $canaccesslimiteditems, $parentitem=null, $searchform=false) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
-        $valuelabel = $this->item_get_value_label_array('options');
+        $labels = $this->item_get_labels_array('options');
         if ( ($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform) ) {
-            $valuelabel = array(SURVEY_INVITATIONVALUE => get_string('choosedots')) + $valuelabel;
+            $labels = array(SURVEY_INVITATIONVALUE => get_string('choosedots')) + $labels;
         }
 
         if ( (!$this->required) || $searchform ) {
             $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-            $valuelabel += array(SURVEY_NOANSWERVALUE => $check_label);
+            $labels += array(SURVEY_NOANSWERVALUE => $check_label);
         }
 
         if (!$this->labelother) {
-            $mform->addElement('select', $this->itemname, $elementlabel, $valuelabel, array('class' => 'indent-'.$this->indent));
+            $mform->addElement('select', $this->itemname, $elementlabel, $labels, array('class' => 'indent-'.$this->indent));
 
             if (!$searchform) {
                 if ($this->required) {
                     // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                    // -> I do not want JS form validation if the page is submitted trough the "previous" button
-                    // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+                    // -> I do not want JS form validation if the page is submitted through the "previous" button
+                    // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                     // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
                     if ($this->extrarow) {
                         $starplace = $this->itemname.'_extrarow';
                     } else {
-                        $starplace = $this->itemname;
+                        $starplace = ($this->userform_mform_element_is_group()) ? $this->itemname.'_group' : $this->itemname;
                     }
                     $mform->_required[] = $starplace; // add the star for mandatory fields at the end of the page with server side validation too
                 }
 
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
-                        $mform->setDefault($this->itemname, $this->defaultvalue);
+                        $index = array_search($this->defaultvalue, $labels);
+                        $mform->setDefault($this->itemname, $index);
                         break;
                     case SURVEY_INVITATIONDEFAULT:
                         $mform->setDefault($this->itemname, SURVEY_INVITATIONVALUE);
@@ -332,10 +353,10 @@ class surveyfield_select extends surveyitem_base {
             }
         } else {
             list($othervalue, $otherlabel) = $this->item_get_other();
-            $valuelabel['other'] = $otherlabel;
+            $labels['other'] = $otherlabel;
 
             $elementgroup = array();
-            $elementgroup[] = $mform->createElement('select', $this->itemname, '', $valuelabel, array('class' => 'indent-'.$this->indent));
+            $elementgroup[] = $mform->createElement('select', $this->itemname, '', $labels, array('class' => 'indent-'.$this->indent));
             $elementgroup[] = $mform->createElement('text', $this->itemname.'_text', '');
             $mform->setType($this->itemname.'_text', PARAM_ALPHANUMEXT);
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
@@ -343,20 +364,20 @@ class surveyfield_select extends surveyitem_base {
             if (!$searchform) {
                 if ($this->required) {
                     // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                    // -> I do not want JS form validation if the page is submitted trough the "previous" button
-                    // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+                    // -> I do not want JS form validation if the page is submitted through the "previous" button
+                    // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                     // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
                     if ($this->extrarow) {
                         $starplace = $this->itemname.'_extrarow';
                     } else {
-                        $starplace = $this->itemname.'_group';
+                        $starplace = ($this->userform_mform_element_is_group()) ? $this->itemname.'_group' : $this->itemname;
                     }
                     $mform->_required[] = $starplace;
                 }
 
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
-                        if (array_key_exists($this->defaultvalue, $valuelabel)) {
+                        if (array_key_exists($this->defaultvalue, $labels)) {
                             $mform->setDefault($this->itemname, $this->defaultvalue);
                         } else {
                             $mform->setDefault($this->itemname, 'other');
@@ -382,10 +403,14 @@ class surveyfield_select extends surveyitem_base {
 
     /*
      * userform_mform_validation
-     * @param $data, &$errors, $survey
+     *
+     * @param $data, &$errors
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey, $canaccesslimiteditems, $parentitem=null) {
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
@@ -410,27 +435,114 @@ class surveyfield_select extends surveyitem_base {
 
     /*
      * userform_get_parent_disabilitation_info
-     * from child_parentcontent defines syntax for disabledIf
-     * @param: $child_parentcontent
+     * from child_parentvalue defines syntax for disabledIf
+     *
+     * @param: $child_parentvalue
      * @return
      */
-    public function userform_get_parent_disabilitation_info($child_parentcontent) {
+    public function userform_get_parent_disabilitation_info($child_parentvalue) {
         $disabilitationinfo = array();
 
-        $mformelementinfo = new stdClass();
-        $mformelementinfo->parentname = $this->itemname;
-        $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $child_parentcontent;
-        $disabilitationinfo[] = $mformelementinfo;
+        $labels = $this->item_get_labels_array('options');
+
+        $index = array_search($child_parentvalue, $labels);
+        if ($index !== false) {
+            $mformelementinfo = new stdClass();
+            $mformelementinfo->parentname = $this->itemname;
+            $mformelementinfo->operator = 'neq';
+            $mformelementinfo->content = $index;
+            $disabilitationinfo[] = $mformelementinfo;
+        } else {
+            $mformelementinfo = new stdClass();
+            $mformelementinfo->parentname = $this->itemname;
+            $mformelementinfo->operator = 'neq';
+            $mformelementinfo->content = 'other';
+            $disabilitationinfo[] = $mformelementinfo;
+
+            $mformelementinfo = new stdClass();
+            $mformelementinfo->parentname = $this->itemname.'_text';
+            $mformelementinfo->operator = 'neq';
+            $mformelementinfo->content = $child_parentvalue;
+            $disabilitationinfo[] = $mformelementinfo;
+        }
 
         return $disabilitationinfo;
+    }
+
+    /*
+     * userform_child_item_allowed_static
+     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
+     * ----------------------------------------------------------------------
+     * this function is called at submit time if (and only if) parent item and child item live in different form page
+     * this function is supposed to classify disabled element as unexpected in order to drop their reported value
+     * ----------------------------------------------------------------------
+     * Am I getting submitted data from $fromform or from table 'survey_userdata'?
+     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
+     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
+     * ----------------------------------------------------------------------
+     *
+     * @param: $submissionid, $childitemrecord
+     * @return $status: true: the item is welcome; false: the item must be dropped out
+     */
+    public function userform_child_item_allowed_static($submissionid, $childitemrecord) {
+        global $DB;
+
+        if (!$childitemrecord->parentid) {
+            return true;
+        }
+
+        $where = array('submissionid' => $submissionid, 'itemid' => $this->itemid);
+        $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
+
+        $child_parentvalue = $childitemrecord->parentvalue;
+
+        $values = $this->item_get_labels_array('options');
+        $index = array_search($child_parentvalue, $values);
+
+        if ($index !== false) {
+            $status = ($givenanswer == $index);
+        } else {
+            $status = ($givenanswer == $child_parentvalue);
+        }
+
+        return $status;
+    }
+
+    /*
+     * userform_child_item_allowed_dynamic
+     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
+     * ----------------------------------------------------------------------
+     * this function is called at submit time if (and only if) parent item and child item live in the same form page
+     * this function is supposed to classify disabled element as unexpected in order to drop their reported value
+     * ----------------------------------------------------------------------
+     * Am I getting submitted data from $fromform or from table 'survey_userdata'?
+     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
+     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
+     * ----------------------------------------------------------------------
+     *
+     * @param: $child_parentcontent, $data
+     * @return $status: true: the item is welcome; false: the item must be dropped out
+     */
+    public function userform_child_item_allowed_dynamic($child_parentcontent, $data) {
+        $labels = $this->item_get_labels_array('options');
+        $index = array_search($child_parentcontent, $labels);
+        if ($index !== false) {
+            $status = ($data[$this->itemname] == $index);
+        } else {
+            $status = ($data[$this->itemname] == 'other');
+            $status = $status && ($data[$this->itemname.'_text'] == $child_parentcontent);
+        }
+
+        return $status;
     }
 
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $answer, $olduserdata
+     *
+     * @param $answer
+     * @param $olduserdata
      * @return
      */
     public function userform_save_preprocessing($answer, $olduserdata) {
@@ -451,6 +563,7 @@ class surveyfield_select extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
+     *
      * @param $fromdb
      * @return
      */
@@ -459,18 +572,22 @@ class surveyfield_select extends surveyitem_base {
 
         if ($fromdb) { // $fromdb may be boolean false for not existing data
             if (isset($fromdb->content)) {
-                $valuelabel = $this->item_get_value_label_array('options');
-                if (array_key_exists($fromdb->content, $valuelabel)) {
+                $labels = $this->item_get_labels_array('options');
+                if (array_key_exists($fromdb->content, $labels)) {
                     $prefill[$this->itemname] = $fromdb->content;
                 } else {
-                    // deve per forza essere il valore di "other"
-                    $prefill[$this->itemname] = 'other';
-                    $prefill[$this->itemname.'_text'] = $fromdb->content;
+                    if ($fromdb->content == SURVEY_NOANSWERVALUE) {
+                        $prefill[$this->itemname] = SURVEY_NOANSWERVALUE;
+                    } else {
+                        // it is, for sure, the content of _text
+                        $prefill[$this->itemname] = 'other';
+                        $prefill[$this->itemname.'_text'] = $fromdb->content;
+                    }
                 }
             } else {
                 // nothing was set
                 // do not accept defaults but overwrite them
-                // but... if this is a select, how can it be empty($fromdb->content)? Because user selected "Not answering"
+                // but... if this is a select, how can it be empty($fromdb->content)? Because user selected "Not answering" or question was disabled
                 $prefill[$this->itemname] = '';
             }
         } // else use item defaults
@@ -479,8 +596,54 @@ class surveyfield_select extends surveyitem_base {
     }
 
     /*
+     * userform_db_to_export
+     * strating from the info stored in the database, this function returns the corresponding content for the export file
+     *
+     * @param $answers
+     * @param $format
+     * @return
+     */
+    public function userform_db_to_export($answer, $format='') {
+        $content = $answer->content;
+        if ($content == SURVEY_NOANSWERVALUE) {
+            return get_string('answerisnoanswer', 'survey');
+        }
+
+        if (empty($format)) {
+            $format = $this->downloadformat;
+        }
+
+        switch ($format) {
+            case SURVEYFIELD_SELECT_RETURNVALUES:
+                $values = $this->item_get_values_array('options');
+                if (array_key_exists($content, $values)) {
+                    $return = $values[$content];
+                } else {
+                    $return = $content;
+                }
+                break;
+            case SURVEYFIELD_SELECT_RETURNLABELS:
+                $values = $this->item_get_labels_array('options');
+                if (array_key_exists($content, $values)) {
+                    $return = $values[$content];
+                } else {
+                    $return = $content;
+                }
+                break;
+            case SURVEYFIELD_SELECT_RETURNPOSITION:
+                $return = $content;
+                break;
+            default:
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $format = '.$format);
+        }
+
+        return $return;
+    }
+
+    /*
      * userform_mform_element_is_group
      * returns true if the useform mform element for this item id is a group and false if not
+     *
      * @param
      * @return
      */

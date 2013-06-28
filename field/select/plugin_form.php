@@ -88,6 +88,18 @@ class survey_pluginform extends surveyitem_baseform {
             $mform->setDefault($fieldname, $item->item_generate_standard_default());
         }
 
+        // ----------------------------------------
+        // newitem::downloadformat
+        // ----------------------------------------
+        $fieldname = 'downloadformat';
+        $options = array(SURVEYFIELD_SELECT_RETURNVALUES => get_string('returnvalues', 'surveyfield_select'),
+                         SURVEYFIELD_SELECT_RETURNLABELS => get_string('returnlabels', 'surveyfield_select'),
+                         SURVEYFIELD_SELECT_RETURNPOSITION => get_string('returnposition', 'surveyfield_select'));
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_radiobutton'), $options);
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_radiobutton');
+        $mform->setType($fieldname, PARAM_INT);
+        $mform->setDefault($fieldname, SURVEYFIELD_CHECKBOX_RETURNVALUES);
+
         $this->add_item_buttons();
     }
 
@@ -99,23 +111,28 @@ class survey_pluginform extends surveyitem_baseform {
         $clean_labelother = trim($data['labelother']);
         $clean_defaultvalue = isset($data['defaultvalue']) ? trim($data['defaultvalue']) : '';
 
-        // costruisco il vettore $value ($label non mi interessa) a partire da $clean_options e $clean_labelother
+        // build $value and $label arrays starting from $clean_options and $clean_labelother
         $values = array();
+        $labels = array();
 
         foreach ($clean_options as $option) {
             if (strpos($option, SURVEY_VALUELABELSEPARATOR) === false) {
                 $values[] = trim($option);
+                $labels[] = trim($option);
             } else {
                 $pair = explode(SURVEY_VALUELABELSEPARATOR, $option);
                 $values[] = $pair[0];
+                $labels[] = $pair[1];
             }
         }
         if (!empty($clean_labelother)) {
             if (strpos($clean_labelother, SURVEY_OTHERSEPARATOR) === false) {
-                $values[] = $clean_labelother;
+                $values[] = '';
+                $labels[] = $clean_labelother;
             } else {
                 $pair = explode(SURVEY_OTHERSEPARATOR, $clean_labelother);
                 $values[] = $pair[1];
+                $labels[] = $pair[0];
             }
         }
 
@@ -138,7 +155,7 @@ class survey_pluginform extends surveyitem_baseform {
                 // second check
                 // each item of default has to be among options item OR has to be == to otherlabel value
                 // //////////////////////////////////////////////////////////////////////////////////////
-                if (!in_array($clean_defaultvalue, $values)) {
+                if (!in_array($clean_defaultvalue, $labels)) {
                     $errors['defaultvalue_group'] = get_string('defaultvalue_err', 'surveyfield_select', $clean_defaultvalue);
                 }
 

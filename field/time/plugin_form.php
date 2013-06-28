@@ -90,7 +90,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
 
         $mform->setDefault('defaultoption', SURVEY_TIMENOWDEFAULT);
-        if (($item->defaultoption == SURVEY_CUSTOMDEFAULT) {
+        if ($item->defaultoption == SURVEY_CUSTOMDEFAULT) {
             $justadefault = $item->item_split_unix_time($item->lowerbound);
             $mform->setDefault($fieldname.'_hour', $justadefault['hours']);
             $mform->setDefault($fieldname.'_minute', $justadefault['minutes']);

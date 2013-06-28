@@ -42,18 +42,14 @@ class survey_chooseitemform extends moodleform {
         // only fields
         // no matter for the page
         // elenco dei campi che l'utente vuole vedere nel file esportato
-        $itemssql = 'SELECT si.id, si.variable, si.plugin, si.content
-                        FROM {survey_item} si
-                        WHERE si.surveyid = :surveyid
-                            AND si.type = "'.SURVEY_TYPEFIELD.'"
-                            AND si.basicform <> '.SURVEY_NOTPRESENT.'
-                            AND si.hide = 0
-                        ORDER BY si.sortindex';
-        // $sqlparams = array('surveyid' => $survey->id, 'type' => SURVEY_TYPEFIELD, 'basicform' => SURVEY_NOTPRESENT, 'hide' => 0);
-        $sqlparams = array('surveyid' => $survey->id);
 
-        // I need get_records_sql instead of get_records because of '<> SURVEY_NOTPRESENT'
         $records = $DB->get_recordset_sql($itemssql, $sqlparams);
+        $where = array();
+        $where['surveyid'] = $survey->id;
+        $where['type'] = SURVEY_TYPEFIELD;
+        $where['limitedaccess'] = 1;
+        $where['hide'] = 0;
+        $records = $DB->get_recordset('survey_item', $where, 'sortindex');
 
         // build options array
         $maxlength = 150;

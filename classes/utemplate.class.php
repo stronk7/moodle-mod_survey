@@ -86,6 +86,12 @@ class mod_survey_usertemplate extends mod_survey_template {
         $this->candeleteutemplates = has_capability('mod/survey:deleteusertemplates', $context, null, true);
     }
 
+    /*
+     * export_utemplate
+     *
+     * @param
+     * @return
+     */
     public function export_utemplate() {
         global $CFG;
 
@@ -117,6 +123,7 @@ class mod_survey_usertemplate extends mod_survey_template {
 
     /*
      * write_utemplate
+     *
      * @param
      * @return
      */
@@ -153,7 +160,7 @@ class mod_survey_usertemplate extends mod_survey_template {
                         $val = 0;
                     }
                 } else {
-                    $item_field = $item->get_generic_field($field);
+                    $item_field = $item->item_get_generic_field($field);
                     if (is_null($item_field)) { // TODO: how can I get this?
                         $val = SURVEY_EMPTYTEMPLATEFIELD;
                     } else {
@@ -169,11 +176,11 @@ class mod_survey_usertemplate extends mod_survey_template {
 
                 $xmltable = $xmlitem->addChild('survey_'.$plugin);
                 foreach ($structure as $field) {
-                    $item_field = $item->get_generic_field($field);
-                    if (is_null($item_field)) { // TODO: how can I get this?
+                    $item_field = $item->item_get_generic_field($field);
+                    if (is_null($item_field)) {
                         $xmlfield = $xmltable->addChild($field, SURVEY_EMPTYTEMPLATEFIELD);
                     } else {
-                        $xmlfield = $xmltable->addChild($field, $item_field); // TODO: how can I get this?
+                        $xmlfield = $xmltable->addChild($field, $item_field);
                     }
                 }
             }
@@ -192,7 +199,8 @@ class mod_survey_usertemplate extends mod_survey_template {
 
     /*
      * survey_get_template_options
-     * @param none
+     *
+     * @param
      * @return $filemanager_options
      */
     public function get_filemanager_options() {
@@ -208,6 +216,7 @@ class mod_survey_usertemplate extends mod_survey_template {
 
     /*
      * get_contextid_from_sharinglevel
+     *
      * @param sharinglevel
      * @return $filemanager_options
      */
@@ -373,6 +382,7 @@ class mod_survey_usertemplate extends mod_survey_template {
 
     /*
      * save_utemplate
+     *
      * @param
      * @return
      */
@@ -402,6 +412,7 @@ class mod_survey_usertemplate extends mod_survey_template {
 
     /*
      * manage_utemplates
+     *
      * @param
      * @return
      */
@@ -502,7 +513,7 @@ class mod_survey_usertemplate extends mod_survey_template {
                     $basepath = new moodle_url('utemplates_manage.php', $paramurl);
 
                     $icons .= '<a class="editing_update" title="'.$exporttitle.'" href="'.$basepath.'">';
-                    $icons .= '<img src="'.$OUTPUT->pix_url('download', 'survey').'" class="iconsmall" alt="'.$exporttitle.'" title="'.$exporttitle.'" /></a>';
+                    $icons .= '<img src="'.$OUTPUT->pix_url('i/export').'" class="iconsmall" alt="'.$exporttitle.'" title="'.$exporttitle.'" /></a>';
                 }
 
                 $tablerow[] = $icons;
@@ -637,6 +648,7 @@ class mod_survey_usertemplate extends mod_survey_template {
 
     /*
      * add_items_from_utemplate
+     *
      * @param $templateid
      * @return
      */
@@ -686,6 +698,7 @@ class mod_survey_usertemplate extends mod_survey_template {
 
     /*
      * get_utemplate_content
+     *
      * @param
      * @return
      */
@@ -699,6 +712,7 @@ class mod_survey_usertemplate extends mod_survey_template {
 
     /*
      * get_utemplate_name
+     *
      * @param
      * @return
      */

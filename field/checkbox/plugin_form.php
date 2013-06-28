@@ -91,7 +91,8 @@ class survey_pluginform extends surveyitem_baseform {
         // newitem::downloadformat
         // ----------------------------------------
         $fieldname = 'downloadformat';
-        $options = array(SURVEYFIELD_CHECKBOX_RETURNVALUES => get_string('returnselection', 'surveyfield_checkbox'),
+        $options = array(SURVEYFIELD_CHECKBOX_RETURNVALUES => get_string('returnvalues', 'surveyfield_checkbox'),
+                         SURVEYFIELD_CHECKBOX_RETURNLABELS => get_string('returnlabels', 'surveyfield_checkbox'),
                          SURVEYFIELD_CHECKBOX_RETURNPOSITION => get_string('returnposition', 'surveyfield_checkbox'));
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_checkbox'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_checkbox');
@@ -112,34 +113,39 @@ class survey_pluginform extends surveyitem_baseform {
         $clean_defaultvalue = survey_textarea_to_array($data['defaultvalue']);
         $clean_labelother = trim($data['labelother']);
 
-        // build $value array (I do not care about $label) starting from $clean_options and $clean_labelother
+        // build $value and $label arrays starting from $clean_options and $clean_labelother
         $values = array();
+        $labels = array();
 
         foreach ($clean_options as $option) {
             if (strpos($option, SURVEY_VALUELABELSEPARATOR) === false) {
                 $values[] = trim($option);
+                $labels[] = trim($option);
             } else {
                 $pair = explode(SURVEY_VALUELABELSEPARATOR, $option);
                 $values[] = $pair[0];
+                $labels[] = $pair[1];
             }
         }
         if (!empty($clean_labelother)) {
             if (strpos($clean_labelother, SURVEY_OTHERSEPARATOR) === false) {
-                $values[] = $clean_labelother;
+                $values[] = '';
+                $labels[] = $clean_labelother;
             } else {
                 $pair = explode(SURVEY_OTHERSEPARATOR, $clean_labelother);
                 $values[] = $pair[1];
+                $labels[] = $pair[0];
             }
         }
 
         // //////////////////////////////////////////////////////////////////////////////////////
         // first check
-        // each item of default has to be among options item OR has to be == to otherlabel value
+        // each item of default has to be among options OR has to be == to otherlabel value
         // this also verify (helped by the second check) that the number of default is not gretr than the number of options
         // //////////////////////////////////////////////////////////////////////////////////////
         if (!empty($data['defaultvalue'])) {
             foreach ($clean_defaultvalue as $default) {
-                if (!in_array($default, $values)) {
+                if (!in_array($default, $labels)) {
                     $errors['defaultvalue'] = get_string('defaultvalue_err', 'surveyfield_checkbox', $default);
                     break;
                 }

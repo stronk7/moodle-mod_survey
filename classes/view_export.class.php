@@ -70,6 +70,7 @@ class mod_survey_exportmanager {
 
     /*
      * survey_export
+     *
      * @param
      * @return
      */
@@ -85,22 +86,17 @@ class mod_survey_exportmanager {
         // ////////////////////////////
         // get the field list
         //     no matter for the page
-        $itemlistsql = 'SELECT si.id, si.variable, si.plugin
-                        FROM {survey_item} si
-                        WHERE si.surveyid = :surveyid
-                            AND si.type = "'.SURVEY_TYPEFIELD.'"'; // <-- ONLY FIELDS hold data, COLELCTION_FORMAT items do not hold data
-        if ($this->formdata->basicform == SURVEY_FILLONLY) {
-            // I need records with:
-            //     basicform == SURVEY_FILLONLY OR basicform == SURVEY_FILLANDSEARCH
-            $itemlistsql .= ' AND si.basicform <> '.SURVEY_NOTPRESENT;
+        $where = array();
+        $where['surveyid'] = $this->survey->id;
+        $where['type'] = SURVEY_TYPEFIELD;
+        if (isset($this->formdata->limitedaccess)) {
+            $where['limitedaccess'] = 1;
         }
         if (!isset($this->formdata->includehide)) {
-            $itemlistsql .= ' AND si.hide = 0';
+            $where['hide'] = 0;
         }
-        $itemlistsql .= ' ORDER BY si.sortindex';
 
-        // I need get_records_sql instead of get_records because of '<> SURVEY_NOTPRESENT'
-        if (!$fieldidlist = $DB->get_records_sql($itemlistsql, $params)) {
+        if (!$fieldidlist = $DB->get_records('survey_item', $where, 'sortindex', 'id, variable, plugin')) {
             return SURVEY_NOFIELDSSELECTED;
             die;
         }
@@ -130,10 +126,9 @@ class mod_survey_exportmanager {
                                 INNER JOIN {survey_userdata} ud ON ud.submissionid = s.id
                                 INNER JOIN {survey_item} si ON si.id = ud.itemid
                             WHERE s.surveyid = :surveyid';
-        if ($this->formdata->basicform == SURVEY_FILLONLY) {
+        if (isset($this->formdata->limitedaccess)) {
             // I need records with:
-            //     basicform == SURVEY_FILLONLY OR basicform == SURVEY_FILLANDSEARCH
-            $richsubmissionssql .= ' AND si.basicform <> '.SURVEY_NOTPRESENT;
+            $richsubmissionssql .= ' AND si.limitedaccess = 1';
         }
         if (!isset($this->formdata->includehidden)) {
             $richsubmissionssql .= ' AND si.hide = 0';
@@ -225,7 +220,9 @@ class mod_survey_exportmanager {
 
     /*
      * export_print_header
-     * @param $fieldidlist, $worksheet
+     *
+     * @param $fieldidlist
+     * @param $worksheet
      * @return
      */
     public function export_print_header($fieldidlist, $worksheet) {
@@ -255,7 +252,9 @@ class mod_survey_exportmanager {
 
     /*
      * export_close_record
-     * @param $recordtoexport, $worksheet
+     *
+     * @param $recordtoexport
+     * @param $worksheet
      * @return
      */
     public function export_close_record($recordtoexport, $worksheet) {
@@ -276,6 +275,7 @@ class mod_survey_exportmanager {
 
     /*
      * decode_content
+     *
      * @param $richsubmission
      * @return
      */

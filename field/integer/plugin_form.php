@@ -67,7 +67,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setDefault('defaultoption', SURVEY_INVITATIONDEFAULT);
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
         if (is_null($item->defaultvalue) || ($item->defaultvalue == SURVEY_INVITATIONDEFAULT)) {
-            $mform->setDefault($fieldname, $item->get_lowerbound());
+            $mform->setDefault($fieldname, $item->lowerbound);
         }
 
         // /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,6 +108,12 @@ class survey_pluginform extends surveyitem_baseform {
             if ( ($data['defaultvalue'] < $data['lowerbound']) || ($data['defaultvalue'] > $data['upperbound']) ) {
                 $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_integer');
             }
+        }
+
+        // if (default == noanswer && the field is mandatory) => error
+        if ( ($data['defaultoption'] == SURVEY_NOANSWERDEFAULT) && isset($data['required']) ) {
+            $a = get_string('noanswer', 'survey');
+            $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);
         }
 
         return $errors;

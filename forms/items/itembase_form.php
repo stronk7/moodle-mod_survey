@@ -139,7 +139,7 @@ class surveyitem_baseform extends moodleform {
         // newitem::hideinstructions
         // ----------------------------------------
         $fieldname = 'hideinstructions';
-        if ($forceextrarow = $item->get_item_form_requires($fieldname)) {
+        if ($item->get_item_form_requires($fieldname)) {
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_INT);
@@ -204,56 +204,36 @@ class surveyitem_baseform extends moodleform {
         }
 
         // ----------------------------------------
-        // newitem::basicform
+        // newitem::insearchform
         // ----------------------------------------
-        $fieldname = 'basicform';
+        $fieldname = 'insearchform';
         if ($item->get_item_form_requires($fieldname)) {
-            $options = array();
-            if ($hassubmissions) {
-                if ($item->get_basicform() != SURVEY_NOTPRESENT) {
-                    // if the item is NOT_PRESENT you can not add it when survey $hassubmissions
-                    $options[SURVEY_FILLONLY] = get_string('usercanfill', 'survey');
-                    if ($item->get_issearchable() || ($item->get_type() == SURVEY_TYPEFORMAT)) {
-                        $options[SURVEY_FILLANDSEARCH] = get_string('usercansearch', 'survey');
-                    }
-                }
-            } else {
-                $options[SURVEY_NOTPRESENT] = get_string('notinbasicform', 'survey');
-                $options[SURVEY_FILLONLY] = get_string('usercanfill', 'survey');
-                if ($item->get_issearchable() || ($item->get_type() == SURVEY_TYPEFORMAT)) {
-                    $options[SURVEY_FILLANDSEARCH] = get_string('usercansearch', 'survey');
-                }
-            }
-            $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
+            $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_INT);
-            $mform->disabledIf($fieldname, 'hide', 'checked');
         }
 
         // ----------------------------------------
-        // newitem::advancedsearch
+        // newitem::limitedaccess
         // ----------------------------------------
-        $fieldname = 'advancedsearch';
+        $fieldname = 'limitedaccess';
         if ($item->get_item_form_requires($fieldname)) {
-            if ($item->get_issearchable() || ($item->get_type() == SURVEY_TYPEFORMAT)) {
-                $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
-                $mform->addHelpButton($fieldname, $fieldname, 'survey');
-                $mform->setType($fieldname, PARAM_INT);
-                $mform->disabledIf($fieldname, 'hide', 'checked');
-            }
+            $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
+            $mform->addHelpButton($fieldname, $fieldname, 'survey');
+            $mform->setType($fieldname, PARAM_INT);
         }
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        $fieldname = 'branching_fs';
-        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
+        if ($item->get_item_form_requires('parentid')) {
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            // here I open a new fieldset
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            $fieldname = 'branching_fs';
+            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
-        // ----------------------------------------
-        // newitem::parentid
-        // ----------------------------------------
-        $fieldname = 'parentid';
-        if ($item->get_item_form_requires($fieldname)) {
+            // ----------------------------------------
+            // newitem::parentid
+            // ----------------------------------------
+            $fieldname = 'parentid';
             // create the list of each item with:
             //     sortindex lower than mine (whether already exists)
             //     $plugintemplate->flag->couldbeparent == true
@@ -287,7 +267,7 @@ class surveyitem_baseform extends moodleform {
             $select = $quickform->createElement('select', $fieldname, get_string($fieldname, 'survey'));
             $select->addOption(get_string('choosedots'), 0);
             foreach ($records as $record) {
-                $star = ($record->basicform == SURVEY_NOTPRESENT) ? '(*) ' : '';
+                $star = ($record->limitedaccess) ? '(*) ' : '';
                 $thiscontent = survey_get_sid_field_content($record);
 
                 $content = $star.get_string('pluginname', 'surveyfield_'.$record->plugin).' ['.$record->sortindex.']: '.strip_tags($thiscontent);
@@ -302,13 +282,11 @@ class surveyitem_baseform extends moodleform {
             $mform->addElement($select);
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_INT);
-        }
 
-        // ----------------------------------------
-        // newitem::parentcontent
-        // ----------------------------------------
-        $fieldname = 'parentcontent';
-        if ($item->get_item_form_requires($fieldname)) {
+            // ----------------------------------------
+            // newitem::parentcontent
+            // ----------------------------------------
+            $fieldname = 'parentcontent';
             $params = array('wrap' => 'virtual', 'rows' => '5', 'cols' => '45');
             $mform->addElement('textarea', $fieldname, get_string($fieldname, 'survey'), $params);
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
@@ -383,6 +361,11 @@ class surveyitem_baseform extends moodleform {
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);
         }
 
+        if (empty($data['parentid']) && empty($data['parentcontent'])) {
+            // stop verification here
+            return $errors;
+        }
+
         // you choosed a parentid but you are missing the parentcontent
         if (empty($data['parentid']) && ($data['parentcontent'] != '')) { // $data['parentcontent'] can be = 0
             $a = get_string('parentcontent', 'survey');
@@ -395,7 +378,6 @@ class surveyitem_baseform extends moodleform {
             $errors['parentid'] = get_string('missingparentcontent_err', 'survey', $a);
         }
 
-        // now validate the format of the "parentcontent" fields against the format of the parent item
         if (!empty($data['parentid']) && ($data['parentcontent'] != '')) { // $data['parentcontent'] can be = 0
             // $data['parentid'] == 148
             // $type = 'field' for sure
@@ -404,15 +386,20 @@ class surveyitem_baseform extends moodleform {
             $itemclass = 'surveyfield_'.$plugin;
             $parentitem = new $itemclass($data['parentid']);
 
-            // verify $parentitem is in the basicform as of this item
-            $childbasicform = $data['basicform'];
-            $parentbasicform = $parentitem->basicform;
-            if ( (($parentbasicform == SURVEY_NOTPRESENT) && ($childbasicform != SURVEY_NOTPRESENT)) ||
-                 (($parentbasicform != SURVEY_NOTPRESENT) && ($childbasicform == SURVEY_NOTPRESENT)) ) {
-                $a = ($parentbasicform == SURVEY_NOTPRESENT) ? get_string('isnotinbasicform', 'survey') : get_string('isinbasicform', 'survey');
-                // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                // echo '$a = '.$a.'<br />';
-                $errors['basicform'] = get_string('differentbasicform', 'survey', $a);
+            if (!isset($data['hide'])) {
+                // verify $parentitem is in the basicform as of this item
+                if (isset($data['limitedaccess'])) {
+                    $childlimitedaccess = $data['limitedaccess'];
+                } else {
+                    $childlimitedaccess = 0;
+                }
+                $parentlimitedaccess = $parentitem->get_limitedaccess();
+                if ($parentlimitedaccess != $childlimitedaccess) {
+                    $a = ($parentlimitedaccessm) ? get_string('isnotinbasicform', 'survey') : get_string('isinbasicform', 'survey');
+                    // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
+                    // echo '$a = '.$a.'<br />';
+                    $errors['basicform'] = get_string('differentbasicform', 'survey', $a);
+                }
             }
         }
 

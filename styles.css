@@ -34,17 +34,15 @@
     white-space:nowrap;
 }
 
-#page-mod-survey-view table#manageitems .uavailability,
-#page-mod-survey-view table#manageitems .mavailability,
-#page-mod-survey-view table#sortitems .uavailability,
-#page-mod-survey-view table#sortitems .mavailability {
+#page-mod-survey-view table#manageitems .availability,
+#page-mod-survey-view table#sortitems .availability {
     padding:0.5em;
     text-align:center;
     white-space:nowrap;
 }
 
-#page-mod-survey-view table#manageitems .basicformpage,
-#page-mod-survey-view table#sortitems .basicformpage {
+#page-mod-survey-view table#manageitems .formpage,
+#page-mod-survey-view table#sortitems .formpage {
     padding:0.5em;
     white-space:nowrap;
     text-align:center;

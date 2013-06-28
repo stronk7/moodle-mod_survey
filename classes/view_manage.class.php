@@ -43,9 +43,9 @@ class mod_survey_submissionmanager {
     public $submissionid = 0;
 
     /*
-     * $canaccessadvancedform
+     * $canaccesslimiteditems
      */
-    public $canaccessadvancedform = false;
+    public $canaccesslimiteditems = false;
 
     /*
      * $canmanageitems
@@ -89,12 +89,13 @@ class mod_survey_submissionmanager {
         $this->action = $action;
         $this->confirm = $confirm;
         $this->searchfields_get = $searchfields_get;
-        $this->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $this->context, null, true);
+        $this->canaccesslimiteditems = has_capability('mod/survey:accesslimiteditems', $this->context, null, true);
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
     }
 
     /*
      * manage_actions
+     *
      * @param
      * @return
      */
@@ -117,6 +118,7 @@ class mod_survey_submissionmanager {
 
     /*
      * manage_submission_deletion
+     *
      * @param
      * @return
      */
@@ -177,6 +179,7 @@ class mod_survey_submissionmanager {
 
     /*
      * manage_all_submission_deletion
+     *
      * @param
      * @return
      */
@@ -227,6 +230,7 @@ class mod_survey_submissionmanager {
 
     /*
      * manage_submissions
+     *
      * @param
      * @return
      */
@@ -483,6 +487,7 @@ class mod_survey_submissionmanager {
 
     /*
      * prevent_direct_user_input
+     *
      * @param
      * @return
      */
@@ -527,6 +532,7 @@ class mod_survey_submissionmanager {
 
     /*
      * submission_to_pdf
+     *
      * @param
      * @return
      */
@@ -544,13 +550,9 @@ class mod_survey_submissionmanager {
         $user = $DB->get_record('user', array('id' => $submission->userid));
         $userdatarecord = $DB->get_records('survey_userdata', array('submissionid' => $this->submissionid), '', 'itemid, id, content');
 
-        $searchform = false;
-        $filtertype = false;
-        $allpages = true;
-
-        // which form does he/she filled?
-        $accessedadvancedform = has_capability('mod/survey:accessadvancedform', $this->context, $user->id, true);
-        $sql = survey_fetch_items_seeds($accessedadvancedform, $searchform, $filtertype, $allpages);
+        $accessedadvancedform = has_capability('mod/survey:accesslimiteditems', $this->context, $user->id, true);
+        // $canaccesslimiteditems, $searchform = false; $type = false; $formpage = false;
+        list($sql, $params) = survey_fetch_items_seeds($this->survey->id, $accessedadvancedform, false);
 
         // I am not allowed to get ONLY answers from survey_userdata
         // because I also need to gather info about fieldset and label
@@ -558,7 +560,6 @@ class mod_survey_submissionmanager {
         //         FROM {survey_submissions} s
         //             JOIN {survey_userdata} ud ON ud.submissionid = s.id
         //         WHERE s.id = :submissionid';
-        $params = array('surveyid' => $this->survey->id);
         $itemseeds = $DB->get_recordset_sql($sql, $params);
 
         $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
@@ -646,7 +647,7 @@ class mod_survey_submissionmanager {
                 // first row
                 // first column
                 $html = $htmllabel;
-                $content = ($item->get_customnumber()) ? $item->customnumber().': ' : '';
+                $content = ($item->get_customnumber()) ? $item->get_customnumber().': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
                 // second column: colspan 2

@@ -31,25 +31,12 @@ class survey_exportform extends moodleform {
         // ----------------------------------------
         $fieldname = 'status';
         if ($this->_customdata->saveresume) {
-            $options = array(SURVEY_STATUSCLOSED => get_string('statusclosed'    , 'survey'),
+            $options = array(SURVEY_STATUSCLOSED => get_string('statusclosed', 'survey'),
                              SURVEY_STATUSINPROGRESS => get_string('statusinprogress', 'survey'),
-                             SURVEY_STATUSALL => get_string('statusboth'      , 'survey'));
+                             SURVEY_STATUSALL => get_string('statusboth', 'survey'));
             $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
         } else {
             $mform->addElement('hidden', $fieldname, SURVEY_STATUSCLOSED);
-            $mform->setType($fieldname, PARAM_INT);
-        }
-
-        // ----------------------------------------
-        // submissionexport::basicform
-        // ----------------------------------------
-        $fieldname = 'basicform';
-        if ($this->_customdata->canaccessadvancedform) {
-            $options = array(SURVEY_FILLONLY => get_string('download_usercanfill', 'survey'),
-                             SURVEY_NOTPRESENT => get_string('download_advancedonly', 'survey'));
-            $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
-        } else {
-            $mform->addElement('hidden', $fieldname, SURVEY_FILLONLY);
             $mform->setType($fieldname, PARAM_INT);
         }
 
@@ -59,6 +46,17 @@ class survey_exportform extends moodleform {
         $fieldname = 'includehidden';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         $mform->setType($fieldname, PARAM_INT);
+
+        // ----------------------------------------
+        // submissionexport::limitedaccess
+        // ----------------------------------------
+        $fieldname = 'limitedaccess';
+        if ($this->_customdata->canaccesslimiteditems) {
+            $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
+        } else {
+            $mform->addElement('hidden', $fieldname, 0);
+            $mform->setType($fieldname, PARAM_INT);
+        }
 
         // ----------------------------------------
         // submissionexport::downloadtype

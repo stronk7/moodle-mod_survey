@@ -24,3 +24,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
+
+// formats
+define('SURVEYFIELD_SELECT_RETURNVALUES',   0);
+define('SURVEYFIELD_SELECT_RETURNLABELS',   1);
+define('SURVEYFIELD_SELECT_RETURNPOSITION', 2);

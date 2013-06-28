@@ -85,7 +85,7 @@ $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
 $formparams->submissionid = $submissionid;
 $formparams->lastformpage = $userpage_manager->lastformpage;
-$formparams->canaccessadvancedform = $userpage_manager->canaccessadvancedform; // Help selecting the fields to show
+$formparams->canaccesslimiteditems = $userpage_manager->canaccesslimiteditems; // Help selecting the fields to show
 $formparams->formpage = $formpage;
 $formparams->currentpage = $userpage_manager->currentpage;
 if ($action == SURVEY_READONLYRESPONSE) {
@@ -108,6 +108,7 @@ if ($userpage_manager->formdata = $userpage_form->get_data()) {
     //             and "pause"    button has been pressed
     $prevbutton = (isset($userpage_manager->formdata->prevbutton) && ($userpage_manager->formdata->prevbutton));
     $pausebutton = (isset($userpage_manager->formdata->pausebutton) && ($userpage_manager->formdata->pausebutton));
+
     if (!$prevbutton && !$pausebutton) {
         $userpage_manager->save_user_data();
         $userpage_manager->notifyroles();
@@ -199,7 +200,7 @@ $userpage_manager->message_current_page();
 // if sumission already exists
 if ($hassubmitbutton) {
     if (!empty($submissionid)) {
-        $prefill = $userpage_manager->get_prefill_data(false);
+        $prefill = $userpage_manager->get_prefill_data();
     }
 }
 // go to populate the hidden field of the form

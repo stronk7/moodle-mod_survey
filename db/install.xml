@@ -60,17 +60,15 @@
         <FIELD NAME="required"         TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="extranote"        NEXT="hideinstructions"/>
         <FIELD NAME="hideinstructions" TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="required"         NEXT="variable"/>
         <FIELD NAME="variable"         TYPE="char" LENGTH="64"     NOTNULL="false"                               SEQUENCE="false" PREVIOUS="hideinstructions" NEXT="indent"/>
-        <FIELD NAME="indent"           TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="variable"         NEXT="basicform"/>
+        <FIELD NAME="indent"           TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="variable"         NEXT="hide"/>
 
-<!-- template section -->
-        <FIELD NAME="basicform"        TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="indent"           NEXT="advancedsearch"/>
-        <FIELD NAME="advancedsearch"   TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="basicform"        NEXT="hide"/>
+        <FIELD NAME="hide"             TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="indent"           NEXT="insearchform"/>
+        <FIELD NAME="insearchform"     TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="hide"             NEXT="limitedaccess"/>
+        <FIELD NAME="limitedaccess"    TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="insearchform"     NEXT="sortindex"/>
 
-        <FIELD NAME="hide"             TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="advancedsearch"   NEXT="sortindex"/>
-        <FIELD NAME="sortindex"        TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="hide"             NEXT="basicformpage"/>
-        <FIELD NAME="basicformpage"    TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="sortindex"        NEXT="advancedformpage"/>
-        <FIELD NAME="advancedformpage" TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="basicformpage"    NEXT="parentid"/>
-        <FIELD NAME="parentid"         TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="true"               SEQUENCE="false" PREVIOUS="advancedformpage" NEXT="parentcontent"/>
+        <FIELD NAME="sortindex"        TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="limitedaccess"    NEXT="formpage"/>
+        <FIELD NAME="formpage"         TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="sortindex"        NEXT="parentid"/>
+        <FIELD NAME="parentid"         TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="true"               SEQUENCE="false" PREVIOUS="formpage"         NEXT="parentcontent"/>
         <FIELD NAME="parentcontent"    TYPE="char" LENGTH="255"    NOTNULL="false"                               SEQUENCE="false" PREVIOUS="parentid"         NEXT="parentvalue"/>
         <FIELD NAME="parentvalue"      TYPE="char" LENGTH="255"    NOTNULL="false"                               SEQUENCE="false" PREVIOUS="parentcontent"    NEXT="timecreated"/>
 

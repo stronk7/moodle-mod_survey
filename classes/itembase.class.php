@@ -124,24 +124,19 @@ class surveyitem_base {
     public $indent = 0;
 
     /*
-     * $basicform = will this item be part of basic edit/search forms?
-     * SURVEY_NOTPRESENT   : no
-     * SURVEY_FILLONLY     : yes, only in the "edit" form
-     * SURVEY_FILLANDSEARCH: yes, in the "edit" and in the "search" form too
-     */
-    public $basicform = SURVEY_FILLANDSEARCH;
-
-    /*
-     * $advancedsearch = will this item be part of the advanced search form?
-     * SURVEY_ADVFILLONLY     : no, it will not be part
-     * SURVEY_ADVFILLANDSEARCH: yes, it will be part of the advanced search form
-     */
-    public $advancedsearch = SURVEY_ADVFILLANDSEARCH;
-
-    /*
      * $hide = is this field going to be shown in the form?
      */
     public $hide = 0;
+
+    /*
+     * $insearchform = is this field going to be part of the search form?
+     */
+    public $insearchform = 0;
+
+    /*
+     * $limitedaccess = is this field going to have a limited access only to users with xxx capability?
+     */
+    public $limitedaccess = 0;
 
     /*
      * $sortindex = the order of this item in the survey form
@@ -149,14 +144,9 @@ class surveyitem_base {
     public $sortindex = 0;
 
     /*
-     * $basicformpage = the user survey page for this item
+     * $formpage = the user survey page for this item
      */
-    public $basicformpage = 0;
-
-    /*
-     * $advancedformpage = the advanced survey page for this item
-     */
-    public $advancedformpage = 0;
+    public $formpage = 0;
 
     /*
      * $parentid = the item this item depends from
@@ -210,11 +200,10 @@ class surveyitem_base {
         'required' => true,
         'variable' => true,
         'indent' => true,
-        'basicform' => true,
-        'advancedsearch' => true,
         'hide' => true,
-        'parentid' => true,
-        'parentcontent' => true
+        'limitedaccess' => true,
+        'insearchform' => true,
+        'parentid' => true
     );
     /***********************************************************************************/
     /* END OF FIELDS OF SURVEY_ITEMS */
@@ -222,7 +211,8 @@ class surveyitem_base {
 
     /*
      * item_load
-     * @param $itemid
+     *
+     * @param integer $itemid
      * @return
      */
     public function item_load($itemid) {
@@ -259,7 +249,8 @@ class surveyitem_base {
      * save
      * Executes surveyitem_<<plugin>> global level actions
      * this is the save point of the global part of each plugin
-     * @param $record
+     *
+     * @param stdClass $record
      * @return
      */
     public function item_save($record) {
@@ -282,21 +273,13 @@ class surveyitem_base {
         $record->surveyid = $cm->instance;
         $record->timemodified = $timenow;
 
-        // a routine to manage checkboxes content (special management for advancedsearch just later on)
-        $checkboxessettings = array('extrarow', 'hideinstructions', 'required', 'hide');
-        foreach($checkboxessettings as $checkboxessetting) {
-            if ($this->item_form_requires[$checkboxessetting]) {
-                $record->{$checkboxessetting} = isset($record->{$checkboxessetting}) ? 1 : 0;
-            } else {
-                $record->{$checkboxessetting} = 0;
-            }
-        }
+        // TAKE CARE: do not manage extrarow
+        // it is an advcheckbox
 
-        // advancedsearch
-        if ($this->item_form_requires['advancedsearch']) {
-            $record->advancedsearch = isset($record->advancedsearch) ? SURVEY_ADVFILLANDSEARCH : SURVEY_ADVFILLONLY;
-        } else {
-            $record->advancedsearch = SURVEY_ADVFILLONLY;
+        // manage other checkboxes content
+        $checkboxessettings = array('limitedaccess', 'insearchform', 'hideinstructions', 'required', 'hide');
+        foreach($checkboxessettings as $checkboxessetting) {
+            $record->{$checkboxessetting} = isset($record->{$checkboxessetting}) ? 1 : 0;
         }
 
         // encode $fromform->parentcontent to $item->parentvalue on the basis of the parentplugin specified in $record->parentid
@@ -305,6 +288,8 @@ class surveyitem_base {
             require_once($CFG->dirroot.'/mod/survey/field/'.$parentplugin.'/plugin.class.php');
             $itemclass = 'surveyfield_'.$parentplugin;
             $parentitem = new $itemclass($record->parentid);
+
+            $record->parentcontent = trim($record->parentcontent, " \t\n\r");
 
             $record->parentvalue = $parentitem->parent_encode_content_to_value($record->parentcontent);
         }
@@ -420,13 +405,13 @@ class surveyitem_base {
             if ($record->id) { // if the item was successfully saved
                 // hide/regular part 3
                 if ( ($oldhide == 1) && ($record->hide == 0) ) {
-                    if (survey_manage_item_show(1, $cm, $record->itemid, $record->type)) {
-                        // a chain of record has been shown
-                        $userfeedback += 4; // 1*2^2
-                    }
+                    //if (survey_manage_item_show(1, $cm, $record->itemid, $record->type)) {
+                    //    // a chain of record has been shown
+                    //    $userfeedback += 4; // 1*2^2
+                    //}
                 }
                 if ( ($oldhide == 0) && ($record->hide == 1) ) {
-                    if (survey_manage_item_hide(1, $record->itemid, $record->type)) {
+                    if ($this->survey_manage_item_hide(1, $record->itemid, $record->type)) {
                         // a chain of record has been shown
                         $userfeedback += 8; // 1*2^3
                     }
@@ -435,21 +420,7 @@ class surveyitem_base {
 
                 // adesso, indipendentemente dalla paternità, verifica che i figli siano nella stessa user form
                 // se stanno in una differente form, spostali
-                if (isset($record->basicform)) { // if the item is not in the user form
-                    if ($record->basicform != SURVEY_NOTPRESENT) { // if the item is not in the basic form
-                        if ($this->survey_move_regular_items($record->itemid, $record->basicform)) {
-                            // a chain of record has been shown
-                            $userfeedback += 16; // 1*2^4
-                        }
-                    }
-
-                    if ($record->basicform == SURVEY_NOTPRESENT) { // if the item is in the basic form
-                        if ($this->survey_move_regular_items($record->itemid, 0)) {
-                            // a chain of record has been shown
-                            $userfeedback += 32; // 1*2^5
-                        }
-                    }
-                }
+                // TODO: muovere l'item
             }
         }
         $logurl = 'itembase.php?id='.$cm->id.'&tab='.SURVEY_TABITEMS.'&itemid='.$record->itemid.'&type='.$record->type.'&plugin='.$record->plugin.'&pag='.SURVEY_ITEMS_MANAGE;
@@ -462,7 +433,8 @@ class surveyitem_base {
     /*
      * item_builtin_string_load_support
      * This function is used to populate empty strings according to the user language
-     * @param $fields
+     *
+     * @param string $fields
      * @return
      */
     public function item_builtin_string_load_support($fields=null) {
@@ -494,7 +466,9 @@ class surveyitem_base {
     /*
      * item_builtin_string_save_support
      * starting from the item object, replace 'content' and $fields for builtin survey
-     * @param $fields
+     *
+     * @param StdClass $record
+     * @param string $fields
      * @return
      */
     public function item_builtin_string_save_support(&$record, $fields=null) {
@@ -547,7 +521,9 @@ class surveyitem_base {
 
     /*
      * item_split_unix_time
+     *
      * @param $time
+     * @param $applyusersettings
      * @return
      */
     public function item_split_unix_time($time, $applyusersettings=false) {
@@ -577,7 +553,9 @@ class surveyitem_base {
 
     /*
      * item_delete_item
-     * @param $itemid, $displaymessage=false
+     *
+     * @param $itemid
+     * @param $displaymessage
      * @return
      */
     public function item_delete_item($itemid, $displaymessage=false) {
@@ -635,7 +613,9 @@ class surveyitem_base {
      * item_set_editor
      * defines presets for the editor field of surveyitem in itembase_form.php
      * (copied from moodle20/cohort/edit.php)
-     * @param $cmid, &$saveditem
+     *
+     * @param $cmid
+     * @param &$saveditem
      * @return
      */
     public function item_set_editor($cmid, &$saveditem) {
@@ -652,30 +632,56 @@ class surveyitem_base {
     }
 
     /*
-     * item_get_value_label_array
+     * item_get_values_array
      * translates the class property $this->{$field} in the array array[$value] = $label
-     * @param $field='options'
-     * @return array $valuelabel
+     *
+     * @param $field
+     * @return array $values
      */
-    public function item_get_value_label_array($field='options') {
+    public function item_get_values_array($field='options') {
         $options = survey_textarea_to_array($this->{$field});
 
-        $valuelabel = array();
-        foreach ($options as $option) {
+        $values = array();
+        foreach ($options as $k => $option) {
             if (preg_match('/^(.*)'.SURVEY_VALUELABELSEPARATOR.'(.*)$/', $option, $match)) { // do not worry: it can never be equal to zero
                 // print_object($match);
-                $valuelabel[$match[1]] = $match[2];
+                $values[] = $match[1];
             } else {
-                $valuelabel[$option] = $option;
+                $values[] = $k;
             }
         }
 
-        return $valuelabel;
+        return $values;
+    }
+
+    /*
+     * item_get_values_array
+     * translates the class property $this->{$field} in the array array[$value] = $label
+     *
+     * @param $field
+     * @return array $labels
+     */
+    public function item_get_labels_array($field='options') {
+        $options = survey_textarea_to_array($this->{$field});
+
+        $labels = array();
+        foreach ($options as $k => $option) {
+            if (preg_match('/^(.*)'.SURVEY_VALUELABELSEPARATOR.'(.*)$/', $option, $match)) { // do not worry: it can never be equal to zero
+                // print_object($match);
+                $labels[] = $match[2];
+            } else {
+                $labels[] = $option;
+            }
+        }
+
+        return $labels;
     }
 
     /*
      * $this->item_clean_textarea_fields
-     * @param $record, $fieldlist
+     *
+     * @param $record
+     * @param $fieldlist
      * @return
      */
     function item_clean_textarea_fields($record, $fieldlist) {
@@ -692,6 +698,7 @@ class surveyitem_base {
 
     /*
      * item_get_other
+     *
      * @param
      * @return
      */
@@ -709,6 +716,7 @@ class surveyitem_base {
 
     /*
      * item_mandatory_is_allowed
+     *
      * @param
      * @return
      */
@@ -725,6 +733,7 @@ class surveyitem_base {
 
     /*
      * item_get_parent_format
+     *
      * @param
      * @return
      */
@@ -735,7 +744,9 @@ class surveyitem_base {
     /*
      * item_get_db_structure
      * returns true if the useform mform element for this item id is a group and false if not
-     * @param
+     *
+     * @param $tablename
+     * @param $dropid
      * @return
      */
     public function item_get_db_structure($tablename=null, $dropid=true) {
@@ -762,6 +773,7 @@ class surveyitem_base {
     /*
      * item_get_main_text
      * returns the content of the field defined as main
+     *
      * @param
      * @return
      */
@@ -772,7 +784,10 @@ class surveyitem_base {
     /*
      * item_get_si_values
      * returns the content of the field defined as main
-     * @param $data, $sistructure, $sisid
+     *
+     * @param $data
+     * @param $sistructure
+     * @param $sisid
      * @return
      */
     public function item_get_si_values($data, $sistructure, $sisid) {
@@ -789,7 +804,7 @@ class surveyitem_base {
 
         $tablename = 'survey_item';
 
-        // STEP 01: define the value aray
+        // STEP 01: define an associative array of values
         // This loop assign the correct order to array elements
         // Now I am free to access/modify array elements with random order
         $values = array_combine(array_values($sistructure), array_pad(array('err'), count($sistructure), 'err'));
@@ -797,9 +812,9 @@ class surveyitem_base {
         // STEP 02: make corrections
         // $si_fields = array('surveyid', 'type', 'plugin', 'externalname',
         //                    'content_sid', 'content', 'contentformat', 'customnumber',
-        //                    'extrarow', 'extranote', 'required', 'variable',
-        //                    'indent', 'basicform', 'advancedsearch', 'hide',
-        //                    'sortindex', 'basicformpage', 'advancedformpage', 'parentid',
+        //                    'extrarow', 'extranote', 'required', 'hideinstructions', 'variable',
+        //                    'indent', 'hide', 'insearchform', 'limitedaccess',
+        //                    'sortindex', 'formpage', 'parentid',
         //                    'parentcontent', 'parentvalue', 'timecreated', 'timemodified');
 
         // let's start with _sid fields
@@ -902,62 +917,37 @@ class surveyitem_base {
         /*------------------------------------------------*/
         $values['hideinstructions'] = $this->hideinstructions;
 
+        // $si_fields = array(...'variable', 'indent', 'hide', 'insearchform',
+
         // override: $value['variable']
         /*------------------------------------------------*/
         $values['variable'] = empty($this->variable) ? '\'\'' : '\''.$this->variable.'\'';
-
-        // $si_fields = array(...'indent', 'basicform', 'advancedsearch', 'hide',
 
         // override: $value['indent']
         /*------------------------------------------------*/
         $values['indent'] = $this->indent;
 
-        // override: $value['basicform']
-        /*------------------------------------------------*/
-        switch ($this->basicform) {
-            case SURVEY_NOTPRESENT:
-                $values['basicform'] = 'SURVEY_NOTPRESENT';
-                break;
-            case SURVEY_FILLONLY:
-                $values['basicform'] = 'SURVEY_FILLONLY';
-                break;
-            case SURVEY_FILLANDSEARCH:
-                $values['basicform'] = 'SURVEY_FILLANDSEARCH';
-                break;
-            default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->basicform = '.$this->basicform);
-        }
-
-        // override: $value['advancedsearch']
-        /*------------------------------------------------*/
-        switch ($this->advancedsearch) {
-            case SURVEY_ADVFILLONLY:
-                $values['advancedsearch'] = 'SURVEY_ADVFILLONLY';
-                break;
-            case SURVEY_ADVFILLANDSEARCH:
-                $values['advancedsearch'] = 'SURVEY_ADVFILLANDSEARCH';
-                break;
-            default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->advancedsearch = '.$this->advancedsearch);
-        }
-
         // override: $value['hide']
         /*------------------------------------------------*/
         $values['hide'] = $this->hide;
 
-        // $si_fields = array(...'sortindex', 'basicformpage', 'advancedformpage', 'parentid',
+        // override: $value['insearchform']
+        /*------------------------------------------------*/
+        $values['insearchform'] = $this->insearchform;
+
+        // $si_fields = array(...'limitedaccess', 'sortindex', 'formpage', 'parentid',
+
+        // override: $value['limitedaccess']
+        /*------------------------------------------------*/
+        $values['limitedaccess'] = $this->limitedaccess;
 
         // override: $value['sortindex']
         /*------------------------------------------------*/
         $values['sortindex'] = '$sortindex';
 
-        // override: $value['basicformpage']
+        // override: $value['formpage']
         /*------------------------------------------------*/
-        $values['basicformpage'] = '\'\'';
-
-        // override: $value['advancedformpage']
-        /*------------------------------------------------*/
-        $values['advancedformpage'] = '\'\'';
+        $values['formpage'] = '\'\'';
 
         // override: $value['parentid']
         /*------------------------------------------------*/
@@ -1015,12 +1005,14 @@ class surveyitem_base {
 
     /*
      * item_get_plugin_values
-     * @param $pluginstructure, $pluginsid
+     *
+     * @param $pluginstructure
+     * @param $pluginsid
      * @return
      */
     public function item_get_plugin_values($pluginstructure, $pluginsid) {
 
-        // STEP 01: define the value aray
+        // STEP 01: define an associative array of values
         // This loop assign the correct order to array elements
         // Now I am free to access/modify array elements with random order
         $values = array_combine (array_values($pluginstructure), array_pad(array('err'), count($pluginstructure), 'err'));
@@ -1079,6 +1071,7 @@ class surveyitem_base {
 
     /*
      * item_update_values_defaultoption
+     *
      * @param $values
      * @return
      */
@@ -1111,65 +1104,21 @@ class surveyitem_base {
         return $values;
     }
 
-    /*
-     * survey_move_regular_items
-     * @param $itemid, $in
-     * @return
-     */
-    function survey_move_regular_items($itemid, $newbasicform) {
-        global $DB;
-
-        // build tohidelist
-        // here I must select the whole tree down
-        $tohidelist = array($itemid);
-        $sortindextohidelist = array();
-        $this->survey_add_regular_item_node($tohidelist, $sortindextohidelist, $newbasicform);
-        array_shift($tohidelist); // $itemid has already been saved
-
-        $itemstoprocess = count($tohidelist);
-
-        foreach ($tohidelist as $tohideitemid) {
-            $DB->set_field('survey_item', 'basicform', $newbasicform, array('id' => $tohideitemid));
-        }
-
-        return $itemstoprocess; // did you do something?
-    }
-
-    /*
-     * survey_add_regular_item_node
-     * @param $tohidelist, $sortindextohidelist, $in
-     * @return
-     */
-    function survey_add_regular_item_node(&$tohidelist, &$sortindextohidelist, $newbasicform) {
-        global $DB;
-
-        $i = count($tohidelist);
-        $itemid = $tohidelist[$i-1];
-        $comparison = ($newbasicform == SURVEY_NOTPRESENT) ? '<>' : '=';
-        $where = 'parentid = :parentid AND basicform '.$comparison.' :basicform';
-        $params = array('parentid' => $itemid, 'basicform' => SURVEY_NOTPRESENT);
-        if ($childitems = $DB->get_records_select('survey_item', $where, $params, 'sortindex', 'id, sortindex')) { // potrebbero non esistere
-            foreach ($childitems as $childitem) {
-                $tohidelist[] = (int)$childitem->id;
-                $sortindextohidelist[] = $childitem->sortindex;
-                $this->survey_add_regular_item_node($tohidelist, $sortindextohidelist, $newbasicform);
-            }
-        }
-    }
-
     // MARK get
 
     /*
-     * get_itemid
-     * @param
+     * item_get_generic_field
+     *
+     * @param $field
      * @return
      */
-    public function get_generic_field($field) {
+    public function item_get_generic_field($field) {
         return $this->{$field};
     }
 
     /*
      * get_itemid
+     *
      * @param
      * @return
      */
@@ -1179,6 +1128,7 @@ class surveyitem_base {
 
     /*
      * get_type
+     *
      * @param
      * @return
      */
@@ -1188,6 +1138,7 @@ class surveyitem_base {
 
     /*
      * get_plugin
+     *
      * @param
      * @return
      */
@@ -1197,6 +1148,7 @@ class surveyitem_base {
 
     /*
      * get_content
+     *
      * @param
      * @return
      */
@@ -1206,6 +1158,7 @@ class surveyitem_base {
 
     /*
      * get_parentid
+     *
      * @param
      * @return
      */
@@ -1215,6 +1168,7 @@ class surveyitem_base {
 
     /*
      * get_parentcontent
+     *
      * @param
      * @return
      */
@@ -1224,6 +1178,7 @@ class surveyitem_base {
 
     /*
      * get_sortindex
+     *
      * @param
      * @return
      */
@@ -1233,6 +1188,7 @@ class surveyitem_base {
 
     /*
      * get_hide
+     *
      * @param
      * @return
      */
@@ -1241,7 +1197,28 @@ class surveyitem_base {
     }
 
     /*
+     * get_limitedaccess
+     *
+     * @param
+     * @return
+     */
+    public function get_limitedaccess() {
+        return $this->limitedaccess;
+    }
+
+    /*
+     * get_insearchform
+     *
+     * @param
+     * @return
+     */
+    public function get_insearchform() {
+        return $this->insearchform;
+    }
+
+    /*
      * get_basicform
+     *
      * @param
      * @return
      */
@@ -1250,34 +1227,18 @@ class surveyitem_base {
     }
 
     /*
-     * get_basicformpage
+     * get_formpage
+     *
      * @param
      * @return
      */
-    public function get_basicformpage() {
-        return $this->basicformpage;
-    }
-
-    /*
-     * get_advancedformpage
-     * @param
-     * @return
-     */
-    public function get_advancedformpage() {
-        return $this->advancedformpage;
-    }
-
-    /*
-     * get_advancedsearch
-     * @param
-     * @return
-     */
-    public function get_advancedsearch() {
-        return $this->advancedsearch;
+    public function get_formpage() {
+        return $this->formpage;
     }
 
     /*
      * get_customnumber
+     *
      * @param
      * @return
      */
@@ -1287,6 +1248,7 @@ class surveyitem_base {
 
     /*
      * get_labelintro
+     *
      * @param
      * @return
      */
@@ -1296,6 +1258,7 @@ class surveyitem_base {
 
     /*
      * get_required
+     *
      * @param
      * @return
      */
@@ -1305,6 +1268,7 @@ class surveyitem_base {
 
     /*
      * get_indent
+     *
      * @param
      * @return
      */
@@ -1314,6 +1278,7 @@ class surveyitem_base {
 
     /*
      * get_extrarow
+     *
      * @param
      * @return
      */
@@ -1323,6 +1288,7 @@ class surveyitem_base {
 
     /*
      * get_itemname
+     *
      * @param
      * @return
      */
@@ -1332,6 +1298,7 @@ class surveyitem_base {
 
     /*
      * get_useplugintable
+     *
      * @param
      * @return
      */
@@ -1341,6 +1308,7 @@ class surveyitem_base {
 
     /*
      * get_issearchable
+     *
      * @param
      * @return
      */
@@ -1350,7 +1318,8 @@ class surveyitem_base {
 
     /*
      * get_item_form_requires
-     * @param
+     *
+     * @param $setup_itemform_element
      * @return
      */
     public function get_item_form_requires($setup_itemform_element) {
@@ -1361,7 +1330,8 @@ class surveyitem_base {
 
     /*
      * set_contentformat
-     * @param
+     *
+     * @param $contentformat
      * @return
      */
     public function set_contentformat($contentformat) {
@@ -1370,7 +1340,8 @@ class surveyitem_base {
 
     /*
      * set_contenttrust
-     * @param
+     *
+     * @param $contenttrust
      * @return
      */
     public function set_contenttrust($contenttrust) {
@@ -1381,7 +1352,8 @@ class surveyitem_base {
 
     /*
      * parent_validate_child_constraints
-     * @param
+     *
+     * @param $childvalue
      * @return status of child relation
      */
     public function parent_validate_child_constraints($childvalue) {
@@ -1395,6 +1367,7 @@ class surveyitem_base {
      * starting from the user input, this method stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
      * (take care: here we are not submitting a survey but we are submitting an item)
+     *
      * @param $parentcontent
      * @return
      */
@@ -1408,7 +1381,8 @@ class surveyitem_base {
     /*
      * userform_get_full_info == extranote + fillinginstruction
      * provides extra description THAT IS NOT SAVED IN THE DATABASE but is shown in the "Add"/"Search" form
-     * @param
+     *
+     * @param $searchform
      * @return
      */
     public function userform_get_full_info($searchform) {
@@ -1446,6 +1420,7 @@ class surveyitem_base {
     /*
      * userform_get_filling_instructions
      * provides extra fillinginstruction THAT IS NOT SAVED IN THE DATABASE but is shown in the "Add"/"Search" form
+     *
      * @param
      * @return
      */
@@ -1459,15 +1434,16 @@ class surveyitem_base {
      * userform_child_item_allowed_static
      * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
      * ----------------------------------------------------------------------
-     * this function is called when $survey->newpageforchild == false
-     * so the current survey lives in just one single web page (unless page break is manually added)
+     * this function is called at submit time if (and only if) parent item and child item live in different form page
+     * this function is supposed to classify disabled element as unexpected in order to drop their reported value
      * ----------------------------------------------------------------------
      * Am I getting submitted data from $fromform or from table 'survey_userdata'?
      *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
      *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
      * ----------------------------------------------------------------------
-     * @param: $parentcontent, $parentsubmitted
-     * @return
+     *
+     * @param: $submissionid, $childitemrecord
+     * @return $status: true: the item is welcome; false: the item must be dropped out
      */
     public function userform_child_item_allowed_static($submissionid, $childitemrecord) {
         global $DB;
@@ -1482,44 +1458,11 @@ class surveyitem_base {
         return ($givenanswer === $childitemrecord->parentvalue);
     }
 
-    /* *****************************
-     * THIS METHOD IS NO LONGER USED
-     * *****************************
-     *
-     * userform_could_be_disabled
-     * This function returns true if an item can be disabled because of the answer to the parent item
-     * The rationale is:
-     * if ($survey->newpageforchild) { then the parent is in a previous page so:
-     *     if its condition was satisfied, the child item ($this) is displayed
-     *     if its condition was NOT satisfied, the child item ($this) is NOT displayed
-     *     in both cases the child item ($this) will always be enabled
-     *
-     * if (empty($parentitem))
-     *     the child item ($this) will always be enabled because the parent does not exist
-     *
-     * if no pagebreaks were added between parent and child (alias, if they are displayed in the same page)
-     *     the child item ($this) can be disabled
-     * @param
-     * @return
-     */
-    public function userform_could_be_disabled($survey, $canaccessadvancedform, $parentitem=null) {
-        global $DB;
-
-        if ($survey->newpageforchild) {
-            return false;
-        }
-        if (empty($parentitem)) {
-            return false;
-        }
-
-        // is its parentitem in its same page?
-        $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
-        return ($parentitem->{$pagefield} == $this->{$pagefield});
-    }
-
     /*
      * userform_can_show_item_as_child
-     * @param
+     *
+     * @param $submissionid
+     * @param $data
      * @return
      */
     public function userform_can_show_item_as_child($submissionid, $data) {
@@ -1551,14 +1494,15 @@ class surveyitem_base {
      * userform_child_item_allowed_dynamic
      * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
      * ----------------------------------------------------------------------
-     * this function is called when $survey->newpageforchild == false
-     * so the current survey lives in just one single web page (unless page break is manually added)
+     * this function is called at submit time if (and only if) parent item and child item live in the same form page
+     * this function is supposed to classify disabled element as unexpected in order to drop their reported value
      * ----------------------------------------------------------------------
      * Am I geting submitted data from $fromform or from table 'survey_userdata'?
      *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
      *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
      * ----------------------------------------------------------------------
-     * @param: $parentcontent, $parentsubmitted
+     *
+     * @param: $child_parentcontent, $data
      * @return
      */
     public function userform_child_item_allowed_dynamic($child_parentcontent, $data) {
@@ -1567,14 +1511,16 @@ class surveyitem_base {
 
     /*
      * userform_disable_element
-     * this function is used ONLY if $survey->newpageforchild == true
+     * this function is used ONLY if $survey->newpageforchild == false
      * it adds as much as needed $mform->disabledIf to disable items when parent condition does not match
      * This method is used by the child item
      * In the frame of this method the parent item is calculated and is requested to provide the disabledif conditions to disable its child item
-     * @param
+     *
+     * @param $mform
+     * @param $canaccesslimiteditems
      * @return
      */
-    public function userform_disable_element($mform, $canaccessadvancedform) {
+    public function userform_disable_element($mform, $canaccesslimiteditems) {
         global $DB;
 
         if (!$this->parentid || ($this->type == SURVEY_TYPEFORMAT)) {
@@ -1587,30 +1533,36 @@ class surveyitem_base {
             $fieldname = $this->itemname;
         }
 
-        $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
+        $mypage = $this->get_formpage();
         $parentrestrictions = array();
-        $parentrecord = $this;
+
+        // if I am here this means I have a parent FOR SURE
+        // instead of making one more query, I assign two variables manually
+        // at the beginning, $currentitem is me
+        $currentitem = new StdClass();
+        $currentitem->parentid = $this->parentid;
+        $currentitem->parentcontent = $this->parentcontent;
         do {
             /*
              * Take care.
              * Even if (!$survey->newpageforchild) I can have all my ancestors into previous pages because I added pagebreak manually
              * Because of this, I need to chech page numbers
              */
-            $parentpage = $DB->get_field('survey_item', $pagefield, array('id' => $parentrecord->parentid));
-            if ($parentpage == $this->{$pagefield}) {
-                $parentid = $parentrecord->parentid;
-                $parentcontent = $parentrecord->parentcontent;
-                $parentrestrictions[$parentid] = $parentcontent; // Item ID $parentid has as constain $parentcontent
+            $parentpage = $DB->get_field('survey_item', 'formpage', array('id' => $currentitem->parentid));
+            if ($parentpage == $mypage) {
+                $parentid = $currentitem->parentid;
+                $parentcontent = $currentitem->parentcontent;
+                $parentrestrictions[$parentid] = $parentcontent; // The element with ID == $parentid requires, as constain, $parentcontent
             } else {
                 // my parent is in a page before mine
                 // no need to investigate more for older ancestors
                 break;
             }
 
-            $parentrecord = $DB->get_record('survey_item', array('id' => $parentid), 'parentid, parentcontent');
+            $currentitem = $DB->get_record('survey_item', array('id' => $parentid), 'parentid, parentcontent, formpage');
         } while (!empty($parentrecord->parentid));
         // $parentrecord is an associative array
-        // In the array key is the ID of the parent item, the corresponding value is the constrain that $this has to be submitted to
+        // The array key is the ID of the parent item, the corresponding value is the constrain that $this has to be submitted to
 
         foreach ($parentrestrictions as $parentid => $childconstrain) {
             $parentitem = survey_get_item($parentid);
@@ -1619,10 +1571,15 @@ class surveyitem_base {
             $displaydebuginfo = false;
             if ($displaydebuginfo) {
                 foreach ($disabilitationinfo as $parentinfo) {
-                    if (isset($parentinfo->operator)) {
-                        echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->operator.'\', \''.$parentinfo->content.'\');</span><br />';
+                    if (is_array($parentinfo->content)) {
+                        $contentdisplayed = 'array('.implode(',', $parentinfo->content).')';
                     } else {
-                        echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->content.'\');</span><br />';
+                        $contentdisplayed = '\''.$parentinfo->content.'\'';
+                    }
+                    if (isset($parentinfo->operator)) {
+                        echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->operator.'\', '.$contentdisplayed.');</span><br />';
+                    } else {
+                        echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', '.$contentdisplayed.');</span><br />';
                     }
                 }
             }
@@ -1635,13 +1592,16 @@ class surveyitem_base {
                     $mform->disabledIf($fieldname, $parentinfo->parentname, $parentinfo->content);
                 }
             }
+            //$mform->disabledIf('survey_field_select_2491', 'survey_field_multiselect_2490[]', 'neq', array(0,4));
         }
     }
 
     /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
-     * @param $answers, $format
+     *
+     * @param $answers
+     * @param $format
      * @return
      */
     public function userform_db_to_export($answer, $format='') {
@@ -1655,6 +1615,7 @@ class surveyitem_base {
 
     /*
      * item_list_constraints
+     *
      * @param
      * @return list of contraints of the plugin in text format
      */

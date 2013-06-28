@@ -16,9 +16,11 @@
         <FIELD NAME="labelother"       TYPE="char" LENGTH="64"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="labelother_sid"   NEXT="defaultoption"/>
 
         <FIELD NAME="defaultoption"    TYPE="int"  LENGTH="2"      NOTNULL="true" UNSIGNED="true"  DEFAULT="2" SEQUENCE="false" PREVIOUS="labelother"       NEXT="defaultvalue_sid"/>
-        <FIELD NAME="defaultvalue_sid" TYPE="int"   LENGTH="4"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="defaultoption"    NEXT="defaultvalue"/>
-        <FIELD NAME="defaultvalue"     TYPE="char" LENGTH="32"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="defaultvalue_sid" NEXT="adjustment"/>
-        <FIELD NAME="adjustment"       TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultvalue"/>
+        <FIELD NAME="defaultvalue_sid" TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="defaultoption"    NEXT="defaultvalue"/>
+        <FIELD NAME="defaultvalue"     TYPE="char" LENGTH="32"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="defaultvalue_sid" NEXT="downloadformat"/>
+        <FIELD NAME="downloadformat"   TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="defaultvalue"     NEXT="adjustment"/>
+
+        <FIELD NAME="adjustment"       TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="downloadformat"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

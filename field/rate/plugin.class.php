@@ -71,6 +71,11 @@ class surveyfield_rate extends surveyitem_base {
     public $defaultvalue = '';
 
     /*
+     * $downloadformat = the format of the content once downloaded
+     */
+    public $downloadformat = '';
+
+    /*
      * $style = how is this rate item displayed? with radiobutton or with dropdown menu?
      */
     public $style = 0;
@@ -108,14 +113,16 @@ class surveyfield_rate extends surveyitem_base {
         $this->flag->couldbeparent = false;
         $this->flag->useplugintable = true;
 
+        $this->item_form_requires['insearchform'] = false;
+
         /*
-         * this item is not issearchable
+         * this item is not searchable
          * so the default inherited from itembase.class.php
-         * public $basicform = SURVEY_FILLANDSEARCH;
+         * public $insearchform = 1;
          * can not match the plugin_form element
-         * So I change it to SURVEY_FILLONLY
+         * So I change it
          */
-        $this->basicform = SURVEY_FILLONLY;
+        $this->insearchform = 0;
 
         $this->extrarow = 1; // define the value of the checkbox
         // item_form_requires['extrarow'] = true: show extrarow checkbox
@@ -131,6 +138,7 @@ class surveyfield_rate extends surveyitem_base {
 
     /*
      * item_load
+     *
      * @param $itemid
      * @return
      */
@@ -148,6 +156,7 @@ class surveyfield_rate extends surveyitem_base {
 
     /*
      * item_save
+     *
      * @param $record
      * @return
      */
@@ -179,6 +188,7 @@ class surveyfield_rate extends surveyitem_base {
 
     /*
      * item_custom_fields_to_form
+     *
      * @param
      * @return
      */
@@ -196,6 +206,7 @@ class surveyfield_rate extends surveyitem_base {
     /*
      * item_custom_fields_to_db
      * sets record field to store the correct value to db for the date custom item
+     *
      * @param $record
      * @return
      */
@@ -215,6 +226,7 @@ class surveyfield_rate extends surveyitem_base {
     /*
      * item_generate_standard_default
      * sets record field to store the correct value to db for the date custom item
+     *
      * @param $record
      * @return
      */
@@ -264,6 +276,7 @@ class surveyfield_rate extends surveyitem_base {
 
     /*
      * item_get_plugin_values
+     *
      * @param $pluginstructure
      * @param $pluginsid
      * @return
@@ -304,16 +317,21 @@ class surveyfield_rate extends surveyitem_base {
 
     /*
      * userform_mform_element
+     *
      * @param $mform
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $survey, $canaccesslimiteditems, $parentitem=null, $searchform=false) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        $options = survey_textarea_to_array('options');
-        $rates = array_keys(array_flip($this->item_get_value_label_array('rates')));
-        $rates_keys = array_keys($this->item_get_value_label_array('rates'));
-        $defaultvalues = survey_textarea_to_array('defaultvalue');
+        $options = survey_textarea_to_array($this->options);
+        $rates = $this->item_get_labels_array('rates');
+
+        $defaultvalues = survey_textarea_to_array($this->defaultvalue);
 
         if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
             if ($this->style == SURVEYFIELD_RATE_USERADIO) {
@@ -324,18 +342,18 @@ class surveyfield_rate extends surveyitem_base {
         }
 
         if ($this->style == SURVEYFIELD_RATE_USERADIO) {
-            foreach ($options as $optionindex => $option) {
-                $uniquename = $this->itemname.'_'.$optionindex;
+            foreach ($options as $k => $option) {
+                $uniquename = $this->itemname.'_'.$k;
                 $elementgroup = array();
-                foreach ($rates as $k => $rate) {
-                    $elementgroup[] = $mform->createElement('radio', $uniquename, '', $rate, $k);
+                foreach ($rates as $j => $rate) {
+                    $elementgroup[] = $mform->createElement('radio', $uniquename, '', $rate, $j);
                 }
                 $mform->addGroup($elementgroup, $uniquename.'_group', $option, ' ', false);
 
                 if (!$searchform) {
                     switch ($this->defaultoption) {
                         case SURVEY_CUSTOMDEFAULT:
-                            $defaultindex = array_search($defaultvalues[$optionindex], $rates_keys);
+                            $defaultindex = array_search($defaultvalues[$k], $rates);
                             $mform->setDefault($uniquename, $defaultindex);
                             break;
                         case SURVEY_INVITATIONDEFAULT:
@@ -352,14 +370,14 @@ class surveyfield_rate extends surveyitem_base {
                 }
             }
         } else { // SURVEYFIELD_RATE_USESELECT
-            foreach ($options as $optionindex => $option) {
-                $uniquename = $this->itemname.'_'.$optionindex;
+            foreach ($options as $k => $option) {
+                $uniquename = $this->itemname.'_'.$k;
                 $mform->addElement('select', $uniquename, $option, $rates, array('class' => 'indent-'.$this->indent));
 
                 if (!$searchform) {
                     switch ($this->defaultoption) {
                         case SURVEY_CUSTOMDEFAULT:
-                            $defaultindex = array_search($defaultvalues[$optionindex], $rates_keys);
+                            $defaultindex = array_search($defaultvalues[$k], $rates);
                             $mform->setDefault($uniquename, $defaultindex);
                             break;
                         case SURVEY_INVITATIONDEFAULT:
@@ -374,16 +392,14 @@ class surveyfield_rate extends surveyitem_base {
                 } else {
                     $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE); // free
                 }
-
-                $optionindex++;
             }
         }
 
         if (!$searchform) {
             if ($this->required) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                // -> I do not want JS form validation if the page is submitted trough the "previous" button
-                // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+                // -> I do not want JS form validation if the page is submitted through the "previous" button
+                // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
                 $mform->_required[] = $this->itemname.'_extrarow';
                 // Extra row has been forced by the plugin
@@ -411,15 +427,19 @@ class surveyfield_rate extends surveyitem_base {
 
     /*
      * userform_mform_validation
-     * @param $data, &$errors, $survey
+     *
+     * @param $data, &$errors
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey, $canaccesslimiteditems, $parentitem=null) {
         // this plugin displays as a set of dropdown menu or radio buttons. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
         // if different rates were requested, it is time to verify this
-        $options = survey_textarea_to_array('options');
+        $options = survey_textarea_to_array($this->options);
 
         if (isset($data[$this->itemname.'_noanswer'])) {
             return; // nothing to validate
@@ -445,7 +465,7 @@ class surveyfield_rate extends surveyitem_base {
         }
 
         if (!empty($this->forcedifferentrates)) {
-            $optionscount = count($this->item_get_value_label_array('options'));
+            $optionscount = count($this->item_get_labels_array('options'));
             $rates = array();
             for ( $i = 0; $i < $optionscount; $i++) {
                 $rates[] = $data[$this->itemname.'_'.$i];
@@ -467,6 +487,7 @@ class surveyfield_rate extends surveyitem_base {
 
     /*
      * userform_get_filling_instructions
+     *
      * @param
      * @return
      */
@@ -485,14 +506,15 @@ class surveyfield_rate extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $answer, $olduserdata
+     *
+     * @param $answer
+     * @param $olduserdata
      * @return
      */
     public function userform_save_preprocessing($answer, $olduserdata) {
         if (isset($answer['noanswer'])) {
             $olduserdata->content = null;
         } else {
-            $rates = array_keys($this->item_get_value_label_array('rates'));
             $return = array();
             foreach ($answer as $answeredrate) {
                 $return[] = $answeredrate;
@@ -506,6 +528,7 @@ class surveyfield_rate extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
+     *
      * @param $fromdb
      * @return
      */
@@ -514,8 +537,6 @@ class surveyfield_rate extends surveyitem_base {
         // [survey_field_rate_157_1] => english: 2
         // [survey_field_rate_157_2] => french: 1
         // [survey_field_rate_157_noanswer] => 0
-
-        $rates_keys = array_keys($this->item_get_value_label_array('rates'));
 
         $prefill = array();
         if ($fromdb) { // $fromdb may be boolean false for not existing data
@@ -544,7 +565,9 @@ class surveyfield_rate extends surveyitem_base {
     /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
-     * @param $answers, $format
+     *
+     * @param $answers
+     * @param $format
      * @return
      */
     public function userform_db_to_export($answer, $format='') {
@@ -562,8 +585,8 @@ class surveyfield_rate extends surveyitem_base {
             case SURVEYFIELD_RATE_RETURNVALUES:
                 $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $content);
                 $output = array();
-                $valuelabel = array_keys($this->item_get_value_label_array('options'));
-                foreach ($valuelabel as $k => $value) {
+                $values = $this->item_get_values_array('options');
+                foreach ($values as $k => $value) {
                     $output[] = $value.SURVEYFIELD_RATE_VALUERATESEPARATOR.$answers[$k];
                 }
                 $return = implode(SURVEY_OUTPUTMULTIVALUESEPARATOR, $output);
@@ -583,6 +606,7 @@ class surveyfield_rate extends surveyitem_base {
     /*
      * userform_mform_element_is_group
      * returns true if the useform mform element for this item id is a group and false if not
+     *
      * @param
      * @return
      */

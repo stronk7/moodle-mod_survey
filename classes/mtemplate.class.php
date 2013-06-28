@@ -72,6 +72,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * create_mtemplate
+     *
      * @param
      * @return
      */
@@ -242,6 +243,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * lib_write_content
+     *
      * @param
      * @return
      */
@@ -341,7 +343,10 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * lib_write_table_structure
-     * @param $structure, $plugin, $sid
+     *
+     * @param $structure
+     * @param $plugin
+     * @param $sid
      * @return
      */
     public function lib_write_table_structure($structure, $plugin, $sid) {
@@ -359,6 +364,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * lib_write_structure_values_separator
+     *
      * @param $pluginname
      * @return
      */
@@ -372,7 +378,8 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * lib_write_intro_si_values
-     * @param
+     *
+     * @param $si_sid
      * @return
      */
     public function lib_write_intro_si_values($si_sid) {
@@ -390,6 +397,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * lib_write_si_values
+     *
      * @param $values
      * @return
      */
@@ -406,7 +414,9 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * lib_write_intro_plugin_values
-     * @param $currentplugin, $currentsid
+     *
+     * @param $currentplugin
+     * @param $currentsid
      * @return
      */
     public function lib_write_intro_plugin_values($currentplugin, $currentsid) {
@@ -420,7 +430,10 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * lib_write_plugin_values
-     * @param $values, $tablename, $currentplugin
+     *
+     * @param $values
+     * @param $tablename
+     * @param $currentplugin
      * @return
      */
     public function lib_write_plugin_values($values, $tablename, $currentplugin) {
@@ -434,7 +447,9 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * collect_strings
-     * @param $currentsid, $values
+     *
+     * @param $currentsid
+     * @param $values
      * @return
      */
     public function collect_strings($currentsid, $values) {
@@ -447,7 +462,8 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * extract_original_string
-     * @param $langtree
+     *
+     * @param
      * @return
      */
     public function extract_original_string() {
@@ -463,6 +479,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * get_translated_strings
+     *
      * @param $userlang
      * @return
      */
@@ -481,7 +498,9 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * wrap_line
-     * @param $values, $lineindent=20
+     *
+     * @param $values
+     * @param $lineindent
      * @return
      */
     public function wrap_line($values, $lineindent=20) {
@@ -544,6 +563,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
     /*
      * add_items_from_plugin
+     *
      * @param
      * @return
      */

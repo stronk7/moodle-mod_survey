@@ -43,77 +43,8 @@ function xmldb_survey_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2012112101) {
-
-        // Rename field draft on table survey_item to hide
-        $table = new xmldb_table('survey_item');
-        $field = new xmldb_field('draft', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'advancedsearch');
-
-        // Launch rename field draft
-        $dbman->rename_field($table, $field, 'hide');
-
-        // survey savepoint reached
-        upgrade_mod_savepoint(true, 2012112101, 'survey');
-    }
-
-    if ($oldversion < 2013050301) {
-
-        // Define field hideinstructions to be added to survey_item.
-        $table = new xmldb_table('survey_item');
-        $field = new xmldb_field('hideinstructions', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'required');
-
-        // Conditionally launch add field hideinstructions.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Survey savepoint reached.
-        upgrade_mod_savepoint(true, 2013050301, 'survey');
-    }
-
-    if ($oldversion < 2013050802) {
-
-        // Rename field softinfo on table survey_item to extranote.
-        $table = new xmldb_table('survey_item');
-        $field = new xmldb_field('softinfo', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'extrarow');
-
-        // Launch rename field softinfo.
-        $dbman->rename_field($table, $field, 'extranote');
-
-        // Survey savepoint reached.
-        upgrade_mod_savepoint(true, 2013050802, 'survey');
-    }
-
-    if ($oldversion < 2013052301) {
-
-        // Define field completionsubmit to be added to survey.
-        $table = new xmldb_table('survey');
-        $field = new xmldb_field('completionsubmit', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'thankshtmlformat');
-
-        // Conditionally launch add field completionsubmit.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Survey savepoint reached.
-        upgrade_mod_savepoint(true, 2013052301, 'survey');
-    }
-
-    if ($oldversion < 2013060901) {
-
-        // Rename field fieldname on table survey_item to variable.
-        $table = new xmldb_table('survey_item');
-        $field = new xmldb_field('fieldname', XMLDB_TYPE_CHAR, '64', null, null, null, null, 'hideinstructions');
-
-        // Launch rename field fieldname.
-        $dbman->rename_field($table, $field, 'variable');
-
-        // Survey savepoint reached.
-        upgrade_mod_savepoint(true, 2013060901, 'survey');
-    }
 
     if ($oldversion < 2013060903) {
-
         // Rename field hidehardinfo on table survey_item to hideinstructions.
         $table = new xmldb_table('survey_item');
         $field = new xmldb_field('hidehardinfo', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'required');
@@ -125,6 +56,75 @@ function xmldb_survey_upgrade($oldversion) {
 
         // Survey savepoint reached.
         upgrade_mod_savepoint(true, 2013060903, 'survey');
+    }
+
+    if ($oldversion < 2013062701) {
+        // Define field insearchform to be added to survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('insearchform', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'hide');
+
+        // Conditionally launch add field insearchform.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $DB->set_field('survey_item', 'insearchform', 0, array('basicform' => 1));
+        $DB->set_field('survey_item', 'insearchform', 1, array('basicform' => 2));
+
+
+        // Define field limitedaccess to be added to survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('limitedaccess', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'insearchform');
+
+        // Conditionally launch add field limitedaccess.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $DB->set_field('survey_item', 'limitedaccess', 0);
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013062701, 'survey');
+    }
+
+    if ($oldversion < 2013062702) {
+        // Define field basicform to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('basicform');
+
+        // Conditionally launch drop field basicform.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field advancedsearch to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('advancedsearch');
+
+        // Conditionally launch drop field advancedsearch.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Rename field basicformpage on table survey_item to formpage.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('basicformpage', XMLDB_TYPE_INTEGER, '7', null, XMLDB_NOTNULL, null, '0', 'sortindex');
+
+        // Launch rename field basicformpage.
+        $dbman->rename_field($table, $field, 'formpage');
+
+
+        // Define field advancedformpage to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('advancedformpage');
+
+        // Conditionally launch drop field advancedsearch.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013062702, 'survey');
     }
 
     return true;

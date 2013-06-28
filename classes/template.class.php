@@ -44,7 +44,9 @@ class mod_survey_template {
 
     /*
      * get_table_structure
-     * @param $tablename, $dropid=true
+     *
+     * @param $tablename
+     * @param $dropid
      * @return
      */
     public function get_table_structure($tablename, $dropid=true) {

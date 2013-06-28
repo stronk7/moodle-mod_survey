@@ -40,12 +40,12 @@ function surveytemplate_criticalincidents_add() {
 
     $content_sid = 0;
     // ////////////// SURVEY_ITEM
-    $si_fields = array('surveyid'      , 'type'            , 'plugin'          , 'externalname' ,
-                       'content_sid'   , 'content'         , 'contentformat'   , 'customnumber' ,
-                       'extrarow'      , 'extranote'       , 'hideinstructions', 'required'     , 'variable',
-                       'indent'        , 'basicform'       , 'advancedsearch'  , 'hide'         ,
-                       'sortindex'     , 'basicformpage'   , 'advancedformpage', 'parentid'     ,
-                       'parentcontent' , 'parentvalue'     , 'timecreated'     , 'timemodified');
+    $si_fields = array('surveyid'      , 'type'         , 'plugin'          , 'externalname',
+                       'content_sid'   , 'content'      , 'contentformat'   , 'customnumber',
+                       'extrarow'      , 'extranote'    , 'hideinstructions', 'required'    ,
+                       'variable'      , 'indent'       , 'hide'            , 'insearchform',
+                       'limitedaccess' , 'sortindex'    , 'formpage'        , 'parentid'    ,
+                       'parentcontent' , 'parentvalue'  , 'timecreated'     , 'timemodified');
 
     $labelintro_sid = 0;
     // ////////////// SURVEY_ITEM_LABEL
@@ -73,9 +73,9 @@ function surveytemplate_criticalincidents_add() {
     $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
                     0, '', 0, null, null,
-                    0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
-                    $sortindex, 1, 1, null,
-                    null, null, $timenow, null);
+                    '', 0, 0, 1,
+                    0, $sortindex, 1, null,
+                    '', '', $timenow, null);
     $itemid = $DB->insert_record('survey_item', array_combine($si_fields, $values));
 
     // survey_label
@@ -96,10 +96,10 @@ function surveytemplate_criticalincidents_add() {
         $content_sid++;
         $values = array(0, SURVEY_TYPEFIELD, 'textarea', $externalname,
                         $content_sid, null, FORMAT_HTML, null,
-                        0, '', 0, SURVEY_REQUIREDITEM, null,
-                        0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
-                        $sortindex, 1, 1, null,
-                        null, null, $timenow, null);
+                        0, '', 0, SURVEY_REQUIREDITEM,
+                        '', 0, 0, 1,
+                        0, $sortindex, 1, null,
+                        '', '', $timenow, null);
         $itemid = $DB->insert_record('survey_item', array_combine($si_fields, $values));
 
         // survey_textarea

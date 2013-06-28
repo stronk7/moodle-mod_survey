@@ -102,16 +102,18 @@ class surveyfield_fileupload extends surveyitem_base {
         $this->flag->couldbeparent = false;
         $this->flag->useplugintable = true;
 
+        $this->item_form_requires['insearchform'] = false;
+
         $this->context = context_module::instance($cm->id);
 
         /*
-         * this item is not issearchable
+         * this item is not searchable
          * so the default inherited from itembase.class.php
-         * public $basicform = SURVEY_FILLANDSEARCH;
+         * public $insearchform = 1;
          * can not match the plugin_form element
-         * So I change it to SURVEY_FILLONLY
+         * So I change it
          */
-        $this->basicform = SURVEY_FILLONLY;
+        $this->insearchform = 0;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
@@ -120,6 +122,7 @@ class surveyfield_fileupload extends surveyitem_base {
 
     /*
      * item_load
+     *
      * @param $itemid
      * @return
      */
@@ -134,6 +137,7 @@ class surveyfield_fileupload extends surveyitem_base {
 
     /*
      * item_save
+     *
      * @param $record
      * @return
      */
@@ -152,6 +156,7 @@ class surveyfield_fileupload extends surveyitem_base {
 
     /*
      * item_get_plugin_values
+     *
      * @param $pluginstructure
      * @param $pluginsid
      * @return
@@ -172,10 +177,15 @@ class surveyfield_fileupload extends surveyitem_base {
 
     /*
      * userform_mform_element
+     *
      * @param $mform
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $survey, $canaccesslimiteditems, $parentitem=null, $searchform=false) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
         $fieldname = $this->itemname.'_filemanager';
@@ -189,14 +199,10 @@ class surveyfield_fileupload extends surveyitem_base {
         if (!$searchform) {
             if ($this->required) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                // -> I do not want JS form validation if the page is submitted trough the "previous" button
-                // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+                // -> I do not want JS form validation if the page is submitted through the "previous" button
+                // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                if ($this->extrarow) {
-                    $starplace = $this->itemname.'_extrarow';
-                } else {
-                    $starplace = $fieldname;
-                }
+                $starplace = ($this->extrarow) ? $this->itemname.'_extrarow' : $this->itemname;
                 $mform->_required[] = $starplace;
             }
         }
@@ -204,10 +210,14 @@ class surveyfield_fileupload extends surveyitem_base {
 
     /*
      * userform_mform_validation
-     * @param $data, &$errors, $survey
+     *
+     * @param $data, &$errors
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey, $canaccesslimiteditems, $parentitem=null) {
         if ($this->required) {
             if ($this->extrarow) {
                 $errorkey = $this->itemname.'_extrarow';
@@ -225,6 +235,7 @@ class surveyfield_fileupload extends surveyitem_base {
 
     /*
      * userform_get_filling_instructions
+     *
      * @param
      * @return
      */
@@ -246,7 +257,9 @@ class surveyfield_fileupload extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $answer, $olduserdata
+     *
+     * @param $answer
+     * @param $olduserdata
      * @return
      */
     public function userform_save_preprocessing($answer, $olduserdata) {
@@ -280,6 +293,7 @@ class surveyfield_fileupload extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
+     *
      * @param $fromdb
      * @return
      */
@@ -303,7 +317,9 @@ class surveyfield_fileupload extends surveyitem_base {
     /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
-     * @param $answers, $format
+     *
+     * @param $answers
+     * @param $format
      * @return
      */
     public function userform_db_to_export($answer, $format='') {
@@ -322,11 +338,11 @@ class surveyfield_fileupload extends surveyitem_base {
     /*
      * userform_mform_element_is_group
      * returns true if the useform mform element for this item id is a group and false if not
+     *
      * @param
      * @return
      */
     public function userform_mform_element_is_group() {
-        // $this->flag->couldbeparent = false
-        // this method is never called
+        return false;
     }
 }

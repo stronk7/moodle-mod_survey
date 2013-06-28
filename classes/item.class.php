@@ -128,6 +128,7 @@ class mod_survey_itemelement {
 
     /*
      * manage_actions
+     *
      * @param
      * @return
      */
@@ -157,13 +158,31 @@ class mod_survey_itemelement {
                 $this->reorder_items();
                 break;
             case SURVEY_REQUIREDON:
-                $DB->set_field('survey_item', 'required', '1', array('id' => $this->itemid));
+                $DB->set_field('survey_item', 'required', 1, array('id' => $this->itemid));
                 break;
             case SURVEY_REQUIREDOFF:
-                $DB->set_field('survey_item', 'required', '0', array('id' => $this->itemid));
+                $DB->set_field('survey_item', 'required', 0, array('id' => $this->itemid));
                 break;
             case SURVEY_CHANGEINDENT:
                 $DB->set_field('survey_item', 'indent', $this->nextindent, array('id' => $this->itemid));
+                break;
+            case SURVEY_ADDTOSEARCH:
+                $item = survey_get_item($this->itemid, $this->type, $this->plugin);
+                if ($item->get_item_form_requires('insearchform')) {
+                    $DB->set_field('survey_item', 'insearchform', 1, array('id' => $this->itemid));
+                }
+                break;
+            case SURVEY_OUTOFSEARCH:
+                $DB->set_field('survey_item', 'insearchform', 0, array('id' => $this->itemid));
+                break;
+            case SURVEY_MAKELIMITED:
+                $item = survey_get_item($this->itemid, $this->type, $this->plugin);
+                if ($item->get_item_form_requires('limitedaccess')) {
+                    $DB->set_field('survey_item', 'limitedaccess', 1, array('id' => $this->itemid));
+                }
+                break;
+            case SURVEY_MAKEFORALL:
+                $DB->set_field('survey_item', 'limitedaccess', 0, array('id' => $this->itemid));
                 break;
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
@@ -172,6 +191,7 @@ class mod_survey_itemelement {
 
     /*
      * manage_items
+     *
      * @param
      * @return
      */
@@ -189,9 +209,8 @@ class mod_survey_itemelement {
         $tablecolumns[] = 'plugin';
         $tablecolumns[] = 'sortindex';
         $tablecolumns[] = 'parentid';
-        $tablecolumns[] = 'uavailability';
-        $tablecolumns[] = 'mavailability';
-        $tablecolumns[] = 'basicformpage';
+        $tablecolumns[] = 'availability';
+        $tablecolumns[] = 'formpage';
         $tablecolumns[] = 'content';
         $tablecolumns[] = 'customnumber';
         $tablecolumns[] = 'actions';
@@ -201,8 +220,7 @@ class mod_survey_itemelement {
         $tableheaders[] = get_string('plugin', 'survey');
         $tableheaders[] = get_string('sortindex', 'survey');
         $tableheaders[] = get_string('parentid_header', 'survey');
-        $tableheaders[] = get_string('basic', 'survey');
-        $tableheaders[] = get_string('advanced_header', 'survey');
+        $tableheaders[] = get_string('availability', 'survey');
         $tableheaders[] = get_string('page');
         $tableheaders[] = get_string('content', 'survey');
         $tableheaders[] = get_string('customnumber_header', 'survey');
@@ -211,16 +229,14 @@ class mod_survey_itemelement {
 
         // $table->collapsible(true);
         $table->sortable(true, 'sortindex'); // sorted by sortindex by default
-        $table->no_sorting('uavailability');
-        $table->no_sorting('mavailability');
+        $table->no_sorting('availability');
         $table->no_sorting('actions');
 
         $table->column_class('plugin', 'plugin');
         $table->column_class('sortindex', 'sortindex');
         $table->column_class('parentid', 'parentitem');
-        $table->column_class('uavailability', 'uavailability');
-        $table->column_class('mavailability', 'mavailability');
-        $table->column_class('basicformpage', 'basicformpage');
+        $table->column_class('availability', 'availability');
+        $table->column_class('formpage', 'formpage');
 
         $table->column_class('content', 'content');
         $table->column_class('customnumber', 'customnumber');
@@ -300,7 +316,7 @@ class mod_survey_itemelement {
 
             $tablerow = array();
             $tablerow[] = $icons;
-            $tablerow = array_pad($tablerow, 9, '');
+            $tablerow = array_pad($tablerow, count($table->columns), '');
 
             $table->add_data($tablerow);
         } else {
@@ -309,6 +325,16 @@ class mod_survey_itemelement {
 
         foreach ($itemseeds as $itemseed) {
             $item = survey_get_item($itemseed->itemid, $itemseed->type, $itemseed->plugin);
+
+            // /////////////////////////////////////////////////
+            // $paramurl_base definition
+            $paramurl_base = array();
+            $paramurl_base['id'] = $this->cm->id;
+            $paramurl_base['itemid'] = $item->get_itemid();
+            $paramurl_base['type'] = $item->get_type();
+            $paramurl_base['plugin'] = $item->get_plugin();
+            // end of $paramurl_base definition
+            // /////////////////////////////////////////////////
 
             $tablerow = array();
 
@@ -332,68 +358,68 @@ class mod_survey_itemelement {
                 $parentsortindex = $DB->get_field('survey_item', 'sortindex', array('id' => $item->get_parentid()));
                 $content = $parentsortindex;
                 $content .= '&nbsp;<img src="'.$OUTPUT->pix_url('link', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
-                $content .= $this->multiline_to_condition_union($item->get_parentcontent());
+                $content .= $this->condition_from_multiline($item->get_parentcontent());
             } else {
                 $content = '';
             }
             $tablerow[] = $content;
 
-            // *************************************** user availability
+            // *************************************** availability
             if ($item->get_hide()) {
-                $message = get_string('basicnoedit', 'survey');
-                $content = '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
-                $message = get_string('basicnosearch', 'survey');
-                $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
-            } else {
-                switch ($item->get_basicform()) {
-                    case SURVEY_NOTPRESENT:
-                        $message = get_string('basicnoedit', 'survey');
-                        $content = '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
-                        $message = get_string('basicnosearch', 'survey');
-                        $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
-                        break;
-                    case SURVEY_FILLONLY:
-                        $message = get_string('basicedit', 'survey');
-                        $content = '<img src="'.$OUTPUT->pix_url('i/grades').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
-                        $message = get_string('basicnosearch', 'survey');
-                        $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
-                        break;
-                    case SURVEY_FILLANDSEARCH:
-                        $message = get_string('basicedit', 'survey');
-                        $content = '<img src="'.$OUTPUT->pix_url('i/grades').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
-                        $message = get_string('basicsearch', 'survey');
-                        $content .= '<img src="'.$OUTPUT->pix_url('t/preview').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
-                        break;
-                    default:
-                        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->basicform = '.$this->basicform);
-                }
-            }
-            $tablerow[] = $content;
+                $message = get_string('hidden', 'survey');
+                $icons = '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
 
-            // *************************************** advanced availability
-            if ($item->get_hide()) {
-                $message = get_string('advancednoedit', 'survey');
-                $content = '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
-                $message = get_string('advancednosearch', 'survey');
-                $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
+                // $message = get_string('hidden', 'survey');
+                $icons .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
             } else {
-                $message = get_string('advancededit', 'survey');
-                $content = '<img src="'.$OUTPUT->pix_url('i/grades').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
-                if ($item->get_advancedsearch() == SURVEY_ADVFILLANDSEARCH) {
-                    $message = get_string('advancedsearch', 'survey');
-                    $content .= '<img src="'.$OUTPUT->pix_url('t/preview').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
+                if (!$item->get_limitedaccess()) {
+                    $message = get_string('available', 'survey');
+                    if ($item->get_item_form_requires('limitedaccess')) {
+                        $paramurl = $paramurl_base + array('act' => SURVEY_MAKELIMITED);
+                        $basepath = new moodle_url('items_manage.php', $paramurl);
+
+                        $icons = '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
+                        $icons .= '<img src="'.$OUTPUT->pix_url('all', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
+                    } else {
+                        $icons = '<img src="'.$OUTPUT->pix_url('all', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+                    }
                 } else {
-                    $message = get_string('advancednosearch', 'survey');
-                    $content .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+                    $message = get_string('needrole', 'survey');
+
+                    $paramurl = $paramurl_base + array('act' => SURVEY_MAKEFORALL);
+                    $basepath = new moodle_url('items_manage.php', $paramurl);
+
+                    $icons = '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
+                    $icons .= '<img src="'.$OUTPUT->pix_url('limited', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
+                }
+
+                if ($item->get_insearchform()) {
+                    $message = get_string('insearchform', 'survey');
+
+                    $paramurl = $paramurl_base + array('act' => SURVEY_OUTOFSEARCH);
+                    $basepath = new moodle_url('items_manage.php', $paramurl);
+
+                    $icons .= '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
+                    $icons .= '<img src="'.$OUTPUT->pix_url('insearch', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
+                } else {
+                    $message = get_string('notinsearchform', 'survey');
+                    if ($item->get_item_form_requires('insearchform')) {
+
+                        $paramurl = $paramurl_base + array('act' => SURVEY_ADDTOSEARCH);
+                        $basepath = new moodle_url('items_manage.php', $paramurl);
+
+                        $icons .= '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
+                        $icons .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>';
+                    } else {
+                        $icons .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
+                    }
                 }
             }
-            $tablerow[] = $content;
+            $tablerow[] = $icons;
 
             // *************************************** page
             if ($item->get_plugin() != 'pagebreak') {
-                $content = ($item->get_basicformpage()) ? $item->get_basicformpage() : '..';
-                $content .= '/';
-                $content .= ($item->get_advancedformpage()) ? $item->get_advancedformpage() : '..';
+                $content = $item->get_formpage();
             } else {
                 $content = '';
             }
@@ -420,15 +446,6 @@ class mod_survey_itemelement {
 
             if ($this->action != SURVEY_CHANGEORDERASK) {
                 // *************************************** actions
-                // /////////////////////////////////////////////////
-                // $paramurl_base definition
-                $paramurl_base = array();
-                $paramurl_base['id'] = $this->cm->id;
-                $paramurl_base['itemid'] = $item->get_itemid();
-                $paramurl_base['type'] = $item->get_type();
-                $paramurl_base['plugin'] = $item->get_plugin();
-                // end of $paramurl_base definition
-                // /////////////////////////////////////////////////
 
                 $icons = '';
                 // *************************************** SURVEY_EDITITEM
@@ -565,7 +582,7 @@ class mod_survey_itemelement {
 
                     $tablerow = array();
                     $tablerow[] = $icons;
-                    $tablerow = array_pad($tablerow, 9, '');
+                    $tablerow = array_pad($tablerow, count($table->columns), '');
 
                     $table->add_data($tablerow);
                 }
@@ -579,6 +596,7 @@ class mod_survey_itemelement {
 
     /*
      * manage_item_hide
+     *
      * @param
      * @return
      */
@@ -641,6 +659,7 @@ class mod_survey_itemelement {
 
     /*
      * manage_item_show
+     *
      * @param
      * @return
      */
@@ -708,6 +727,7 @@ class mod_survey_itemelement {
 
     /*
      * manage_item_deletion
+     *
      * @param
      * @return
      */
@@ -813,6 +833,7 @@ class mod_survey_itemelement {
 
     /*
      * reorder_items
+     *
      * @param
      * @return
      */
@@ -856,6 +877,7 @@ class mod_survey_itemelement {
 
     /*
      * reorder_items
+     *
      * @param
      * @return
      */
@@ -943,6 +965,8 @@ class mod_survey_itemelement {
 
         foreach ($itemseeds as $itemseed) {
             $item = survey_get_item($itemseed->itemid, $itemseed->type, $itemseed->plugin);
+            $current_hide = $item->get_hide();
+
             if ($item->get_parentid()) {
                 $parentseed = $DB->get_record('survey_item', array('id' => $item->get_parentid()), 'plugin', MUST_EXIST);
                 require_once($CFG->dirroot.'/mod/survey/field/'.$parentseed->plugin.'/plugin.class.php');
@@ -973,7 +997,7 @@ class mod_survey_itemelement {
                 $message = get_string('parentid_alt', 'survey');
                 $content = $parentitem->get_sortindex();
                 $content .= '&nbsp;<img src="'.$OUTPUT->pix_url('link', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
-                $content .= $this->multiline_to_condition_union($item->get_parentcontent());
+                $content .= $this->condition_from_multiline($item->get_parentcontent());
             } else {
                 $content = '';
             }
@@ -993,7 +1017,6 @@ class mod_survey_itemelement {
                     $tablerow[] = $okstring;
                 } else {
                     if ($status === false) {
-                        $current_hide = $item->get_hide();
                         if (empty($current_hide)) {
                             $tablerow[] = '<span class="errormessage">'.get_string('wrongrelation', 'survey', $item->get_parentcontent()).'</span>';
                         } else {
@@ -1038,11 +1061,12 @@ class mod_survey_itemelement {
     }
 
     /*
-     * survey_wlib_write_plugin_values
+     * condition_from_multiline
+     *
      * @param &$libcontent, $values, $tablename, $currentplugin
      * @return
      */
-    public function multiline_to_condition_union($parentcontent) {
+    public function condition_from_multiline($parentcontent) {
         $constarains = str_replace("\r", '', $parentcontent);
         $constarains = explode("\n", $constarains);
 
@@ -1050,7 +1074,8 @@ class mod_survey_itemelement {
     }
 
     /*
-     * survey_wlib_write_plugin_values
+     * display_user_feedback
+     *
      * @param &$libcontent, $values, $tablename, $currentplugin
      * @return
      */
@@ -1107,4 +1132,22 @@ class mod_survey_itemelement {
 
         echo $OUTPUT->box($message, 'notice centerpara');
     }
+
+    /*
+     * itemwelcome
+     *
+     * @param &$libcontent, $values, $tablename, $currentplugin
+     * @return
+     */
+    public function item_welcome() {
+        global $OUTPUT;
+
+        $plugintitle = get_string('userfriendlypluginname', 'survey'.$this->type.'_'.$this->plugin);
+
+        $message = '<img src="'.$OUTPUT->pix_url('icon', 'survey'.$this->type.'_'.$this->plugin).'" class="icon" alt="'.$plugintitle.'" title="'.$plugintitle.'" />';
+        $message .= get_string($this->type, 'survey').': '.$plugintitle;
+
+        echo $OUTPUT->box($message);
+    }
+
 }

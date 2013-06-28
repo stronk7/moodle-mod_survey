@@ -153,6 +153,7 @@ class survey_pluginform extends surveyitem_baseform {
             $a = get_string('noanswer', 'survey');
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);
         }
+
         return $errors;
     }
 }

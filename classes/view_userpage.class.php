@@ -74,9 +74,9 @@ class mod_survey_userpagemanager {
     public $canmanageallsubmissions = false;
 
     /*
-     * $canaccessadvancedform
+     * $canaccesslimiteditems
      */
-    public $canaccessadvancedform = false;
+    public $canaccesslimiteditems = false;
 
     /*
      * $canmanageitems
@@ -102,10 +102,16 @@ class mod_survey_userpagemanager {
         $this->action = $action;
         $this->set_page_from_action();
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
-        $this->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $this->context, null, true);
+        $this->canaccesslimiteditems = has_capability('mod/survey:accesslimiteditems', $this->context, null, true);
         $this->canmanageitems = has_capability('mod/survey:manageitems', $this->context, null, true);
     }
 
+    /*
+     * set_page_from_action
+     *
+     * @param
+     * @return
+     */
     function set_page_from_action() {
         switch ($this->action) {
             case SURVEY_NOACTION:
@@ -127,6 +133,7 @@ class mod_survey_userpagemanager {
 
     /*
      * survey_add_custom_css
+     *
      * @param
      * @return
      */
@@ -143,52 +150,54 @@ class mod_survey_userpagemanager {
 
     /*
      * assign_pages
+     *
      * @param
      * @return
      */
     public function assign_pages() {
         global $DB;
 
-        if ($this->canaccessadvancedform) {
-            $pagefield = 'advancedformpage';
-            $whereclause = 'surveyid = :surveyid AND hide = 0';
-        } else {
-            $pagefield = 'basicformpage';
-            $whereclause = 'surveyid = :surveyid AND hide = 0 AND basicform <> '.SURVEY_NOTPRESENT;
+        $conditions = array();
+        $conditions['surveyid'] = $this->survey->id;
+        $conditions['hide'] = 0;
+        if (!$this->canaccesslimiteditems) {
+            $conditions['limitedaccess'] = 0;
         }
-        $whereparams = array('surveyid' => $this->survey->id);
-        $pagenumber = $DB->get_field_select('survey_item', 'MAX('.$pagefield.')', $whereclause, $whereparams);
-        // were pages assigned?
-        if (!$pagenumber) {
-            $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
-            $pagenumber = 1;
-            $items = $DB->get_recordset_select('survey_item', $whereclause, $whereparams, 'sortindex', 'id, type, plugin, parentid, '.$pagefield.', sortindex');
-            if ($items) {
+        if ($pagenumber = $DB->get_field('survey_item', 'MAX(formpage)', $conditions)) {
+            $this->lastformpage = $pagenumber;
+            return;
+        }
 
-                foreach ($items as $item) {
-                    if ($item->plugin == 'pagebreak') { // it is a page break
-                        if (!$lastwaspagebreak) {
+        $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
+        $pagenumber = 1;
+        $items = $DB->get_recordset('survey_item', $conditions, 'sortindex', 'id, type, plugin, parentid, formpage, sortindex');
+        if ($items) {
+//echo
+            foreach ($items as $item) {
+                if ($item->plugin == 'pagebreak') { // it is a page break
+                    if (!$lastwaspagebreak) {
+                        $pagenumber++;
+                    }
+                    $lastwaspagebreak = true;
+                    continue;
+                } else {
+                    $lastwaspagebreak = false;
+                }
+                if ($this->survey->newpageforchild) {
+                    $item_parentid = $item->parentid;
+                    if (!empty($item_parentid)) {
+                        $parentpage = $DB->get_field('survey_item', 'formpage', array('id' => $item->parentid), MUST_EXIST);
+                        if ($parentpage == $pagenumber) {
                             $pagenumber++;
                         }
-                        $lastwaspagebreak = true;
-                        continue;
-                    } else {
-                        $lastwaspagebreak = false;
                     }
-                    if ($this->survey->newpageforchild) {
-                        $item_parentid = $item->get_parentid();
-                        if (!empty($item_parentid)) {
-                            $parentpage = $DB->get_field('survey_item', $pagefield, array('id' => $item->get_parentid()), MUST_EXIST);
-                            if ($parentpage == $pagenumber) {
-                                $pagenumber++;
-                            }
-                        }
-                    }
-                    $DB->set_field('survey_item', $pagefield, $pagenumber, array('id' => $item->id));
                 }
-                $items->close();
+//echo 'assegno pagine: $DB->set_field(\'survey_item\', \'formpage\', '.$pagenumber.', array(\'id\' => '.$item->id.'));<br />';
+                $DB->set_field('survey_item', 'formpage', $pagenumber, array('id' => $item->id));
             }
+            $items->close();
         }
+//echo '$pagenumber = '.$pagenumber.'<br />';
 
         $this->lastformpage = $pagenumber;
     }
@@ -379,7 +388,8 @@ class mod_survey_userpagemanager {
 
     /*
      * save_survey_submissions
-     * @param none
+     *
+     * @param
      * @return survey_submissions record
      */
     public function save_survey_submissions() {
@@ -393,7 +403,6 @@ class mod_survey_userpagemanager {
         $savebutton = (isset($this->formdata->savebutton) && ($this->formdata->savebutton));
         $saveasnewbutton = (isset($this->formdata->saveasnewbutton) && ($this->formdata->saveasnewbutton));
         $nextbutton = (isset($this->formdata->nextbutton) && ($this->formdata->nextbutton));
-
         if ($saveasnewbutton) {
             $this->formdata->submissionid = 0;
         }
@@ -433,12 +442,14 @@ class mod_survey_userpagemanager {
                 $survey_submissions->status = $status;
             }
         }
+
         $this->submissionid = $survey_submissions->id;
         $this->status = $survey_submissions->status;
     }
 
     /*
      * notifyroles
+     *
      * @param
      * @return
      */
@@ -488,12 +499,11 @@ class mod_survey_userpagemanager {
             if ($this->survey->notifyrole) {
                 // get_enrolled_users($courseid, $options = array()) <-- role is missing
                 // get_users_from_role_on_context($role, $context);  <-- this is ok but I need to call it once per $role, below I make the query once all together
-                $roles = explode(',', $this->survey->notifyrole);
                 $sql = 'SELECT DISTINCT ra.userid, u.firstname, u.lastname, u.email
                         FROM (SELECT *
                               FROM {role_assignments}
                               WHERE contextid = '.$context->id.'
-                                  AND roleid IN ('.$roles.')) ra
+                                  AND roleid IN ('.$this->survey->notifyrole.')) ra
                         JOIN {user} u ON u.id = ra.userid';
                 $receivers = $DB->get_records_sql($sql);
             } else {
@@ -548,7 +558,9 @@ class mod_survey_userpagemanager {
 
     /*
      * next_not_empty_page
-     * @param $surveyid, $canaccessadvancedform, $formpage, $forward, $submissionid=0, $maxformpage=0
+     *
+     * @param $forward
+     * @param $maxformpage
      * @return
      */
     public function next_not_empty_page($forward, $maxformpage=0) {
@@ -584,14 +596,15 @@ class mod_survey_userpagemanager {
 
     /*
      * page_has_items
-     * @param $surveyid, $canaccessadvancedform, $formpage, $submissionid
+     *
+     * @param $formpage
      * @return
      */
     public function page_has_items($formpage) {
         global $CFG, $DB;
 
-        $sql = survey_fetch_items_seeds($this->canaccessadvancedform, false, true);
-        $params = array('surveyid' => $this->survey->id, 'formpage' => $formpage, 'type' => SURVEY_TYPEFIELD);
+        //$canaccesslimiteditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$formpage
+        list($sql, $params) = survey_fetch_items_seeds($this->survey->id, $this->canaccesslimiteditems, false, SURVEY_TYPEFIELD, $formpage);
         $itemseeds = $DB->get_records_sql($sql, $params);
 
         // start looking ONLY at empty($item->parentid) because it doesn't involve extra queries
@@ -626,6 +639,7 @@ class mod_survey_userpagemanager {
 
     /*
      * count_input_items
+     *
      * @param
      * @return
      */
@@ -635,22 +649,22 @@ class mod_survey_userpagemanager {
         // if no items are available, stop the intervention here
         $whereparams = array('surveyid' => $this->survey->id);
         $whereclause = 'surveyid = :surveyid AND hide = 0';
-        if (!$this->canaccessadvancedform) {
-            $whereclause .= ' AND basicform <> '.SURVEY_NOTPRESENT;
+        if (!$this->canaccesslimiteditems) {
+            $whereclause .= ' AND limitedaccess = 0';
         }
-
         return $DB->count_records_select('survey_item', $whereclause, $whereparams);
     }
 
     /*
      * noitem_stopexecution
+     *
      * @param
      * @return
      */
     public function noitem_stopexecution() {
         global $COURSE, $OUTPUT;
 
-        $message = ($this->canaccessadvancedform) ? get_string('noadvanceditemsfound', 'survey') : get_string('nobasicitemsfound', 'survey');
+        $message = ($this->canaccesslimiteditems) ? get_string('noadvanceditemsfound', 'survey') : get_string('nobasicitemsfound', 'survey');
         echo $OUTPUT->notification($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
 
         if ($this->canmanageitems) {
@@ -665,6 +679,7 @@ class mod_survey_userpagemanager {
 
     /*
      * submissions_allowed
+     *
      * @param
      * @return
      */
@@ -684,6 +699,7 @@ class mod_survey_userpagemanager {
 
     /*
      * user_closed_submissions
+     *
      * @param
      * @return
      */
@@ -697,6 +713,7 @@ class mod_survey_userpagemanager {
 
     /*
      * submissions_exceeded_stopexecution
+     *
      * @param
      * @return
      */
@@ -716,6 +733,7 @@ class mod_survey_userpagemanager {
 
     /*
      * manage_thanks_page
+     *
      * @param
      * @return
      */
@@ -733,6 +751,7 @@ class mod_survey_userpagemanager {
 
     /*
      * survey_show_thanks_page
+     *
      * @param
      * @return
      */
@@ -765,6 +784,7 @@ class mod_survey_userpagemanager {
 
     /*
      * message_preview_mode
+     *
      * @param
      * @return
      */
@@ -777,6 +797,7 @@ class mod_survey_userpagemanager {
 
     /*
      * message_current_page
+     *
      * @param
      * @return
      */
@@ -794,15 +815,16 @@ class mod_survey_userpagemanager {
 
     /*
      * get_prefill_data
-     * @param $allpages
+     *
+     * @param
      * @return
      */
-    public function get_prefill_data($allpages) {
+    public function get_prefill_data() {
         global $CFG, $DB;
 
         $prefill = array();
-        $sql = survey_fetch_items_seeds($this->canaccessadvancedform, false, true, $allpages);
-        $params = array('surveyid' => $this->survey->id, 'formpage' => $this->formpage, 'type' => SURVEY_TYPEFIELD);
+        //$canaccesslimiteditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$this->formpage
+        list($sql, $params) = survey_fetch_items_seeds($this->survey->id, $this->canaccesslimiteditems, false, SURVEY_TYPEFIELD, $this->formpage);
         if ($itemseeds = $DB->get_recordset_sql($sql, $params)) {
             foreach ($itemseeds as $itemseed) {
                 $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
@@ -814,22 +836,14 @@ class mod_survey_userpagemanager {
             $itemseeds->close();
         }
 
-        // TAKE CARE: if history is required, do not copy the submissionid when the submission is SURVEY_STATUSCLOSED
-        //            this forces a new submission creation
-        if ($this->survey->history) {
-            $status = $DB->get_field('survey_submissions', 'status', array('id' => $this->submissionid));
-            if ($status == SURVEY_STATUSINPROGRESS) {
-                $prefill['submissionid'] = $this->submissionid;
-            }
-        } else {
-            $prefill['submissionid'] = $this->submissionid;
-        }
+        $prefill['submissionid'] = $this->submissionid;
 
         return $prefill;
     }
 
     /*
      * drop_unexpected_values
+     *
      * @param
      * @return
      */
@@ -910,6 +924,7 @@ class mod_survey_userpagemanager {
 
     /*
      * prevent_direct_user_input
+     *
      * @param
      * @return
      */
@@ -951,6 +966,7 @@ class mod_survey_userpagemanager {
 
     /*
      * duplicate_submission
+     *
      * @param $allpages
      * @return
      */

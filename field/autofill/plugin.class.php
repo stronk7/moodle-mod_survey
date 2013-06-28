@@ -125,6 +125,7 @@ class surveyfield_autofill extends surveyitem_base {
 
     /*
      * item_load
+     *
      * @param $itemid
      * @return
      */
@@ -141,6 +142,7 @@ class surveyfield_autofill extends surveyitem_base {
 
     /*
      * item_save
+     *
      * @param $record
      * @return
      */
@@ -162,6 +164,7 @@ class surveyfield_autofill extends surveyitem_base {
     /*
      * item_custom_fields_to_form
      * translates the class properties to form fields value
+     *
      * @param
      * @return
      */
@@ -197,6 +200,7 @@ class surveyfield_autofill extends surveyitem_base {
 
     /*
      * item_custom_fields_to_db
+     *
      * @param $record
      * @return
      */
@@ -232,6 +236,7 @@ class surveyfield_autofill extends surveyitem_base {
 
     /*
      * item_get_plugin_values
+     *
      * @param $pluginstructure
      * @param $pluginsid
      * @return
@@ -281,10 +286,15 @@ class surveyfield_autofill extends surveyitem_base {
 
     /*
      * userform_mform_element
+     *
      * @param $mform
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $survey, $canaccesslimiteditems, $parentitem=null, $searchform=false) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
@@ -310,10 +320,15 @@ class surveyfield_autofill extends surveyitem_base {
 
     /*
      * userform_mform_validation
-     * @param $data, &$errors, $survey
+     *
+     * @param $data
+     * @param &$errors
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey, $canaccesslimiteditems, $parentitem=null) {
         // nothing to do here
     }
 
@@ -321,7 +336,9 @@ class surveyfield_autofill extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $answer, $olduserdata
+     *
+     * @param $answer
+     * @param $olduserdata
      * @return
      */
     public function userform_save_preprocessing($answer, $olduserdata) {
@@ -388,6 +405,7 @@ class surveyfield_autofill extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
+     *
      * @param $fromdb
      * @return
      */
@@ -404,6 +422,7 @@ class surveyfield_autofill extends surveyitem_base {
     /*
      * userform_mform_element_is_group
      * returns true if the useform mform element for this item id is a group and false if not
+     *
      * @param
      * @return
      */
@@ -414,6 +433,7 @@ class surveyfield_autofill extends surveyitem_base {
 
     /*
      * userform_calculate_content
+     *
      * @param $item
      * @return
      */

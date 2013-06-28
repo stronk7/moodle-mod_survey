@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 class surveytemplate_criticalincidents {
     /*
      * apply_survey_settings
+     *
      * @param $record
      * @return record
      */

@@ -117,6 +117,7 @@ class surveyfield_recurrence extends surveyitem_base {
 
     /*
      * item_load
+     *
      * @param $itemid
      * @return
      */
@@ -133,6 +134,7 @@ class surveyfield_recurrence extends surveyitem_base {
 
     /*
      * item_save
+     *
      * @param $record
      * @return
      */
@@ -154,7 +156,10 @@ class surveyfield_recurrence extends surveyitem_base {
 
     /*
      * item_recurrence_to_unix_time
-     * @param $year, $month, $day
+     *
+     * @param $year
+     * @param $month
+     * @param $day
      * @return
      */
     public function item_recurrence_to_unix_time($month, $day) {
@@ -164,6 +169,7 @@ class surveyfield_recurrence extends surveyitem_base {
     /*
      * item_custom_fields_to_form
      * translates the recurrence class property $fieldlist in $field.'_year' and $field.'_month'
+     *
      * @param
      * @return
      */
@@ -200,6 +206,7 @@ class surveyfield_recurrence extends surveyitem_base {
     /*
      * item_custom_fields_to_db
      * sets record field to store the correct value to db for the recurrence custom item
+     *
      * @param $record
      * @return
      */
@@ -226,6 +233,7 @@ class surveyfield_recurrence extends surveyitem_base {
     /*
      * item_composite_fields
      * get the list of composite fields
+     *
      * @param
      * @return
      */
@@ -236,6 +244,7 @@ class surveyfield_recurrence extends surveyitem_base {
     /*
      * item_atomize_parent_content
      * starting from parentcontent, this function returns it splitted into an array
+     *
      * @param $parentcontent
      * @return
      */
@@ -248,6 +257,7 @@ class surveyfield_recurrence extends surveyitem_base {
 
     /*
      * item_get_plugin_values
+     *
      * @param $pluginstructure
      * @param $pluginsid
      * @return
@@ -266,6 +276,7 @@ class surveyfield_recurrence extends surveyitem_base {
 
     /*
      * item_get_downloadformats
+     *
      * @param
      * @return
      */
@@ -283,6 +294,7 @@ class surveyfield_recurrence extends surveyitem_base {
 
     /*
      * item_check_monthday
+     *
      * @param
      * @return
      */
@@ -303,10 +315,15 @@ class surveyfield_recurrence extends surveyitem_base {
 
     /*
      * userform_mform_element
+     *
      * @param $mform
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $survey, $canaccesslimiteditems, $parentitem=null, $searchform=false) {
         global $DB, $USER;
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
@@ -334,14 +351,10 @@ class surveyfield_recurrence extends surveyitem_base {
                 $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
 
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                // -> I do not want JS form validation if the page is submitted trough the "previous" button
-                // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+                // -> I do not want JS form validation if the page is submitted through the "previous" button
+                // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                if ($this->extrarow) {
-                    $starplace = $this->itemname.'_extrarow';
-                } else {
-                    $starplace = $this->itemname.'_group';
-                }
+                $starplace = ($this->extrarow) ? $this->itemname.'_extrarow' : $this->itemname.'_group';
                 $mform->_required[] = $starplace;
             } else {
                 $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'));
@@ -397,10 +410,14 @@ class surveyfield_recurrence extends surveyitem_base {
 
     /*
      * userform_mform_validation
-     * @param $data, &$errors, $survey
+     *
+     * @param $data, &$errors
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey, $canaccesslimiteditems, $parentitem=null) {
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
@@ -467,6 +484,7 @@ class surveyfield_recurrence extends surveyitem_base {
 
     /*
      * userform_get_filling_instructions
+     *
      * @param
      * @return
      */
@@ -496,7 +514,9 @@ class surveyfield_recurrence extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $answer, $olduserdata
+     *
+     * @param $answer
+     * @param $olduserdata
      * @return
      */
     public function userform_save_preprocessing($answer, $olduserdata) {
@@ -512,6 +532,7 @@ class surveyfield_recurrence extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
+     *
      * @param $fromdb
      * @return
      */
@@ -544,7 +565,9 @@ class surveyfield_recurrence extends surveyitem_base {
     /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
-     * @param $answers, $format
+     *
+     * @param $answers
+     * @param $format
      * @return
      */
     public function userform_db_to_export($answer, $format='') {
@@ -563,6 +586,7 @@ class surveyfield_recurrence extends surveyitem_base {
     /*
      * userform_mform_element_is_group
      * returns true if the useform mform element for this item id is a group and false if not
+     *
      * @param
      * @return
      */

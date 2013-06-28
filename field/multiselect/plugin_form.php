@@ -104,13 +104,16 @@ class survey_pluginform extends surveyitem_baseform {
 
         // build $value array (I do not care about $label) starting from $clean_options
         $values = array();
+        $labels = array();
 
         foreach ($clean_options as $option) {
             if (strpos($option, SURVEY_VALUELABELSEPARATOR) === false) {
                 $values[] = trim($option);
+                $labels[] = trim($option);
             } else {
                 $pair = explode(SURVEY_VALUELABELSEPARATOR, $option);
                 $values[] = $pair[0];
+                $labels[] = $pair[1];
             }
         }
 
@@ -121,8 +124,8 @@ class survey_pluginform extends surveyitem_baseform {
         // //////////////////////////////////////////////////////////////////////////////////////
         if (!empty($data['defaultvalue'])) {
             foreach ($clean_defaultvalue as $default) {
-                if (!in_array($default, $values)) {
-                    $errors['defaultvalue'] = get_string('defaultvalue_err', 'surveyfield_checkbox', $default);
+                if (!in_array($default, $labels)) {
+                    $errors['defaultvalue'] = get_string('defaultvalue_err', 'surveyfield_multiselect', $default);
                     break;
                 }
             }

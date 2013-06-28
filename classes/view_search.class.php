@@ -43,9 +43,9 @@ class mod_survey_searchmanager {
     public $survey = null;
 
     /*
-     * $canaccessadvancedform
+     * $canaccesslimiteditems
      */
-    public $canaccessadvancedform = false;
+    public $canaccesslimiteditems = false;
 
     /********************** this will be provided later
      * $formdata: the form content as submitted by the user
@@ -59,11 +59,12 @@ class mod_survey_searchmanager {
         $this->cm = $cm;
         $this->context = context_module::instance($cm->id);
         $this->survey = $survey;
-        $this->canaccessadvancedform = has_capability('mod/survey:accessadvancedform', $this->context, null, true);
+        $this->canaccesslimiteditems = has_capability('mod/survey:accesslimiteditems', $this->context, null, true);
     }
 
     /*
      * get_searchparamurl
+     *
      * @param
      * @return
      */
@@ -124,6 +125,7 @@ class mod_survey_searchmanager {
 
     /*
      * count_input_items
+     *
      * @param
      * @return
      */
@@ -132,18 +134,14 @@ class mod_survey_searchmanager {
 
         // if no items are available, stop the intervention here
         $whereparams = array('surveyid' => $this->survey->id);
-        $whereclause = 'surveyid = :surveyid AND hide = 0';
-        if (!$this->canaccessadvancedform) {
-            $whereclause .= ' AND basicform = '.SURVEY_FILLANDSEARCH;
-        } else {
-            $whereclause .= ' AND advancedsearch = '.SURVEY_ADVFILLANDSEARCH;
-        }
+        $whereclause = 'surveyid = :surveyid AND hide = 0 AND insearchform = 1';
 
         return $DB->count_records_select('survey_item', $whereclause, $whereparams);
     }
 
     /*
      * noitem_stopexecution
+     *
      * @param
      * @return
      */

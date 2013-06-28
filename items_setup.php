@@ -146,6 +146,7 @@ include_once($CFG->dirroot.'/mod/survey/tabs.php');
 if ($item_manager->hassubmissions) {
     echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
 }
+$item_manager->item_welcome();
 $item_form->set_data($item);
 $item_form->display();
 

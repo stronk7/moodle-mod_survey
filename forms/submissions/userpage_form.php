@@ -42,7 +42,7 @@ class survey_submissionform extends moodleform {
         $survey = $this->_customdata->survey;
         $submissionid = $this->_customdata->submissionid;
         $formpage = $this->_customdata->formpage;
-        $canaccessadvancedform = $this->_customdata->canaccessadvancedform;
+        $canaccesslimiteditems = $this->_customdata->canaccesslimiteditems;
         $currentpage = $this->_customdata->currentpage;
 
         // ----------------------------------------
@@ -70,9 +70,8 @@ class survey_submissionform extends moodleform {
             $a = $survey->saveresume ? get_string('revieworpause', 'survey') : get_string('onlyreview', 'survey');
             $mform->addElement('static', 'nomoreitems', get_string('note', 'survey'), get_string('nomoreitems', 'survey', $a));
         } else {
-            $allpages = ($currentpage == SURVEY_SUBMISSION_READONLY);
-            $sql = survey_fetch_items_seeds($canaccessadvancedform, false, false, $allpages);
-            $params = array('surveyid' => $survey->id, 'formpage' => $formpage);
+            //$canaccesslimiteditems, $searchform=false, $type=false, $formpage
+            list($sql, $params) = survey_fetch_items_seeds($survey->id, $canaccesslimiteditems, false, false, $formpage);
             $itemseeds = $DB->get_recordset_sql($sql, $params);
             // I do not need to be sure items are found because I already know this
             // In attempt.php if items are not found I display a message and execution is stopped
@@ -99,8 +98,7 @@ class survey_submissionform extends moodleform {
                     // if parentitem is in a previous page, have a check
                     // otherwise
                     // display the current item
-                    $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
-                    if ($parentitem->{$pagefield} < $formpage) {
+                    if ($parentitem->get_formpage() < $formpage) {
                         require_once($CFG->dirroot.'/mod/survey/'.$itemseed->type.'/'.$itemseed->plugin.'/plugin.class.php');
 
                         $itemaschildisallowed = $parentitem->userform_child_item_allowed_static($submissionid, $itemseed);
@@ -125,14 +123,14 @@ class survey_submissionform extends moodleform {
                         $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->get_indent())); // here I  do not strip tags to content
                     }
 
-                    $item->userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem);
+                    $item->userform_mform_element($mform, $survey, $canaccesslimiteditems, $parentitem);
 
                     if ($fullinfo = $item->userform_get_full_info(false)) {
                         $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo);
                     }
 
                     if (!$survey->newpageforchild) {
-                        $item->userform_disable_element($mform, $canaccessadvancedform);
+                        $item->userform_disable_element($mform, $canaccesslimiteditems);
                     }
                 }
             }
@@ -147,13 +145,14 @@ class survey_submissionform extends moodleform {
 
         // -------------------------------------------------------------------------------
         // buttons
-        $buttonarray = array();
+        $buttonlist = array();
+
         if ($formpage != 1) { // 0 or greater than 1 [0 is returned for $page when no items are found not even in the last page]
-            $buttonarray[] = $mform->createElement('submit', 'prevbutton', get_string('previousformpage', 'survey'));
+            $buttonlist['prevbutton'] = get_string('previousformpage', 'survey');
         }
         if ($currentpage != SURVEY_SUBMISSION_PREVIEW) {
             if ($survey->saveresume) {
-                $buttonarray[] = $mform->createElement('submit', 'pausebutton', get_string('pause', 'survey'));
+                $buttonlist['pausebutton'] = get_string('pause', 'survey');
             }
             if (($formpage == $lastformpage) || (!$formpage)) {
                 if ($survey->history) {
@@ -167,21 +166,31 @@ class survey_submissionform extends moodleform {
                     $usesimplesavebutton = true;
                 }
                 if ($usesimplesavebutton) {
-                    $buttonarray[] = $mform->createElement('submit', 'savebutton', get_string('submit'));
+                    $buttonlist['savebutton'] = get_string('submit');
                 } else {
-                    $buttonarray[] = $mform->createElement('submit', 'saveasnewbutton', get_string('saveasnew', 'survey'));
+                    $buttonlist['saveasnewbutton'] = get_string('saveasnew', 'survey');
                 }
             }
         }
         if (($formpage < $lastformpage) && ($formpage)) { // lower than $lastformpage but different from 0
-            $buttonarray[] = $mform->createElement('submit', 'nextbutton', get_string('nextformpage', 'survey'));
+            $buttonlist['nextbutton'] = get_string('nextformpage', 'survey');
         }
 
-        if (count($buttonarray)) {
-            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        if (count($buttonlist) > 1) {
+            $buttonarray = array();
+            foreach ($buttonlist as $name => $label) {
+                $buttonarray[] = $mform->createElement('submit', $name, $label);
+            }
+            $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
             $mform->setType('buttonar', PARAM_RAW);
             $mform->closeHeaderBefore('buttonar');
+        } else {
+            foreach ($buttonlist as $name => $label) {
+                $mform->addElement('submit', $name, $label);
+            }
         }
+// echo '$mform:';
+// var_dump($mform);
     }
 
     public function validation($data, $files) {
@@ -192,7 +201,7 @@ class survey_submissionform extends moodleform {
         // $survey = $this->_customdata->survey;
         // $submissionid = $this->_customdata->submissionid;
         // $formpage = $this->_customdata->formpage;
-        // $canaccessadvancedform = $this->_customdata->canaccessadvancedform;
+        // $canaccesslimiteditems = $this->_customdata->canaccesslimiteditems;
         $currentpage = $this->_customdata->currentpage;
 
         if (isset($data['prevbutton']) || ($currentpage == SURVEY_SUBMISSION_PREVIEW)) {
@@ -205,7 +214,7 @@ class survey_submissionform extends moodleform {
         $survey = $this->_customdata->survey;
         $submissionid = $this->_customdata->submissionid;
         $formpage = $this->_customdata->formpage;
-        $canaccessadvancedform = $this->_customdata->canaccessadvancedform;
+        $canaccesslimiteditems = $this->_customdata->canaccesslimiteditems;
 
         $errors = parent::validation($data, $files);
 
@@ -237,9 +246,7 @@ class survey_submissionform extends moodleform {
                         // call its parent
                         $parentitem = survey_get_item($item_parentid);
                         // tell parent that his child has parentcontent = 12/4/1968
-                        $pagefield = ($canaccessadvancedform) ? 'advancedformpage' : 'basicformpage';
-                        $item_field = $parentitem->get_generic_field($pagefield);
-                        if ($parentitem->{$pagefield} == $item_field) { // TODO: how can I get this?
+                        if ($parentitem->get_formpage() == $item->get_formpage()) {
                             $itemisenabled = $parentitem->userform_child_item_allowed_dynamic($item->get_parentcontent(), $data);
                         } else {
                             // If ($parentitem is in a previous page) && ($item is displayed because it was found) {
@@ -252,7 +259,7 @@ class survey_submissionform extends moodleform {
                 }
 
                 if ($itemisenabled) {
-                    $item->userform_mform_validation($data, $errors, $survey, $canaccessadvancedform, $parentitem);
+                    $item->userform_mform_validation($data, $errors, $survey, $canaccesslimiteditems, $parentitem);
                 // } else {
                     // echo 'parent item didn\'t allow the validation of the child item '.$item->itemid.', plugin = '.$item->plugin.'('.$item->content.')<br />';
                 }

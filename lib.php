@@ -101,27 +101,25 @@ define('SURVEY_TYPEFORMAT', 'format');
     define('SURVEY_REQUIREDOFF'       , '7');
     define('SURVEY_REQUIREDON'        , '8');
     define('SURVEY_CHANGEINDENT'      , '9');
+    define('SURVEY_ADDTOSEARCH'       ,'10');
+    define('SURVEY_OUTOFSEARCH'       ,'11');
+    define('SURVEY_MAKEFORALL'        ,'12');
+    define('SURVEY_MAKELIMITED'       ,'13');
+
     // RESPONSES section
-    define('SURVEY_EDITRESPONSE'      , '10');
-    define('SURVEY_READONLYRESPONSE'  , '11');
-    define('SURVEY_DELETERESPONSE'    , '12');
-    define('SURVEY_DELETEALLRESPONSES', '13');
-    define('SURVEY_RESPONSETOPDF'     , '14');
+    define('SURVEY_EDITRESPONSE'      ,'14');
+    define('SURVEY_READONLYRESPONSE'  ,'15');
+    define('SURVEY_DELETERESPONSE'    ,'16');
+    define('SURVEY_DELETEALLRESPONSES','17');
+    define('SURVEY_RESPONSETOPDF'     ,'18');
     // SURVEY section
-    define('SURVEY_PREVIEWSURVEY'     , '15');
+    define('SURVEY_PREVIEWSURVEY'     ,'19');
     // UTEMPLATE section
-    define('SURVEY_DELETEUTEMPLATE'   , '16');
-    define('SURVEY_EXPORTUTEMPLATE'   , '17');
+    define('SURVEY_DELETEUTEMPLATE'   ,'20');
+    define('SURVEY_EXPORTUTEMPLATE'   ,'21');
 
 // SAVESTATUS
 define('SURVEY_NOFEEDBACK', 0);
-
-// ITEMS AVAILABILITY
-define('SURVEY_NOTPRESENT'      , 0);
-define('SURVEY_FILLONLY'        , 1);
-define('SURVEY_FILLANDSEARCH'   , 2);
-define('SURVEY_ADVFILLONLY'     , 0);
-define('SURVEY_ADVFILLANDSEARCH', 1);
 
 // ITEMPREFIX
 define('SURVEY_ITEMPREFIX', 'survey');
@@ -932,7 +930,10 @@ function survey_site_recaptcha_enabled() {
 
 /**
  * survey_get_plugin_list
- * @param $plugintype=null, $includetype=false, $count=false
+ *
+ * @param $plugintype
+ * @param $includetype
+ * @param $count
  * @return
  */
 function survey_get_plugin_list($plugintype=null, $includetype=false, $count=false) {
@@ -986,41 +987,38 @@ function survey_get_plugin_list($plugintype=null, $includetype=false, $count=fal
 
 /**
  * survey_fetch_items_seeds
- * @param $canaccessadvancedform, $searchform, $allpages=false
+ * @param $canaccesslimiteditems
+ * @param $searchform
+ * @param $type
+ * @param $formpage
  * @return
  */
-function survey_fetch_items_seeds($canaccessadvancedform, $searchform, $filtertype=false, $allpages=false) {
-    $return = 'SELECT si.*
+function survey_fetch_items_seeds($surveyid, $canaccesslimiteditems, $searchform, $type=false, $formpage=false) {
+    $sql = 'SELECT si.*
                FROM {survey_item} si
-               WHERE si.surveyid = :surveyid';
-    if ($canaccessadvancedform) {
-        if ($searchform) { // advanced search
-            $return .= ' AND si.advancedsearch = '.SURVEY_ADVFILLANDSEARCH;
-        } else {            // advanced entry
-            if (!$allpages) { // if I am not asking for all the pages, I focus on a single page only
-                $return .= ' AND si.advancedformpage = :formpage';
-            }
-        }
-    } else {
-        if ($searchform) { // user search
-            $return .= ' AND si.basicform = '.SURVEY_FILLANDSEARCH;
-        } else {            // user entry
-            $return .= ' AND si.basicform <> '.SURVEY_NOTPRESENT;
-            if (!$allpages) { // if I am not asking for all the pages, I focus on a single page only
-                $return .= ' AND si.basicformpage = :formpage';
-            }
-        }
+               WHERE si.surveyid = :surveyid
+                   AND si.hide = 0';
+    $params = array();
+    $params['surveyid'] = $surveyid;
+
+    if (!$canaccesslimiteditems) {
+        $sql .= ' AND si.limitedaccess = 0';
     }
     if ($searchform) { // advanced search
-        $return .= ' AND si.plugin <> "pagebreak"';
+        $sql .= ' AND si.insearchform = 1';
+        $sql .= ' AND si.plugin <> "pagebreak"';
     }
-    if ($filtertype) {
-        $return .= ' AND si.type = :type';
+    if ($type) {
+        $sql .= ' AND si.type = :type';
+        $params['type'] = $type;
     }
-    $return .= ' AND si.hide = 0
-            ORDER BY si.sortindex';
+    if ($formpage) { // if I am asking for a single page ONLY
+        $sql .= ' AND si.formpage = :formpage';
+        $params['formpage'] = $formpage;
+    }
+    $sql .= ' ORDER BY si.sortindex';
 
-    return $return;
+    return array($sql, $params);
 }
 
 /**
@@ -1058,12 +1056,8 @@ function survey_get_editor_options() {
 function survey_reset_items_pages($surveyid) {
     global $DB;
 
-    $targets = array('basicformpage', 'advancedformpage');
-
     $sqlparam = array('surveyid' => $surveyid);
-    foreach ($targets as $target) {
-        $DB->set_field('survey_item', $target, 0, $sqlparam);
-    }
+    $DB->set_field('survey_item', 'formpage', 0, $sqlparam);
 }
 
 /*

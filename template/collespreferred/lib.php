@@ -40,12 +40,12 @@ function surveytemplate_collespreferred_add() {
 
     $content_sid = 0;
     // ////////////// SURVEY_ITEM
-    $si_fields = array('surveyid'      , 'type'            , 'plugin'          , 'externalname' ,
-                       'content_sid'   , 'content'         , 'contentformat'   , 'customnumber' ,
-                       'extrarow'      , 'extranote'       , 'hideinstructions', 'required'     , 'variable',
-                       'indent'        , 'basicform'       , 'advancedsearch'  , 'hide'         ,
-                       'sortindex'     , 'basicformpage'   , 'advancedformpage', 'parentid'     ,
-                       'parentcontent' , 'parentvalue'     , 'timecreated'     , 'timemodified');
+    $si_fields = array('surveyid'      , 'type'         , 'plugin'          , 'externalname',
+                       'content_sid'   , 'content'      , 'contentformat'   , 'customnumber',
+                       'extrarow'      , 'extranote'    , 'hideinstructions', 'required'    ,
+                       'variable'      , 'indent'       , 'hide'            , 'insearchform',
+                       'limitedaccess' , 'sortindex'    , 'formpage'        , 'parentid'    ,
+                       'parentcontent' , 'parentvalue'  , 'timecreated'     , 'timemodified');
 
     $radio_options_sid = 1;
     $radio_labelother_sid = 0;
@@ -92,10 +92,10 @@ function surveytemplate_collespreferred_add() {
     $content_sid++;
     $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
-                    0, '', 0, null, null,
-                    0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
-                    $sortindex, 1, 1, null,
-                    null, null, $timenow, null);
+                    0, '', 0, null,
+                    '', 0, 0, 1,
+                    0, $sortindex, 1, null,
+                    '', '', $timenow, null);
     $itemid = $DB->insert_record('survey_item', array_combine($si_fields, $values));
 
     // survey_label
@@ -120,9 +120,9 @@ function surveytemplate_collespreferred_add() {
         // $content_sid++; content_sid is not supposed to grow for fieldset
         $values = array(0, SURVEY_TYPEFORMAT, 'fieldset', $externalname,
                         null, null, FORMAT_HTML, null,
-                        0, '', 0, null, null,
-                        0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
-                        $sortindex, 1, 1, null,
+                        0, '', 0, null,
+                        '', 0, 0, 1,
+                        0, $sortindex, 1, null,
                         null, null, $timenow, null);
         $itemid = $DB->insert_record('survey_item', array_combine($si_fields, $values));
 
@@ -140,14 +140,14 @@ function surveytemplate_collespreferred_add() {
 
         // survey_item
         /*------------------------------------------------*/
-        // $content_sid++; do not increase here because contnt of label does not change during the survey
+        // $content_sid++; do not increase here because content of label does not change during the survey
         //                 and I gat the string for label always from content00
         $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
                         0, null, FORMAT_HTML, null,
-                        0, '', 0, null, null,
-                        0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
-                        $sortindex, 1, 1, null,
-                        null, null, $timenow, null);
+                        0, '', 0, null,
+                    '', 0, 0, 1,
+                    0, $sortindex, 1, null,
+                    '', '', $timenow, null);
         $itemid = $DB->insert_record('survey_item', array_combine($si_fields, $values));
 
         // survey_label
@@ -169,10 +169,10 @@ function surveytemplate_collespreferred_add() {
             $content_sid++;
             $values = array(0, SURVEY_TYPEFIELD, 'radiobutton', $externalname,
                             $content_sid, null, FORMAT_HTML, null,
-                            0, '', 0, SURVEY_REQUIREDITEM, null,
-                            0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
-                            $sortindex, 1, 1, null,
-                            null, null, $timenow, null);
+                            0, '', 0, SURVEY_REQUIREDITEM,
+                            '', 0, 0, 1,
+                            0, $sortindex, 1, null,
+                            '', '', $timenow, null);
             $itemid = $DB->insert_record('survey_item', array_combine($si_fields, $values));
 
             // survey_radiobutton
@@ -198,10 +198,10 @@ function surveytemplate_collespreferred_add() {
     $content_sid++;
     $values = array(0, SURVEY_TYPEFIELD, 'select', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
-                    0, '', 0, SURVEY_REQUIREDITEM, null,
-                    0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
-                    $sortindex, 1, 1, null,
-                    null, null, $timenow, null);
+                    0, '', 0, SURVEY_REQUIREDITEM,
+                    '', 0, 0, 1,
+                    0, $sortindex, 1, null,
+                    '', '', $timenow, null);
     $itemid = $DB->insert_record('survey_item', array_combine($si_fields, $values));
 
     // survey_select
@@ -225,10 +225,10 @@ function surveytemplate_collespreferred_add() {
     $content_sid++;
     $values = array(0, SURVEY_TYPEFIELD, 'textarea', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
-                    0, '', 0, SURVEY_OPTIONALITEM, null,
-                    0, SURVEY_FILLANDSEARCH, SURVEY_ADVFILLANDSEARCH, 0,
-                    $sortindex, 1, 1, null,
-                    null, null, $timenow, null);
+                    0, '', 0, SURVEY_OPTIONALITEM,
+                    '', 0, 0, 1,
+                    0, $sortindex, 1, null,
+                    '', '', $timenow, null);
     $itemid = $DB->insert_record('survey_item', array_combine($si_fields, $values));
 
     // survey_textarea

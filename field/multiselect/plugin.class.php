@@ -66,6 +66,11 @@ class surveyfield_multiselect extends surveyitem_base {
     public $defaultvalue = '';
 
     /*
+     * $downloadformat = the format of the content once downloaded
+     */
+    public $downloadformat = '';
+
+    /*
      * $heightinrows = the height of the multiselect in rows
      */
     public $heightinrows = 4;
@@ -107,6 +112,7 @@ class surveyfield_multiselect extends surveyitem_base {
 
     /*
      * item_load
+     *
      * @param $itemid
      * @return
      */
@@ -122,6 +128,7 @@ class surveyfield_multiselect extends surveyitem_base {
 
     /*
      * item_save
+     *
      * @param $record
      * @return
      */
@@ -144,16 +151,17 @@ class surveyfield_multiselect extends surveyitem_base {
 
     /*
      * item_list_constraints
+     *
      * @param
      * @return list of contraints of the plugin in text format
      */
     public function item_list_constraints() {
         $constraints = array();
 
-        $valuelabel = $this->item_get_value_label_array('options');
+        $labels = $this->item_get_labels_array('options');
         $optionstr = get_string('option', 'surveyfield_multiselect');
-        foreach ($valuelabel as $value => $label) {
-            $constraints[] = $optionstr.': '.$value;
+        foreach ($labels as $label) {
+            $constraints[] = $optionstr.': '.$label;
         }
 
         return implode($constraints, '<br />');
@@ -161,6 +169,7 @@ class surveyfield_multiselect extends surveyitem_base {
 
     /*
      * item_get_plugin_values
+     *
      * @param $pluginstructure
      * @param $pluginsid
      * @return
@@ -181,18 +190,18 @@ class surveyfield_multiselect extends surveyitem_base {
 
     /*
      * parent_validate_child_constraints
+     *
      * @param
      * @return status of child relation
      */
     public function parent_validate_child_constraints($childvalue) {
-        $childvalue = survey_textarea_to_array($childvalue);
+        $childlabels = survey_textarea_to_array($childvalue);
 
-        $valuelabel = $this->item_get_value_label_array('options');
-        $valuelabelkeys = array_keys($valuelabel);
+        $labels = $this->item_get_labels_array('options');
 
         $errcount = 0;
-        foreach ($childvalue as $value) {
-            if (array_search($value, $valuelabelkeys) === false) {
+        foreach ($childlabels as $childlabel) {
+            if (array_search($childlabel, $labels) === false) {
                 $errcount++;
             }
         }
@@ -205,7 +214,6 @@ class surveyfield_multiselect extends surveyitem_base {
                 break;
             default:
                 $status = false;
-                break;
         }
 
         return $status;
@@ -217,6 +225,7 @@ class surveyfield_multiselect extends surveyitem_base {
      * starting from the user input, this method stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
      * (take care: here we are not submitting a survey but we are submitting an item)
+     *
      * @param $parentcontent
      * @return
      */
@@ -231,24 +240,28 @@ class surveyfield_multiselect extends surveyitem_base {
 
     /*
      * userform_mform_element
+     *
      * @param $mform
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $survey, $canaccesslimiteditems, $parentitem=null, $searchform=false) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
-        $valuelabel = array_keys(array_flip($this->item_get_value_label_array('options')));
+        $labels = $this->item_get_labels_array('options');
 
-        $select = $mform->addElement('select', $this->itemname, $elementlabel, $valuelabel, array('size' => $this->heightinrows));
+        $select = $mform->addElement('select', $this->itemname, $elementlabel, $labels, array('size' => $this->heightinrows));
         $select->setMultiple(true);
 
         if (!$searchform) {
-            if ($defaults = survey_textarea_to_array('defaultvalue')) {
-                $valuelabel_keys = array_keys($this->item_get_value_label_array('options'));
+            if ($defaults = survey_textarea_to_array($this->defaultvalue)) {
                 $default_keys = array();
                 foreach($defaults as $default) {
-                    $default_keys[] = array_search($default, $valuelabel_keys);
+                    $default_keys[] = array_search($default, $labels);
                 }
                 $mform->setDefault($this->itemname, $default_keys);
             }
@@ -274,25 +287,25 @@ class surveyfield_multiselect extends surveyitem_base {
         if (!$searchform) {
             if ($this->required) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                // -> I do not want JS form validation if the page is submitted trough the "previous" button
-                // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+                // -> I do not want JS form validation if the page is submitted through the "previous" button
+                // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                if ($this->extrarow) {
-                    $starplace = $this->itemname.'_extrarow';
-                } else {
-                    $starplace = $this->itemname;
-                }
-                $mform->_required[] = $starplace; // add the star for mandatory fields at the end of the page with server side validation too
+                $starplace = ($this->extrarow) ? $this->itemname.'_extrarow' : $this->itemname;
+               $mform->_required[] = $starplace; // add the star for mandatory fields at the end of the page with server side validation too
             }
         }
     }
 
     /*
      * userform_mform_validation
-     * @param $data, &$errors, $survey
+     *
+     * @param $data, &$errors
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey, $canaccesslimiteditems, $parentitem=null) {
         if ($this->required) {
             if ($this->extrarow) {
                 $errorkey = $this->itemname.'_extrarow';
@@ -308,20 +321,28 @@ class surveyfield_multiselect extends surveyitem_base {
 
     /*
      * userform_get_parent_disabilitation_info
-     * from child_parentcontent defines syntax for disabledIf
-     * @param: $child_parentcontent
+     * from child_parentvalue defines syntax for disabledIf
+     *
+     * @param: $child_parentvalue
      * @return
      */
-    public function userform_get_parent_disabilitation_info($child_parentcontent) {
+    public function userform_get_parent_disabilitation_info($child_parentvalue) {
         $disabilitationinfo = array();
 
-        $options = survey_textarea_to_array($child_parentcontent);
+        $labels = $this->item_get_labels_array('options');
+        $constrains = survey_textarea_to_array($child_parentvalue);
+
+        $key = array();
+        foreach ($constrains as $constrain) {
+            $key[] = array_search($constrain, $labels);
+        }
 
         $mformelementinfo = new stdClass();
         $mformelementinfo->parentname = $this->itemname.'[]';
         $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $options;
+        $mformelementinfo->content = $key;
         $disabilitationinfo[] = $mformelementinfo;
+// $mform->disabledIf('survey_field_select_2491', 'survey_field_multiselect_2490[]', 'neq', array(0,4));
 
         return $disabilitationinfo;
     }
@@ -330,15 +351,16 @@ class surveyfield_multiselect extends surveyitem_base {
      * userform_child_item_allowed_static
      * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
      * ----------------------------------------------------------------------
-     * this function is called when $survey->newpageforchild == false
-     * so the current survey lives in just one single web page (unless page break is manually added)
+     * this function is called at submit time if (and only if) parent item and child item live in different form page
+     * this function is supposed to classify disabled element as unexpected in order to drop their reported value
      * ----------------------------------------------------------------------
      * Am I getting submitted data from $fromform or from table 'survey_userdata'?
      *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
      *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
      * ----------------------------------------------------------------------
-     * @param: $parentcontent, $parentsubmitted
-     * @return
+     *
+     * @param: $submissionid, $childitemrecord
+     * @return $status: true: the item is welcome; false: the item must be dropped out
      */
     public function userform_child_item_allowed_static($submissionid, $childitemrecord) {
         global $DB;
@@ -360,32 +382,46 @@ class surveyfield_multiselect extends surveyitem_base {
      * userform_child_item_allowed_dynamic
      * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
      * ----------------------------------------------------------------------
-     * this function is called when $survey->newpageforchild == false
-     * so the current survey lives in just one single web page (unless page break is manually added)
+     * this function is called at submit time if (and only if) parent item and child item live in the same form page
+     * this function is supposed to classify disabled element as unexpected in order to drop their reported value
      * ----------------------------------------------------------------------
      * Am I getting submitted data from $fromform or from table 'survey_userdata'?
      *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
      *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
      * ----------------------------------------------------------------------
-     * @param: $parentcontent, $parentsubmitted
-     * @return
+     *
+     * @param: $child_parentcontent, $data
+     * @return $status: true: the item is welcome; false: the item must be dropped out
      */
     public function userform_child_item_allowed_dynamic($child_parentcontent, $data) {
         // if a child has me as parent, its parentcontent attribute will be a list of elements
-        $content = survey_textarea_to_array($child_parentcontent);
-        asort($content);
+        $labels = $this->item_get_labels_array('options');
+
+        $key = array();
+        $request = survey_textarea_to_array($child_parentcontent);
+        foreach ($request as $label) {
+            $index = array_search($label, $labels);
+            if ($index !== false) {
+                $key[] = "$index"; // type casting
+            } else {
+                return false;
+            }
+        }
+        asort($key);
 
         $childconstraints = $data[$this->itemname];
         asort($childconstraints);
 
-        return ($content === $childconstraints);
+        return ($key === $childconstraints);
     }
 
     /*
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $answer, $olduserdata
+     *
+     * @param $answer
+     * @param $olduserdata
      * @return
      */
     public function userform_save_preprocessing($answer, $olduserdata) {
@@ -405,6 +441,7 @@ class surveyfield_multiselect extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
+     *
      * @param $fromdb
      * @return
      */
@@ -424,7 +461,9 @@ class surveyfield_multiselect extends surveyitem_base {
     /*
      * userform_db_to_export
      * strating from the info stored in the database, this function returns the corresponding content for the export file
-     * @param $answers, $format
+     *
+     * @param $answers
+     * @param $format
      * @return
      */
     public function userform_db_to_export($answer, $format='') {
@@ -440,12 +479,12 @@ class surveyfield_multiselect extends surveyitem_base {
         // $answers is an array like: array(1,1,0,0)
         switch ($format) {
             case SURVEYFIELD_MULTISELECT_RETURNVALUES:
-                $answers = array_flip(explode(SURVEY_DBMULTIVALUESEPARATOR, $content));
+                $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $content);
                 $output = array();
-                $valuelabel = array_keys($this->item_get_value_label_array('options'));
+                $values = $this->item_get_values_array('options');
 
-                $standardanswerscount = count($valuelabel);
-                foreach ($valuelabel as $k => $value) {
+                $standardanswerscount = count($values);
+                foreach ($values as $k => $value) {
                     if (isset($answers[$k])) {
                         $output[] = $value;
                     }
@@ -467,6 +506,7 @@ class surveyfield_multiselect extends surveyitem_base {
     /*
      * userform_mform_element_is_group
      * returns true if the useform mform element for this item id is a group and false if not
+     *
      * @param
      * @return
      */

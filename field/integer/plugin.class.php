@@ -108,6 +108,7 @@ class surveyfield_integer extends surveyitem_base {
 
     /*
      * item_load
+     *
      * @param $itemid
      * @return
      */
@@ -124,6 +125,7 @@ class surveyfield_integer extends surveyitem_base {
 
     /*
      * item_save
+     *
      * @param $record
      * @return
      */
@@ -145,6 +147,7 @@ class surveyfield_integer extends surveyitem_base {
 
     /*
      * item_custom_fields_to_form
+     *
      * @param
      * @return
      */
@@ -170,6 +173,7 @@ class surveyfield_integer extends surveyitem_base {
     /*
      * item_custom_fields_to_db
      * sets record field to store the correct value to db for the integer custom item
+     *
      * @param $record
      * @return
      */
@@ -199,6 +203,7 @@ class surveyfield_integer extends surveyitem_base {
 
     /*
      * item_list_constraints
+     *
      * @param
      * @return list of contraints of the plugin in text format
      */
@@ -212,6 +217,7 @@ class surveyfield_integer extends surveyitem_base {
 
     /*
      * item_get_plugin_values
+     *
      * @param $pluginstructure
      * @param $pluginsid
      * @return
@@ -232,6 +238,7 @@ class surveyfield_integer extends surveyitem_base {
 
     /*
      * parent_validate_child_constraints
+     *
      * @param
      * @return status of child relation
      */
@@ -249,6 +256,7 @@ class surveyfield_integer extends surveyitem_base {
      * starting from the user input, this method stores to the db the value as it is stored during survey submission
      * this method manages the $parentcontent of its child item, not its own $parentcontent
      * (take care: here we are not submitting a survey but we are submitting an item)
+     *
      * @param $parentcontent
      * @return
      */
@@ -260,10 +268,15 @@ class surveyfield_integer extends surveyitem_base {
 
     /*
      * userform_mform_element
+     *
      * @param $mform
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvancedform, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $survey, $canaccesslimiteditems, $parentitem=null, $searchform=false) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
@@ -283,14 +296,10 @@ class surveyfield_integer extends surveyitem_base {
         if (!$searchform) {
             if ($this->required) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                // -> I do not want JS form validation if the page is submitted trough the "previous" button
-                // -> I do not want JS field validation even if this item is required AND disabled too. THIS IS A MOODLE BUG. See: MDL-34815
+                // -> I do not want JS form validation if the page is submitted through the "previous" button
+                // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                if ($this->extrarow) {
-                    $starplace = $this->itemname.'_extrarow';
-                } else {
-                    $starplace = $this->itemname;
-                }
+                $starplace = ($this->extrarow) ? $this->itemname.'_extrarow' : $this->itemname;
                 $mform->_required[] = $starplace; // add the star for mandatory fields at the end of the page with server side validation too
             }
         }
@@ -317,10 +326,14 @@ class surveyfield_integer extends surveyitem_base {
 
     /*
      * userform_mform_validation
-     * @param $data, &$errors, $survey
+     *
+     * @param $data, &$errors
+     * @param $survey
+     * @param $canaccesslimiteditems
+     * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvancedform, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey, $canaccesslimiteditems, $parentitem=null) {
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
@@ -361,6 +374,7 @@ class surveyfield_integer extends surveyitem_base {
 
     /*
      * userform_get_filling_instructions
+     *
      * @param
      * @return
      */
@@ -404,17 +418,18 @@ class surveyfield_integer extends surveyitem_base {
 
     /*
      * userform_get_parent_disabilitation_info
-     * from child_parentcontent defines syntax for disabledIf
-     * @param: $child_parentcontent
+     * from child_parentvalue defines syntax for disabledIf
+     *
+     * @param: $child_parentvalue
      * @return
      */
-    public function userform_get_parent_disabilitation_info($child_parentcontent) {
+    public function userform_get_parent_disabilitation_info($child_parentvalue) {
         $disabilitationinfo = array();
 
         $mformelementinfo = new stdClass();
         $mformelementinfo->parentname = $this->itemname;
         $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $child_parentcontent;
+        $mformelementinfo->content = $child_parentvalue;
         $disabilitationinfo[] = $mformelementinfo;
 
         return $disabilitationinfo;
@@ -424,7 +439,9 @@ class surveyfield_integer extends surveyitem_base {
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
-     * @param $answer, $olduserdata
+     *
+     * @param $answer
+     * @param $olduserdata
      * @return
      */
     public function userform_save_preprocessing($answer, $olduserdata) {
@@ -440,6 +457,7 @@ class surveyfield_integer extends surveyitem_base {
      * (defaults are set in userform_mform_element)
      *
      * userform_set_prefill
+     *
      * @param $fromdb
      * @return
      */
@@ -461,6 +479,7 @@ class surveyfield_integer extends surveyitem_base {
     /*
      * userform_mform_element_is_group
      * returns true if the useform mform element for this item id is a group and false if not
+     *
      * @param
      * @return
      */
