@@ -35,7 +35,6 @@ function xmldb_surveyfield_datetime_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2013052302) {
-
         // Define field downloadformat to be added to survey_datetime.
         $table = new xmldb_table('survey_datetime');
         $field = new xmldb_field('downloadformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');
@@ -50,7 +49,6 @@ function xmldb_surveyfield_datetime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2013052401) {
-
         // Changing type of field downloadformat on table survey_datetime to char.
         $table = new xmldb_table('survey_datetime');
         $field = new xmldb_field('downloadformat', XMLDB_TYPE_CHAR, '32', null, null, null, null, 'defaultvalue');

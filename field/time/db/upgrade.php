@@ -35,7 +35,6 @@ function xmldb_surveyfield_time_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2013052302) {
-
         // Define field downloadformat to be added to survey_time.
         $table = new xmldb_table('survey_time');
         $field = new xmldb_field('downloadformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');
@@ -50,7 +49,6 @@ function xmldb_surveyfield_time_upgrade($oldversion) {
     }
 
     if ($oldversion < 2013060402) {
-
         // Define field step to be dropped from survey_time.
         $table = new xmldb_table('survey_time');
         $field = new xmldb_field('downloadformat');
@@ -75,7 +73,6 @@ function xmldb_surveyfield_time_upgrade($oldversion) {
     }
 
     if ($oldversion < 2013061701) {
-
         // Define field downloadformat to be added to survey_time.
         $table = new xmldb_table('survey_time');
         $field = new xmldb_field('downloadformat', XMLDB_TYPE_CHAR, '32', null, null, null, null, 'defaultvalue');
@@ -90,7 +87,6 @@ function xmldb_surveyfield_time_upgrade($oldversion) {
     }
 
     if ($oldversion < 2013061702) {
-
         // Define field rangetype to be dropped from survey_time.
         $table = new xmldb_table('survey_time');
         $field = new xmldb_field('rangetype');

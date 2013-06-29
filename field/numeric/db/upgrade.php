@@ -35,7 +35,6 @@ function xmldb_surveyfield_numeric_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2013062401) {
-
         // Changing precision of field lowerbound on table survey_numeric to ().
         $table = new xmldb_table('survey_numeric');
         $field = new xmldb_field('lowerbound', XMLDB_TYPE_FLOAT, null, null, null, null, null, 'signed');
@@ -56,7 +55,6 @@ function xmldb_surveyfield_numeric_upgrade($oldversion) {
     }
 
     if ($oldversion < 2013062501) {
-
         // Changing precision of field defaultvalue on table survey_numeric to ().
         $table = new xmldb_table('survey_numeric');
         $field = new xmldb_field('defaultvalue', XMLDB_TYPE_FLOAT, null, null, null, null, null, 'defaultvalue_sid');

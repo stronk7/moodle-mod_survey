@@ -35,7 +35,6 @@ function xmldb_surveyfield_multiselect_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2013041901) {
-
         // Define field heightinrows to be added to survey_multiselect.
         $table = new xmldb_table('survey_multiselect');
         $field = new xmldb_field('heightinrows', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');
@@ -50,7 +49,6 @@ function xmldb_surveyfield_multiselect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2013062201) {
-
         // Define field downloadformat to be added to survey_multiselect.
         $table = new xmldb_table('survey_multiselect');
         $field = new xmldb_field('downloadformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');

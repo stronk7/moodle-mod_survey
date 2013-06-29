@@ -35,7 +35,6 @@ function xmldb_surveyfield_checkbox_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2013050801) {
-
         // Define field returnvalue to be added to survey_checkbox.
         $table = new xmldb_table('survey_checkbox');
         $field = new xmldb_field('returnvalue', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'adjustment');
@@ -50,7 +49,6 @@ function xmldb_surveyfield_checkbox_upgrade($oldversion) {
     }
 
     if ($oldversion < 2013062001) {
-
         // Rename field returnvalue on table survey_checkbox to downloadformat.
         $table = new xmldb_table('survey_checkbox');
         $field = new xmldb_field('returnvalue', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'adjustment');

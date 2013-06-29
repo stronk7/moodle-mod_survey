@@ -99,7 +99,6 @@ class surveyformat_fieldset extends surveyitem_base {
         $this->item_form_requires['variable'] = false;
         $this->item_form_requires['indent'] = false;
         $this->item_form_requires['hideinstructions'] = false;
-        $this->item_form_requires['insearchform'] = false;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);

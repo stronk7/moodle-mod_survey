@@ -284,17 +284,8 @@ class mod_survey_itemelement {
             echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
         }
 
-        $sql = 'SELECT si.*, si.id as itemid, si.plugin, si.type
-                FROM {survey_item} si
-                WHERE si.surveyid = :surveyid';
-        if ($table->get_sql_sort()) {
-            $sort = ' ORDER BY '.$table->get_sql_sort();
-        } else {
-            $sort = ' ORDER BY si.sortindex';
-        }
-        $sql .= $sort;
-
-        if (!$itemseeds = $DB->get_records_sql($sql, array('surveyid' => $this->survey->id), $sort)) {
+        $where = array('surveyid' => $this->survey->id);
+        if (!$itemseeds = $DB->get_records('survey_item', $where, $table->get_sql_sort(), '*, id as itemid')) {
             $a = new stdClass();
             $url = new moodle_url('/mod/survey/items_add.php', $paramurl);
             $a->href = $url->out();

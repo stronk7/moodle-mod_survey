@@ -117,7 +117,6 @@ class surveyformat_label extends surveyitem_base {
         $this->item_form_requires['variable'] = false;
         $this->item_form_requires['indent'] = false;
         $this->item_form_requires['hideinstructions'] = false;
-        $this->item_form_requires['insearchform'] = false;
 
         // if the item is constructed at survey instance creation
         // (this happen if a builtin survey is requested)

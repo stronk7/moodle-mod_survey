@@ -130,12 +130,8 @@ class mod_survey_usertemplate extends mod_survey_template {
     public function write_utemplate() {
         global $DB;
 
-        $sql = 'SELECT si.id, si.type, si.plugin
-                FROM {survey_item} si
-                WHERE si.surveyid = :surveyid
-                ORDER BY si.sortindex';
-        $params = array('surveyid' => $this->survey->id);
-        $itemseeds = $DB->get_records_sql($sql, $params);
+        $where = array('surveyid' => $this->survey->id);
+        $itemseeds = $DB->get_records('survey_item', $where, 'sortindex', 'id, type, plugin');
 
         $xmltemplate = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><items></items>');
         foreach ($itemseeds as $itemseed) {
@@ -161,10 +157,10 @@ class mod_survey_usertemplate extends mod_survey_template {
                     }
                 } else {
                     $item_field = $item->item_get_generic_field($field);
-                    if (is_null($item_field)) { // TODO: how can I get this?
+                    if (is_null($item_field)) {
                         $val = SURVEY_EMPTYTEMPLATEFIELD;
                     } else {
-                        $val = $item_field; // TODO: how can I get this?
+                        $val = $item_field;
                     }
                 }
                 $xmlfield = $xmltable->addChild($field, $val);

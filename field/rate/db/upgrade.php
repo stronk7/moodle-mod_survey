@@ -35,7 +35,6 @@ function xmldb_surveyfield_rate_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2013062101) {
-
         // Define field downloadformat to be added to survey_rate.
         $table = new xmldb_table('survey_rate');
         $field = new xmldb_field('downloadformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');

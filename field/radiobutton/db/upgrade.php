@@ -35,7 +35,6 @@ function xmldb_surveyfield_radiobutton_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2013062701) {
-
         // Define field downloadformat to be added to survey_date.
         $table = new xmldb_table('survey_date');
         $field = new xmldb_field('downloadformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');
