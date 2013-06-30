@@ -72,12 +72,15 @@ $roles = get_roles_used_in_context($context);
 //     $roles[$guestrole->id] = $guestrole;
 // }
 $role = array_keys($roles);
+// echo '$roles:';
+// var_dump($roles);
+
 $sql = 'SELECT DISTINCT u.id, u.picture, u.imagealt, u.firstname, u.lastname, u.email, s.attempts
         FROM {user} u
-		JOIN (SELECT *
+		JOIN (SELECT userid
                 FROM {role_assignments}
                 WHERE contextid = '.$context->id.'
-                  AND roleid IN ('.implode($role).')) ra ON u.id = ra.userid
+                  AND roleid IN ('.implode(',', $role).')) ra ON u.id = ra.userid
 		LEFT JOIN (SELECT *, count(s.id) as attempts
 			       FROM {survey_submissions} s
 			       WHERE s.surveyid = :surveyid

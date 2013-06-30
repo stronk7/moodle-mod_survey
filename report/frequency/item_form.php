@@ -43,11 +43,11 @@ class survey_chooseitemform extends moodleform {
         // no matter for the page
         // elenco dei campi che l'utente vuole vedere nel file esportato
 
-        $records = $DB->get_recordset_sql($itemssql, $sqlparams);
+        //$records = $DB->get_recordset_sql($itemssql, $sqlparams);
         $where = array();
         $where['surveyid'] = $survey->id;
         $where['type'] = SURVEY_TYPEFIELD;
-        $where['limitedaccess'] = 1;
+        $where['limitedaccess'] = 0;
         $where['hide'] = 0;
         $records = $DB->get_recordset('survey_item', $where, 'sortindex');
 
@@ -64,7 +64,7 @@ class survey_chooseitemform extends moodleform {
         }
 
         $fieldname = 'itemid';
-        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyreport_frequency'), $options);
+        $mform->addElement('select', $fieldname, get_string('variable', 'survey'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyreport_frequency');
 
         // -------------------------------------------------------------------------------

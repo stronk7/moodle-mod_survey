@@ -39,9 +39,10 @@ if (!$survey = $DB->get_record('survey', array('id' => $cm->instance))) {
 
 $item = survey_get_item($itemid);
 
-$sql = 'SELECT ud.content, count(ud.id) as absolute
-        FROM {survey_userdata} ud
-        WHERE ud.itemid = :itemid';
+$sql = 'SELECT content, count(id) as absolute
+        FROM {survey_userdata}
+        WHERE itemid = :itemid
+        GROUP BY content';
 
 $params['itemid'] = $itemid;
 
@@ -120,6 +121,3 @@ if (true) {
 }
 
 exit;
-
-
-

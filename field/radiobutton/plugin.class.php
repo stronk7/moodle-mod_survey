@@ -397,6 +397,9 @@ class surveyfield_radiobutton extends surveyitem_base {
                 default:
                     debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
             }
+            if (!empty($this->labelother)) {
+                $mform->setDefault($this->itemname.'_text', $othervalue);
+            }
         } else {
             $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE); // free
         }
