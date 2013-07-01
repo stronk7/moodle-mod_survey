@@ -25,16 +25,16 @@
 
 $string['pluginname'] = 'Autofill';
 $string['userfriendlypluginname'] = 'Autofill';
-$string['submissiontime'] = 'submission time';
-$string['submissiondate'] = 'submission date';
-$string['submissiondateandtime'] = 'submission date and time';
-$string['submissionid'] = 'submission ID';
-$string['userid'] = 'owner ID';
-$string['userfirstname'] = 'owner first name';
-$string['userlastname'] = 'owner last name';
-$string['userfullname'] = 'owner full name';
-$string['usergroupid'] = 'owner group ID';
-$string['usergroupname'] = 'owner group name';
+$string['submissiontime'] = 'response creation time';
+$string['submissiondate'] = 'response date';
+$string['submissiondateandtime'] = 'response date and time';
+$string['submissionid'] = 'response ID';
+$string['userid'] = 'user ID';
+$string['userfirstname'] = 'user first name';
+$string['userlastname'] = 'user last name';
+$string['userfullname'] = 'user full name';
+$string['usergroupid'] = 'user group ID';
+$string['usergroupname'] = 'user group name';
 $string['surveyid'] = 'survey ID';
 $string['surveyname'] = 'survey name';
 $string['courseid'] = 'course ID';
@@ -54,7 +54,7 @@ $string['custominfo'] = 'Custom info';
 $string['showfield'] = 'Display in the survey';
 $string['showfield_help'] = 'This option allow you to hide or show this autofill item from the survey form. Once you choose to show it, the item will be shown in each form it belongs: basic and/or advanced one';
 $string['cannotcheck'] = 'Please check it by yourself.';
-$string['submission'] = 'Submission';
-$string['latevalue'] = 'Content will be added at submit time';
+$string['submission'] = 'Response';
+$string['latevalue'] = 'Content will be added at submission time';
 
 

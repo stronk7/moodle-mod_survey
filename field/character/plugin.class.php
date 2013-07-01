@@ -288,7 +288,12 @@ class surveyfield_character extends surveyitem_base {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
-        $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent));
+        $options = array('class' => 'indent-'.$this->indent);
+        $options['maxlength'] = $this->maxlength;
+        if ($this->maxlength < 21) {
+            $options['size'] = $this->maxlength;
+        }
+        $mform->addElement('text', $this->itemname, $elementlabel, $options);
         $mform->setType($this->itemname, PARAM_RAW);
         if (!$searchform) {
             $mform->setDefault($this->itemname, $this->defaultvalue);

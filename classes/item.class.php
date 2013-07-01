@@ -385,7 +385,7 @@ class mod_survey_itemelement {
                 }
 
                 if ($item->get_insearchform()) {
-                    $message = get_string('insearchform', 'survey');
+                    $message = get_string('belongtosearchform', 'survey');
 
                     $paramurl = $paramurl_base + array('act' => SURVEY_OUTOFSEARCH);
                     $basepath = new moodle_url('items_manage.php', $paramurl);

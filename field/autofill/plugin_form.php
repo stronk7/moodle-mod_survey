@@ -103,9 +103,10 @@ class survey_pluginform extends surveyitem_baseform {
         }
 
         if (!$errors && !$uniontext) {
-            $fieldname = 'contentelement1';
+            $fieldname = 'element_1';
             $errors[$fieldname.'_group'] = get_string('contentselect_err', 'surveyfield_autofill');
         }
+
         return $errors;
     }
 }

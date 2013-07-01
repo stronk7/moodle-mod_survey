@@ -468,8 +468,9 @@ class surveyfield_multiselect extends surveyitem_base {
      */
     public function userform_db_to_export($answer, $format='') {
         $content = $answer->content;
-        if (!$content) {
-            return get_string('answerisnoanswer', 'survey');
+        // SURVEY_NOANSWERVALUE does not exist here
+        if (!$content === null) { // item was disabled
+            return get_string('notanswereditem', 'survey');
         }
 
         if (empty($format)) {

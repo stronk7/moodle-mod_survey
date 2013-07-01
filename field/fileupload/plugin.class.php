@@ -323,6 +323,7 @@ class surveyfield_fileupload extends surveyitem_base {
      * @return
      */
     public function userform_db_to_export($answer, $format='') {
+        // SURVEY_NOANSWERVALUE does not exist here
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $answer->id);
         $filename = array();

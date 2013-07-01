@@ -554,8 +554,11 @@ class surveyfield_date extends surveyitem_base {
      */
     public function userform_db_to_export($answer, $format='') {
         $content = $answer->content;
-        if (!$content) {
+        if ($content == SURVEY_NOANSWERVALUE) { // answer was "no answer"
             return get_string('answerisnoanswer', 'survey');
+        }
+        if (!$content === null) { // item was disabled
+            return get_string('notanswereditem', 'survey');
         }
 
         if (!empty($format)) {

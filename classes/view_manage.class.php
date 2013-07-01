@@ -229,13 +229,96 @@ class mod_survey_submissionmanager {
     }
 
     /*
+     * get_manage_sql
+     *
+     * @param
+     * @return
+     */
+    public function get_manage_sql($table) {
+        $sql = 'SELECT s.*, s.id as submissionid, '.user_picture::fields('u').'
+                FROM {survey_submissions} s ';
+
+        list($where, $params) = $table->get_sql_where();
+
+        // write $userdata_transposed whether necessary
+        if ($this->searchfields_get) {
+            // this will be re-send to URL for next page reload, whether requested with a sort, for instance
+            $paramurl['searchquery'] = $this->searchfields_get;
+
+            $search_restrictions = unserialize($this->searchfields_get);
+
+            // written following http://buysql.com/mysql/14-how-to-automate-pivot-tables.html
+            $userdata_transposed = 'SELECT submissionid, ';
+            $sqlrow = array();
+            foreach ($search_restrictions as $itemid => $search_restriction) {
+                $sqlrow[] = 'MAX(IF(itemid = \''.$itemid.'\', content, NULL)) AS \'c_'.$itemid.'\'';
+            }
+            $userdata_transposed .= implode(', ', $sqlrow);
+            $userdata_transposed .= ' FROM {survey_userdata}';
+            $userdata_transposed .= ' GROUP BY submissionid';
+
+            $sql .= '    JOIN ('.$userdata_transposed.') udt ON udt.submissionid = s.id '; // udt == user data transposed
+        }
+
+        // if $survey->readaccess == SURVEY_GROUP I am sure that course or instance is divided by group too
+        if ($this->survey->readaccess == SURVEY_GROUP) {
+            // apply the group filter ONLY IF "Advanced permissions"
+            $sql .= '    JOIN {groups_members} gm ON gm.userid = s.userid ';
+        }
+
+        $sql .= '    JOIN {user} u ON (s.userid = u.id)
+                WHERE s.surveyid = :surveyid';
+        $params['surveyid'] = $this->survey->id;
+
+        if ($this->survey->readaccess == SURVEY_OWNER) {
+            $sql .= ' WHERE s.userid = :userid';
+            $params['userid'] = $USER->id;
+        }
+
+        // specific restrictions over {survey_userdata}
+        if ($this->searchfields_get) {
+            foreach ($search_restrictions as $itemid => $search_restriction) {
+                $sql .= ' AND udt.c_'.$itemid.' = :c_'.$itemid;
+                $params['c_'.$itemid] = $search_restriction;
+            }
+        }
+
+        $mygroups = survey_get_my_groups($this->cm);
+        if ($this->survey->readaccess == SURVEY_GROUP) { // if $survey->readaccess == SURVEY_GROUP then course or instance is divided by group
+
+            $grouprow = array();
+            $sql .= ' AND (';
+            foreach ($mygroups as $mygroup) {
+                $grouprow[] = '(gm.groupid = '.$mygroup.')';
+            }
+            $sql .= implode(' OR ', $grouprow);
+            $sql .= ') ';
+        }
+
+        // specific restrictions coming from $table->get_sql_where()
+        if ($where) {
+            $sql .= ' AND '.$where;
+        }
+
+        // sort coming from $table->get_sql_sort()
+        if ($table->get_sql_sort()) {
+            $sql .= ' ORDER BY '.$table->get_sql_sort();
+        } else {
+            $sql .= ' ORDER BY s.timecreated';
+        }
+
+echo '$sql = '.$sql.'<br />';
+        return array($sql, $params, $mygroups);
+    }
+
+    /*
      * manage_submissions
      *
      * @param
      * @return
      */
     public function manage_submissions() {
-        global $USER, $OUTPUT, $CFG, $DB, $COURSE;
+        global $OUTPUT, $CFG, $DB, $COURSE;
 
         require_once($CFG->libdir.'/tablelib.php');
 
@@ -302,9 +385,6 @@ class mod_survey_submissionmanager {
             die;
         }
 
-        // do I need to filter groups?
-        $filtergroups = survey_need_group_filtering($this->cm, $this->context);
-
         $status = array(SURVEY_STATUSINPROGRESS => get_string('statusinprogress', 'survey'),
                         SURVEY_STATUSCLOSED => get_string('statusclosed', 'survey'));
         $downloadpdftitle = get_string('downloadpdf', 'survey');
@@ -316,80 +396,7 @@ class mod_survey_submissionmanager {
         $paramurl['id'] = $this->cm->id;
         $basepath = new moodle_url('view.php', $paramurl);
 
-        list($where, $params) = $table->get_sql_where();
-
-        // ////////////////////////////
-        // write sql to get correct submissions
-        $mygroups = survey_get_my_groups($this->cm);
-        $userfields = user_picture::fields('u');
-
-        $sql = 'SELECT s.*, s.id as submissionid, '.$userfields.'
-                FROM {survey_submissions} s ';
-
-        // write $userdata_transposed whether necessary
-        if ($this->searchfields_get) {
-            // this will be re-send to URL for next page reload, whether requested with a sort, for instance
-            $paramurl['searchquery'] = $this->searchfields_get;
-
-            $search_restrictions = unserialize($this->searchfields_get);
-// $search_restrictions:
-//   1053 => string '1' (length=1)
-//   1054 => string '6.32' (length=4)
-//   1055 => string '90' (length=2)
-//   1065 => string 'Wine' (length=4)
-
-            // written following http://buysql.com/mysql/14-how-to-automate-pivot-tables.html
-            $userdata_transposed = 'SELECT submissionid, ';
-            $sqlrow = array();
-            foreach ($search_restrictions as $itemid => $search_restriction) {
-                $sqlrow[] = 'MAX(IF(itemid = \''.$itemid.'\', content, NULL)) AS \'c_'.$itemid.'\'';
-            }
-            $userdata_transposed .= implode(', ', $sqlrow);
-            $userdata_transposed .= ' FROM {survey_userdata}';
-            $userdata_transposed .= ' GROUP BY submissionid';
-
-            $sql .= '    JOIN ('.$userdata_transposed.') udt ON udt.submissionid = s.id '; // udt == user data transposed
-        }
-        if ($filtergroups) {
-            $sql .= '    JOIN {groups_members} gm ON gm.userid = s.userid ';
-        }
-        $sql .= '    JOIN {user} u ON (s.userid = u.id)
-                WHERE s.surveyid = :surveyid';
-        $params['surveyid'] = $this->survey->id;
-
-        // specific restrictions over {survey_userdata}
-        if ($this->searchfields_get) {
-            foreach ($search_restrictions as $itemid => $search_restriction) {
-                $sql .= ' AND udt.c_'.$itemid.' = :c_'.$itemid;
-                $params['c_'.$itemid] = $search_restriction;
-            }
-        }
-        if ($filtergroups) {
-            $grouprow = array();
-            $sql .= ' AND (';
-            foreach ($mygroups as $mygroup) {
-                $grouprow[] = '(gm.groupid = '.$mygroup.')';
-            }
-            $sql .= implode(' OR ', $grouprow);
-            $sql .= ') ';
-        }
-
-        // specific restrictions coming from $table->get_sql_where()
-        if ($where) {
-            $sql .= ' AND '.$where;
-        }
-
-        // sort coming from $table->get_sql_sort()
-        if ($table->get_sql_sort()) {
-            $sql .= ' ORDER BY '.$table->get_sql_sort();
-        } else {
-            $sql .= ' ORDER BY s.timecreated';
-        }
-
-        // echo '$sql = '.$sql.'<br />';
-
-        // end of: write sql to get correct submissions
-        // ////////////////////////////
+        list($sql, $params, $mygroups) = $this->get_manage_sql($table);
 
         $submissions = $DB->get_recordset_sql($sql, $params, $table->get_sql_sort());
 

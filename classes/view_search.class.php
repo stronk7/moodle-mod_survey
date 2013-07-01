@@ -116,11 +116,11 @@ class mod_survey_searchmanager {
             }
         }
 
-        // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-        // echo '$searchfields:';
-        // var_dump($searchfields);
-
-        return serialize($searchfields);
+        if ($searchfields) {
+            return serialize($searchfields);
+        } else {
+            return;
+        }
     }
 
     /*

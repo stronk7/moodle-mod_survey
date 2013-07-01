@@ -472,8 +472,9 @@ class surveyfield_numeric extends surveyitem_base {
      */
     public function userform_db_to_export($answer, $format='') {
         $content = $answer->content;
-        if (strlen($content) == 0) {
-            return get_string('answerisnoanswer', 'survey');
+        // SURVEY_NOANSWERVALUE does not exist here
+        if (strlen($content) == 0) { // item was disabled
+            return get_string('notanswereditem', 'survey');
         }
 
         return $content;
