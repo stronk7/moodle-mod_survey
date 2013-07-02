@@ -166,8 +166,12 @@ if (!$userpage_manager->count_input_items()) {
 // ////////////////////////////
 // is the user allowed to submit one more survey?
 if ($hassubmitbutton) {
-    if (!$userpage_manager->submissions_allowed()) {
-        $userpage_manager->submissions_exceeded_stopexecution();
+    if (!$userpage_manager->submissionid) { // I am going to create one more new submission
+        if (!$userpage_manager->submissions_allowed()) {
+            $userpage_manager->submissions_exceeded_stopexecution();
+        }
+    } else { // I am editing an "in progress" submission
+        // you are always allowed to carry on with your "in progress" submission
     }
 }
 // end of: is the user allowed to submit one more survey?

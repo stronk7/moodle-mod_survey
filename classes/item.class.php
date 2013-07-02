@@ -435,6 +435,7 @@ class mod_survey_itemelement {
                 }
             }
 
+            $current_hide = $item->get_hide();
             if ($this->action != SURVEY_CHANGEORDERASK) {
                 // *************************************** actions
 
@@ -462,7 +463,6 @@ class mod_survey_itemelement {
                 // *************************************** SURVEY_HIDEITEM/SURVEY_SHOWITEM
                 if (!$this->hassubmissions || $CFG->survey_forcemodifications) {
                     $paramurl = $paramurl_base;
-                    $current_hide = $item->get_hide();
                     if (!empty($current_hide)) {
                         $icopath = 't/show';
                         $paramurl = $paramurl + array('act' => SURVEY_SHOWITEM);
@@ -543,7 +543,7 @@ class mod_survey_itemelement {
 
             $tablerow[] = $icons;
 
-            $addedclass = empty($current_hide) ? '' : 'dimmed';
+            $addedclass = ($current_hide) ? 'dimmed' : '';
             $table->add_data($tablerow, $addedclass);
 
             // print_object($item);

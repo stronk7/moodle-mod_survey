@@ -165,7 +165,7 @@ class mod_survey_submissionmanager {
                 case SURVEY_CONFIRMED_YES:
                     $DB->delete_records('survey_userdata', array('submissionid' => $this->submissionid));
                     $DB->delete_records('survey_submissions', array('id' => $this->submissionid));
-                    echo $OUTPUT->notification(get_string('surveydeleted', 'survey'), 'notifyproblem');
+                    echo $OUTPUT->notification(get_string('responsedeleted', 'survey'), 'notifyproblem');
                     break;
                 case SURVEY_CONFIRMED_NO:
                     $message = get_string('usercanceled', 'survey');
@@ -307,7 +307,7 @@ class mod_survey_submissionmanager {
             $sql .= ' ORDER BY s.timecreated';
         }
 
-echo '$sql = '.$sql.'<br />';
+// echo '$sql = '.$sql.'<br />';
         return array($sql, $params, $mygroups);
     }
 
@@ -318,7 +318,7 @@ echo '$sql = '.$sql.'<br />';
      * @return
      */
     public function manage_submissions() {
-        global $OUTPUT, $CFG, $DB, $COURSE;
+        global $OUTPUT, $CFG, $DB, $COURSE, $USER;
 
         require_once($CFG->libdir.'/tablelib.php');
 
@@ -390,7 +390,9 @@ echo '$sql = '.$sql.'<br />';
         $downloadpdftitle = get_string('downloadpdf', 'survey');
         $deletetitle = get_string('delete');
         $neverstring = get_string('never');
+        $edittitle = get_string('edit');
         $restrictedaccess = get_string('restrictedaccess', 'survey');
+        $duplicatetitle = get_string('duplicate');
 
         $paramurl = array();
         $paramurl['id'] = $this->cm->id;
@@ -441,30 +443,39 @@ echo '$sql = '.$sql.'<br />';
                 // actions
                 $paramurl['submissionid'] = $submission->submissionid;
                 if ($this->canmanageallsubmissions || has_extrapermission('edit', $this->survey, $mygroups, $submission->userid)) { // "edit" or "edit as new"
+                    $paramurl['act'] = SURVEY_EDITRESPONSE;
                     if ($submission->status == SURVEY_STATUSCLOSED) {
-                        $paramurl['act'] = SURVEY_EDITRESPONSE;
                         if ($this->survey->history) {
-                            $icontitle = get_string('duplicate');
+                            $icontitle = $duplicatetitle;
                             $iconpath = 't/copy';
                         } else {
-                            $icontitle = get_string('edit');
+                            $icontitle = $edittitle;
                             $iconpath = 't/edit';
                         }
                     } else {
-                        // alwats allow the user to finalize his/her submission
-                        $paramurl['act'] = SURVEY_EDITRESPONSE;
-                        $icontitle = get_string('edit');
+                        // always allow the user to finalize his/her submission
+                        $icontitle = $edittitle;
                         $iconpath = 't/edit';
                     }
                     $basepath = new moodle_url('view.php', $paramurl);
                     $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
                 } else { // read only
-                    $paramurl['act'] = SURVEY_READONLYRESPONSE;
-                    $basepath = new moodle_url('view.php', $paramurl);
-                    $icontitle = $restrictedaccess;
-                    $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
-                    $icons .= '<img src="'.$OUTPUT->pix_url('t/preview').'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
+                    // I don't have canmanageallsubmissions || has_extrapermission
+                    // but if I meet an "in progress" submission of mine...
+                    if (($submission->status == SURVEY_STATUSINPROGRESS) && ($submission->userid == $USER->id)) {
+                        $paramurl['act'] = SURVEY_EDITRESPONSE;
+                        $icontitle = $edittitle;
+                        $basepath = new moodle_url('view.php', $paramurl);
+                        $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
+                        $icons .= '<img src="'.$OUTPUT->pix_url('t/edit').'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
+                    } else { // submission is closed
+                        $paramurl['act'] = SURVEY_READONLYRESPONSE;
+                        $icontitle = $restrictedaccess;
+                        $basepath = new moodle_url('view.php', $paramurl);
+                        $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
+                        $icons .= '<img src="'.$OUTPUT->pix_url('readonly', 'survey').'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
+                    }
                 }
 
                 if ($this->canmanageallsubmissions || has_extrapermission('delete', $this->survey, $mygroups, $submission->userid)) { // delete

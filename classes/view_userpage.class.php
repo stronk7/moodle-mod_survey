@@ -157,20 +157,20 @@ class mod_survey_userpagemanager {
     public function assign_pages() {
         global $DB;
 
-        $conditions = array();
-        $conditions['surveyid'] = $this->survey->id;
-        $conditions['hide'] = 0;
-        if (!$this->canaccesslimiteditems) {
-            $conditions['limitedaccess'] = 0;
-        }
-        if ($pagenumber = $DB->get_field('survey_item', 'MAX(formpage)', $conditions)) {
+        $where = array();
+        $where['surveyid'] = $this->survey->id;
+//         $where['hide'] = 0;
+//         if (!$this->canaccesslimiteditems) {
+//             $where['limitedaccess'] = 0;
+//         }
+        if ($pagenumber = $DB->get_field('survey_item', 'MAX(formpage)', $where)) {
             $this->lastformpage = $pagenumber;
             return;
         }
 
         $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
         $pagenumber = 1;
-        $items = $DB->get_recordset('survey_item', $conditions, 'sortindex', 'id, type, plugin, parentid, formpage, sortindex');
+        $items = $DB->get_recordset('survey_item', $where, 'sortindex', 'id, type, plugin, parentid, formpage, sortindex');
         if ($items) {
 //echo
             foreach ($items as $item) {
@@ -277,7 +277,7 @@ class mod_survey_userpagemanager {
      *    passing it $iteminfo->extra
      */
     public function save_user_data() {
-        global $CFG, $DB, $OUTPUT;
+        global $DB;
 
         // ////////////////////////////
         // begin by saving survey_submissions first
@@ -684,8 +684,6 @@ class mod_survey_userpagemanager {
      * @return
      */
     public function submissions_allowed() {
-        global $USER, $DB;
-
         // if $this->formdata is available, this means that the form was already displayed and submitted
         // so it is not the time to say the user is not allowed to submit one more survey
         if ($this->formdata) {
@@ -694,7 +692,8 @@ class mod_survey_userpagemanager {
         if (!$this->survey->maxentries) {
             return true;
         }
-        return ($this->user_closed_submissions() <= $this->survey->maxentries);
+
+        return ($this->user_closed_submissions(SURVEY_STATUSALL) < $this->survey->maxentries);
     }
 
     /*
@@ -703,10 +702,17 @@ class mod_survey_userpagemanager {
      * @param
      * @return
      */
-    public function user_closed_submissions() {
+    public function user_closed_submissions($status=SURVEY_STATUSALL) {
         global $USER, $DB;
 
-        $params = array('surveyid' => $this->survey->id, 'userid' => $USER->id, 'status' => SURVEY_STATUSCLOSED);
+        $params = array('surveyid' => $this->survey->id, 'userid' => $USER->id);
+        if ($status != SURVEY_STATUSALL) {
+            $statuslist = array(SURVEY_STATUSCLOSED, SURVEY_STATUSINPROGRESS);
+            if (!in_array($status, $statuslist)) {
+                throw new moodle_exception('invalid $status passed to user_closed_submissions in '.__LINE__.' of file '.__FILE__);
+            }
+            $params['status'] = $status;
+        }
 
         return $DB->count_records('survey_submissions', $params);
     }
@@ -820,7 +826,7 @@ class mod_survey_userpagemanager {
      * @return
      */
     public function get_prefill_data() {
-        global $CFG, $DB;
+        global $DB;
 
         $prefill = array();
         //$canaccesslimiteditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$this->formpage
@@ -929,7 +935,7 @@ class mod_survey_userpagemanager {
      * @return
      */
     public function prevent_direct_user_input() {
-        global $DB;
+        global $DB, $USER;
 
         if ($this->action == SURVEY_NOACTION) {
             return true;
@@ -937,7 +943,7 @@ class mod_survey_userpagemanager {
         if ($this->canmanageallsubmissions) {
             return true;
         }
-        if (!$ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $this->submissionid), IGNORE_MISSING)) {
+        if (!$submission = $DB->get_record('survey_submissions', array('id' => $this->submissionid), '*', IGNORE_MISSING)) {
             print_error('incorrectaccessdetected', 'survey');
         }
 
@@ -951,10 +957,12 @@ class mod_survey_userpagemanager {
                 require_capability('mod/survey:preview', $this->context);
                 break;
             case SURVEY_EDITRESPONSE:
-                $allowed = has_extrapermission('edit', $this->survey, $mygroups, $ownerid);
+                $condition1 = has_extrapermission('edit', $this->survey, $mygroups, $submission->userid);
+                $condition2 = ($submission->userid == $USER->id) && ($submission->status == SURVEY_STATUSINPROGRESS);
+                $allowed = $condition1 || $condition2;
                 break;
             case SURVEY_READONLYRESPONSE:
-                $allowed = has_extrapermission('read', $this->survey, $mygroups, $ownerid);
+                $allowed = has_extrapermission('read', $this->survey, $mygroups, $submission->userid);
                 break;
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->action = '.$this->action);
