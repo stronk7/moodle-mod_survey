@@ -72,7 +72,7 @@ function surveytemplate_criticalincidents_add() {
     $content_sid++;
     $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
                     $content_sid, null, FORMAT_HTML, null,
-                    0, '', 0, null, null,
+                    0, '', 0, null,
                     '', 0, 0, 1,
                     0, $sortindex, 1, null,
                     '', '', $timenow, null);

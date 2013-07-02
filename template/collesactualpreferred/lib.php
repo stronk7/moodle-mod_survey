@@ -143,7 +143,7 @@ function surveytemplate_collesactualpreferred_add() {
         // $content_sid++; do not increase here because content of label does not change during the survey
         //                 and I gat the string for label always from content00
         $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
-                        0, null, FORMAT_HTML,
+                        0, null, FORMAT_HTML, '',
                         0, '', 0, null,
                         '', 0, 0, 1,
                         0, $sortindex, 1, null,
