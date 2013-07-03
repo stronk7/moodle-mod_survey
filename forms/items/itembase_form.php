@@ -367,18 +367,18 @@ class surveyitem_baseform extends moodleform {
         }
 
         // you choosed a parentid but you are missing the parentcontent
-        if (empty($data['parentid']) && ($data['parentcontent'] != '')) { // $data['parentcontent'] can be = 0
+        if (empty($data['parentid']) && (strlen($data['parentcontent']) > 0)) { // $data['parentcontent'] can be = 0
             $a = get_string('parentcontent', 'survey');
             $errors['parentcontent'] = get_string('missingparentid_err', 'survey', $a);
         }
 
         // you did not choose a parent item but you entered an answer
-        if (!empty($data['parentid']) && ($data['parentcontent'] == '')) { // $data['parentcontent'] can be = 0
+        if ( !empty($data['parentid']) && (strlen($data['parentcontent']) == 0) ) { // $data['parentcontent'] can be = 0
             $a = get_string('parentid', 'survey');
             $errors['parentid'] = get_string('missingparentcontent_err', 'survey', $a);
         }
 
-        if (!empty($data['parentid']) && ($data['parentcontent'] != '')) { // $data['parentcontent'] can be = 0
+        if (!empty($data['parentid']) && (strlen($data['parentcontent']) > 0)) { // $data['parentcontent'] can be = 0
             // $data['parentid'] == 148
             // $type = 'field' for sure
             $plugin = $DB->get_field('survey_item', 'plugin', array('id' => $data['parentid']));
@@ -386,20 +386,17 @@ class surveyitem_baseform extends moodleform {
             $itemclass = 'surveyfield_'.$plugin;
             $parentitem = new $itemclass($data['parentid']);
 
-            if (!isset($data['hide'])) {
-                // verify $parentitem is in the basicform as of this item
-                if (isset($data['limitedaccess'])) {
-                    $childlimitedaccess = $data['limitedaccess'];
-                } else {
-                    $childlimitedaccess = 0;
-                }
-                $parentlimitedaccess = $parentitem->get_limitedaccess();
-                if ($parentlimitedaccess != $childlimitedaccess) {
-                    $a = ($parentlimitedaccessm) ? get_string('isnotinbasicform', 'survey') : get_string('isinbasicform', 'survey');
-                    // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                    // echo '$a = '.$a.'<br />';
-                    $errors['basicform'] = get_string('differentbasicform', 'survey', $a);
-                }
+            if (isset($data['limitedaccess'])) {
+                $childlimitedaccess = $data['limitedaccess'];
+            } else {
+                $childlimitedaccess = 0;
+            }
+            $parentlimitedaccess = $parentitem->get_limitedaccess();
+            if ($parentlimitedaccess != $childlimitedaccess) {
+                $a = ($parentlimitedaccess) ? get_string('parentisadvanced', 'survey') : get_string('parentisstandard', 'survey');
+                // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
+                // echo '$a = '.$a.'<br />';
+                $errors['limitedaccess'] = get_string('differentaccess', 'survey', $a);
             }
         }
 

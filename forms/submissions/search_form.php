@@ -39,10 +39,10 @@ class survey_searchform extends moodleform {
 
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
-        $canaccesslimiteditems = $this->_customdata->canaccesslimiteditems;
+        $canaccessadvanceditems = $this->_customdata->canaccessadvanceditems;
 
-        //$canaccesslimiteditems, $searchform=true, $type=false, $formpage=false
-        list($sql, $params) = survey_fetch_items_seeds($survey->id, $canaccesslimiteditems, true);
+        //$canaccessadvanceditems, $searchform=true, $type=false, $formpage=false
+        list($sql, $params) = survey_fetch_items_seeds($survey->id, $canaccessadvanceditems, true);
         $itemseeds = $DB->get_recordset_sql($sql, $params);
 
         $context = context_module::instance($cmid);
@@ -58,7 +58,7 @@ class survey_searchform extends moodleform {
                 $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->get_indent())); // here I  do not strip tags to content
             }
 
-            $item->userform_mform_element($mform, $survey, $canaccesslimiteditems, null, true);
+            $item->userform_mform_element($mform, $survey, $canaccessadvanceditems, null, true);
 
             if ($fullinfo = $item->userform_get_full_info(true)) {
                 $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo);

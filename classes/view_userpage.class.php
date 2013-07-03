@@ -59,12 +59,27 @@ class mod_survey_userpagemanager {
     public $formpage = null;
 
     /*
+     * $maxassignedpage
+     */
+    public $maxassignedpage = 0;
+
+    /*
+     * $firstpage_right
+     */
+    public $firstpage_right = 0;
+
+    /*
+     * $firstpage_left
+     */
+    public $firstpage_left = 0;
+
+    /*
      * $action
      */
     public $action = SURVEY_NOACTION;
 
     /*
-     * $currentpage
+     * $currentpage: this is the page of the module. Nothing to share with $formpage
      */
     public $currentpage = '';
 
@@ -74,9 +89,9 @@ class mod_survey_userpagemanager {
     public $canmanageallsubmissions = false;
 
     /*
-     * $canaccesslimiteditems
+     * $canaccessadvanceditems
      */
-    public $canaccesslimiteditems = false;
+    public $canaccessadvanceditems = false;
 
     /*
      * $canmanageitems
@@ -94,16 +109,126 @@ class mod_survey_userpagemanager {
      * Class constructor
      */
     public function __construct($cm, $survey, $submissionid, $formpage, $action) {
+        global $DB;
+
         $this->cm = $cm;
         $this->context = context_module::instance($cm->id);
         $this->survey = $survey;
         $this->submissionid = $submissionid;
-        $this->formpage = $formpage;
         $this->action = $action;
         $this->set_page_from_action();
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
-        $this->canaccesslimiteditems = has_capability('mod/survey:accesslimiteditems', $this->context, null, true);
+        $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
         $this->canmanageitems = has_capability('mod/survey:manageitems', $this->context, null, true);
+
+        // assign pages to items
+        $this->maxassignedpage = $DB->get_field('survey_item', 'MAX(formpage)', array('surveyid' => $survey->id));
+        $this->assign_pages();
+
+        // calculare $this->firstpage_right
+        if ($this->canaccessadvanceditems) {
+            $this->firstpage_right = 1;
+        } else {
+            $this->next_not_empty_page(true, 0); // this calculates $this->firstformpage
+        }
+
+        if ($formpage == 0) { // you are at the beginning of the survey
+            $this->formpage = $this->firstpage_right;
+        } else {
+            $this->formpage = $formpage;
+        }
+    }
+
+    /*
+     * next_not_empty_page
+     *
+     * @param $forward
+     * @param $startingpage
+     * @return
+     */
+    public function next_not_empty_page($forward, $startingpage) {
+        // depending on user provided answer, in the previous or next page there may be no questions to display
+        // get the first page WITH questions
+        // this method write the page number of the first non empty page (according to user answers) in $this->firstpage_right
+        // or the page number of the last non empty page (according to user answers) in $this->firstpage_left
+        // returns $nextpage or 0 if no more empty pages are found in the specified direction
+
+        $condition1 = ($startingpage == SURVEY_RIGHT_OVERFLOW) && ($forward);
+        $condition2 = ($startingpage == SURVEY_LEFT_OVERFLOW) && (!$forward);
+        if ($condition1 || $condition2) {
+            throw new moodle_exception('Wrong direction required in next_not_empty_page whether $startingpage == SURVEY_RIGHT_OVERFLOW');
+        }
+
+        if ($startingpage == SURVEY_RIGHT_OVERFLOW) {
+            $startingpage = $this->maxassignedpage + 1;
+        }
+        if ($startingpage == SURVEY_LEFT_OVERFLOW) {
+            $startingpage = 0;
+        }
+
+        if ($forward) {
+            $nextpage = ++$startingpage;
+            $overflowpage = $this->maxassignedpage + 1; // maxpage = $maxformpage, but I have to add      1 because of ($i != $overflowpage)
+        } else {
+            $nextpage = --$startingpage;
+            $overflowpage = 0;                          // minpage = 1,            but I have to subtract 1 because of ($i != $overflowpage)
+        }
+
+        do {
+            if ($this->page_has_items($nextpage)) {
+                break;
+            }
+            $nextpage = ($forward) ? ++$nextpage : --$nextpage;
+        } while ($nextpage != $overflowpage);
+
+        if ($forward) {
+            $this->firstpage_right = ($nextpage == $overflowpage) ? SURVEY_RIGHT_OVERFLOW : $nextpage;
+        } else {
+            $this->firstpage_left = ($nextpage == $overflowpage) ? SURVEY_LEFT_OVERFLOW : $nextpage;
+        }
+    }
+
+    /*
+     * page_has_items
+     *
+     * @param $formpage
+     * @return
+     */
+    public function page_has_items($formpage) {
+        global $CFG, $DB;
+
+        //$canaccessadvanceditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$formpage
+        list($sql, $params) = survey_fetch_items_seeds($this->survey->id, $this->canaccessadvanceditems, false, SURVEY_TYPEFIELD, $formpage);
+        $itemseeds = $DB->get_records_sql($sql, $params);
+
+        // start looking ONLY at empty($item->parentid) because it doesn't involve extra queries
+        foreach ($itemseeds as $itemseed) {
+            if (empty($itemseed->parentid)) {
+                // if at least one item has an empty parentid, I finished
+                return true;
+            }
+        }
+
+        foreach ($itemseeds as $itemseed) {
+            // make sure that the visibility condition is verified
+            if ($itemseed->type == SURVEY_TYPEFORMAT) {
+                continue;
+            }
+
+            $parentplugin = $DB->get_field('survey_item', 'plugin', array('id' => $itemseed->parentid));
+            require_once($CFG->dirroot.'/mod/survey/field/'.$parentplugin.'/plugin.class.php');
+
+            $itemclass = 'surveyfield_'.$parentplugin;
+            $parentitem = new $itemclass($itemseed->parentid);
+
+            if ($parentitem->userform_child_item_allowed_static($this->submissionid, $itemseed)) {
+            //if (userform_child_item_allowed_static($this->submissionid, $itemseed)) {
+                return true;
+            }
+        }
+
+        // if you're not able to get out in the two previous occasions ... declares defeat
+        return false;
     }
 
     /*
@@ -157,22 +282,21 @@ class mod_survey_userpagemanager {
     public function assign_pages() {
         global $DB;
 
+        if ($this->maxassignedpage) {
+            return;
+        }
+
         $where = array();
         $where['surveyid'] = $this->survey->id;
 //         $where['hide'] = 0;
-//         if (!$this->canaccesslimiteditems) {
+//         if (!$this->canaccessadvanceditems) {
 //             $where['limitedaccess'] = 0;
 //         }
-        if ($pagenumber = $DB->get_field('survey_item', 'MAX(formpage)', $where)) {
-            $this->lastformpage = $pagenumber;
-            return;
-        }
 
         $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
         $pagenumber = 1;
         $items = $DB->get_recordset('survey_item', $where, 'sortindex', 'id, type, plugin, parentid, formpage, sortindex');
         if ($items) {
-//echo
             foreach ($items as $item) {
                 if ($item->plugin == 'pagebreak') { // it is a page break
                     if (!$lastwaspagebreak) {
@@ -192,14 +316,11 @@ class mod_survey_userpagemanager {
                         }
                     }
                 }
-//echo 'assegno pagine: $DB->set_field(\'survey_item\', \'formpage\', '.$pagenumber.', array(\'id\' => '.$item->id.'));<br />';
+// echo 'assegno pagine: $DB->set_field(\'survey_item\', \'formpage\', '.$pagenumber.', array(\'id\' => '.$item->id.'));<br />';
                 $DB->set_field('survey_item', 'formpage', $pagenumber, array('id' => $item->id));
             }
             $items->close();
         }
-//echo '$pagenumber = '.$pagenumber.'<br />';
-
-        $this->lastformpage = $pagenumber;
     }
 
     /*
@@ -557,87 +678,6 @@ class mod_survey_userpagemanager {
     }
 
     /*
-     * next_not_empty_page
-     *
-     * @param $forward
-     * @param $maxformpage
-     * @return
-     */
-    public function next_not_empty_page($forward, $maxformpage=0) {
-        // depending on user provided answer, in the previous or next page there may be no questions to display
-        // get the first page WITH questions
-        // in the worst case will get 1 or $maxformpage
-        // @ page 1 I will ALWAYS find items to show
-        // @ page $maxformpage I may not find items to show.
-        // if even in $maxformpage I can not find items to show, return $returnpage = 0
-
-        if ($forward && empty($maxformpage)) {
-            throw new moodle_exception('emptymaxformpage', 'survey');
-        }
-
-        // $formpage is the page where I come from
-        if ($forward) {
-            $i = ++$this->formdata->formpage;
-            $overflowpage = $maxformpage + 1; // maxpage = $maxformpage, but I have to add      1 because of ($i != $overflowpage)
-        } else {
-            $i = --$this->formdata->formpage;
-            $overflowpage = 0;              // minpage = 1,            but I have to subtract 1 because of ($i != $overflowpage)
-        }
-
-        do {
-            if ($returnpage = $this->page_has_items($i)) {
-                break;
-            }
-            $i = ($forward) ? ++$i : --$i;
-        } while ($i != $overflowpage);
-
-        return $returnpage;
-    }
-
-    /*
-     * page_has_items
-     *
-     * @param $formpage
-     * @return
-     */
-    public function page_has_items($formpage) {
-        global $CFG, $DB;
-
-        //$canaccesslimiteditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$formpage
-        list($sql, $params) = survey_fetch_items_seeds($this->survey->id, $this->canaccesslimiteditems, false, SURVEY_TYPEFIELD, $formpage);
-        $itemseeds = $DB->get_records_sql($sql, $params);
-
-        // start looking ONLY at empty($item->parentid) because it doesn't involve extra queries
-        foreach ($itemseeds as $itemseed) {
-            if (empty($itemseed->parentid)) {
-                // if at least one item has an empty parentid, I finished
-                return $formpage;
-            }
-        }
-
-        foreach ($itemseeds as $itemseed) {
-            // make sure that the visibility condition is verified
-            if ($itemseed->type == SURVEY_TYPEFORMAT) {
-                continue;
-            }
-
-            $parentplugin = $DB->get_field('survey_item', 'plugin', array('id' => $itemseed->parentid));
-            require_once($CFG->dirroot.'/mod/survey/field/'.$parentplugin.'/plugin.class.php');
-
-            $itemclass = 'surveyfield_'.$parentplugin;
-            $parentitem = new $itemclass($itemseed->parentid);
-
-            if ($parentitem->userform_child_item_allowed_static($this->submissionid, $itemseed)) {
-            //if (userform_child_item_allowed_static($this->submissionid, $itemseed)) {
-                return $formpage;
-            }
-        }
-
-        // if you're not able to get out in the two previous occasions ... declares defeat
-        return 0;
-    }
-
-    /*
      * count_input_items
      *
      * @param
@@ -649,7 +689,7 @@ class mod_survey_userpagemanager {
         // if no items are available, stop the intervention here
         $whereparams = array('surveyid' => $this->survey->id);
         $whereclause = 'surveyid = :surveyid AND hide = 0';
-        if (!$this->canaccesslimiteditems) {
+        if (!$this->canaccessadvanceditems) {
             $whereclause .= ' AND limitedaccess = 0';
         }
         return $DB->count_records_select('survey_item', $whereclause, $whereparams);
@@ -664,7 +704,7 @@ class mod_survey_userpagemanager {
     public function noitem_stopexecution() {
         global $COURSE, $OUTPUT;
 
-        $message = ($this->canaccesslimiteditems) ? get_string('noadvanceditemsfound', 'survey') : get_string('nobasicitemsfound', 'survey');
+        $message = ($this->canaccessadvanceditems) ? get_string('noadvanceditemsfound', 'survey') : get_string('nobasicitemsfound', 'survey');
         echo $OUTPUT->notification($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
 
         if ($this->canmanageitems) {
@@ -802,19 +842,26 @@ class mod_survey_userpagemanager {
     }
 
     /*
-     * message_current_page
+     * display_page_x_of_y
      *
      * @param
      * @return
      */
-    public function message_current_page() {
+    public function display_page_x_of_y() {
         global $OUTPUT;
 
-        if ($this->lastformpage > 1) {
+        if ($this->maxassignedpage > 1) {
             // if $formpage == 0 no more pages with items are available
             $a = new stdclass();
-            $a->formpage = ($this->formpage == 0) ? $this->lastformpage : $this->formpage;
-            $a->lastformpage = $this->lastformpage;
+            $a->formpage = $this->formpage;
+            if ($this->formpage == SURVEY_LEFT_OVERFLOW) {
+                $a->formpage = 1;
+            }
+            if ($this->formpage == SURVEY_RIGHT_OVERFLOW) {
+                $a->formpage = $this->maxassignedpage;
+            }
+
+            $a->maxassignedpage = $this->maxassignedpage;
             echo $OUTPUT->heading(get_string('pagexofy', 'survey', $a));
         }
     }
@@ -829,8 +876,8 @@ class mod_survey_userpagemanager {
         global $DB;
 
         $prefill = array();
-        //$canaccesslimiteditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$this->formpage
-        list($sql, $params) = survey_fetch_items_seeds($this->survey->id, $this->canaccesslimiteditems, false, SURVEY_TYPEFIELD, $this->formpage);
+        // $canaccessadvanceditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$this->formpage
+        list($sql, $params) = survey_fetch_items_seeds($this->survey->id, $this->canaccessadvanceditems, false, SURVEY_TYPEFIELD, $this->formpage);
         if ($itemseeds = $DB->get_recordset_sql($sql, $params)) {
             foreach ($itemseeds as $itemseed) {
                 $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);

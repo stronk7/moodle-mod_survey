@@ -43,9 +43,9 @@ class mod_survey_submissionmanager {
     public $submissionid = 0;
 
     /*
-     * $canaccesslimiteditems
+     * $canaccessadvanceditems
      */
-    public $canaccesslimiteditems = false;
+    public $canaccessadvanceditems = false;
 
     /*
      * $canmanageitems
@@ -89,7 +89,7 @@ class mod_survey_submissionmanager {
         $this->action = $action;
         $this->confirm = $confirm;
         $this->searchfields_get = $searchfields_get;
-        $this->canaccesslimiteditems = has_capability('mod/survey:accesslimiteditems', $this->context, null, true);
+        $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
     }
 
@@ -568,8 +568,8 @@ class mod_survey_submissionmanager {
         $user = $DB->get_record('user', array('id' => $submission->userid));
         $userdatarecord = $DB->get_records('survey_userdata', array('submissionid' => $this->submissionid), '', 'itemid, id, content');
 
-        $accessedadvancedform = has_capability('mod/survey:accesslimiteditems', $this->context, $user->id, true);
-        // $canaccesslimiteditems, $searchform = false; $type = false; $formpage = false;
+        $accessedadvancedform = has_capability('mod/survey:accessadvanceditems', $this->context, $user->id, true);
+        // $canaccessadvanceditems, $searchform = false; $type = false; $formpage = false;
         list($sql, $params) = survey_fetch_items_seeds($this->survey->id, $accessedadvancedform, false);
 
         // I am not allowed to get ONLY answers from survey_userdata

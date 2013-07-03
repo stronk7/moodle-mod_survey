@@ -43,9 +43,9 @@ class mod_survey_searchmanager {
     public $survey = null;
 
     /*
-     * $canaccesslimiteditems
+     * $canaccessadvanceditems
      */
-    public $canaccesslimiteditems = false;
+    public $canaccessadvanceditems = false;
 
     /********************** this will be provided later
      * $formdata: the form content as submitted by the user
@@ -59,7 +59,7 @@ class mod_survey_searchmanager {
         $this->cm = $cm;
         $this->context = context_module::instance($cm->id);
         $this->survey = $survey;
-        $this->canaccesslimiteditems = has_capability('mod/survey:accesslimiteditems', $this->context, null, true);
+        $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
     }
 
     /*

@@ -192,12 +192,12 @@ class surveyformat_label extends surveyitem_base {
      *
      * @param $mform
      * @param $survey
-     * @param $canaccesslimiteditems
+     * @param $canaccessadvanceditems
      * @param $parentitem
      * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccesslimiteditems, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $survey, $canaccessadvanceditems, $parentitem=null, $searchform=false) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
         $message = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
@@ -210,11 +210,11 @@ class surveyformat_label extends surveyitem_base {
      *
      * @param $data, &$errors
      * @param $survey
-     * @param $canaccesslimiteditems
+     * @param $canaccessadvanceditems
      * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccesslimiteditems, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvanceditems, $parentitem=null) {
         // nothing to do here
     }
 

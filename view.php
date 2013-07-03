@@ -50,7 +50,7 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 
-$formpage = optional_param('formpage' , 1, PARAM_INT); // form page number
+$formpage = optional_param('formpage' , 0, PARAM_INT); // form page number
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $submissionid = optional_param('submissionid', 0, PARAM_INT);
 
@@ -65,13 +65,6 @@ $hassubmitbutton = ($userpage_manager->currentpage != SURVEY_SUBMISSION_READONLY
 $hassubmitbutton = $hassubmitbutton && ($userpage_manager->currentpage != SURVEY_SUBMISSION_PREVIEW);
 
 // ////////////////////////////
-// assign items to pages in the basicform and in the advancedform
-$userpage_manager->assign_pages();
-// this is the method used to assign $userpage_manager->lastformpage
-// end of: assign items to pages in the basicform and in the advancedform
-// ////////////////////////////
-
-// ////////////////////////////
 // define $user_form return url
 $paramurl = array('id' => $cm->id, 'act' => $action);
 $formurl = new moodle_url('view.php', $paramurl);
@@ -84,10 +77,11 @@ $formparams = new stdClass();
 $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
 $formparams->submissionid = $submissionid;
-$formparams->lastformpage = $userpage_manager->lastformpage;
-$formparams->canaccesslimiteditems = $userpage_manager->canaccesslimiteditems; // Help selecting the fields to show
-$formparams->formpage = $formpage;
-$formparams->currentpage = $userpage_manager->currentpage;
+$formparams->firstpage_right = $userpage_manager->firstpage_right;
+$formparams->maxassignedpage = $userpage_manager->maxassignedpage;
+$formparams->canaccessadvanceditems = $userpage_manager->canaccessadvanceditems; // Help selecting the fields to show
+$formparams->formpage = $userpage_manager->formpage;
+$formparams->currentpage = $userpage_manager->currentpage; // this is the page to get corresponding fields
 if ($action == SURVEY_READONLYRESPONSE) {
     $userpage_form = new survey_submissionform($formurl, $formparams, 'post', '', null, false);
 } else {
@@ -123,15 +117,17 @@ if ($userpage_manager->formdata = $userpage_form->get_data()) {
     $paramurl['submissionid'] = $userpage_manager->submissionid;
 
     if ($prevbutton) {
-        // $userpage_manager->formdata->formpage in the worst case becomes equal to 1
-        $paramurl['formpage'] = $userpage_manager->next_not_empty_page(false);
+        // $userpage_manager->formdata->formpage in the worst case becomes equal to 1 such as left $overflow (-1)
+        $userpage_manager->next_not_empty_page(false, $userpage_manager->formpage);
+        $paramurl['formpage'] = $userpage_manager->firstpage_left;
         redirect(new moodle_url('view.php', $paramurl)); // -> go to the first non empty previous page of the form
     }
 
     $nextbutton = (isset($userpage_manager->formdata->nextbutton) && ($userpage_manager->formdata->nextbutton));
     if ($nextbutton) {
-        // $userpage_manager->formdata->formpage in the worst case could become $lastformpage such as 0
-        $paramurl['formpage'] = $userpage_manager->next_not_empty_page(true, $userpage_manager->lastformpage);
+        // $userpage_manager->formdata->formpage in the worst case could become $firstpage_left such as right $overflow (-2)
+        $userpage_manager->next_not_empty_page(true, $userpage_manager->formpage);
+        $paramurl['formpage'] = $userpage_manager->firstpage_right;
         redirect(new moodle_url('view.php', $paramurl)); // -> go to the first non empty next page of the form
     }
 }
@@ -195,7 +191,7 @@ if ($userpage_manager->currentpage == SURVEY_SUBMISSION_PREVIEW) {
 
 // ////////////////////////////
 // display orientation text: page xx of yy
-$userpage_manager->message_current_page();
+$userpage_manager->display_page_x_of_y();
 // end of: display orientation text: page xx of yy
 // ////////////////////////////
 
@@ -208,7 +204,7 @@ if ($hassubmitbutton) {
     }
 }
 // go to populate the hidden field of the form
-$prefill['formpage'] = empty($formpage) ? $userpage_manager->lastformpage : $formpage;
+$prefill['formpage'] = $userpage_manager->formpage;
 
 $userpage_form->set_data($prefill);
 $userpage_form->display();

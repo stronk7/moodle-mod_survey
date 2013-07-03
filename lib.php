@@ -118,6 +118,10 @@ define('SURVEY_TYPEFORMAT', 'format');
     define('SURVEY_DELETEUTEMPLATE'   ,'20');
     define('SURVEY_EXPORTUTEMPLATE'   ,'21');
 
+// OVERFLOW
+define('SURVEY_LEFT_OVERFLOW' , -10);
+define('SURVEY_RIGHT_OVERFLOW', -20);
+
 // SAVESTATUS
 define('SURVEY_NOFEEDBACK', 0);
 
@@ -987,13 +991,13 @@ function survey_get_plugin_list($plugintype=null, $includetype=false, $count=fal
 
 /**
  * survey_fetch_items_seeds
- * @param $canaccesslimiteditems
+ * @param $canaccessadvanceditems
  * @param $searchform
  * @param $type
  * @param $formpage
  * @return
  */
-function survey_fetch_items_seeds($surveyid, $canaccesslimiteditems, $searchform, $type=false, $formpage=false) {
+function survey_fetch_items_seeds($surveyid, $canaccessadvanceditems, $searchform, $type=false, $formpage=false) {
     $sql = 'SELECT si.*
                FROM {survey_item} si
                WHERE si.surveyid = :surveyid
@@ -1001,7 +1005,7 @@ function survey_fetch_items_seeds($surveyid, $canaccesslimiteditems, $searchform
     $params = array();
     $params['surveyid'] = $surveyid;
 
-    if (!$canaccesslimiteditems) {
+    if (!$canaccessadvanceditems) {
         $sql .= ' AND si.limitedaccess = 0';
     }
     if ($searchform) { // advanced search

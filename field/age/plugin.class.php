@@ -306,12 +306,12 @@ class surveyfield_age extends surveyitem_base {
      *
      * @param $mform
      * @param $survey
-     * @param $canaccesslimiteditems
+     * @param $canaccessadvanceditems
      * @param $parentitem
      * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccesslimiteditems, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $survey, $canaccessadvanceditems, $parentitem=null, $searchform=false) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
         $years = array();
@@ -383,7 +383,7 @@ class surveyfield_age extends surveyitem_base {
      * @param $olduserdata
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccesslimiteditems, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvanceditems, $parentitem=null) {
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 

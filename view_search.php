@@ -72,7 +72,7 @@ $formurl = new moodle_url('view_search.php', $paramurl);
 $formparams = new stdClass();
 $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
-$formparams->canaccesslimiteditems = $search_manager->canaccesslimiteditems; // Help selecting the fields to show
+$formparams->canaccessadvanceditems = $search_manager->canaccessadvanceditems; // Help selecting the fields to show
 $formparams->formpage = $formpage;
 $search_form = new survey_searchform($formurl, $formparams);
 // end of: prepare params for the form

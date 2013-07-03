@@ -51,7 +51,7 @@ class survey_exportform extends moodleform {
         // submissionexport::limitedaccess
         // ----------------------------------------
         $fieldname = 'limitedaccess';
-        if ($this->_customdata->canaccesslimiteditems) {
+        if ($this->_customdata->canaccessadvanceditems) {
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         } else {
             $mform->addElement('hidden', $fieldname, 0);

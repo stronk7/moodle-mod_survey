@@ -1517,10 +1517,10 @@ class surveyitem_base {
      * In the frame of this method the parent item is calculated and is requested to provide the disabledif conditions to disable its child item
      *
      * @param $mform
-     * @param $canaccesslimiteditems
+     * @param $canaccessadvanceditems
      * @return
      */
-    public function userform_disable_element($mform, $canaccesslimiteditems) {
+    public function userform_disable_element($mform, $canaccessadvanceditems) {
         global $DB;
 
         if (!$this->parentid || ($this->type == SURVEY_TYPEFORMAT)) {

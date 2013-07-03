@@ -67,7 +67,7 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
 
     SUB-TAB == SURVEY_SUBMISSION_NEW
         $elementurl = new moodle_url('/mod/survey/view.php', $paramurl);
-        mod/survey:accesslimiteditems
+        mod/survey:accessadvanceditems
         mod/survey:submit
 
     SUB-TAB == SURVEY_SUBMISSION_MANAGE
@@ -197,7 +197,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:accesslimiteditems' => array(
+    'mod/survey:accessadvanceditems' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

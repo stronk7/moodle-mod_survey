@@ -38,11 +38,12 @@ class survey_submissionform extends moodleform {
         $mform = $this->_form;
 
         $cmid = $this->_customdata->cmid;
-        $lastformpage = $this->_customdata->lastformpage;
+        $firstpage_right = $this->_customdata->firstpage_right;
+        $maxassignedpage = $this->_customdata->maxassignedpage;
         $survey = $this->_customdata->survey;
         $submissionid = $this->_customdata->submissionid;
         $formpage = $this->_customdata->formpage;
-        $canaccesslimiteditems = $this->_customdata->canaccesslimiteditems;
+        $canaccessadvanceditems = $this->_customdata->canaccessadvanceditems;
         $currentpage = $this->_customdata->currentpage;
 
         // ----------------------------------------
@@ -63,29 +64,32 @@ class survey_submissionform extends moodleform {
         $mform->addElement('hidden', 'formpage', 0); // <-- this value comes from default just set before $mform->display(); in attempt.php
         $mform->setType('formpage', PARAM_INT);
 
-        if (!$formpage) {
-            // if !$formpage then I am at the END of the survey otherwise, $formpage == 1 at least
-            // no more pages have fields to show
-            // let's display final message
+        if ($formpage == SURVEY_LEFT_OVERFLOW) {
+            $mform->addElement('static', 'nomoreitems', get_string('note', 'survey'), get_string('onlyadvanceditemhere', 'survey'));
+            // $mform->addElement('static', 'nomoreitems', get_string('note', 'survey'), 'SURVEY_LEFT_OVERFLOW');
+        }
+
+        if ($formpage == SURVEY_RIGHT_OVERFLOW) {
             $a = $survey->saveresume ? get_string('revieworpause', 'survey') : get_string('onlyreview', 'survey');
             $mform->addElement('static', 'nomoreitems', get_string('note', 'survey'), get_string('nomoreitems', 'survey', $a));
-        } else {
-            //$canaccesslimiteditems, $searchform=false, $type=false, $formpage
-            list($sql, $params) = survey_fetch_items_seeds($survey->id, $canaccesslimiteditems, false, false, $formpage);
+            // $mform->addElement('static', 'nomoreitems', get_string('note', 'survey'), 'SURVEY_RIGHT_OVERFLOW');
+        }
+
+        if ($formpage > 0) {
+            //$canaccessadvanceditems, $searchform=false, $type=false, $formpage
+            list($sql, $params) = survey_fetch_items_seeds($survey->id, $canaccessadvanceditems, false, false, $formpage);
             $itemseeds = $DB->get_recordset_sql($sql, $params);
             // I do not need to be sure items are found because I already know this
             // In attempt.php if items are not found I display a message and execution is stopped
 
+            if (!$itemseeds->valid()) {
+                // no items are in this page
+                // display a message
+                $mform->addElement('static', 'noitemshere', get_string('note', 'survey'), 'ciccia');
+            }
+
             $context = context_module::instance($cmid);
-
             foreach ($itemseeds as $itemseed) {
-                // echo '$itemseed->basicformpage:';
-                // var_dump($itemseed->basicformpage);
-
-                // Show the item only if:
-                //     - all has to go to the same page
-                //       OR
-                //     - the current item matches the parent value
                 if ($itemseed->parentid) {
                     // get it now AND NEVER MORE
                     $parentitem = survey_get_item($itemseed->parentid);
@@ -123,14 +127,14 @@ class survey_submissionform extends moodleform {
                         $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->get_indent())); // here I  do not strip tags to content
                     }
 
-                    $item->userform_mform_element($mform, $survey, $canaccesslimiteditems, $parentitem);
+                    $item->userform_mform_element($mform, $survey, $canaccessadvanceditems, $parentitem);
 
                     if ($fullinfo = $item->userform_get_full_info(false)) {
                         $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo);
                     }
 
                     if (!$survey->newpageforchild) {
-                        $item->userform_disable_element($mform, $canaccesslimiteditems);
+                        $item->userform_disable_element($mform, $canaccessadvanceditems);
                     }
                 }
             }
@@ -147,14 +151,15 @@ class survey_submissionform extends moodleform {
         // buttons
         $buttonlist = array();
 
-        if ($formpage != 1) { // 0 or greater than 1 [0 is returned for $page when no items are found not even in the last page]
+        // SURVEY_LEFT_OVERFLOW or greater than 1
+        if ( ($formpage == SURVEY_RIGHT_OVERFLOW) || ($formpage > 1) ) {
             $buttonlist['prevbutton'] = get_string('previousformpage', 'survey');
         }
         if ($currentpage != SURVEY_SUBMISSION_PREVIEW) {
             if ($survey->saveresume) {
                 $buttonlist['pausebutton'] = get_string('pause', 'survey');
             }
-            if (($formpage == $lastformpage) || (!$formpage)) {
+            if (($formpage == $maxassignedpage) || ($formpage == SURVEY_RIGHT_OVERFLOW)){
                 if ($survey->history) {
                     $submission_status = $DB->get_field('survey_submissions', 'status', array('id' => $submissionid), IGNORE_MISSING);
                     if ($submission_status === false) { // submissions still does not exist
@@ -172,7 +177,7 @@ class survey_submissionform extends moodleform {
                 }
             }
         }
-        if (($formpage < $lastformpage) && ($formpage)) { // lower than $lastformpage but different from 0
+        if ( ($formpage == SURVEY_LEFT_OVERFLOW) || ($formpage > 0 && $formpage < $maxassignedpage) ) {
             $buttonlist['nextbutton'] = get_string('nextformpage', 'survey');
         }
 
@@ -197,11 +202,6 @@ class survey_submissionform extends moodleform {
         $mform = $this->_form;
 
         // $cmid = $this->_customdata->cmid;
-        // $lastformpage = $this->_customdata->lastformpage;
-        // $survey = $this->_customdata->survey;
-        // $submissionid = $this->_customdata->submissionid;
-        // $formpage = $this->_customdata->formpage;
-        // $canaccesslimiteditems = $this->_customdata->canaccesslimiteditems;
         $currentpage = $this->_customdata->currentpage;
 
         if (isset($data['prevbutton']) || ($currentpage == SURVEY_SUBMISSION_PREVIEW)) {
@@ -209,12 +209,12 @@ class survey_submissionform extends moodleform {
             return array();
         }
 
-        // $cmid = $this->_customdata->cmid;
-        // $lastformpage = $this->_customdata->lastformpage;
         $survey = $this->_customdata->survey;
         $submissionid = $this->_customdata->submissionid;
         $formpage = $this->_customdata->formpage;
-        $canaccesslimiteditems = $this->_customdata->canaccesslimiteditems;
+        $firstpage_right = $this->_customdata->firstpage_right;
+        $maxassignedpage = $this->_customdata->maxassignedpage;
+        $canaccessadvanceditems = $this->_customdata->canaccessadvanceditems;
 
         $errors = parent::validation($data, $files);
 
@@ -259,7 +259,7 @@ class survey_submissionform extends moodleform {
                 }
 
                 if ($itemisenabled) {
-                    $item->userform_mform_validation($data, $errors, $survey, $canaccesslimiteditems, $parentitem);
+                    $item->userform_mform_validation($data, $errors, $survey, $canaccessadvanceditems, $parentitem);
                 // } else {
                     // echo 'parent item didn\'t allow the validation of the child item '.$item->itemid.', plugin = '.$item->plugin.'('.$item->content.')<br />';
                 }

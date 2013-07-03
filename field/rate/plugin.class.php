@@ -320,12 +320,12 @@ class surveyfield_rate extends surveyitem_base {
      *
      * @param $mform
      * @param $survey
-     * @param $canaccesslimiteditems
+     * @param $canaccessadvanceditems
      * @param $parentitem
      * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccesslimiteditems, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $survey, $canaccessadvanceditems, $parentitem=null, $searchform=false) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
         $options = survey_textarea_to_array($this->options);
@@ -430,11 +430,11 @@ class surveyfield_rate extends surveyitem_base {
      *
      * @param $data, &$errors
      * @param $survey
-     * @param $canaccesslimiteditems
+     * @param $canaccessadvanceditems
      * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccesslimiteditems, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvanceditems, $parentitem=null) {
         // this plugin displays as a set of dropdown menu or radio buttons. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
