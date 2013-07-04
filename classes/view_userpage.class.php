@@ -288,10 +288,7 @@ class mod_survey_userpagemanager {
 
         $where = array();
         $where['surveyid'] = $this->survey->id;
-//         $where['hide'] = 0;
-//         if (!$this->canaccessadvanceditems) {
-//             $where['limitedaccess'] = 0;
-//         }
+        $where['hide'] = 0;
 
         $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
         $pagenumber = 1;

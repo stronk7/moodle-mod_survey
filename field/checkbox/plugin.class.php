@@ -392,14 +392,14 @@ class surveyfield_checkbox extends surveyitem_base {
         $disabilitationinfo = array();
 
         // I need to know the names of mfrom element corresponding to the content of $child_parentvalue
-        $values = $this->item_get_values_array('options');
+        $labels = $this->item_get_labels_array('options');
         $request = survey_textarea_to_array($child_parentvalue);
 
-        foreach ($values as $k => $value) {
+        foreach ($labels as $k => $label) {
             $mformelementinfo = new stdClass();
 
             $mformelementinfo->parentname = $this->itemname.'_'.$k;
-            $constrainindex = array_search($value, $request);
+            $constrainindex = array_search($label, $request);
             if ($constrainindex !== false) { // 0 or a different index
                 unset($request[$constrainindex]);
                 $mformelementinfo->content = 'notchecked';

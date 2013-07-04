@@ -1533,22 +1533,23 @@ class surveyitem_base {
             $fieldname = $this->itemname;
         }
 
-        $mypage = $this->get_formpage();
         $parentrestrictions = array();
 
         // if I am here this means I have a parent FOR SURE
         // instead of making one more query, I assign two variables manually
         // at the beginning, $currentitem is me
         $currentitem = new StdClass();
-        $currentitem->parentid = $this->parentid;
-        $currentitem->parentcontent = $this->parentcontent;
+        $currentitem->parentid = $this->get_parentid();
+        $currentitem->parentcontent = $this->get_parentcontent();
+        $mypage = $this->get_formpage(); // once and forever
         do {
             /*
              * Take care.
-             * Even if (!$survey->newpageforchild) I can have all my ancestors into previous pages because I added pagebreak manually
+             * Even if (!$survey->newpageforchild) I can have all my ancestors into previous pages by adding pagebreaks manually
              * Because of this, I need to chech page numbers
              */
-            $parentpage = $DB->get_field('survey_item', 'formpage', array('id' => $currentitem->parentid));
+            $parentitem = $DB->get_record('survey_item', array('id' => $currentitem->parentid), 'parentid, parentcontent, formpage');
+            $parentpage = $parentitem->formpage;
             if ($parentpage == $mypage) {
                 $parentid = $currentitem->parentid;
                 $parentcontent = $currentitem->parentcontent;
@@ -1559,8 +1560,8 @@ class surveyitem_base {
                 break;
             }
 
-            $currentitem = $DB->get_record('survey_item', array('id' => $parentid), 'parentid, parentcontent, formpage');
-        } while (!empty($parentrecord->parentid));
+            $currentitem = $parentitem;
+        } while (!empty($parentitem->parentid));
         // $parentrecord is an associative array
         // The array key is the ID of the parent item, the corresponding value is the constrain that $this has to be submitted to
 
