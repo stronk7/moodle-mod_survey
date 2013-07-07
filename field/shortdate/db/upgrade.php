@@ -45,7 +45,7 @@ function xmldb_surveyfield_shortdate_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013052302, 'surveyfield_shortdate', 'survey');
+        upgrade_plugin_savepoint(true, 2013052302, 'surveyfield', 'shortdate');
     }
 
     if ($oldversion < 2013052401) {
@@ -57,7 +57,7 @@ function xmldb_surveyfield_shortdate_upgrade($oldversion) {
         $dbman->change_field_type($table, $field);
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013052401, 'surveyfield_shortdate', 'survey');
+        upgrade_plugin_savepoint(true, 2013052401, 'surveyfield', 'shortdate');
     }
 
     if ($oldversion < 2013062104) {
@@ -71,7 +71,7 @@ function xmldb_surveyfield_shortdate_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013062104, 'surveyfield_shortdate', 'survey');
+        upgrade_plugin_savepoint(true, 2013062104, 'surveyfield', 'shortdate');
     }
 
     return true;

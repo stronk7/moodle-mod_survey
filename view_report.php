@@ -60,7 +60,7 @@ require_capability('mod/survey:accessreports', $context);
 // nothing to do here ;-)
 
 // ////////////////////////////////////////////////////////////
-// Output starts here
+// output starts here
 // ////////////////////////////////////////////////////////////
 $PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);

@@ -45,7 +45,7 @@ function xmldb_surveyfield_checkbox_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013050801, 'surveyfield_checkbox', 'survey');
+        upgrade_plugin_savepoint(true, 2013050801, 'surveyfield', 'checkbox');
     }
 
     if ($oldversion < 2013062001) {
@@ -57,7 +57,7 @@ function xmldb_surveyfield_checkbox_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'downloadformat');
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013062001, 'surveyfield_checkbox', 'survey');
+        upgrade_plugin_savepoint(true, 2013062001, 'surveyfield', 'checkbox');
     }
 
     return true;

@@ -45,7 +45,7 @@ function xmldb_surveyfield_recurrence_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013061702, 'surveyfield_recurrence', 'survey');
+        upgrade_plugin_savepoint(true, 2013061702, 'surveyfield', 'recurrence');
     }
 
     return true;

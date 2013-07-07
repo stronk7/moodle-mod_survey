@@ -45,7 +45,7 @@ function xmldb_surveyfield_boolean_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013061801, 'surveyfield_boolean', 'survey');
+        upgrade_plugin_savepoint(true, 2013061801, 'surveyfield', 'boolean');
     }
 
     return true;

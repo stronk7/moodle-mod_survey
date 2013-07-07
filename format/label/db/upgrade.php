@@ -37,7 +37,7 @@ function xmldb_surveyformat_label_upgrade($oldversion) {
     // if ($oldversion < 2012101103) {
 
         // survey savepoint reached
-    //    upgrade_plugin_savepoint(true, 2012062560, 'surveyformat_label', 'survey');
+    //    upgrade_plugin_savepoint(true, 2012062560, 'surveyformat', 'label');
     // }
 
     return true;

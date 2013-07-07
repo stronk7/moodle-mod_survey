@@ -45,7 +45,7 @@ function xmldb_surveyfield_rate_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013062101, 'surveyfield_rate', 'survey');
+        upgrade_plugin_savepoint(true, 2013062101, 'surveyfield', 'rate');
     }
 
     return true;

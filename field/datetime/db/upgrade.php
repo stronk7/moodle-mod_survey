@@ -45,7 +45,7 @@ function xmldb_surveyfield_datetime_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013052302, 'surveyfield_datetime', 'survey');
+        upgrade_plugin_savepoint(true, 2013052302, 'surveyfield', 'datetime');
     }
 
     if ($oldversion < 2013052401) {
@@ -57,7 +57,7 @@ function xmldb_surveyfield_datetime_upgrade($oldversion) {
         $dbman->change_field_type($table, $field);
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013052401, 'surveyfield_datetime', 'survey');
+        upgrade_plugin_savepoint(true, 2013052401, 'surveyfield', 'datetime');
     }
 
     if ($oldversion < 2013062104) {
@@ -71,7 +71,7 @@ function xmldb_surveyfield_datetime_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013062104, 'surveyfield_datetime', 'survey');
+        upgrade_plugin_savepoint(true, 2013062104, 'surveyfield', 'datetime');
     }
 
     return true;

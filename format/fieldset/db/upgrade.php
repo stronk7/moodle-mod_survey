@@ -44,7 +44,7 @@ function xmldb_surveyformat_fieldset_upgrade($oldversion) {
 
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013042901, 'surveyformat_fieldset', 'survey');
+        upgrade_plugin_savepoint(true, 2013042901, 'surveyformat', 'fieldset');
     }
 
     return true;

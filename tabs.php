@@ -136,16 +136,18 @@ switch ($currenttab) {
             $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
         }
 
-        if ($cansubmit) { // attempt
+        if ($canview) { // attempt
             $elementurl = new moodle_url('/mod/survey/view.php', $paramurl);
             $strlabel = get_string('tabsubmissionspage2', 'survey');
             $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
         }
 
         // manage data
-        $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
-        $strlabel = get_string('tabsubmissionspage3', 'survey');
-        $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
+        if ($canmanagesubmissions) {
+            $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
+            $strlabel = get_string('tabsubmissionspage3', 'survey');
+            $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
+        }
 
         if ($currentpage == SURVEY_SUBMISSION_EDIT) { // edit
             $localparamurl = array('id' => $cm->id, 'act' => SURVEY_EDITRESPONSE);
@@ -275,7 +277,7 @@ switch ($currenttab) {
 
         break;
     default:
-        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $currenttab = '.$currenttab);
+        print_error('incorrectaccessdetected', 'survey');
 }
 
 // echo '$tabs:';

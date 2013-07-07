@@ -45,7 +45,7 @@ function xmldb_surveyfield_multiselect_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013041901, 'surveyfield_multiselect', 'survey');
+        upgrade_plugin_savepoint(true, 2013041901, 'surveyfield', 'multiselect');
     }
 
     if ($oldversion < 2013062201) {
@@ -59,7 +59,7 @@ function xmldb_surveyfield_multiselect_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013062201, 'surveyfield_multiselect', 'survey');
+        upgrade_plugin_savepoint(true, 2013062201, 'surveyfield', 'multiselect');
     }
 
     return true;

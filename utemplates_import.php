@@ -94,7 +94,7 @@ if ($utemplate_manager->formdata = $import_utemplate->get_data()) {
 // ////////////////////////////
 
 // ////////////////////////////////////////////////////////////
-// Output starts here
+// output starts here
 // ////////////////////////////////////////////////////////////
 $PAGE->set_url('/mod/survey/utemplates.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);

@@ -63,6 +63,11 @@ class mod_survey_submissionmanager {
     public $confirm = false;
 
     /*
+     * $canmanagesubmissions
+     */
+    public $canmanagesubmissions = false;
+
+    /*
      * $canmanageallsubmissions
      */
     public $canmanageallsubmissions = false;
@@ -90,6 +95,7 @@ class mod_survey_submissionmanager {
         $this->confirm = $confirm;
         $this->searchfields_get = $searchfields_get;
         $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
+        $this->canmanagesubmissions = has_capability('mod/survey:managesubmissions', $this->context, null, true);
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
     }
 
@@ -235,6 +241,8 @@ class mod_survey_submissionmanager {
      * @return
      */
     public function get_manage_sql($table) {
+        global $USER;
+
         $sql = 'SELECT s.*, s.id as submissionid, '.user_picture::fields('u').'
                 FROM {survey_submissions} s ';
 
@@ -261,18 +269,22 @@ class mod_survey_submissionmanager {
         }
 
         // if $survey->readaccess == SURVEY_GROUP I am sure that course or instance is divided by group too
-        if ($this->survey->readaccess == SURVEY_GROUP) {
-            // apply the group filter ONLY IF "Advanced permissions"
-            $sql .= '    JOIN {groups_members} gm ON gm.userid = s.userid ';
+        if (!$this->canmanageallsubmissions) {
+            if ($this->survey->readaccess == SURVEY_GROUP) {
+                // apply the group filter ONLY IF "Advanced permissions"
+                $sql .= '    JOIN {groups_members} gm ON gm.userid = s.userid ';
+            }
         }
 
         $sql .= '    JOIN {user} u ON (s.userid = u.id)
                 WHERE s.surveyid = :surveyid';
         $params['surveyid'] = $this->survey->id;
 
-        if ($this->survey->readaccess == SURVEY_OWNER) {
-            $sql .= ' WHERE s.userid = :userid';
-            $params['userid'] = $USER->id;
+        if (!$this->canmanageallsubmissions) {
+            if ($this->survey->readaccess == SURVEY_OWNER) {
+                $sql .= ' AND s.userid = :userid';
+                $params['userid'] = $USER->id;
+            }
         }
 
         // specific restrictions over {survey_userdata}
@@ -285,14 +297,15 @@ class mod_survey_submissionmanager {
 
         $mygroups = survey_get_my_groups($this->cm);
         if ($this->survey->readaccess == SURVEY_GROUP) { // if $survey->readaccess == SURVEY_GROUP then course or instance is divided by group
-
-            $grouprow = array();
-            $sql .= ' AND (';
-            foreach ($mygroups as $mygroup) {
-                $grouprow[] = '(gm.groupid = '.$mygroup.')';
+            if (count($mygroups)) {
+                $grouprow = array();
+                $sql .= ' AND (';
+                foreach ($mygroups as $mygroup) {
+                    $grouprow[] = '(gm.groupid = '.$mygroup.')';
+                }
+                $sql .= implode(' OR ', $grouprow);
+                $sql .= ') ';
             }
-            $sql .= implode(' OR ', $grouprow);
-            $sql .= ') ';
         }
 
         // specific restrictions coming from $table->get_sql_where()
@@ -512,10 +525,13 @@ class mod_survey_submissionmanager {
     public function prevent_direct_user_input() {
         global $DB;
 
-        if ($this->action == SURVEY_NOACTION) {
+        if ($this->canmanageallsubmissions) {
             return true;
         }
-        if ($this->canmanageallsubmissions) {
+        if (!$this->managesubmissions) {
+            print_error('incorrectaccessdetected', 'survey');
+        }
+        if ($this->action == SURVEY_NOACTION) {
             return true;
         }
         if (!$ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $this->submissionid), IGNORE_MISSING)) {
@@ -535,13 +551,13 @@ class mod_survey_submissionmanager {
                 $allowed = has_extrapermission('delete', $this->survey, $mygroups, $ownerid);
                 break;
             case SURVEY_RESPONSETOPDF:
-                require_capability('mod/survey:submissiontopdf', $this->context);
+                $allowed = has_capability('mod/survey:submissiontopdf', $this->context);
                 break;
             case SURVEY_DELETEALLRESPONSES:
-                require_capability('mod/survey:deleteallsubmissions', $this->context);
+                $allowed = has_capability('mod/survey:deleteallsubmissions', $this->context);
                 break;
             default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->action = '.$this->action);
+                $allowed = false;
         }
         if (!$allowed) {
             print_error('incorrectaccessdetected', 'survey');

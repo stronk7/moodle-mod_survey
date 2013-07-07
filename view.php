@@ -81,14 +81,16 @@ $formparams->firstpage_right = $userpage_manager->firstpage_right;
 $formparams->maxassignedpage = $userpage_manager->maxassignedpage;
 $formparams->canaccessadvanceditems = $userpage_manager->canaccessadvanceditems; // Help selecting the fields to show
 $formparams->formpage = $userpage_manager->formpage;
-$formparams->currentpage = $userpage_manager->currentpage; // this is the page to get corresponding fields
+$formparams->tabpage = $userpage_manager->currentpage; // this is the page to get corresponding fields
+$formparams->cansubmit = $userpage_manager->cansubmit;
+// end of: prepare params for the form
+// ////////////////////////////
+
 if ($action == SURVEY_READONLYRESPONSE) {
     $userpage_form = new survey_submissionform($formurl, $formparams, 'post', '', null, false);
 } else {
     $userpage_form = new survey_submissionform($formurl, $formparams);
 }
-// end of: prepare params for the form
-// ////////////////////////////
 
 // ////////////////////////////
 // manage form submission
@@ -135,7 +137,7 @@ if ($userpage_manager->formdata = $userpage_form->get_data()) {
 // ////////////////////////////
 
 // ////////////////////////////////////////////////////////////
-// Output starts here
+// output starts here
 // ////////////////////////////////////////////////////////////
 $PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);

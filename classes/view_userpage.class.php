@@ -98,6 +98,11 @@ class mod_survey_userpagemanager {
      */
     public $canmanageitems = false;
 
+    /*
+     * $cansubmit
+     */
+    public $cansubmit = false;
+
     /********************** this will be provided later
      * $formdata: the form content as submitted by the user
      */
@@ -117,9 +122,14 @@ class mod_survey_userpagemanager {
         $this->submissionid = $submissionid;
         $this->action = $action;
         $this->set_page_from_action();
-        $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
-        $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
+
         $this->canmanageitems = has_capability('mod/survey:manageitems', $this->context, null, true);
+        $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
+
+        $this->cansubmit = has_capability('mod/survey:submit', $this->context, null, true);
+
+        $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
+
 
         // assign pages to items
         $this->maxassignedpage = $DB->get_field('survey_item', 'MAX(formpage)', array('surveyid' => $survey->id));
@@ -132,7 +142,7 @@ class mod_survey_userpagemanager {
             $this->next_not_empty_page(true, 0); // this calculates $this->firstformpage
         }
 
-        if ($formpage == 0) { // you are at the beginning of the survey
+        if ($formpage == 0) { // you are viewing the survey for the first time
             $this->formpage = $this->firstpage_right;
         } else {
             $this->formpage = $formpage;
@@ -981,35 +991,35 @@ class mod_survey_userpagemanager {
     public function prevent_direct_user_input() {
         global $DB, $USER;
 
-        if ($this->action == SURVEY_NOACTION) {
-            return true;
-        }
         if ($this->canmanageallsubmissions) {
             return true;
         }
-        if (!$submission = $DB->get_record('survey_submissions', array('id' => $this->submissionid), '*', IGNORE_MISSING)) {
-            print_error('incorrectaccessdetected', 'survey');
-        }
+        $submission = $DB->get_record('survey_submissions', array('id' => $this->submissionid), '*', IGNORE_MISSING);
 
         $allowed = true;
         $mygroups = survey_get_my_groups($this->cm);
         switch ($this->action) {
             case SURVEY_NOACTION:
-                require_capability('mod/survey:submit', $this->context);
+                $allowed = has_capability('mod/survey:view', $this->context);
                 break;
             case SURVEY_PREVIEWSURVEY:
-                require_capability('mod/survey:preview', $this->context);
+                $condition1 = ($submission);
+                $condition2 = has_capability('mod/survey:preview', $this->context);
+                $allowed = $condition1 && $condition2;
                 break;
             case SURVEY_EDITRESPONSE:
-                $condition1 = has_extrapermission('edit', $this->survey, $mygroups, $submission->userid);
-                $condition2 = ($submission->userid == $USER->id) && ($submission->status == SURVEY_STATUSINPROGRESS);
-                $allowed = $condition1 || $condition2;
+                $condition1 = ($submission);
+                $condition2 = has_extrapermission('edit', $this->survey, $mygroups, $submission->userid);
+                $condition3 = ($submission->userid == $USER->id) && ($submission->status == SURVEY_STATUSINPROGRESS);
+                $allowed = $condition1 && ($condition2 || $condition3);
                 break;
             case SURVEY_READONLYRESPONSE:
-                $allowed = has_extrapermission('read', $this->survey, $mygroups, $submission->userid);
+                $condition1 = ($submission);
+                $condition2 = has_extrapermission('read', $this->survey, $mygroups, $submission->userid);
+                $allowed = $condition1 && $condition2;
                 break;
             default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->action = '.$this->action);
+                $allowed = false;
         }
         if (!$allowed) {
             print_error('incorrectaccessdetected', 'survey');

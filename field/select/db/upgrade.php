@@ -45,7 +45,7 @@ function xmldb_surveyfield_select_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013062701, 'surveyfield_select', 'survey');
+        upgrade_plugin_savepoint(true, 2013062701, 'surveyfield', 'select');
     }
 
     return true;

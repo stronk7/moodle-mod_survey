@@ -29,89 +29,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->dirroot.'/mod/survey/report/count/report.class.php');
 
-echo $OUTPUT->heading(get_string('pluginname', 'surveyreport_count'));
+$context = context_module::instance($cm->id);
 
-$table = new flexible_table('userattempts');
+require_course_login($course, true, $cm);
+require_capability('mod/survey:accessreports', $context);
 
-$paramurl = array('id' => $cm->id, 'rname' => $reportname);
-$table->define_baseurl(new moodle_url('view_report.php', $paramurl));
-
-$tablecolumns = array();
-$tablecolumns[] = 'picture';
-$tablecolumns[] = 'fullname';
-$tablecolumns[] = 'attempts';
-$table->define_columns($tablecolumns);
-
-$tableheaders = array();
-$tableheaders[] = '';
-$tableheaders[] = get_string('fullname');
-$tableheaders[] = get_string('submissions', 'survey');
-$table->define_headers($tableheaders);
-
-$table->sortable(true, 'lastname', 'ASC'); // sorted by sortindex by default
-
-$table->column_class('picture', 'picture');
-$table->column_class('fullname', 'fullname');
-$table->column_class('attempts', 'attempts');
-
-// $table->initialbars(true);
-
-// hide the same info whether in two consecutive rows
-$table->column_suppress('picture');
-$table->column_suppress('fullname');
-
-// general properties for the whole table
-// $table->set_attribute('cellpadding', '5');
-$table->set_attribute('id', 'userattempts');
-$table->set_attribute('class', 'generaltable');
-// $table->set_attribute('width', '90%');
-$table->setup();
-
-$context = context_course::instance($COURSE->id);
-$roles = get_roles_used_in_context($context);
-// if (isset($survey->guestisallowed)) {
-//     $guestrole = get_guest_role();
-//     $roles[$guestrole->id] = $guestrole;
-// }
-$role = array_keys($roles);
-$sql = 'SELECT DISTINCT u.id, u.picture, u.imagealt, u.firstname, u.lastname, u.email, s.attempts
-        FROM {user} u
-		JOIN (SELECT *
-                FROM {role_assignments}
-                WHERE contextid = '.$context->id.'
-                  AND roleid IN ('.implode($role).')) ra ON u.id = ra.userid
-		LEFT JOIN (SELECT *, count(s.id) as attempts
-			         FROM {survey_submissions} s
-			         WHERE s.surveyid = :surveyid
-			         GROUP BY s.userid) s ON s.userid = u.id';
-if ($table->get_sql_sort()) {
-    $sql .= ' ORDER BY '.$table->get_sql_sort();
-} else {
-    $sql .= ' ORDER BY s.lastname';
-}
-
-$sqlparams = array('surveyid' => $survey->id);
-$usersubmissions = $DB->get_recordset_sql($sql, $sqlparams);
-
-foreach ($usersubmissions as $usersubmission) {
-    $tablerow = array();
-
-    // picture
-    $tablerow[] = $OUTPUT->user_picture($usersubmission, array('courseid'=>$COURSE->id));
-
-    // user fullname
-    $tablerow[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$usersubmission->id.'&amp;course='.$COURSE->id.'">'.fullname($usersubmission).'</a>';
-
-    // user attempts
-    $tablerow[] = isset($usersubmission->attempts) ? $usersubmission->attempts : '--';
-
-    // add row to the table
-    $table->add_data($tablerow);
-}
-
-$usersubmissions->close();
-
-$table->summary = get_string('submissionslist', 'survey');
-$table->print_html();
-
+$report_manager = new report_count($cm, $survey);
+$report_manager->fetch_information();
+$report_manager->output_information();

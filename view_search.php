@@ -100,7 +100,7 @@ if ($search_manager->formdata = $search_form->get_data()) { // $search_form, her
 // ////////////////////////////
 
 // ////////////////////////////////////////////////////////////
-// Output starts here
+// output starts here
 // ////////////////////////////////////////////////////////////
 $PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);

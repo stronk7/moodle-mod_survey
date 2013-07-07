@@ -62,7 +62,7 @@ $submission_manager->prevent_direct_user_input();
 $submission_manager->submission_to_pdf();
 
 // ////////////////////////////////////////////////////////////
-// Output starts here
+// output starts here
 // ////////////////////////////////////////////////////////////
 $PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);

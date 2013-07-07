@@ -136,7 +136,7 @@ class survey_pluginform extends surveyitem_baseform {
         // clean_rates
         // clean_defaultvalue
 
-        // SE è richiesto un default
+        // if a default is required
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
             // il numero dei default deve essere pari al numero delle opzioni
             if (count($clean_defaultvalue) != count($clean_options)) {
@@ -171,7 +171,7 @@ class survey_pluginform extends surveyitem_baseform {
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);
         }
 
-        // SE è richiesto forcedifferentrates
+        // if forcedifferentrates was requested
         // il numero dei numero delle opzioni DEVE essere >= al numero degli elementi da valutare
         if (isset($data['forcedifferentrates'])) {
             // if I claim for different rates, I must provide a sufficient number of rates

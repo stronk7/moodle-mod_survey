@@ -4,9 +4,10 @@ require_once('../../../../config.php');
 require_once($CFG->libdir.'/graphlib.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 
-$id     = required_param('id', PARAM_INT); // Course Module ID
+$id = required_param('id', PARAM_INT); // Course Module ID
 $itemid = required_param('itemid', PARAM_INT); // Item ID
-$group  = optional_param('group', 0, PARAM_INT); // Group ID
+$submissionscount = required_param('submissionscount', PARAM_INT); // Submissions count
+$group = optional_param('group', 0, PARAM_INT); // Group ID
 
 require_once($CFG->dirroot.'/mod/survey/report/frequency/lib.php');
 
@@ -48,12 +49,19 @@ $params['itemid'] = $itemid;
 
 $answers = $DB->get_recordset_sql($sql, $params, 'ud.content');
 
+$counted = 0;
 $content = array();
 $absolute = array();
 foreach ($answers as $answer) {
     $content[] = $item->userform_db_to_export($answer);
     $absolute[] = $answer->absolute;
+    $counted += $answer->absolute;
 }
+if ($counted < $submissionscount) {
+    $content[] = get_string('answernotpresent', 'surveyreport_frequency');
+    $absolute[] = ($submissionscount - $counted);
+}
+
 $answers->close();
 
 $item = survey_get_item($itemid);

@@ -91,7 +91,7 @@ if ($mtemplate_manager->formdata = $apply_mtemplate->get_data()) {
 // ////////////////////////////
 
 // ////////////////////////////////////////////////////////////
-// Output starts here
+// output starts here
 // ////////////////////////////////////////////////////////////
 $PAGE->set_url('/mod/survey/mtemplates.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);

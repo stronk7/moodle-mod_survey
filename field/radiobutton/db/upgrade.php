@@ -45,7 +45,7 @@ function xmldb_surveyfield_radiobutton_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013062701, 'surveyfield_radiobutton', 'survey');
+        upgrade_plugin_savepoint(true, 2013062701, 'surveyfield', 'radiobutton');
     }
 
     return true;

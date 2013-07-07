@@ -77,7 +77,7 @@ $item_manager = new mod_survey_itemelement($cm, $context, $survey, $type, $plugi
 // nothing to do here ;-)
 
 // ////////////////////////////////////////////////////////////
-// Output starts here
+// output starts here
 // ////////////////////////////////////////////////////////////
 $PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);

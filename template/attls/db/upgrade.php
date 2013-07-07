@@ -37,7 +37,7 @@ function xmldb_surveytemplate_attls_upgrade($oldversion) {
     // if ($oldversion < 2012101103) {
 
         // survey savepoint reached
-    //    upgrade_plugin_savepoint(true, 2012062560, 'surveytemplate_attls', 'survey');
+    //    upgrade_plugin_savepoint(true, 2012062560, 'surveytemplate', 'attls');
     // }
 
     return true;

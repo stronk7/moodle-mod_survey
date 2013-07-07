@@ -28,11 +28,20 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot.'/mod/survey/report/frequency/report.class.php');
 require_once($CFG->dirroot.'/mod/survey/report/frequency/item_form.php');
 require_once($CFG->dirroot.'/mod/survey/report/frequency/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
-echo $OUTPUT->heading(get_string('pluginname', 'surveyreport_frequency'));
+$context = context_module::instance($cm->id);
+
+require_course_login($course, true, $cm);
+require_capability('mod/survey:accessreports', $context);
+
+// ////////////////////////////////////////////////////////////
+// calculations
+// ////////////////////////////////////////////////////////////
+$report_manager = new report_frequency($cm, $survey);
 
 // ////////////////////////////
 // define $mform return url
@@ -56,16 +65,10 @@ $mform->display();
 // ////////////////////////////
 // manage form submission
 if ($fromform) {
-    surveyreport_displaydistribution($cm, $survey, $fromform->itemid, $hassubmissions);
+    $report_manager->fetch_information($fromform->itemid, $hassubmissions);
 
-    $debug = false;
-    if ($debug) {
-        include_once($CFG->dirroot.'/mod/survey/report/frequency/graph.php');
-    } else {
-
-        $url = 'id='.$cm->id.'&amp;group=0&amp;itemid='.$fromform->itemid;
-        survey_print_graph($url);
-    }
+    $url = 'id='.$cm->id.'&amp;group=0&amp;itemid='.$fromform->itemid.'&amp;submissionscount='.$hassubmissions;
+    $report_manager->output_information($url);
 }
 // end of: manage form submission
 // ////////////////////////////

@@ -51,7 +51,7 @@ function xmldb_surveyfield_numeric_upgrade($oldversion) {
         $dbman->change_field_precision($table, $field);
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013062401, 'surveyfield_numeric', 'survey');
+        upgrade_plugin_savepoint(true, 2013062401, 'surveyfield', 'numeric');
     }
 
     if ($oldversion < 2013062501) {
@@ -63,7 +63,7 @@ function xmldb_surveyfield_numeric_upgrade($oldversion) {
         $dbman->change_field_precision($table, $field);
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013062501, 'surveyfield_numeric', 'survey');
+        upgrade_plugin_savepoint(true, 2013062501, 'surveyfield', 'numeric');
     }
 
     return true;

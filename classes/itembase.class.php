@@ -29,7 +29,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /*
- * The base class representing a field
+ * The base class defining an item
  */
 class surveyitem_base {
 
@@ -504,7 +504,7 @@ class surveyitem_base {
         // usually this routine is not executed
         // $fields['options'] = 'options_sid';
         foreach ($fields as $fieldname) {
-            if (!is_null($this->{$fieldname.'_sid'})) { // se è previsto che il campo $fieldname sia multilang
+            if (!is_null($this->{$fieldname.'_sid'})) { // if the field $fieldname is multilang
                 $stringindex = $fieldname.sprintf('%02d', $this->{$fieldname.'_sid'});
                 $referencestring = get_string($stringindex, 'surveytemplate_'.$this->externalname);
 

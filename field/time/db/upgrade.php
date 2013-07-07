@@ -45,7 +45,7 @@ function xmldb_surveyfield_time_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013052302, 'surveyfield_time', 'survey');
+        upgrade_plugin_savepoint(true, 2013052302, 'surveyfield', 'time');
     }
 
     if ($oldversion < 2013060402) {
@@ -69,7 +69,7 @@ function xmldb_surveyfield_time_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013060402, 'surveyfield_time', 'survey');
+        upgrade_plugin_savepoint(true, 2013060402, 'surveyfield', 'time');
     }
 
     if ($oldversion < 2013061701) {
@@ -83,7 +83,7 @@ function xmldb_surveyfield_time_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013061701, 'surveyfield_time', 'survey');
+        upgrade_plugin_savepoint(true, 2013061701, 'surveyfield', 'time');
     }
 
     if ($oldversion < 2013061702) {
@@ -97,7 +97,7 @@ function xmldb_surveyfield_time_upgrade($oldversion) {
         }
 
         // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013061702, 'surveyfield_time', 'survey');
+        upgrade_plugin_savepoint(true, 2013061702, 'surveyfield', 'time');
     }
 
     return true;

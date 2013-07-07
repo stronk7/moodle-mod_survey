@@ -67,15 +67,14 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
 
     SUB-TAB == SURVEY_SUBMISSION_NEW
         $elementurl = new moodle_url('/mod/survey/view.php', $paramurl);
+        mod/survey:view
         mod/survey:accessadvanceditems
         mod/survey:submit
 
     SUB-TAB == SURVEY_SUBMISSION_MANAGE
         $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
         mod/survey:manageallsubmissions
-        mod/survey:managesubmissions <-- USELESS I think.
-                                         Each user is allowed to manage submissions.
-                                         At worst none depending on general module advanced permissions.
+        mod/survey:managesubmissions <-- Guest is not allowed to manage submissions because they are really anonymous
 
     SUB-TAB == SURVEY_SUBMISSION_EDIT
     SUB-TAB == SURVEY_SUBMISSION_READONLY
@@ -163,7 +162,6 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
 $capabilities = array(
     'mod/survey:addinstance' => array(
         'riskbitmask' => RISK_XSS,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
@@ -198,6 +196,7 @@ $capabilities = array(
     ),
 
     'mod/survey:accessadvanceditems' => array(
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -209,17 +208,16 @@ $capabilities = array(
 
     'mod/survey:submit' => array(
         'riskbitmask' => RISK_XSS,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
+            'guest' => CAP_ALLOW,
             'student' => CAP_ALLOW
         )
     ),
 
     'mod/survey:manageallsubmissions' => array(
         'riskbitmask' => RISK_XSS,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -229,9 +227,20 @@ $capabilities = array(
         )
     ),
 
+    'mod/survey:managesubmissions' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
     'mod/survey:deleteallsubmissions' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -242,6 +251,7 @@ $capabilities = array(
     ),
 
     'mod/survey:submissiontopdf' => array(
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -253,6 +263,7 @@ $capabilities = array(
     ),
 
     'mod/survey:searchsubmissions' => array(
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -265,7 +276,6 @@ $capabilities = array(
 
     'mod/survey:accessreports' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -277,7 +287,6 @@ $capabilities = array(
 
     'mod/survey:exportdata' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -289,7 +298,6 @@ $capabilities = array(
 
     'mod/survey:manageitems' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -301,7 +309,6 @@ $capabilities = array(
 
     'mod/survey:additems' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -313,7 +320,6 @@ $capabilities = array(
 
     'mod/survey:setupitems' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -325,7 +331,6 @@ $capabilities = array(
 
     'mod/survey:manageusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -336,7 +341,6 @@ $capabilities = array(
 
     'mod/survey:deleteusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -347,7 +351,6 @@ $capabilities = array(
 
     'mod/survey:exportusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -358,7 +361,6 @@ $capabilities = array(
 
     'mod/survey:createusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -369,7 +371,6 @@ $capabilities = array(
 
     'mod/survey:importusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -380,7 +381,6 @@ $capabilities = array(
 
     'mod/survey:applyusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -391,7 +391,6 @@ $capabilities = array(
 
     'mod/survey:createmastertemplate' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -402,7 +401,6 @@ $capabilities = array(
 
     'mod/survey:applymastertemplate' => array(
         'riskbitmask' => RISK_PERSONAL,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

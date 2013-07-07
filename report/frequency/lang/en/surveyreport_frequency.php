@@ -30,4 +30,5 @@ $string['content'] = 'answer';
 $string['absolute'] = 'absolute';
 $string['percentage'] = 'percentage';
 $string['pleasechooseavalue'] = 'Please choose an item for the distribution';
+$string['answernotpresent'] = 'mising';
 
