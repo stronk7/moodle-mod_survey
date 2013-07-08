@@ -34,12 +34,15 @@ defined('MOODLE_INTERNAL') || die();
 $hassubmissions = survey_has_submissions($survey->id);
 $context = context_module::instance($cm->id);
 
+$canview = has_capability('mod/survey:view', $context, null, true);
 $canpreview = has_capability('mod/survey:preview', $context, null, true);
 $cansubmit = has_capability('mod/survey:submit', $context, null, true);
 $cansearch = has_capability('mod/survey:searchsubmissions', $context, null, true);
 $canexportdata = has_capability('mod/survey:exportdata', $context, null, true);
 $canaccessreports = has_capability('mod/survey:accessreports', $context, null, true);
 $canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
+
+$canmanagesubmissions = has_capability('mod/survey:managesubmissions', $context, null, true);
 
 $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $context, null, true);
 $cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);

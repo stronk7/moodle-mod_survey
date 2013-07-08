@@ -265,10 +265,12 @@ class surveyfield_boolean extends surveyitem_base {
         $option = array();
         $option['strfbool1'] = get_string('strfbool1', 'surveyfield_boolean'); // yes/no
         $option['strfbool2'] = get_string('strfbool2', 'surveyfield_boolean'); // y/n
-        $option['strfbool3'] = get_string('strfbool3', 'surveyfield_boolean'); // up/down
-        $option['strfbool4'] = get_string('strfbool4', 'surveyfield_boolean'); // true/false
-        $option['strfbool5'] = get_string('strfbool5', 'surveyfield_boolean'); // 0/1
-        $option['strfbool6'] = get_string('strfbool6', 'surveyfield_boolean'); // +/-
+        $option['strfbool3'] = get_string('strfbool3', 'surveyfield_boolean'); // Y/N
+        $option['strfbool4'] = get_string('strfbool4', 'surveyfield_boolean'); // up/down
+        $option['strfbool5'] = get_string('strfbool5', 'surveyfield_boolean'); // true/false
+        $option['strfbool6'] = get_string('strfbool6', 'surveyfield_boolean'); // T/F
+        $option['strfbool7'] = get_string('strfbool7', 'surveyfield_boolean'); // 1/0
+        $option['strfbool8'] = get_string('strfbool8', 'surveyfield_boolean'); // +/-
 
         return $option;
     }

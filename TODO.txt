@@ -18,6 +18,6 @@ site level. (thanks to JR)
 -> survey_scale_used_anywhere($scaleid)?
 -> in the search form one more option should be added to each item to search for "no answer"
 -> unit test (they are a must)
--> 100% free survey in the front page
+-> 100% free survey in the front page. Issue: cansubmit is false.
 -> move actions from navigation menu to admin menu
 -> add button on the top of the item management table
