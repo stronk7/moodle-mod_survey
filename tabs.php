@@ -82,12 +82,7 @@ $row[] = new tabobject(SURVEY_TAB1NAME, $elementurl->out(), SURVEY_TAB1NAME);
 // TAB ITEMS
 // -----------------------------------------------------------------------------
 if ($canmanageitems) {
-    $itemcount = $DB->count_records('survey_item', array('surveyid' => $survey->id));
-    if ($itemcount) {
-        $elementurl = new moodle_url('/mod/survey/items_manage.php', $paramurl);
-    } else {
-        $elementurl = new moodle_url('/mod/survey/items_add.php', $paramurl);
-    }
+    $elementurl = new moodle_url('/mod/survey/items_manage.php', $paramurl);
     $row[] = new tabobject(SURVEY_TAB2NAME, $elementurl->out(), SURVEY_TAB2NAME);
 }
 
@@ -200,22 +195,16 @@ switch ($currenttab) {
             $strlabel = get_string('tabitemspage1', 'survey');
             $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
 
-            if (!$hassubmissions || $CFG->survey_forcemodifications) { // add
-                $elementurl = new moodle_url('/mod/survey/items_add.php', $paramurl);
+            if ($currentpage == SURVEY_ITEMS_SETUP) { // setup
+                $elementurl = new moodle_url('/mod/survey/items_setup.php', $paramurl);
                 $strlabel = get_string('tabitemspage2', 'survey');
                 $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
             }
 
-            if ($currentpage == SURVEY_ITEMS_SETUP) { // setup
-                $elementurl = new moodle_url('/mod/survey/items_setup.php', $paramurl);
-                $strlabel = get_string('tabitemspage3', 'survey');
-                $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
-            }
-
             if ($countparents) { // verify parent child relations
                 $elementurl = new moodle_url('/mod/survey/items_validate.php', $paramurl);
-                $strlabel = get_string('tabitemspage4', 'survey');
-                $row[] = new tabobject('idpage4', $elementurl->out(), $strlabel);
+                $strlabel = get_string('tabitemspage3', 'survey');
+                $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
             }
         }
 

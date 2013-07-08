@@ -57,11 +57,10 @@ class survey_itemtypeform extends moodleform {
         $pluginlist = array(get_string('typefield' , 'survey') => $field_plugins,
                             get_string('typeformat', 'survey') => $format_plugins);
 
-        $mform->addElement('selectgroups', $fieldname, get_string($fieldname, 'survey'), $pluginlist);
-        $mform->addHelpButton($fieldname, $fieldname, 'survey');
-
-        // -------------------------------------------------------------------------------
-        // buttons
-        $this->add_action_buttons(false, get_string('continue'));
+        $elementgroup = array();
+        $elementgroup[] = $mform->createElement('selectgroups', $fieldname, '', $pluginlist);
+        $elementgroup[] = $mform->createElement('submit', $fieldname.'_button', get_string('add'));
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'survey'), array(' '), false);
+        $mform->addHelpButton($fieldname.'_group', $fieldname, 'survey');
     }
 }

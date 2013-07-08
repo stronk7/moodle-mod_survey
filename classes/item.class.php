@@ -285,15 +285,7 @@ class mod_survey_itemelement {
         }
 
         $where = array('surveyid' => $this->survey->id);
-        if (!$itemseeds = $DB->get_records('survey_item', $where, $table->get_sql_sort(), '*, id as itemid')) {
-            $a = new stdClass();
-            $url = new moodle_url('/mod/survey/items_add.php', $paramurl);
-            $a->href = $url->out();
-
-            $a->title = get_string('noitemsfoundtitle', 'survey');
-            echo $OUTPUT->box(get_string('noitemsfound', 'survey', $a));
-        }
-
+        $itemseeds = $DB->get_records('survey_item', $where, $table->get_sql_sort(), '*, id as itemid');
         $drawmovearrow = (count($itemseeds) > 1);
 
         // this is the very first position, so if the item has a parent, no "moveherebox" must appear
@@ -943,16 +935,7 @@ class mod_survey_itemelement {
         }
 
         $itemseeds = $DB->get_recordset_sql($sql, array('surveyid' => $this->survey->id), $table->get_sql_sort());
-        if (!$itemseeds->valid()) {
-            $a = new stdClass();
-            $url = new moodle_url('/mod/survey/items_add.php', $paramurl);
-            $a->href = $url->out();
-
-            $a->title = get_string('noitemsfoundtitle', 'survey');
-            echo $OUTPUT->box(get_string('noitemsfound', 'survey', $a));
-        } else {
-            echo $OUTPUT->box(get_string('validationinfo', 'survey'));
-        }
+        echo $OUTPUT->box(get_string('validationinfo', 'survey'));
 
         foreach ($itemseeds as $itemseed) {
             $item = survey_get_item($itemseed->itemid, $itemseed->type, $itemseed->plugin);

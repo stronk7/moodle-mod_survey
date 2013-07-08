@@ -66,14 +66,11 @@ $context = context_module::instance($cm->id);
 require_capability('mod/survey:additems', $context);
 
 // ////////////////////////////////////////////////////////////
-// manager definition
+// calculations
 // ////////////////////////////////////////////////////////////
 $item_manager = new mod_survey_itemelement($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
                                            $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
 
-// ////////////////////////////////////////////////////////////
-// calculations
-// ////////////////////////////////////////////////////////////
 require_once($CFG->dirroot.'/mod/survey/'.$item_manager->type.'/'.$item_manager->plugin.'/plugin.class.php');
 require_once($CFG->dirroot.'/mod/survey/'.$item_manager->type.'/'.$item_manager->plugin.'/plugin_form.php');
 

@@ -81,11 +81,6 @@ $apply_utemplate = new survey_applyutemplateform($formurl, $formparams);
 
 // ////////////////////////////
 // manage form submission
-if ($apply_utemplate->is_cancelled()) {
-    $returnurl = new moodle_url('items_add.php', $paramurl);
-    redirect($returnurl);
-}
-
 if ($utemplate_manager->formdata = $apply_utemplate->get_data()) {
     $utemplate_manager->apply_utemplate();
 

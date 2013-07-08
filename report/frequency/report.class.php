@@ -174,14 +174,15 @@ class report_frequency {
         global $CFG;
 
         if (empty($CFG->gdversion)) {
-            echo "(".get_string("gdneed").")";
+            echo '('.get_string('gdneed').')';
         } else {
             echo '<div class="reportsummary">'.
-                '<img class="resultgraph" height="'.SURVEY_GHEIGHT.
-                '" width="'.SURVEY_GWIDTH.
-                '" src="'.$CFG->wwwroot.'/mod/survey/report/frequency/graph.php?'.$url.
-                '" alt="'.get_string('pluginname', 'surveyreport_frequency').'" />'.
-                '</div>';
+                 '<img class="resultgraph"'.
+                     ' height="'.SURVEY_GHEIGHT.'"'.
+                     ' width="'.SURVEY_GWIDTH.'"'.
+                     ' src="'.$url.'"'.
+                     ' alt="'.get_string('pluginname', 'surveyreport_frequency').'" />'.
+                 '</div>';
         }
     }
 }

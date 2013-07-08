@@ -44,9 +44,7 @@ define('SURVEY_MAXEVERYEAR'        , 2020);
 define('SURVEY_VALUELABELSEPARATOR', '::');
 define('SURVEY_OTHERSEPARATOR'     , '->');
 
-// TAB NUMBERS ALIAS COUNT OF THE TABS IN THE TAB BAR
 // to change tabs order, just exchange numbers if the following lines
-
 define('SURVEY_TABSUBMISSIONS', 1);
 define('SURVEY_TABITEMS'      , 2);
 define('SURVEY_TABUTEMPLATES' , 3);
@@ -71,40 +69,39 @@ define('SURVEY_TAB'.SURVEY_TABMTEMPLATES.'NAME', get_string('tabmtemplatename', 
 
     // ITEMS PAGES
     define('SURVEY_ITEMS_MANAGE'  , 1);
-    define('SURVEY_ITEMS_ADD'     , 2);
-    define('SURVEY_ITEMS_SETUP'   , 3);
-    define('SURVEY_ITEMS_VALIDATE', 4);
+    define('SURVEY_ITEMS_SETUP'   , 2);
+    define('SURVEY_ITEMS_VALIDATE', 3);
 
     // USER TEMPLATES PAGES
-    define('SURVEY_UTEMPLATES_MANAGE'  , 1);
-    define('SURVEY_UTEMPLATES_BUILD'   , 2);
-    define('SURVEY_UTEMPLATES_IMPORT'  , 3);
-    define('SURVEY_UTEMPLATES_APPLY'   , 4);
+    define('SURVEY_UTEMPLATES_MANAGE', 1);
+    define('SURVEY_UTEMPLATES_BUILD' , 2);
+    define('SURVEY_UTEMPLATES_IMPORT', 3);
+    define('SURVEY_UTEMPLATES_APPLY' , 4);
 
     // MASTER TEMPLATES PAGES
-    define('SURVEY_MTEMPLATES_BUILD'   , 1);
-    define('SURVEY_MTEMPLATES_APPLY'   , 2);
+    define('SURVEY_MTEMPLATES_BUILD', 1);
+    define('SURVEY_MTEMPLATES_APPLY', 2);
 
 // ITEM TYPES
 define('SURVEY_TYPEFIELD' , 'field');
 define('SURVEY_TYPEFORMAT', 'format');
 
 // ACTIONS
-    define('SURVEY_NOACTION'          , '0');
+    define('SURVEY_NOACTION'      , '0');
     // ITEM MANAGEMENT section
-    define('SURVEY_EDITITEM'          , '1');
-    define('SURVEY_CHANGEORDERASK'    , '2');
-    define('SURVEY_CHANGEORDER'       , '3');
-    define('SURVEY_HIDEITEM'          , '4');
-    define('SURVEY_SHOWITEM'          , '5');
-    define('SURVEY_DELETEITEM'        , '6');
-    define('SURVEY_REQUIREDOFF'       , '7');
-    define('SURVEY_REQUIREDON'        , '8');
-    define('SURVEY_CHANGEINDENT'      , '9');
-    define('SURVEY_ADDTOSEARCH'       ,'10');
-    define('SURVEY_OUTOFSEARCH'       ,'11');
-    define('SURVEY_MAKEFORALL'        ,'12');
-    define('SURVEY_MAKELIMITED'       ,'13');
+    define('SURVEY_EDITITEM'      , '1');
+    define('SURVEY_CHANGEORDERASK', '2');
+    define('SURVEY_CHANGEORDER'   , '3');
+    define('SURVEY_HIDEITEM'      , '4');
+    define('SURVEY_SHOWITEM'      , '5');
+    define('SURVEY_DELETEITEM'    , '6');
+    define('SURVEY_REQUIREDOFF'   , '7');
+    define('SURVEY_REQUIREDON'    , '8');
+    define('SURVEY_CHANGEINDENT'  , '9');
+    define('SURVEY_ADDTOSEARCH'   ,'10');
+    define('SURVEY_OUTOFSEARCH'   ,'11');
+    define('SURVEY_MAKEFORALL'    ,'12');
+    define('SURVEY_MAKELIMITED'   ,'13');
 
     // RESPONSES section
     define('SURVEY_EDITRESPONSE'      ,'14');
@@ -829,21 +826,13 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
      */
     if ($canmanageitems) {
         // PARENT
-        $itemcount = $DB->count_records('survey_item', array('surveyid' => $cm->instance));
         $paramurl = array('s' => $cm->instance);
-        if ($itemcount) {
-            $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
-        } else {
-            $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/items_add.php', $paramurl), navigation_node::TYPE_CONTAINER);
-        }
+        $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
         // CHILDREN
         $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_SETTING);
-        if (!$hassubmissions || $CFG->survey_forcemodifications) {
-            $navnode->add(get_string('tabitemspage2', 'survey'), new moodle_url('/mod/survey/items_add.php', $paramurl), navigation_node::TYPE_SETTING);
-        }
         if ($countparents) {
-            $navnode->add(get_string('tabitemspage4', 'survey'), new moodle_url('/mod/survey/items_validate.php', $paramurl), navigation_node::TYPE_SETTING);
+            $navnode->add(get_string('tabitemspage3', 'survey'), new moodle_url('/mod/survey/items_validate.php', $paramurl), navigation_node::TYPE_SETTING);
         }
     }
 

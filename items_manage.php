@@ -29,6 +29,7 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 require_once($CFG->dirroot.'/mod/survey/classes/item.class.php');
+require_once($CFG->dirroot.'/mod/survey/forms/items/selectitem_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $s = optional_param('s', 0, PARAM_INT);  // survey instance ID
@@ -65,15 +66,10 @@ $context = context_module::instance($cm->id);
 require_capability('mod/survey:manageitems', $context);
 
 // ////////////////////////////////////////////////////////////
-// manager definition
+// calculations
 // ////////////////////////////////////////////////////////////
 $item_manager = new mod_survey_itemelement($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
                                            $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
-
-// ////////////////////////////////////////////////////////////
-// calculations
-// ////////////////////////////////////////////////////////////
-// nothing to do here ;-)
 
 // ////////////////////////////////////////////////////////////
 // output starts here
@@ -95,6 +91,21 @@ include_once($CFG->dirroot.'/mod/survey/tabs.php');
 $item_manager->manage_actions();
 
 $item_manager->display_user_feedback();
+
+///////////////////////////////////////////////////////////////
+if (!$hassubmissions || $CFG->survey_forcemodifications) { // add item
+    if (has_capability('mod/survey:additems', $context)) {
+        $paramurl = array('id' => $cm->id);
+        $formurl = new moodle_url('items_setup.php', $paramurl);
+
+        // $message = get_string('additem', 'survey');
+        // echo $OUTPUT->box($message, 'notice centerpara');
+
+        $itemtype = new survey_itemtypeform($formurl);
+        $itemtype->display();
+    }
+}
+///////////////////////////////////////////////////////////////
 
 $item_manager->manage_items();
 

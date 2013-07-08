@@ -108,9 +108,6 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
     SUB-TAB == SURVEY_ITEMS_MANAGE
         $elementurl = new moodle_url('/mod/survey/items_manage.php', $localparamurl);
         mod/survey:manageitems
-
-    SUB-TAB == SURVEY_ITEMS_ADD
-        $elementurl = new moodle_url('/mod/survey/items_add.php', $localparamurl);
         mod/survey:additems
 
     SUB-TAB == SURVEY_ITEMS_SETUP

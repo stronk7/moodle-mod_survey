@@ -67,8 +67,15 @@ $mform->display();
 if ($fromform) {
     $report_manager->fetch_information($fromform->itemid, $hassubmissions);
 
-    $url = 'id='.$cm->id.'&amp;group=0&amp;itemid='.$fromform->itemid.'&amp;submissionscount='.$hassubmissions;
-    $report_manager->output_information($url);
+    $paramurl = array();
+    $paramurl['id'] = $cm->id;
+    $paramurl['group'] = 0;
+    $paramurl['itemid'] = $fromform->itemid;
+    $paramurl['submissionscount'] = $hassubmissions;
+    $url = new moodle_url('/mod/survey/report/frequency/graph.php', $paramurl);
+    $a = $url->out();
+
+    $report_manager->output_information($url->out());
 }
 // end of: manage form submission
 // ////////////////////////////

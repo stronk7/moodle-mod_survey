@@ -715,7 +715,7 @@ class mod_survey_userpagemanager {
         echo $OUTPUT->notification($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
 
         if ($this->canmanageitems) {
-            $continueurl = new moodle_url('/mod/survey/items_add.php', array('s' => $this->survey->id));
+            $continueurl = new moodle_url('/mod/survey/items_manage.php', array('s' => $this->survey->id));
         } else {
             $continueurl = new moodle_url('/course/view.php', array('id' => $COURSE->id));
         }
