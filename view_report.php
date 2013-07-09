@@ -49,7 +49,7 @@ require_course_login($course, true, $cm);
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 
 $reportname = optional_param('rname', '', PARAM_ALPHA);
-$hassubmissions = survey_has_submissions($survey->id);
+$hassubmissions = survey_count_submissions($survey->id);
 
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:accessreports', $context);

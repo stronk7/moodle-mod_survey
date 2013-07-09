@@ -58,7 +58,7 @@ define('SURVEY_TAB'.SURVEY_TABMTEMPLATES.'NAME', get_string('tabmtemplatename', 
 
 // PAGES
     // SUBMISSIONS PAGES
-    define('SURVEY_ITEMS_PREVIEW', 1); // <-- take care, this is an ITEM constant
+    // do not start numbering with 1 as it conflicts with define('SURVEY_ITEMS_PREVIEW' , 1);
     define('SURVEY_SUBMISSION_ATTEMPT' , 2);
     define('SURVEY_SUBMISSION_MANAGE'  , 3);
     define('SURVEY_SUBMISSION_EDIT'    , 4);
@@ -68,6 +68,7 @@ define('SURVEY_TAB'.SURVEY_TABMTEMPLATES.'NAME', get_string('tabmtemplatename', 
     define('SURVEY_SUBMISSION_EXPORT'  , 8);
 
     // ITEMS PAGES
+    define('SURVEY_ITEMS_PREVIEW' , 1);
     define('SURVEY_ITEMS_MANAGE'  , 2);
     define('SURVEY_ITEMS_SETUP'   , 3);
     define('SURVEY_ITEMS_VALIDATE', 4);
@@ -777,7 +778,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     $cansearch = has_capability('mod/survey:searchsubmissions', $context, null, true);
     $canexportdata = has_capability('mod/survey:exportdata', $context, null, true);
 
-    $hassubmissions = survey_has_submissions($cm->instance);
+    $hassubmissions = survey_count_submissions($cm->instance);
 
     $whereparams = array('surveyid' => $cm->instance);
     $countparents = $DB->count_records_select('survey_item', 'surveyid = :surveyid AND parentid <> 0', $whereparams);
@@ -858,7 +859,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
     $cancreatemastertemplate = has_capability('mod/survey:createmastertemplate', $context, null, true);
     $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $context, null, true);
 
-    $hassubmissions = survey_has_submissions($cm->instance);
+    $hassubmissions = survey_count_submissions($cm->instance);
 
     /*
      * SURVEY_TABUTEMPLATES
@@ -1060,11 +1061,11 @@ function survey_reset_items_pages($surveyid) {
 }
 
 /*
- * survey_has_submissions
+ * survey_count_submissions
  * @param $findparams
  * @return
  */
-function survey_has_submissions($surveyid, $status=SURVEY_STATUSALL) {
+function survey_count_submissions($surveyid, $status=SURVEY_STATUSALL) {
     global $DB;
 
     $params = array('surveyid' => $surveyid);

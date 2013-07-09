@@ -92,6 +92,10 @@ $item_manager->manage_actions();
 
 $item_manager->display_user_feedback();
 
+if ($item_manager->hassubmissions) {
+    echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
+}
+
 ///////////////////////////////////////////////////////////////
 if (!$hassubmissions || $CFG->survey_forcemodifications) { // add item
     if (has_capability('mod/survey:additems', $context)) {

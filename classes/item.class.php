@@ -98,6 +98,16 @@ class mod_survey_itemelement {
     public $userfeedback = SURVEY_NOFEEDBACK;
 
     /*
+     * $saveasnew
+     */
+    public $saveasnew = 0;
+
+    /*
+     * $hassubmissions
+     */
+    public $hassubmissions = null;
+
+    /*
      * Class constructor
      */
     public function __construct($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
@@ -123,7 +133,7 @@ class mod_survey_itemelement {
         $this->parentid = $parentid;
         $this->userfeedback = $userfeedback;
         $this->saveasnew = $saveasnew;
-        $this->hassubmissions = survey_has_submissions($survey->id, SURVEY_STATUSALL);
+        $this->hassubmissions = survey_count_submissions($survey->id, SURVEY_STATUSALL);
     }
 
     /*
@@ -279,10 +289,6 @@ class mod_survey_itemelement {
         $paramurl_move['itm'] = $this->itemtomove;
         // end of $paramurl_move definition
         // /////////////////////////////////////////////////
-
-        if ($this->hassubmissions) {
-            echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
-        }
 
         $where = array('surveyid' => $this->survey->id);
         $itemseeds = $DB->get_records('survey_item', $where, $table->get_sql_sort(), '*, id as itemid');

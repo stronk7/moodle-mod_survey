@@ -31,23 +31,12 @@ defined('MOODLE_INTERNAL') || die();
 // do not prevent direct user input
 // prevention is done in each working page according to actions
 
-$hassubmissions = survey_has_submissions($survey->id);
+$hassubmissions = survey_count_submissions($survey->id);
 $context = context_module::instance($cm->id);
 
-$canview = has_capability('mod/survey:view', $context, null, true);
-$canpreview = has_capability('mod/survey:preview', $context, null, true);
 $cansubmit = has_capability('mod/survey:submit', $context, null, true);
-$cansearch = has_capability('mod/survey:searchsubmissions', $context, null, true);
-$canexportdata = has_capability('mod/survey:exportdata', $context, null, true);
-$canaccessreports = has_capability('mod/survey:accessreports', $context, null, true);
 $canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
-
-$canmanagesubmissions = has_capability('mod/survey:managesubmissions', $context, null, true);
-
 $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $context, null, true);
-$cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
-$canimportusertemplates = has_capability('mod/survey:importusertemplates', $context, null, true);
-$canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
 
 $cancreatemastertemplate = has_capability('mod/survey:createmastertemplate', $context, null, true);
 $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $context, null, true);
@@ -58,15 +47,15 @@ $countparents = $DB->count_records_select('survey_item', 'surveyid = :surveyid A
 $inactive = null;
 $activetwo = null;
 
-// ==> single tab definition
-$row = array();
-
 /*
  * **********************************************
  * TABS
  * **********************************************
  */
 $paramurl = array('id' => $cm->id);
+
+// ==> tab row definition
+$row = array();
 
 // -----------------------------------------------------------------------------
 // TAB SURVEY
@@ -121,6 +110,13 @@ $pageid = 'idpage'.$currentpage;
  */
 switch ($currenttab) {
     case SURVEY_TABSUBMISSIONS:
+        // permissions
+        $canview = has_capability('mod/survey:view', $context, null, true);
+        $canmanagesubmissions = has_capability('mod/survey:managesubmissions', $context, null, true);
+        $cansearch = has_capability('mod/survey:searchsubmissions', $context, null, true);
+        $canaccessreports = has_capability('mod/survey:accessreports', $context, null, true);
+        $canexportdata = has_capability('mod/survey:exportdata', $context, null, true);
+
         $tabname = get_string('tabsubmissionsname', 'survey');
         $inactive = array($tabname);
         $activetwo = array($tabname);
@@ -178,6 +174,9 @@ switch ($currenttab) {
 
         break;
     case SURVEY_TABITEMS:
+        // permissions
+        $canpreview = has_capability('mod/survey:preview', $context, null, true);
+
         $tabname = get_string('tabitemname', 'survey');
         $inactive = array($tabname);
         $activetwo = array($tabname);
@@ -212,6 +211,11 @@ switch ($currenttab) {
 
         break;
     case SURVEY_TABUTEMPLATES:
+        // permissions
+        $cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
+        $canimportusertemplates = has_capability('mod/survey:importusertemplates', $context, null, true);
+        $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
+
         $tabname = get_string('tabutemplatename', 'survey');
         $inactive = array($tabname);
         $activetwo = array($tabname);
