@@ -61,11 +61,11 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
 // -----------------------------------------------------------------------------
 // TAB SURVEY
 // -----------------------------------------------------------------------------
-    SUB-TAB == SURVEY_SUBMISSION_PREVIEW
+    SUB-TAB == SURVEY_ITEMS_PREVIEW
         $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
         mod/survey:preview
 
-    SUB-TAB == SURVEY_SUBMISSION_NEW
+    SUB-TAB == SURVEY_SUBMISSION_ATTEMPT
         $elementurl = new moodle_url('/mod/survey/view.php', $paramurl);
         mod/survey:view
         mod/survey:accessadvanceditems

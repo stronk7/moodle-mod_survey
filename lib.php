@@ -58,8 +58,8 @@ define('SURVEY_TAB'.SURVEY_TABMTEMPLATES.'NAME', get_string('tabmtemplatename', 
 
 // PAGES
     // SUBMISSIONS PAGES
-    define('SURVEY_SUBMISSION_PREVIEW' , 1);
-    define('SURVEY_SUBMISSION_NEW'     , 2);
+    define('SURVEY_ITEMS_PREVIEW', 1); // <-- take care, this is an ITEM constant
+    define('SURVEY_SUBMISSION_ATTEMPT' , 2);
     define('SURVEY_SUBMISSION_MANAGE'  , 3);
     define('SURVEY_SUBMISSION_EDIT'    , 4);
     define('SURVEY_SUBMISSION_READONLY', 5);
@@ -68,9 +68,9 @@ define('SURVEY_TAB'.SURVEY_TABMTEMPLATES.'NAME', get_string('tabmtemplatename', 
     define('SURVEY_SUBMISSION_EXPORT'  , 8);
 
     // ITEMS PAGES
-    define('SURVEY_ITEMS_MANAGE'  , 1);
-    define('SURVEY_ITEMS_SETUP'   , 2);
-    define('SURVEY_ITEMS_VALIDATE', 3);
+    define('SURVEY_ITEMS_MANAGE'  , 2);
+    define('SURVEY_ITEMS_SETUP'   , 3);
+    define('SURVEY_ITEMS_VALIDATE', 4);
 
     // USER TEMPLATES PAGES
     define('SURVEY_UTEMPLATES_MANAGE', 1);
@@ -777,15 +777,6 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     $cansearch = has_capability('mod/survey:searchsubmissions', $context, null, true);
     $canexportdata = has_capability('mod/survey:exportdata', $context, null, true);
 
-    $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $context, null, true);
-    $cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
-    $canimportusertemplates = has_capability('mod/survey:importusertemplates', $context, null, true);
-    $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
-
-    $cancreatemastertemplate = has_capability('mod/survey:createmastertemplate', $context, null, true);
-    $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $context, null, true);
-
-
     $hassubmissions = survey_has_submissions($cm->instance);
 
     $whereparams = array('surveyid' => $cm->instance);
@@ -806,10 +797,6 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     }
 
     // CHILDREN
-    if ($canpreview) {
-        $localparamurl = array('s' => $cm->instance, 'act' => SURVEY_PREVIEWSURVEY);
-        $navnode->add(get_string('tabsubmissionspage1', 'survey'), new moodle_url('/mod/survey/view.php', $localparamurl), navigation_node::TYPE_SETTING);
-    }
     if ($cansubmit) {
         $navnode->add(get_string('tabsubmissionspage2', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
     }
@@ -824,17 +811,54 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     /*
      * SURVEY_TABITEMS
      */
-    if ($canmanageitems) {
-        // PARENT
-        $paramurl = array('s' => $cm->instance);
-        $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
+    // PARENT
+    $paramurl = array('s' => $cm->instance);
+    $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
-        // CHILDREN
-        $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_SETTING);
+    // CHILDREN
+    if ($canpreview) {
+        $localparamurl = array('s' => $cm->instance, 'act' => SURVEY_PREVIEWSURVEY);
+        $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/view.php', $localparamurl), navigation_node::TYPE_SETTING);
+    }
+    if ($canmanageitems) {
+        $navnode->add(get_string('tabitemspage2', 'survey'), new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_SETTING);
         if ($countparents) {
             $navnode->add(get_string('tabitemspage3', 'survey'), new moodle_url('/mod/survey/items_validate.php', $paramurl), navigation_node::TYPE_SETTING);
         }
     }
+}
+
+/*
+ * Extends the settings navigation with the survey settings
+ *
+ * This function is called when the context for the page is a survey module. This is not called by AJAX
+ * so it is safe to rely on the $PAGE.
+ *
+ * @param settings_navigation $settingsnav {@link settings_navigation}
+ * @param navigation_node $surveynode {@link navigation_node}
+ */
+function survey_extend_settings_navigation(settings_navigation $settings, navigation_node $surveynode) {
+    global $CFG, $PAGE;
+
+    $cm = $PAGE->cm;
+    if (!$cm = $PAGE->cm) {
+        return;
+    }
+//
+//     $link = new moodle_url('/mod/survey/view.php', array('id' => $cm->id, 'action'=>'grading'));
+//     $surveynode->add(get_string('report'), $link, navigation_node::TYPE_SETTING);
+
+    $context = context_module::instance($cm->id);
+
+    $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $context, null, true);
+    $cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
+    $canimportusertemplates = has_capability('mod/survey:importusertemplates', $context, null, true);
+    $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
+
+    $cancreatemastertemplate = has_capability('mod/survey:createmastertemplate', $context, null, true);
+    $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $context, null, true);
+
+    $hassubmissions = survey_has_submissions($cm->instance);
 
     /*
      * SURVEY_TABUTEMPLATES
@@ -842,7 +866,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     if ($canmanageusertemplates) {
         // PARENT
         $paramurl = array('s' => $cm->instance);
-        $navnode = $navref->add(SURVEY_TAB3NAME,  new moodle_url('/mod/survey/utemplates_create.php', $paramurl), navigation_node::TYPE_CONTAINER);
+        $navnode = $surveynode->add(SURVEY_TAB3NAME,  new moodle_url('/mod/survey/utemplates_create.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
         // CHILDREN
         if (!$hassubmissions || $CFG->survey_forcemodifications) {
@@ -864,7 +888,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
      */
     // PARENT
     $paramurl = array('s' => $cm->instance);
-    $navnode = $navref->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/mtemplates_create.php', $paramurl), navigation_node::TYPE_CONTAINER);
+    $navnode = $surveynode->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/mtemplates_create.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
     // CHILDREN
     if ($cancreatemastertemplate) {
@@ -873,28 +897,10 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     if ( (!$hassubmissions || $CFG->survey_forcemodifications) && $canapplymastertemplate ) {
         $navnode->add(get_string('tabmtemplatepage2', 'survey'), new moodle_url('/mod/survey/mtemplates_apply.php', $paramurl), navigation_node::TYPE_SETTING);
     }
-}
 
-/*
- * Extends the settings navigation with the survey settings
- *
- * This function is called when the context for the page is a survey module. This is not called by AJAX
- * so it is safe to rely on the $PAGE.
- *
- * @param settings_navigation $settingsnav {@link settings_navigation}
- * @param navigation_node $surveynode {@link navigation_node}
- */
-function survey_extend_settings_navigation(settings_navigation $settings, navigation_node $surveynode) {
-    global $PAGE;
-
-//     $cm = $PAGE->cm;
-//     if (!$cm) {
-//         return;
-//     }
-//
-//     $link = new moodle_url('/mod/survey/view.php', array('id' => $cm->id, 'action'=>'grading'));
-//     $surveynode->add(get_string('report'), $link, navigation_node::TYPE_SETTING);
-
+    /*
+     * SURVEY REPORTS
+     */
     if ($surveyreportlist = get_plugin_list('surveyreport')) {
         $icon = new pix_icon('i/report', '', 'moodle', array('class'=>'icon'));
         $reportnode = $surveynode->add(get_string('report'), null, navigation_node::TYPE_CONTAINER);

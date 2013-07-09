@@ -62,7 +62,7 @@ $userpage_manager->prevent_direct_user_input();
 $userpage_manager->survey_add_custom_css();
 
 $hassubmitbutton = ($userpage_manager->currentpage != SURVEY_SUBMISSION_READONLY);
-$hassubmitbutton = $hassubmitbutton && ($userpage_manager->currentpage != SURVEY_SUBMISSION_PREVIEW);
+$hassubmitbutton = $hassubmitbutton && ($userpage_manager->currentpage != SURVEY_ITEMS_PREVIEW);
 
 // ////////////////////////////
 // define $user_form return url
@@ -149,7 +149,7 @@ $PAGE->set_heading($course->shortname);
 
 echo $OUTPUT->header();
 
-$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+$currenttab = $userpage_manager->currenttab; // needed by tabs.php
 $currentpage = $userpage_manager->currentpage; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
@@ -185,7 +185,7 @@ if ($hassubmitbutton) {
 
 // ////////////////////////////
 // display an alert to explain why buttons are missing
-if ($userpage_manager->currentpage == SURVEY_SUBMISSION_PREVIEW) {
+if ($userpage_manager->currentpage == SURVEY_ITEMS_PREVIEW) {
     $userpage_manager->message_preview_mode();
 }
 // end of: display an alert to explain why buttons are missing
@@ -215,7 +215,7 @@ $userpage_form->display();
 
 // ////////////////////////////
 // display an alert to explain why buttons are missing
-if ($userpage_manager->currentpage == SURVEY_SUBMISSION_PREVIEW) {
+if ($userpage_manager->currentpage == SURVEY_ITEMS_PREVIEW) {
     $userpage_manager->message_preview_mode();
 }
 // end of: display an alert to explain why buttons are missing

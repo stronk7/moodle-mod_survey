@@ -123,7 +123,7 @@ class mod_survey_itemelement {
         $this->parentid = $parentid;
         $this->userfeedback = $userfeedback;
         $this->saveasnew = $saveasnew;
-        $this->hassubmissions = survey_has_submissions($survey->id, SURVEY_STATUSCLOSED);
+        $this->hassubmissions = survey_has_submissions($survey->id, SURVEY_STATUSALL);
     }
 
     /*

@@ -79,6 +79,11 @@ class mod_survey_userpagemanager {
     public $action = SURVEY_NOACTION;
 
     /*
+     * $currentpage: The tab of the module where the page will be shown
+     */
+    public $currenttab = '';
+
+    /*
      * $currentpage: this is the page of the module. Nothing to share with $formpage
      */
     public $currentpage = '';
@@ -250,15 +255,19 @@ class mod_survey_userpagemanager {
     function set_page_from_action() {
         switch ($this->action) {
             case SURVEY_NOACTION:
-                $this->currentpage = SURVEY_SUBMISSION_NEW; // needed by tabs.php
+                $this->currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+                $this->currentpage = SURVEY_SUBMISSION_ATTEMPT; // needed by tabs.php
                 break;
             case SURVEY_PREVIEWSURVEY:
-                $this->currentpage = SURVEY_SUBMISSION_PREVIEW; // needed by tabs.php
+                $this->currenttab = SURVEY_TABITEMS; // needed by tabs.php
+                $this->currentpage = SURVEY_ITEMS_PREVIEW; // needed by tabs.php
                 break;
             case SURVEY_EDITRESPONSE:
+                $this->currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
                 $this->currentpage = SURVEY_SUBMISSION_EDIT; // needed by tabs.php
                 break;
             case SURVEY_READONLYRESPONSE:
+                $this->currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
                 $this->currentpage = SURVEY_SUBMISSION_READONLY; // needed by tabs.php
                 break;
             default:

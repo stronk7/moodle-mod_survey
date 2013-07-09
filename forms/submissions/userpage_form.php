@@ -141,7 +141,7 @@ class survey_submissionform extends moodleform {
             }
             $itemseeds->close();
 
-            if ($tabpage != SURVEY_SUBMISSION_PREVIEW) {
+            if ($tabpage != SURVEY_ITEMS_PREVIEW) {
                 if (!empty($survey->captcha)) {
                     $mform->addElement('recaptcha', 'captcha_form_footer');
                 }
@@ -157,7 +157,7 @@ class survey_submissionform extends moodleform {
             if ( ($formpage == SURVEY_RIGHT_OVERFLOW) || ($formpage > 1) ) {
                 $buttonlist['prevbutton'] = get_string('previousformpage', 'survey');
             }
-            if ($tabpage != SURVEY_SUBMISSION_PREVIEW) {
+            if ($tabpage != SURVEY_ITEMS_PREVIEW) {
                 if ($survey->saveresume) {
                     $buttonlist['pausebutton'] = get_string('pause', 'survey');
                 }
@@ -207,7 +207,7 @@ class survey_submissionform extends moodleform {
         // $cmid = $this->_customdata->cmid;
         $tabpage = $this->_customdata->tabpage;
 
-        if (isset($data['prevbutton']) || ($tabpage == SURVEY_SUBMISSION_PREVIEW)) {
+        if (isset($data['prevbutton']) || ($tabpage == SURVEY_ITEMS_PREVIEW)) {
             // skip validation
             return array();
         }

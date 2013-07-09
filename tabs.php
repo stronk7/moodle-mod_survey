@@ -127,13 +127,6 @@ switch ($currenttab) {
 
         $row = array();
 
-        if ($canpreview) { // preview
-            $localparamurl = array('id' => $cm->id, 'act' => SURVEY_PREVIEWSURVEY);
-            $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
-            $strlabel = get_string('tabsubmissionspage1', 'survey');
-            $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
-        }
-
         if ($canview) { // attempt
             $elementurl = new moodle_url('/mod/survey/view.php', $paramurl);
             $strlabel = get_string('tabsubmissionspage2', 'survey');
@@ -189,22 +182,29 @@ switch ($currenttab) {
         $inactive = array($tabname);
         $activetwo = array($tabname);
 
-        if ($canmanageitems) { // manage
-            $row = array();
-            $elementurl = new moodle_url('/mod/survey/items_manage.php', $paramurl);
+        $row = array();
+        if ($canpreview) { // preview
+            $localparamurl = array('id' => $cm->id, 'act' => SURVEY_PREVIEWSURVEY);
+            $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
             $strlabel = get_string('tabitemspage1', 'survey');
             $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
+        }
+
+        if ($canmanageitems) { // manage
+            $elementurl = new moodle_url('/mod/survey/items_manage.php', $paramurl);
+            $strlabel = get_string('tabitemspage2', 'survey');
+            $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
 
             if ($currentpage == SURVEY_ITEMS_SETUP) { // setup
                 $elementurl = new moodle_url('/mod/survey/items_setup.php', $paramurl);
-                $strlabel = get_string('tabitemspage2', 'survey');
-                $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
+                $strlabel = get_string('tabitemspage3', 'survey');
+                $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
             }
 
             if ($countparents) { // verify parent child relations
                 $elementurl = new moodle_url('/mod/survey/items_validate.php', $paramurl);
-                $strlabel = get_string('tabitemspage3', 'survey');
-                $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
+                $strlabel = get_string('tabitemspage4', 'survey');
+                $row[] = new tabobject('idpage4', $elementurl->out(), $strlabel);
             }
         }
 
@@ -264,8 +264,6 @@ switch ($currenttab) {
             $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
         }
         $tabs[] = $row;
-
-        //$pageid = $tabname;
 
         break;
     default:
