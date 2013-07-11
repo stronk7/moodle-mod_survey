@@ -44,7 +44,7 @@ function surveytemplate_criticalincidents_add() {
                        'content_sid'   , 'content'      , 'contentformat'   , 'customnumber',
                        'extrarow'      , 'extranote'    , 'hideinstructions', 'required'    ,
                        'variable'      , 'indent'       , 'hide'            , 'insearchform',
-                       'limitedaccess' , 'sortindex'    , 'formpage'        , 'parentid'    ,
+                       'advanced'      , 'sortindex'    , 'formpage'        , 'parentid'    ,
                        'parentcontent' , 'parentvalue'  , 'timecreated'     , 'timemodified');
 
     $labelintro_sid = 0;

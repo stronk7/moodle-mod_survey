@@ -234,7 +234,7 @@ class mod_survey_usertemplate extends mod_survey_template {
         //       CONTEXT_USER | $USER->id
 
         if (!isset($parts[0]) || !isset($parts[1])) {
-            throw new moodle_exception('Wrong $sharinglevel passed in get_contextid_from_sharinglevel');
+            print_error('Wrong $sharinglevel passed in get_contextid_from_sharinglevel');
         }
 
         switch ($contextlevel) {

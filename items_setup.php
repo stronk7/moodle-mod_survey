@@ -28,7 +28,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
-require_once($CFG->dirroot.'/mod/survey/classes/item.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itemlist.class.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $s = optional_param('s', 0, PARAM_INT);  // survey instance ID
@@ -68,16 +68,16 @@ require_capability('mod/survey:additems', $context);
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$item_manager = new mod_survey_itemelement($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
+$itemlist_manager = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
                                            $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
 
-require_once($CFG->dirroot.'/mod/survey/'.$item_manager->type.'/'.$item_manager->plugin.'/plugin.class.php');
-require_once($CFG->dirroot.'/mod/survey/'.$item_manager->type.'/'.$item_manager->plugin.'/plugin_form.php');
+require_once($CFG->dirroot.'/mod/survey/'.$itemlist_manager->type.'/'.$itemlist_manager->plugin.'/plugin.class.php');
+require_once($CFG->dirroot.'/mod/survey/'.$itemlist_manager->type.'/'.$itemlist_manager->plugin.'/plugin_form.php');
 
 // ////////////////////////////
 // get item
-$itemclass = 'survey'.$item_manager->type.'_'.$item_manager->plugin;
-$item = new $itemclass($item_manager->itemid);
+$itemclass = 'survey'.$itemlist_manager->type.'_'.$itemlist_manager->plugin;
+$item = new $itemclass($itemlist_manager->itemid);
 if (method_exists($item, 'item_set_editor')) {
     $item->item_set_editor($cm->id, $item);
 }
@@ -96,7 +96,7 @@ $formurl = new moodle_url('items_setup.php', $paramurl);
 $formparams = new stdClass();
 $formparams->survey = $survey;                               // needed to setup date boundaries in date fields
 $formparams->item = $item;                                   // needed in many situations
-$formparams->hassubmissions = $item_manager->hassubmissions; // are editing features restricted?
+$formparams->hassubmissions = $itemlist_manager->hassubmissions; // are editing features restricted?
 $item_form = new survey_pluginform($formurl, $formparams);
 // end of: prepare params for the form
 // ////////////////////////////
@@ -116,7 +116,7 @@ if ($fromform = $item_form->get_data()) {
 
     $item->item_save($fromform);
 
-    $paramurl = array('id' => $cm->id, 'ufd' => $userfeedback);
+    $paramurl = array('id' => $cm->id, 'ufd' => $item->userfeedback);
     $returnurl = new moodle_url('items_manage.php', $paramurl);
     redirect($returnurl);
 }
@@ -140,10 +140,10 @@ $currenttab = SURVEY_TABITEMS; // needed by tabs.php
 $currentpage = SURVEY_ITEMS_SETUP; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-if ($item_manager->hassubmissions) {
+if ($itemlist_manager->hassubmissions) {
     echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
 }
-$item_manager->item_welcome();
+$itemlist_manager->item_welcome();
 $item_form->set_data($item);
 $item_form->display();
 

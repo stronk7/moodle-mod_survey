@@ -44,7 +44,7 @@ function surveytemplate_collespreferred_add() {
                        'content_sid'   , 'content'      , 'contentformat'   , 'customnumber',
                        'extrarow'      , 'extranote'    , 'hideinstructions', 'required'    ,
                        'variable'      , 'indent'       , 'hide'            , 'insearchform',
-                       'limitedaccess' , 'sortindex'    , 'formpage'        , 'parentid'    ,
+                       'advanced'      , 'sortindex'    , 'formpage'        , 'parentid'    ,
                        'parentcontent' , 'parentvalue'  , 'timecreated'     , 'timemodified');
 
     $radio_options_sid = 1;

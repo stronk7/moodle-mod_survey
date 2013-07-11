@@ -47,7 +47,7 @@ class survey_chooseitemform extends moodleform {
         $where = array();
         $where['surveyid'] = $survey->id;
         $where['type'] = SURVEY_TYPEFIELD;
-        $where['limitedaccess'] = 0;
+        $where['advanced'] = 0;
         $where['hide'] = 0;
         $records = $DB->get_recordset('survey_item', $where, 'sortindex');
 

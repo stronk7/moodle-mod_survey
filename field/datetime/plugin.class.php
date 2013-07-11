@@ -277,7 +277,7 @@ class surveyfield_datetime extends surveyitem_base {
         // just a check before assuming all has been done correctly
         $errindex = array_search('err', $values, true);
         if ($errindex !== false) {
-            throw new moodle_exception('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
+            print_error('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
         }
 
         return $values;

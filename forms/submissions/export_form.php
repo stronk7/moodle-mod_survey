@@ -48,9 +48,9 @@ class survey_exportform extends moodleform {
         $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------
-        // submissionexport::limitedaccess
+        // submissionexport::advanced
         // ----------------------------------------
-        $fieldname = 'limitedaccess';
+        $fieldname = 'advanced';
         if ($this->_customdata->canaccessadvanceditems) {
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         } else {

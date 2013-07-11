@@ -28,7 +28,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
-require_once($CFG->dirroot.'/mod/survey/classes/item.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itemlist.class.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $s = optional_param('s', 0, PARAM_INT);  // survey instance ID
@@ -67,7 +67,7 @@ require_capability('mod/survey:setupitems', $context);
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$item_manager = new mod_survey_itemelement($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
+$itemlist_manager = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
                                            $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
 
 // ////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ $currenttab = SURVEY_TABITEMS; // needed by tabs.php
 $currentpage = SURVEY_ITEMS_VALIDATE; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-$item_manager->validate_relations();
+$itemlist_manager->validate_relations();
 
 // Finish the page
 echo $OUTPUT->footer();

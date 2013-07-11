@@ -1002,7 +1002,7 @@ function survey_fetch_items_seeds($surveyid, $canaccessadvanceditems, $searchfor
     $params['surveyid'] = $surveyid;
 
     if (!$canaccessadvanceditems) {
-        $sql .= ' AND si.limitedaccess = 0';
+        $sql .= ' AND si.advanced = 0';
     }
     if ($searchform) { // advanced search
         $sql .= ' AND si.insearchform = 1';

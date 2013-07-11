@@ -214,9 +214,9 @@ class surveyitem_baseform extends moodleform {
         }
 
         // ----------------------------------------
-        // newitem::limitedaccess
+        // newitem::advanced
         // ----------------------------------------
-        $fieldname = 'limitedaccess';
+        $fieldname = 'advanced';
         if ($item->get_item_form_requires($fieldname)) {
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
@@ -260,24 +260,24 @@ class surveyitem_baseform extends moodleform {
             }
             $sql .= ' AND plugin IN '.$pluginwhere.'
                         ORDER BY sortindex';
-            $records = $DB->get_recordset_sql($sql, $sqlparams);
+            $parents = $DB->get_recordset_sql($sql, $sqlparams);
 
             $maxlength = 80;
             $quickform = new HTML_QuickForm();
             $select = $quickform->createElement('select', $fieldname, get_string($fieldname, 'survey'));
             $select->addOption(get_string('choosedots'), 0);
-            foreach ($records as $record) {
-                $star = ($record->limitedaccess) ? '(*) ' : '';
-                $thiscontent = survey_get_sid_field_content($record);
+            foreach ($parents as $parent) {
+                $star = ($parent->advanced) ? '(*) ' : '';
+                $thiscontent = survey_get_sid_field_content($parent);
 
-                $content = $star.get_string('pluginname', 'surveyfield_'.$record->plugin).' ['.$record->sortindex.']: '.strip_tags($thiscontent);
+                $content = $star.get_string('pluginname', 'surveyfield_'.$parent->plugin).' ['.$parent->sortindex.']: '.strip_tags($thiscontent);
                 if (strlen($content) > $maxlength) {
                     $content = substr($content, 0, $maxlength);
                 }
-                $disabled = ($record->hide == 1) ? array('disabled' => 'disabled') : null;
-                $select->addOption($content, $record->id, $disabled);
+                $disabled = ($parent->hide == 1) ? array('disabled' => 'disabled') : null;
+                $select->addOption($content, $parent->id, $disabled);
             }
-            $records->close();
+            $parents->close();
 
             $mform->addElement($select);
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
@@ -366,6 +366,22 @@ class surveyitem_baseform extends moodleform {
             return $errors;
         }
 
+        // /////////////////////////////////////////////////
+        // mform issue (never rose up)
+        // I have a parent-child couple of items.
+        // After the relation was been done, the parent was made hidden.
+        // Now I eit the child.
+        // The parentid drop down menu should:
+        //     -> have the item, corresponding to the parentid of the current item, disabled
+        //     -> have that item selected
+        // In this tricky case, parentid is not set at all.
+        // I fix this issue by assigning "manually" the parentid
+        // and I continue as if the parent item is visible
+        if (!isset($data['parentid'])) { // parentid is disabled because parent is hidden
+            $data['parentid'] = $item->get_parentid();
+        }
+        // /////////////////////////////////////////////////
+
         // you choosed a parentid but you are missing the parentcontent
         if (empty($data['parentid']) && (strlen($data['parentcontent']) > 0)) { // $data['parentcontent'] can be = 0
             $a = get_string('parentcontent', 'survey');
@@ -376,28 +392,6 @@ class surveyitem_baseform extends moodleform {
         if ( !empty($data['parentid']) && (strlen($data['parentcontent']) == 0) ) { // $data['parentcontent'] can be = 0
             $a = get_string('parentid', 'survey');
             $errors['parentid'] = get_string('missingparentcontent_err', 'survey', $a);
-        }
-
-        if (!empty($data['parentid']) && (strlen($data['parentcontent']) > 0)) { // $data['parentcontent'] can be = 0
-            // $data['parentid'] == 148
-            // $type = 'field' for sure
-            $plugin = $DB->get_field('survey_item', 'plugin', array('id' => $data['parentid']));
-            require_once($CFG->dirroot.'/mod/survey/field/'.$plugin.'/plugin.class.php');
-            $itemclass = 'surveyfield_'.$plugin;
-            $parentitem = new $itemclass($data['parentid']);
-
-            if (isset($data['limitedaccess'])) {
-                $childlimitedaccess = $data['limitedaccess'];
-            } else {
-                $childlimitedaccess = 0;
-            }
-            $parentlimitedaccess = $parentitem->get_limitedaccess();
-            if ($parentlimitedaccess != $childlimitedaccess) {
-                $a = ($parentlimitedaccess) ? get_string('parentisadvanced', 'survey') : get_string('parentisstandard', 'survey');
-                // echo 'I am at the line '.__LINE__.' of the file '.__FILE__.'<br />';
-                // echo '$a = '.$a.'<br />';
-                $errors['limitedaccess'] = get_string('differentaccess', 'survey', $a);
-            }
         }
 
         return $errors;

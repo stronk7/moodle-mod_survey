@@ -84,25 +84,6 @@ function survey_textarea_to_array($textareacontent) {
 }
 
 /*
- * survey_add_tree_node
- * @param $confirm, $cm, $itemid, $type
- * @return
- */
-function survey_add_tree_node(&$tohidelist, &$sortindextohidelist) {
-    global $DB;
-
-    $i = count($tohidelist);
-    $itemid = $tohidelist[$i-1];
-    if ($childitems = $DB->get_records('survey_item', array('parentid' => $itemid, 'hide' => 0), 'sortindex', 'id, sortindex')) { // potrebbero non esistere
-        foreach ($childitems as $childitem) {
-            $tohidelist[] = (int)$childitem->id;
-            $sortindextohidelist[] = $childitem->sortindex;
-            survey_add_tree_node($tohidelist, $sortindextohidelist);
-        }
-    }
-}
-
-/*
  * has_extrapermission
  * advancedpermissions
  * @param $survey, $mygroups, $ownerid

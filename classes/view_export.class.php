@@ -89,8 +89,8 @@ class mod_survey_exportmanager {
         $where = array();
         $where['surveyid'] = $this->survey->id;
         $where['type'] = SURVEY_TYPEFIELD;
-        if (isset($this->formdata->limitedaccess)) {
-            $where['limitedaccess'] = 1;
+        if (isset($this->formdata->advanced)) {
+            $where['advanced'] = 1;
         }
         if (!isset($this->formdata->includehide)) {
             $where['hide'] = 0;
@@ -126,9 +126,9 @@ class mod_survey_exportmanager {
                                 INNER JOIN {survey_userdata} ud ON ud.submissionid = s.id
                                 INNER JOIN {survey_item} si ON si.id = ud.itemid
                             WHERE s.surveyid = :surveyid';
-        if (isset($this->formdata->limitedaccess)) {
+        if (isset($this->formdata->advanced)) {
             // I need records with:
-            $richsubmissionssql .= ' AND si.limitedaccess = 1';
+            $richsubmissionssql .= ' AND si.advanced = 1';
         }
         if (!isset($this->formdata->includehidden)) {
             $richsubmissionssql .= ' AND si.hide = 0';

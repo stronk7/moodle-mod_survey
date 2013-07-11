@@ -171,7 +171,7 @@ class mod_survey_userpagemanager {
         $condition1 = ($startingpage == SURVEY_RIGHT_OVERFLOW) && ($forward);
         $condition2 = ($startingpage == SURVEY_LEFT_OVERFLOW) && (!$forward);
         if ($condition1 || $condition2) {
-            throw new moodle_exception('Wrong direction required in next_not_empty_page whether $startingpage == SURVEY_RIGHT_OVERFLOW');
+            print_error('Wrong direction required in next_not_empty_page whether $startingpage == SURVEY_RIGHT_OVERFLOW');
         }
 
         if ($startingpage == SURVEY_RIGHT_OVERFLOW) {
@@ -518,7 +518,7 @@ class mod_survey_userpagemanager {
             if ($userdata_record->content != 'dummy_content') {
                 $DB->update_record('survey_userdata', $userdata_record);
             } else {
-                throw new moodle_exception('Wrong $userdata_record! \'dummy_content\' has not been replaced.');
+                print_error('Wrong $userdata_record! \'dummy_content\' has not been replaced.');
             }
         }
     }
@@ -706,7 +706,7 @@ class mod_survey_userpagemanager {
         $whereparams = array('surveyid' => $this->survey->id);
         $whereclause = 'surveyid = :surveyid AND hide = 0';
         if (!$this->canaccessadvanceditems) {
-            $whereclause .= ' AND limitedaccess = 0';
+            $whereclause .= ' AND advanced = 0';
         }
         return $DB->count_records_select('survey_item', $whereclause, $whereparams);
     }
@@ -765,7 +765,7 @@ class mod_survey_userpagemanager {
         if ($status != SURVEY_STATUSALL) {
             $statuslist = array(SURVEY_STATUSCLOSED, SURVEY_STATUSINPROGRESS);
             if (!in_array($status, $statuslist)) {
-                throw new moodle_exception('invalid $status passed to user_closed_submissions in '.__LINE__.' of file '.__FILE__);
+                print_error('invalid $status passed to user_closed_submissions in '.__LINE__.' of file '.__FILE__);
             }
             $params['status'] = $status;
         }

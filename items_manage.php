@@ -28,7 +28,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
-require_once($CFG->dirroot.'/mod/survey/classes/item.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/itemlist.class.php');
 require_once($CFG->dirroot.'/mod/survey/forms/items/selectitem_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
@@ -68,7 +68,7 @@ require_capability('mod/survey:manageitems', $context);
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$item_manager = new mod_survey_itemelement($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
+$itemlist_manager = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
                                            $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
 
 // ////////////////////////////////////////////////////////////
@@ -88,16 +88,16 @@ $currenttab = SURVEY_TABITEMS; // needed by tabs.php
 $currentpage = SURVEY_ITEMS_MANAGE; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-$item_manager->manage_actions();
+$itemlist_manager->manage_actions();
 
-$item_manager->display_user_feedback();
+$itemlist_manager->display_user_feedback();
 
-if ($item_manager->hassubmissions) {
+if ($itemlist_manager->hassubmissions) {
     echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
 }
 
-///////////////////////////////////////////////////////////////
-if (!$hassubmissions || $CFG->survey_forcemodifications) { // add item
+// add item form
+if (!$hassubmissions || $CFG->survey_forcemodifications) {
     if (has_capability('mod/survey:additems', $context)) {
         $paramurl = array('id' => $cm->id);
         $formurl = new moodle_url('items_setup.php', $paramurl);
@@ -109,9 +109,8 @@ if (!$hassubmissions || $CFG->survey_forcemodifications) { // add item
         $itemtype->display();
     }
 }
-///////////////////////////////////////////////////////////////
 
-$item_manager->manage_items();
+$itemlist_manager->manage_items();
 
 // Finish the page
 echo $OUTPUT->footer();

@@ -134,9 +134,9 @@ class surveyitem_base {
     public $insearchform = 0;
 
     /*
-     * $limitedaccess = is this field going to have a limited access only to users with xxx capability?
+     * $advanced = is this field going to be available only to users with accessadvanceditems capability?
      */
-    public $limitedaccess = 0;
+    public $advanced = 0;
 
     /*
      * $sortindex = the order of this item in the survey form
@@ -201,7 +201,7 @@ class surveyitem_base {
         'variable' => true,
         'indent' => true,
         'hide' => true,
-        'limitedaccess' => true,
+        'advanced' => true,
         'insearchform' => true,
         'parentid' => true
     );
@@ -257,8 +257,9 @@ class surveyitem_base {
         global $CFG, $DB, $PAGE;
 
         $cm = $PAGE->cm;
+        $context = context_module::instance($cm->id);
 
-        // you are going to change item content (maybe sortindex, maybe the basicform)
+        // you are going to change item content (maybe sortindex, maybe the parentitem)
         // so, do not forget to reset items per page
         survey_reset_items_pages($cm->instance);
 
@@ -277,7 +278,7 @@ class surveyitem_base {
         // it is an advcheckbox
 
         // manage other checkboxes content
-        $checkboxessettings = array('limitedaccess', 'insearchform', 'hideinstructions', 'required', 'hide');
+        $checkboxessettings = array('advanced', 'insearchform', 'hideinstructions', 'required', 'hide');
         foreach($checkboxessettings as $checkboxessetting) {
             $record->{$checkboxessetting} = isset($record->{$checkboxessetting}) ? 1 : 0;
         }
@@ -294,24 +295,25 @@ class surveyitem_base {
             $record->parentvalue = $parentitem->parent_encode_content_to_value($record->parentcontent);
         }
 
-        // $userfeedback
-        //   +--- children moved out from user entry form
-        //   |       +--- children moved in the user entry form
-        //   |       |       +--- child hided because of this item hide
-        //   |       |       |       +--- parent was shown because this item was shown
+        // $this->userfeedback
+        //   +--- children got limited access
+        //   |       +--- parents were made available for all
+        //   |       |       +--- children were hided because this item was hided
+        //   |       |       |       +--- parents were shown because this item was shown
         //   |       |       |       |       +--- new|edit
         //   |       |       |       |       |       +--- success|fail
         // [0|1] - [0|1] - [0|1] - [0|1] - [0|1] - [0|1]
-        // last digit == 1 means that the process was successfull
-        // last digit == 0 means that the process was NOT successfull
+        // last digit (on the right, of course) == 1 means that the process was globally successfull
+        // last digit (on the right, of course) == 0 means that the process was globally NOT successfull
+
         // beforelast digit == 0 means NEW
         // beforelast digit == 1 means EDIT
 
-        // (digit in place 2) == 1 means item shown
-        // (digit in place 3) == 1 means item hided because this item was hided
-        // (digit in place 4) == 1 means item hided because this item was removed from the user entry form
+        // (digit in place 2) == 1 means items were shown because this (as child) was shown
+        // (digit in place 3) == 1 means items were hided because this (as parent) was hided
+        // (digit in place 4) == 1 means items inherited limited access because this (as parent) got a limited access
 
-        $userfeedback = SURVEY_NOFEEDBACK;
+        $this->userfeedback = SURVEY_NOFEEDBACK;
         // Does this record need to be saved as new record or as un update on a preexisting record?
         if (empty($record->itemid)) {
             // record is new
@@ -324,27 +326,24 @@ class surveyitem_base {
                     WHERE surveyid = :surveyid
                         AND sortindex > 0';
             $sqlparam = array('surveyid' => $cm->instance);
-            $record->sortindex = 1+$DB->count_records_sql($sql, $sqlparam);
+            $record->sortindex = 1 + $DB->count_records_sql($sql, $sqlparam);
 
             // itemid
             if ($record->itemid = $DB->insert_record('survey_item', $record)) {
                 // $tablename
                 if ($this->flag->useplugintable) {
                     if ($DB->insert_record($tablename, $record)) {
-                        $userfeedback += 1; // 0*2^1+1*2^0
+                        $this->userfeedback += 1; // 0*2^1+1*2^0
                     }
                 } else {
-                    $userfeedback += 1; // 0*2^1+1*2^0
+                    $this->userfeedback += 1; // 0*2^1+1*2^0
                 }
-            } else {
-                $userfeedback += 0; // 0*2^1+0*2^0
             }
 
-            $logaction = ($userfeedback) ? 'add item' : 'add item failed';
+            $logaction = ($this->userfeedback == SURVEY_NOFEEDBACK) ? 'add item failed' : 'add item';
 
-            // special mention for the "editor" field
+            // special care for the "editor" field
             if ($this->item_form_requires['content_editor']) { // i.e. content
-                $context = context_module::instance($cm->id);
                 $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
                 $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
                 $record->contentformat = FORMAT_HTML;
@@ -358,9 +357,8 @@ class surveyitem_base {
 
         } else {
 
-            // special mention for the "editor" field
+            // special care for the "editor" field
             if ($this->item_form_requires['content_editor']) { // i.e. content
-                $context = context_module::instance($cm->id);
                 $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
                 $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
                 $record->contentformat = FORMAT_HTML;
@@ -369,9 +367,13 @@ class surveyitem_base {
                 $record->contentformat = null;
             }
 
-            // hide/regular part 2
+            // hide/unhide part 1
             $oldhide = $DB->get_field('survey_item', 'hide', array('id' => $record->itemid)); // used later
-            // end of: hide/regular 2
+            // end of: hide/unhide 1
+
+            // limit/unlimit access part 1
+            $oldadvanced = $DB->get_field('survey_item', 'advanced', array('id' => $record->itemid)); // used later
+            // end of: limit/unlimit access part 1
 
             // survey_item
             // id
@@ -385,49 +387,93 @@ class surveyitem_base {
                 if ($this->flag->useplugintable) {
                     $record->id = $record->pluginid;
                     if ($DB->update_record($tablename, $record)) {
-                        // $status = SURVEY_ITEMEDITED;
-                        $userfeedback += 3; // 1*2^1+1*2^0
+                        $this->userfeedback += 3; // 1*2^1+1*2^0 alias: editing + success
                     } else {
-                        // $status = SURVEY_ITEMEDITFAIL;
-                        $userfeedback += 2; // 1*2^1+0*2^0
+                        $this->userfeedback += 2; // 1*2^1+0*2^0 alias: editing + fail
                     }
                 } else {
-                    // $status = SURVEY_ITEMADDED;
-                    $userfeedback += 3; // 1*2^1+1*2^0
+                    $this->userfeedback += 3; // 1*2^1+1*2^0 alias: editing + success
                 }
             } else {
-                // $status = SURVEY_ITEMEDITFAIL;
-                $userfeedback += 2; // 1*2^1+0*2^0
+                $this->userfeedback += 2; // 1*2^1+0*2^0 alias: editing + fail
             }
 
-            $logaction = ($userfeedback) ? 'update item' : 'update item failed';
+            $logaction = ($this->userfeedback == SURVEY_NOFEEDBACK) ? 'add item failed' : 'add item';
 
-            if ($record->id) { // if the item was successfully saved
-                // hide/regular part 3
-                if ( ($oldhide == 1) && ($record->hide == 0) ) {
-                    //if (survey_manage_item_show(1, $cm, $record->itemid, $record->type)) {
-                    //    // a chain of record has been shown
-                    //    $userfeedback += 4; // 1*2^2
-                    //}
+            // save process is over. Good.
+            // now hide or unhide (whether needed) chain of ancestors or descendents
+            if ($this->userfeedback & 1) { // bitwise logic, alias: if the item was successfully saved
+                // /////////////////////////////////////////////////
+                // manage ($oldhide != $record->hide)
+                // /////////////////////////////////////////////////
+                if ($oldhide != $record->hide) {
+                    $survey = $DB->get_record('survey', array('id' => $cm->instance), '*', MUST_EXIST);
+                    $action = ($oldhide) ? SURVEY_SHOWITEM : SURVEY_HIDEITEM;
+                    $itemtomove = 0;
+                    $lastitembefore = 0;
+                    $confirm = SURVEY_CONFIRMED_YES;
+                    $nextindent = 0;
+                    $parentid = 0;
+                    $userfeedback = 0;
+                    $saveasnew  = 0;
+                    $itemlist_manager = new mod_survey_itemlist($cm, $context, $survey, $record->type, $record->plugin,
+                                           $record->itemid, $action, $itemtomove, $lastitembefore,
+                                           $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
                 }
-                if ( ($oldhide == 0) && ($record->hide == 1) ) {
-                    if ($this->survey_manage_item_hide(1, $record->itemid, $record->type)) {
-                        // a chain of record has been shown
-                        $userfeedback += 8; // 1*2^3
+
+                // hide/unhide part 2
+                if ( ($oldhide == 1) && ($record->hide == 0) ) {
+                    if ($itemlist_manager->manage_item_show()) {
+                        // a chain of parent items has been showed
+                        $this->userfeedback += 4; // 1*2^2
                     }
                 }
-                // end of: hide/regular part 3
+                if ( ($oldhide == 0) && ($record->hide == 1) ) {
+                    if ($itemlist_manager->manage_item_hide()) {
+                        // a chain of child items has been hided
+                        $this->userfeedback += 8; // 1*2^3
+                    }
+                }
+                // end of: hide/unhide part 2
 
-                // adesso, indipendentemente dalla paternità, verifica che i figli siano nella stessa user form
-                // se stanno in una differente form, spostali
-                // TODO: muovere l'item
+                // /////////////////////////////////////////////////
+                // manage ($oldadvanced != $record->advanced)
+                // /////////////////////////////////////////////////
+                if ($oldadvanced != $record->advanced) {
+                    $survey = $DB->get_record('survey', array('id' => $cm->instance), '*', MUST_EXIST);
+                    $action = ($oldadvanced) ? SURVEY_MAKEFORALL : SURVEY_MAKELIMITED;
+                    $itemtomove = 0;
+                    $lastitembefore = 0;
+                    $confirm = SURVEY_CONFIRMED_YES;
+                    $nextindent = 0;
+                    $parentid = 0;
+                    $userfeedback = 0;
+                    $saveasnew  = 0;
+                    $itemlist_manager = new mod_survey_itemlist($cm, $context, $survey, $record->type, $record->plugin,
+                                           $record->itemid, $action, $itemtomove, $lastitembefore,
+                                           $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
+                }
+                // limit/unlimit access part 2
+                if ( ($oldadvanced == 1) && ($record->advanced == 0) ) {
+                    if ($itemlist_manager->manage_item_makestandard()) {
+                        // a chain of parent items has been made available for all
+                        $this->userfeedback += 16; // 1*2^4
+                    }
+                }
+                if ( ($oldadvanced == 0) && ($record->advanced == 1) ) {
+                    if ($itemlist_manager->manage_item_makeadvanced()) {
+                        // a chain of child items got a limited access
+                        $this->userfeedback += 32; // 1*2^5
+                    }
+                }
+                // end of: limit/unlimit access part 2
             }
         }
+
         $logurl = 'itembase.php?id='.$cm->id.'&tab='.SURVEY_TABITEMS.'&itemid='.$record->itemid.'&type='.$record->type.'&plugin='.$record->plugin.'&pag='.SURVEY_ITEMS_MANAGE;
         add_to_log($cm->course, 'survey', $logaction, $logurl, $record->itemid, $cm->id);
 
-        // $userfeedback is for user feedback purpose only in manageitems.php
-        $this->userfeedback = $userfeedback;
+        // $this->userfeedback is for user feedback purpose only in items_manage.php
     }
 
     /*
@@ -446,7 +492,7 @@ class surveyitem_base {
             $fields = array('content');
         }
         if (!is_array($fields)) {
-            throw new moodle_exception('Array or null are expected in item_builtin_string_load_support');
+            print_error('Array or null are expected in item_builtin_string_load_support');
         }
 
         // special care for content editor
@@ -480,7 +526,7 @@ class surveyitem_base {
             $fields = array('content');
         }
         if (!is_array($fields)) {
-            throw new moodle_exception('Array or null are expected in item_builtin_string_save_support');
+            print_error('Array or null are expected in item_builtin_string_save_support');
         }
 
         if (in_array('content', $fields)) {
@@ -813,7 +859,7 @@ class surveyitem_base {
         // $si_fields = array('surveyid', 'type', 'plugin', 'externalname',
         //                    'content_sid', 'content', 'contentformat', 'customnumber',
         //                    'extrarow', 'extranote', 'required', 'hideinstructions', 'variable',
-        //                    'indent', 'hide', 'insearchform', 'limitedaccess',
+        //                    'indent', 'hide', 'insearchform', 'advanced',
         //                    'sortindex', 'formpage', 'parentid',
         //                    'parentcontent', 'parentvalue', 'timecreated', 'timemodified');
 
@@ -935,11 +981,11 @@ class surveyitem_base {
         /*------------------------------------------------*/
         $values['insearchform'] = $this->insearchform;
 
-        // $si_fields = array(...'limitedaccess', 'sortindex', 'formpage', 'parentid',
+        // $si_fields = array(...'advanced', 'sortindex', 'formpage', 'parentid',
 
-        // override: $value['limitedaccess']
+        // override: $value['advanced']
         /*------------------------------------------------*/
-        $values['limitedaccess'] = $this->limitedaccess;
+        $values['advanced'] = $this->advanced;
 
         // override: $value['sortindex']
         /*------------------------------------------------*/
@@ -997,7 +1043,7 @@ class surveyitem_base {
         // just a check before assuming all has been done correctly
         $errindex = array_search('err', $values, true);
         if ($errindex !== false) {
-            throw new moodle_exception('$values[\''.$errindex.'\'] of survey_items was not properly managed');
+            print_error('$values[\''.$errindex.'\'] of survey_items was not properly managed');
         }
 
         return $values;
@@ -1197,13 +1243,13 @@ class surveyitem_base {
     }
 
     /*
-     * get_limitedaccess
+     * get_advanced
      *
      * @param
      * @return
      */
-    public function get_limitedaccess() {
-        return $this->limitedaccess;
+    public function get_advanced() {
+        return $this->advanced;
     }
 
     /*

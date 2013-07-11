@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 /*
  * The base class representing a field
  */
-class mod_survey_itemelement {
+class mod_survey_itemlist {
     /*
      * $cm
      */
@@ -186,13 +186,10 @@ class mod_survey_itemelement {
                 $DB->set_field('survey_item', 'insearchform', 0, array('id' => $this->itemid));
                 break;
             case SURVEY_MAKELIMITED:
-                $item = survey_get_item($this->itemid, $this->type, $this->plugin);
-                if ($item->get_item_form_requires('limitedaccess')) {
-                    $DB->set_field('survey_item', 'limitedaccess', 1, array('id' => $this->itemid));
-                }
+                $this->manage_item_makeadvanced();
                 break;
             case SURVEY_MAKEFORALL:
-                $DB->set_field('survey_item', 'limitedaccess', 0, array('id' => $this->itemid));
+                $this->manage_item_makestandard();
                 break;
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
@@ -361,9 +358,9 @@ class mod_survey_itemelement {
                 // $message = get_string('hidden', 'survey');
                 $icons .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
             } else {
-                if (!$item->get_limitedaccess()) {
+                if (!$item->get_advanced()) {
                     $message = get_string('available', 'survey');
-                    if ($item->get_item_form_requires('limitedaccess')) {
+                    if ($item->get_item_form_requires('advanced')) {
                         $paramurl = $paramurl_base + array('act' => SURVEY_MAKELIMITED);
                         $basepath = new moodle_url('items_manage.php', $paramurl);
 
@@ -584,6 +581,61 @@ class mod_survey_itemelement {
     }
 
     /*
+     * add_child_node
+     * @param &$nodelist
+     * @param &$sortindexnodelist
+     * @param $additionalcondition
+     * @return
+     */
+    function add_child_node(&$nodelist, &$sortindexnodelist, $additionalcondition) {
+        global $DB;
+
+        if (!is_array($additionalcondition)) {
+            print_error('Array is expected in add_child_node');
+        }
+
+        $i = count($nodelist);
+        $itemid = $nodelist[$i-1];
+        $where = array('parentid' => $itemid) + $additionalcondition;
+        if ($childitems = $DB->get_records('survey_item', $where, 'sortindex', 'id, sortindex')) {
+            foreach ($childitems as $childitem) {
+                $nodelist[] = (int)$childitem->id;
+                $sortindexnodelist[] = $childitem->sortindex;
+                $this->add_child_node($nodelist, $sortindexnodelist, $additionalcondition);
+            }
+        }
+    }
+
+    /*
+     * add_parent_node
+     * @param $additionalcondition
+     * @return
+     */
+    function add_parent_node($additionalcondition) {
+        global $DB;
+
+        if (!is_array($additionalcondition)) {
+            print_error('Array is expected in add_parent_node');
+        }
+
+        $nodelist = array($this->itemid);
+        $sortindexnodelist = array();
+
+        // get the first parentid
+        $parentitem = new stdClass();
+        $parentitem->id = $DB->get_field('survey_item', 'parentid', array('id' => $this->itemid));
+
+        $where = array('id' => $parentitem->id) + $additionalcondition;
+        if ($parentitem = $DB->get_record('survey_item', $where, 'id, sortindex')) {
+            $nodelist[] = (int)$parentitem->id;
+            $sortindexnodelist[] = $parentitem->sortindex;
+            $where = array('id' => $parentitem->id) + $additionalcondition;
+        }
+
+        return array($nodelist, $sortindexnodelist);
+    }
+
+    /*
      * manage_item_hide
      *
      * @param
@@ -596,7 +648,7 @@ class mod_survey_itemelement {
         // here I must select the whole tree down
         $tohidelist = array($this->itemid);
         $sortindextohidelist = array();
-        survey_add_tree_node($tohidelist, $sortindextohidelist);
+        $this->add_child_node($tohidelist, $sortindextohidelist, array('hide' => 0));
 
         $itemstoprocess = count($tohidelist);
         if ($this->confirm == SURVEY_UNCONFIRMED) {
@@ -656,17 +708,9 @@ class mod_survey_itemelement {
         global $DB, $OUTPUT;
 
         // build toshowlist
-        $parentitem = new StdClass();
-        $toshowlist = array($this->itemid);
-        $sortindextoshowlist = array();
-        $parentitem->parentid = $this->itemid;
+        list($toshowlist, $sortindextoshowlist) = $this->add_parent_node(array('hide' => 1));
 
-        while ($parentitem = $DB->get_record('survey_item', array('id' => $parentitem->parentid, 'hide' => 1), 'id, parentid, sortindex')) { // potrebbe non esistere
-            $toshowlist[] = $parentitem->id;
-            $sortindextoshowlist[] = $parentitem->sortindex;
-        }
-
-        $itemstoprocess = count($sortindextoshowlist);
+        $itemstoprocess = count($toshowlist); // this is the list of ancestors
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             if ($itemstoprocess > 1) { // ask for confirmation
                 $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);
@@ -674,13 +718,13 @@ class mod_survey_itemelement {
                 $a = new stdClass();
                 $a->lastitem = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
                 $a->ancestors = implode(', ', $sortindextoshowlist);
-                $message = get_string('askitemsshow', 'survey', $a);
+                $message = get_string('askitemstoshow', 'survey', $a);
 
                 $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_SHOWITEM, 'itemid' => $this->itemid);
 
                 $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'type' => $this->type);
                 $urlyes = new moodle_url('items_manage.php', $optionsyes);
-                $buttonyes = new single_button($urlyes, get_string('confirmitemsshow', 'survey'));
+                $buttonyes = new single_button($urlyes, get_string('confirmitemstoshow', 'survey'));
 
                 $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
                 $urlno = new moodle_url('items_manage.php', $optionsno);
@@ -699,6 +743,132 @@ class mod_survey_itemelement {
                     // hide items
                     foreach ($toshowlist as $toshowitemid) {
                         $DB->set_field('survey_item', 'hide', 0, array('id' => $toshowitemid));
+                    }
+                    survey_reset_items_pages($this->cm->instance);
+                    break;
+                case SURVEY_CONFIRMED_NO:
+                    $itemstoprocess = 0;
+                    $message = get_string('usercanceled', 'survey');
+                    echo $OUTPUT->notification($message, 'notifyproblem');
+                    break;
+                default:
+                    print_error('codingerror');
+            }
+        }
+        return $itemstoprocess; // did you do something?
+    }
+
+    /*
+     * manage_item_makeadvanced
+     *
+     * the idea is: in a chain of parent-child items,
+     *     -> items available to each user (standard items) can be parent of item available to each user such as item with limited access (advanced)
+     *     -> item with limited access (advanced) can ONLY BE parent of items with limited access (advanced)
+     * @param
+     * @return
+     */
+    public function manage_item_makeadvanced() {
+        global $DB, $OUTPUT;
+
+        // build toadvancedlist
+        // here I must select the whole tree down
+        $toadvancedlist = array($this->itemid);
+        $sortindextoadvancedlist = array();
+        $this->add_child_node($toadvancedlist, $sortindextoadvancedlist, array('advanced' => 0));
+
+        $itemstoprocess = count($toadvancedlist);
+        if ($this->confirm == SURVEY_UNCONFIRMED) {
+            if (count($toadvancedlist) > 1) { // ask for confirmation
+                $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);
+
+                $a = new stdClass();
+                $a->parentid = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+                $a->dependencies = implode(', ', $sortindextoadvancedlist);
+                $message = get_string('askitemstoadvanced', 'survey', $a);
+
+                $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_MAKELIMITED);
+
+                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'type' => $this->type);
+                $urlyes = new moodle_url('items_manage.php', $optionsyes);
+                $buttonyes = new single_button($urlyes, get_string('confirmitemstoadvanced', 'survey'));
+
+                $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
+                $urlno = new moodle_url('items_manage.php', $optionsno);
+                $buttonno = new single_button($urlno, get_string('no'));
+
+                echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
+                echo $OUTPUT->footer();
+                die;
+            } else { // hide without asking
+                $DB->set_field('survey_item', 'advanced', 1, array('id' => $this->itemid));
+                survey_reset_items_pages($this->cm->instance);
+            }
+        } else {
+            switch ($this->confirm) {
+                case SURVEY_CONFIRMED_YES:
+                    // hide items
+                    foreach ($toadvancedlist as $tohideitemid) {
+                        $DB->set_field('survey_item', 'advanced', 1, array('id' => $tohideitemid));
+                    }
+                    survey_reset_items_pages($this->cm->instance);
+                    break;
+                case SURVEY_CONFIRMED_NO:
+                    $itemstoprocess = 0;
+                    $message = get_string('usercanceled', 'survey');
+                    echo $OUTPUT->notification($message, 'notifyproblem');
+                    break;
+                default:
+                    debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $confirm = '.$this->confirm);
+            }
+        }
+        return $itemstoprocess; // did you do something?
+    }
+
+    /*
+     * manage_item_makestandard
+     *
+     * @param
+     * @return
+     */
+    public function manage_item_makestandard() {
+        global $DB, $OUTPUT;
+
+        // build tostandardlist
+        list($tostandardlist, $sortindextostandardlist) = $this->add_parent_node(array('advanced' => 1));
+
+        $itemstoprocess = count($tostandardlist); // this is the list of ancestors
+        if ($this->confirm == SURVEY_UNCONFIRMED) {
+            if ($itemstoprocess > 1) { // ask for confirmation
+                $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);
+
+                $a = new stdClass();
+                $a->lastitem = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+                $a->ancestors = implode(', ', $sortindextostandardlist);
+                $message = get_string('askitemstostandard', 'survey', $a);
+
+                $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_MAKEFORALL, 'itemid' => $this->itemid);
+
+                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'type' => $this->type);
+                $urlyes = new moodle_url('items_manage.php', $optionsyes);
+                $buttonyes = new single_button($urlyes, get_string('confirmitemstostandard', 'survey'));
+
+                $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
+                $urlno = new moodle_url('items_manage.php', $optionsno);
+                $buttonno = new single_button($urlno, get_string('no'));
+
+                echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
+                echo $OUTPUT->footer();
+                die;
+            } else { // show without asking
+                $DB->set_field('survey_item', 'advanced', 0, array('id' => $this->itemid));
+                survey_reset_items_pages($this->cm->instance);
+            }
+        } else {
+            switch ($this->confirm) {
+                case SURVEY_CONFIRMED_YES:
+                    // hide items
+                    foreach ($tostandardlist as $toshowitemid) {
+                        $DB->set_field('survey_item', 'advanced', 0, array('id' => $toshowitemid));
                     }
                     survey_reset_items_pages($this->cm->instance);
                     break;
@@ -798,7 +968,7 @@ class mod_survey_itemelement {
                     $itemlist = $DB->get_recordset_sql($sql, array('surveyid' => $this->survey->id, 'killedsortindex' => $killedsortindex));
                     $currentsortindex = $killedsortindex;
                     foreach ($itemlist as $item) {
-                        $DB->set_field('survey_item', 'sortindex', $currentsortindex, array('id' => $item->get_itemid()));
+                        $DB->set_field('survey_item', 'sortindex', $currentsortindex, array('id' => $item->id));
                         $currentsortindex++;
                     }
                     $itemlist->close();
@@ -1104,7 +1274,7 @@ class mod_survey_itemelement {
                     break;
                 case 5: // a chain of items was removed from the user entry form
                     if ($bit) {
-                        $message .= '<br />'.get_string('itemedithidefrombasicform', 'survey');
+                        $message .= '<br />'.get_string('itemeditmakeadvanced', 'survey');
                     }
                     break;
             }

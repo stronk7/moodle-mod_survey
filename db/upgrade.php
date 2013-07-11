@@ -127,5 +127,18 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013062702, 'survey');
     }
 
+    if ($oldversion < 2013071101) {
+
+        // Rename field limitedaccess on table survey_item to advanced.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('limitedaccess', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'insearchform');
+
+        // Launch rename field limitedaccess.
+        $dbman->rename_field($table, $field, 'advanced');
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013071101, 'survey');
+    }
+
     return true;
 }

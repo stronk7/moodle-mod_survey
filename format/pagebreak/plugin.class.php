@@ -85,7 +85,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         $this->item_form_requires['required'] = false;
         $this->item_form_requires['variable'] = false;
         $this->item_form_requires['insearchform'] = false;
-        $this->item_form_requires['limitedaccess'] = false;
+        $this->item_form_requires['advanced'] = false;
         $this->item_form_requires['parentid'] = false;
         $this->item_form_requires['indent'] = false;
         $this->item_form_requires['hideinstructions'] = false;
@@ -135,7 +135,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
 
         if ($reviewcounter != count($values)) {
-            throw new moodle_exception('survey_items values were not all checked. '.$reviewcounter.' reviewes vs '.count($values).' fields in the structure');
+            print_error('survey_items values were not all checked. '.$reviewcounter.' reviewes vs '.count($values).' fields in the structure');
         }
         return $values;
     }
