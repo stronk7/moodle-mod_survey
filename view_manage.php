@@ -51,7 +51,7 @@ add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, 
 
 $submissionid = optional_param('submissionid', 0, PARAM_INT);
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
-$confirm = optional_param('cnf' , 0, PARAM_INT); // confirm submission deletion
+$confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
 $searchfields_get = optional_param('searchquery', '', PARAM_RAW);
 
 // ////////////////////////////////////////////////////////////

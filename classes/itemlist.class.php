@@ -116,11 +116,11 @@ class mod_survey_itemlist {
         $this->context = $context;
         $this->survey = $survey;
         if (preg_match('~^('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_(\w+)$~', $plugin, $match)) {
-            // execution comes from /forms/items/itemtype.php
+            // execution comes from /forms/items/selectitem_form.php
             $this->type = $match[1]; // field or format
             $this->plugin = $match[2]; // boolean or char ... or fieldset ...
         } else {
-            // execution comes from /forms/items/manageitems.php
+            // execution comes from /forms/items/items_manage.php
             $this->type = $type;
             $this->plugin = $plugin;
         }
@@ -447,7 +447,7 @@ class mod_survey_itemlist {
                     $paramurl = $paramurl_base + array('act' => SURVEY_CHANGEORDERASK, 'itm' => $item->get_sortindex());
                     $current_parentid = $item->get_parentid();
                     if (!empty($current_parentid)) {
-                        $paramurl = $paramurl + array('pit' => $current_parentid);
+                        $paramurl = $paramurl + array('pid' => $current_parentid);
                     }
                     $basepath = new moodle_url('items_manage.php', $paramurl);
 
@@ -623,13 +623,14 @@ class mod_survey_itemlist {
 
         // get the first parentid
         $parentitem = new stdClass();
-        $parentitem->id = $DB->get_field('survey_item', 'parentid', array('id' => $this->itemid));
+        $parentitem->parentid = $DB->get_field('survey_item', 'parentid', array('id' => $this->itemid));
 
-        $where = array('id' => $parentitem->id) + $additionalcondition;
-        if ($parentitem = $DB->get_record('survey_item', $where, 'id, sortindex')) {
+        $where = array('id' => $parentitem->parentid) + $additionalcondition;
+
+        while ($parentitem = $DB->get_record('survey_item', $where, 'id, parentid, sortindex')) {
             $nodelist[] = (int)$parentitem->id;
             $sortindexnodelist[] = $parentitem->sortindex;
-            $where = array('id' => $parentitem->id) + $additionalcondition;
+            $where = array('id' => $parentitem->parentid) + $additionalcondition;
         }
 
         return array($nodelist, $sortindexnodelist);

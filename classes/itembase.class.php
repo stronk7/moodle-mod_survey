@@ -473,7 +473,7 @@ class surveyitem_base {
         $logurl = 'itembase.php?id='.$cm->id.'&tab='.SURVEY_TABITEMS.'&itemid='.$record->itemid.'&type='.$record->type.'&plugin='.$record->plugin.'&pag='.SURVEY_ITEMS_MANAGE;
         add_to_log($cm->course, 'survey', $logaction, $logurl, $record->itemid, $cm->id);
 
-        // $this->userfeedback is for user feedback purpose only in items_manage.php
+        // $this->userfeedback is going to be part of $returnurl in items_setup.php and to be send to items_manage.php
     }
 
     /*

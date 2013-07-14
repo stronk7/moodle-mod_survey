@@ -56,9 +56,9 @@ $itemid = optional_param('itemid', 0, PARAM_INT);
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $itemtomove = optional_param('itm', 0, PARAM_INT);
 $lastitembefore = optional_param('lib', 0, PARAM_INT);
-$confirm = optional_param('cnf', 0, PARAM_INT);
+$confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
 $nextindent = optional_param('ind', 0, PARAM_INT);
-$parentid = optional_param('pit', 0, PARAM_INT);
+$parentid = optional_param('pid', 0, PARAM_INT);
 $userfeedback = optional_param('ufd', SURVEY_NOFEEDBACK, PARAM_INT);
 $saveasnew = optional_param('saveasnew', null, PARAM_TEXT);
 
@@ -101,9 +101,6 @@ if (!$hassubmissions || $CFG->survey_forcemodifications) {
     if (has_capability('mod/survey:additems', $context)) {
         $paramurl = array('id' => $cm->id);
         $formurl = new moodle_url('items_setup.php', $paramurl);
-
-        // $message = get_string('additem', 'survey');
-        // echo $OUTPUT->box($message, 'notice centerpara');
 
         $itemtype = new survey_itemtypeform($formurl);
         $itemtype->display();

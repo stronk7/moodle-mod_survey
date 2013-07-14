@@ -49,18 +49,19 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "elements.php?id=$cm->id", $survey->name, $cm->id);
 
-$plugin = optional_param('plugin', null, PARAM_TEXT);
 $type = optional_param('type', null, PARAM_TEXT);
 $plugin = optional_param('plugin', null, PARAM_TEXT);
 $itemid = optional_param('itemid', 0, PARAM_INT);
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
-$itemtomove = optional_param('itm', 0, PARAM_INT);
-$lastitembefore = optional_param('lib', 0, PARAM_INT);
-$confirm = optional_param('cnf', 0, PARAM_INT);
-$nextindent = optional_param('ind', 0, PARAM_INT);
-$parentid = optional_param('pit', 0, PARAM_INT);
-$userfeedback = optional_param('ufd', SURVEY_NOFEEDBACK, PARAM_INT);
-$saveasnew = optional_param('saveasnew', null, PARAM_TEXT);
+
+// params never passed but needed by called class
+$itemtomove = 0;
+$userfeedback = SURVEY_NOFEEDBACK;
+$lastitembefore = 0;
+$confirm = SURVEY_UNCONFIRMED;
+$nextindent = 0;
+$parentid = 0;
+$saveasnew = null;
 
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:additems', $context);

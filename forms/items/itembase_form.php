@@ -61,14 +61,14 @@ class surveyitem_baseform extends moodleform {
         // newitem::type
         // ----------------------------------------
         $fieldname = 'type';
-        $mform->addElement('hidden', $fieldname, 'bloodytype');
+        $mform->addElement('hidden', $fieldname, 'dummytype');
         $mform->setType($fieldname, PARAM_RAW);
 
         // ----------------------------------------
         // newitem::plugin
         // ----------------------------------------
         $fieldname = 'plugin';
-        $mform->addElement('hidden', $fieldname, 'bloodyplugin');
+        $mform->addElement('hidden', $fieldname, 'dummyplugin');
         $mform->setType($fieldname, PARAM_RAW);
 
         // /////////////////////////////////////////////////////////////////////////////////////////////////

@@ -51,8 +51,10 @@ require_course_login($course, true, $cm);
 add_to_log($course->id, 'survey', 'view', "utemplates.php?id=$cm->id", $survey->name, $cm->id);
 
 $utemplateid = optional_param('fid', 0, PARAM_INT);
-$action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
-$confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
+
+// params never passed but needed by called class
+$action = SURVEY_NOACTION;
+$confirm = SURVEY_UNCONFIRMED;
 
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:importusertemplates', $context);

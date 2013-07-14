@@ -67,7 +67,6 @@ $string['accessrightsnote_group'] = 'If you plan to dismiss groups, take them of
 $string['accessrightsnote_nogroup'] = 'If you plan to use groups, create them and come here again. The access list will change accordingly.';
 $string['actionoverother_help'] = 'Operate on elements already present in the survey with the following action';
 $string['actionoverother'] = 'Other elements action';
-$string['additem'] = 'Choose the element to add to your survey. It can be a or a format type.';
 $string['advanced_help'] = 'Is this element going to be available only to users equipped with a special permission or generally available to each user?';
 $string['advanced'] = 'Advanced element';
 $string['advancededit'] = 'Each non hidden element is displayed in the advanced entry form';
