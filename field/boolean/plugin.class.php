@@ -370,7 +370,11 @@ class surveyfield_boolean extends surveyitem_base {
                 if ($this->extrarow) {
                     $starplace = $this->itemname.'_extrarow';
                 } else {
-                    $starplace = $this->itemname;
+                    if ($this->style == SURVEYFIELD_BOOLEAN_USESELECT) {
+                        $starplace = $this->itemname;
+                    } else { // SURVEYFIELD_BOOLEAN_USERADIOV or SURVEYFIELD_BOOLEAN_USERADIOH
+                        $starplace = $this->itemname.'_group';
+                    }
                 }
                 $mform->_required[] = $starplace; // add the star for mandatory fields at the end of the page with server side validation too
             }

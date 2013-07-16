@@ -588,9 +588,11 @@ class surveyfield_rate extends surveyitem_base {
             case SURVEYFIELD_RATE_RETURNVALUES:
                 $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $content);
                 $output = array();
-                $values = $this->item_get_values_array('options');
-                foreach ($values as $k => $value) {
-                    $output[] = $value.SURVEYFIELD_RATE_VALUERATESEPARATOR.$answers[$k];
+                $labels = $this->item_get_labels_array('options');
+                $rates = $this->item_get_values_array('rates');
+                foreach ($labels as $k => $label) {
+                    $index = $answers[$k];
+                    $output[] = $label.SURVEYFIELD_RATE_VALUERATESEPARATOR.$rates[$index];
                 }
                 $return = implode(SURVEY_OUTPUTMULTIVALUESEPARATOR, $output);
                 break;
