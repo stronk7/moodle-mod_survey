@@ -111,7 +111,7 @@ if ($item_form->is_cancelled()) {
 
 if ($fromform = $item_form->get_data()) {
     // was this item forced to be new?
-    if (!empty($saveasnew)) {
+    if (!empty($fromform->saveasnew)) {
         $fromform->itemid = 0;
     }
 
