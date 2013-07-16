@@ -56,6 +56,9 @@ function xmldb_surveyfield_date_upgrade($oldversion) {
         // Launch change of type for field downloadformat.
         $dbman->change_field_type($table, $field);
 
+        // set default
+        $DB->set_field('survey_date', 'downloadformat', 'strftime01');
+
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013052401, 'surveyfield', 'date');
     }

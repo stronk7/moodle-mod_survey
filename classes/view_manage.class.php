@@ -296,15 +296,17 @@ class mod_survey_submissionmanager {
         }
 
         $mygroups = survey_get_my_groups($this->cm);
-        if ($this->survey->readaccess == SURVEY_GROUP) { // if $survey->readaccess == SURVEY_GROUP then course or instance is divided by group
-            if (count($mygroups)) {
-                $grouprow = array();
-                $sql .= ' AND (';
-                foreach ($mygroups as $mygroup) {
-                    $grouprow[] = '(gm.groupid = '.$mygroup.')';
+        if (!$this->canmanageallsubmissions) {
+            if ($this->survey->readaccess == SURVEY_GROUP) { // if $survey->readaccess == SURVEY_GROUP then course or instance is divided by group
+                if (count($mygroups)) {
+                    $grouprow = array();
+                    $sql .= ' AND (';
+                    foreach ($mygroups as $mygroup) {
+                        $grouprow[] = '(gm.groupid = '.$mygroup.')';
+                    }
+                    $sql .= implode(' OR ', $grouprow);
+                    $sql .= ') ';
                 }
-                $sql .= implode(' OR ', $grouprow);
-                $sql .= ') ';
             }
         }
 
@@ -650,12 +652,12 @@ class mod_survey_submissionmanager {
         // 1: to the beginning of the next line
         // 2: below
 
-        $htmllabel = '<table style="width:100%;"><tr><td style="width:'.$firstcolwidth.'%;text-align:right;">@@col1@@</td>';
-        $htmllabel .= '<td style="width:'.$lasttwocolumns.'%;text-align:left;">@@col2@@</td></tr></table>';
+        $htmllabeltemplate = '<table style="width:100%;"><tr><td style="width:'.$firstcolwidth.'%;text-align:right;">@@col1@@</td>';
+        $htmllabeltemplate .= '<td style="width:'.$lasttwocolumns.'%;text-align:left;">@@col2@@</td></tr></table>';
 
-        $htmlregular = '<table style="width:100%;"><tr><td style="width:'.$firstcolwidth.'%;text-align:right;">@@col1@@</td>';
-        $htmlregular .= '<td style="width:'.$secondcolwidth.'%;text-align:left;">@@col2@@</td>';
-        $htmlregular .= '<td style="width:'.$thirdcolwidth.'%;text-align:left;">@@col3@@</td></tr></table>';
+        $htmlstandardtemplate = '<table style="width:100%;"><tr><td style="width:'.$firstcolwidth.'%;text-align:right;">@@col1@@</td>';
+        $htmlstandardtemplate .= '<td style="width:'.$secondcolwidth.'%;text-align:left;">@@col2@@</td>';
+        $htmlstandardtemplate .= '<td style="width:'.$thirdcolwidth.'%;text-align:left;">@@col3@@</td></tr></table>';
 
         $border = array('T' => array('width' => 0.2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 1, 'color' => array(179, 219, 181)));
         foreach($itemseeds as $itemseed) {
@@ -665,12 +667,12 @@ class mod_survey_submissionmanager {
             }
             if ($item->get_plugin() == 'label') {
                 // first column
-                $html = $htmllabel;
+                $html = $htmllabeltemplate;
                 $content = ($item->get_customnumber()) ? $item->get_customnumber().': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
                 // second column: colspan 2
-                $content = trim(strip_tags($item->get_content()), " \t\n\r\0\x0B\xC2\xA0");
+                $content = trim(strip_tags($item->get_content()), " \t\n\r");
                 $html = str_replace('@@col2@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true); // this is like span 2
                 continue;
@@ -680,18 +682,18 @@ class mod_survey_submissionmanager {
             if ($item->get_extrarow()) {
                 // first row
                 // first column
-                $html = $htmllabel;
+                $html = $htmllabeltemplate;
                 $content = ($item->get_customnumber()) ? $item->get_customnumber().': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
                 // second column: colspan 2
-                $content = trim(strip_tags($item->get_content()), " \t\n\r\0\x0B\xC2\xA0");
+                $content = trim(strip_tags($item->get_content()), " \t\n\r");
                 $html = str_replace('@@col2@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, 'R', true);
 
                 // second row
                 // first column
-                $html = $htmlregular;
+                $html = $htmlstandardtemplate;
                 $html = str_replace('@@col1@@', '', $html);
 
                 // second column
@@ -708,12 +710,12 @@ class mod_survey_submissionmanager {
             } else { // I need to draw two cells in the same row
                 // first row
                 // first column
-                $html = $htmlregular;
+                $html = $htmlstandardtemplate;
                 $content = ($item->get_customnumber()) ? $item->get_customnumber().': ' : '';
                 $html = str_replace('@@col1@@', $content, $html);
 
                 // second column
-                $content = trim(strip_tags($item->get_content()), " \t\n\r\0\x0B\xC2\xA0");
+                $content = trim(strip_tags($item->get_content()), " \t\n\r");
                 $html = str_replace('@@col2@@', $content, $html);
 
                 // third column

@@ -216,10 +216,11 @@ class mod_survey_itemlist {
         $tablecolumns[] = 'plugin';
         $tablecolumns[] = 'sortindex';
         $tablecolumns[] = 'parentid';
-        $tablecolumns[] = 'availability';
-        $tablecolumns[] = 'formpage';
-        $tablecolumns[] = 'content';
         $tablecolumns[] = 'customnumber';
+        $tablecolumns[] = 'content';
+        $tablecolumns[] = 'variable';
+        $tablecolumns[] = 'formpage';
+        $tablecolumns[] = 'availability';
         $tablecolumns[] = 'actions';
         $table->define_columns($tablecolumns);
 
@@ -227,10 +228,11 @@ class mod_survey_itemlist {
         $tableheaders[] = get_string('plugin', 'survey');
         $tableheaders[] = get_string('sortindex', 'survey');
         $tableheaders[] = get_string('parentid_header', 'survey');
-        $tableheaders[] = get_string('availability', 'survey');
-        $tableheaders[] = get_string('page');
-        $tableheaders[] = get_string('content', 'survey');
         $tableheaders[] = get_string('customnumber_header', 'survey');
+        $tableheaders[] = get_string('content', 'survey');
+        $tableheaders[] = get_string('variable', 'survey');
+        $tableheaders[] = get_string('page');
+        $tableheaders[] = get_string('availability', 'survey');
         $tableheaders[] = get_string('actions');
         $table->define_headers($tableheaders);
 
@@ -277,6 +279,7 @@ class mod_survey_itemlist {
         $deletetitle = get_string('delete');
         $indenttitle = get_string('indent', 'survey');
         $moveheretitle = get_string('movehere');
+        $namenotset = get_string('namenotset', 'survey');
 
         // /////////////////////////////////////////////////
         // $paramurl_move definition
@@ -350,6 +353,41 @@ class mod_survey_itemlist {
             }
             $tablerow[] = $content;
 
+            // *************************************** customnumber
+            if (($item->get_type() == SURVEY_TYPEFIELD) || ($item->get_plugin() == 'label')) {
+                $tablerow[] = $item->get_customnumber();
+            } else {
+                $tablerow[] = '';
+            }
+
+            // *************************************** content
+            $itemcontent = $item->item_get_main_text();
+            $item->set_contentformat(FORMAT_HTML);
+            $item->set_contenttrust(1);
+
+            $output = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->get_itemid());
+            $tablerow[] = $output;
+
+            // *************************************** variable
+            if ($item->get_type() == SURVEY_TYPEFIELD) {
+                if ($variable = $item->get_variable()) {
+                    $content = $variable;
+                } else {
+                    $content = $namenotset;
+                }
+            } else {
+                $content = '';
+            }
+            $tablerow[] = $content;
+
+            // *************************************** page
+            if ($item->get_plugin() != 'pagebreak') {
+                $content = $item->get_formpage();
+            } else {
+                $content = '';
+            }
+            $tablerow[] = $content;
+
             // *************************************** availability
             if ($item->get_hide()) {
                 $message = get_string('hidden', 'survey');
@@ -403,36 +441,9 @@ class mod_survey_itemlist {
             }
             $tablerow[] = $icons;
 
-            // *************************************** page
-            if ($item->get_plugin() != 'pagebreak') {
-                $content = $item->get_formpage();
-            } else {
-                $content = '';
-            }
-            $tablerow[] = $content;
-
-            // *************************************** content
-            $itemcontent = $item->item_get_main_text();
-            $item->set_contentformat(FORMAT_HTML);
-            $item->set_contenttrust(1);
-
-            $output = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->get_itemid());
-            $tablerow[] = $output;
-
-            // *************************************** customnumber
-            if ($item->get_type() == SURVEY_TYPEFIELD) {
-                $tablerow[] = $item->get_customnumber();
-            } else {
-                if ($item->get_plugin() == 'label') {
-                    $tablerow[] = $item->get_labelintro();
-                } else {
-                    $tablerow[] = '';
-                }
-            }
-
+            // *************************************** actions
             $current_hide = $item->get_hide();
             if ($this->action != SURVEY_CHANGEORDERASK) {
-                // *************************************** actions
 
                 $icons = '';
                 // *************************************** SURVEY_EDITITEM
@@ -653,7 +664,7 @@ class mod_survey_itemlist {
 
         $itemstoprocess = count($tohidelist);
         if ($this->confirm == SURVEY_UNCONFIRMED) {
-            if (count($tohidelist) > 1) { // ask for confirmation
+            if ($itemstoprocess > 1) { // ask for confirmation
                 $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);
 
                 $a = new stdClass();

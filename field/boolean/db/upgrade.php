@@ -44,6 +44,9 @@ function xmldb_surveyfield_boolean_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
+        // set default
+        $DB->set_field('survey_boolean', 'downloadformat', 'strfbool1');
+
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013061801, 'surveyfield', 'boolean');
     }

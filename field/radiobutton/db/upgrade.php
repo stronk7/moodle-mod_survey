@@ -44,6 +44,9 @@ function xmldb_surveyfield_radiobutton_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
+        // set default
+        $DB->set_field('survey_date', 'downloadformat', 0);
+
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013062701, 'surveyfield', 'radiobutton');
     }

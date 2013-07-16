@@ -1263,13 +1263,13 @@ class surveyitem_base {
     }
 
     /*
-     * get_basicform
+     * get_variable
      *
      * @param
      * @return
      */
-    public function get_basicform() {
-        return $this->basicform;
+    public function get_variable() {
+        return $this->variable;
     }
 
     /*

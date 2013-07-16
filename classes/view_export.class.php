@@ -89,14 +89,14 @@ class mod_survey_exportmanager {
         $where = array();
         $where['surveyid'] = $this->survey->id;
         $where['type'] = SURVEY_TYPEFIELD;
-        if (isset($this->formdata->advanced)) {
-            $where['advanced'] = 1;
+        if (!isset($this->formdata->advanced)) {
+            $where['advanced'] = 0;
         }
         if (!isset($this->formdata->includehide)) {
             $where['hide'] = 0;
         }
 
-        if (!$fieldidlist = $DB->get_records('survey_item', $where, 'sortindex', 'id, variable, plugin')) {
+        if (!$itemseeds = $DB->get_records('survey_item', $where, 'sortindex', 'id, variable, plugin')) {
             return SURVEY_NOFIELDSSELECTED;
             die;
         }
@@ -115,20 +115,20 @@ class mod_survey_exportmanager {
 
         // ////////////////////////////
         // write the query
-        $richsubmissionssql = 'SELECT s.id, s.status, s.timecreated, s.timemodified, ';
+        $richsubmissionssql = 'SELECT s.id as submissionid, s.status, s.timecreated, s.timemodified, ';
         if (empty($this->survey->anonymous)) {
             $richsubmissionssql .= 'u.id as userid, u.firstname,  u.lastname, ';
         }
-        $richsubmissionssql .= 'ud.id as userdataid, ud.itemid, ud.content,
+        $richsubmissionssql .= 'ud.id as id, ud.itemid, ud.content,
                                 si.sortindex, si.variable, si.plugin
                             FROM {survey_submissions} s
                                 INNER JOIN {user} u ON u.id = s.userid
                                 INNER JOIN {survey_userdata} ud ON ud.submissionid = s.id
                                 INNER JOIN {survey_item} si ON si.id = ud.itemid
                             WHERE s.surveyid = :surveyid';
-        if (isset($this->formdata->advanced)) {
+        if (!isset($this->formdata->advanced)) {
             // I need records with:
-            $richsubmissionssql .= ' AND si.advanced = 1';
+            $richsubmissionssql .= ' AND si.advanced = 0';
         }
         if (!isset($this->formdata->includehidden)) {
             $richsubmissionssql .= ' AND si.hide = 0';
@@ -163,12 +163,13 @@ class mod_survey_exportmanager {
                 $worksheet = null;
             }
 
-            $this->export_print_header($fieldidlist, $worksheet);
+            $this->export_print_header($itemseeds, $worksheet);
 
-            // reduce the weight of $fieldidlist storing no longer relevant infos
-            $fieldidlistkeys = array_keys($fieldidlist);
+            // reduce the weight of $itemseeds disposing no longer relevant infos
             $notsetstring = get_string('notanswereditem', 'survey');
-            $placeholders = array_fill_keys($fieldidlistkeys, $notsetstring);
+            $itemseedskeys = array_keys($itemseeds);
+            $placeholders = array_fill_keys($itemseedskeys, $notsetstring);
+            unset($itemseeds);
 
             // echo '$placeholders:';
             // var_dump($placeholders);
@@ -183,14 +184,14 @@ class mod_survey_exportmanager {
                     continue;
                 }
 
-                if ($oldrichsubmissionid == $richsubmission->id) {
+                if ($oldrichsubmissionid == $richsubmission->submissionid) {
                     $recordtoexport[$richsubmission->itemid] = $this->decode_content($richsubmission);
                 } else {
                     if (!empty($oldrichsubmissionid)) { // new richsubmissionid, stop managing old record
                         // write old record
                         $this->export_close_record($recordtoexport, $worksheet);
                     }
-                    $oldrichsubmissionid = $richsubmission->id;
+                    $oldrichsubmissionid = $richsubmission->submissionid;
 
                     // begin a new record
                     $recordtoexport = array();
@@ -221,18 +222,18 @@ class mod_survey_exportmanager {
     /*
      * export_print_header
      *
-     * @param $fieldidlist
+     * @param $itemseeds
      * @param $worksheet
      * @return
      */
-    public function export_print_header($fieldidlist, $worksheet) {
+    public function export_print_header($itemseeds, $worksheet) {
         // write the names of the fields in the header of the file to export
         $recordtoexport = array();
         if (empty($this->survey->anonymous)) {
             $recordtoexport[] = get_string('firstname');
             $recordtoexport[] = get_string('lastname');
         }
-        foreach ($fieldidlist as $singlefield) {
+        foreach ($itemseeds as $singlefield) {
             $recordtoexport[] = empty($singlefield->variable) ? $singlefield->plugin.'_'.$singlefield->id : $singlefield->variable;
         }
         $recordtoexport[] = get_string('timecreated', 'survey');

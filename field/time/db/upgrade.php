@@ -82,6 +82,9 @@ function xmldb_surveyfield_time_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
+        // set default
+        $DB->set_field('survey_time', 'downloadformat', 'strftime1');
+
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013061701, 'surveyfield', 'time');
     }

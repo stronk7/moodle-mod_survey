@@ -18,7 +18,7 @@
 /*
  * Library of interface functions and constants for module survey
  *
- * All the core Moodle functions, neeeded to allow the module to work
+ * All the core Moodle functions, needed to allow the module to work
  * integrated in Moodle should be placed here.
  * All the survey specific functions, needed to implement all the module
  * logic, should go to locallib.php. This will help to save some memory when

@@ -137,8 +137,9 @@ class mod_survey_userpagemanager {
 
 
         // assign pages to items
-        $this->maxassignedpage = $DB->get_field('survey_item', 'MAX(formpage)', array('surveyid' => $survey->id));
-        $this->assign_pages();
+        if (!$this->maxassignedpage = $DB->get_field('survey_item', 'MAX(formpage)', array('surveyid' => $survey->id))) {
+            $this->assign_pages();
+        }
 
         // calculare $this->firstpage_right
         if ($this->canaccessadvanceditems) {
@@ -301,10 +302,6 @@ class mod_survey_userpagemanager {
     public function assign_pages() {
         global $DB;
 
-        if ($this->maxassignedpage) {
-            return;
-        }
-
         $where = array();
         $where['surveyid'] = $this->survey->id;
         $where['hide'] = 0;
@@ -332,10 +329,11 @@ class mod_survey_userpagemanager {
                         }
                     }
                 }
-// echo 'assegno pagine: $DB->set_field(\'survey_item\', \'formpage\', '.$pagenumber.', array(\'id\' => '.$item->id.'));<br />';
+                // echo 'Assigning pages: $DB->set_field(\'survey_item\', \'formpage\', '.$pagenumber.', array(\'id\' => '.$item->id.'));<br />';
                 $DB->set_field('survey_item', 'formpage', $pagenumber, array('id' => $item->id));
             }
             $items->close();
+            $this->maxassignedpage = $pagenumber;
         }
     }
 
@@ -708,6 +706,7 @@ class mod_survey_userpagemanager {
         if (!$this->canaccessadvanceditems) {
             $whereclause .= ' AND advanced = 0';
         }
+
         return $DB->count_records_select('survey_item', $whereclause, $whereparams);
     }
 
@@ -720,14 +719,10 @@ class mod_survey_userpagemanager {
     public function noitem_stopexecution() {
         global $COURSE, $OUTPUT;
 
-        $message = ($this->canaccessadvanceditems) ? get_string('noadvanceditemsfound', 'survey') : get_string('nobasicitemsfound', 'survey');
+        $message = get_string('noitemsfound', 'survey');
         echo $OUTPUT->notification($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
 
-        if ($this->canmanageitems) {
-            $continueurl = new moodle_url('/mod/survey/items_manage.php', array('s' => $this->survey->id));
-        } else {
-            $continueurl = new moodle_url('/course/view.php', array('id' => $COURSE->id));
-        }
+        $continueurl = new moodle_url('/course/view.php', array('id' => $COURSE->id));
         echo $OUTPUT->continue_button($continueurl);
         echo $OUTPUT->footer();
         die;

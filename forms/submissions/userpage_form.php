@@ -86,7 +86,7 @@ class survey_submissionform extends moodleform {
             if (!$itemseeds->valid()) {
                 // no items are in this page
                 // display a message
-                $mform->addElement('static', 'noitemshere', get_string('note', 'survey'), 'ciccia');
+                $mform->addElement('static', 'noitemshere', get_string('note', 'survey'), 'How can I be here if ($formpage > 0) ?');
             }
 
             $context = context_module::instance($cmid);

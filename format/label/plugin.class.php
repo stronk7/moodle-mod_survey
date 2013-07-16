@@ -110,7 +110,7 @@ class surveyformat_label extends surveyitem_base {
         // list of fields I do not want to have in the item definition form
         $this->item_form_requires['common_fs'] = false;
         // $this->item_form_requires['content_editor'] = false;
-        $this->item_form_requires['customnumber'] = false;
+        // $this->item_form_requires['customnumber'] = false;
         $this->item_form_requires['extrarow'] = false;
         $this->item_form_requires['extranote'] = false;
         $this->item_form_requires['required'] = false;
@@ -202,7 +202,9 @@ class surveyformat_label extends surveyitem_base {
 
         $message = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
 
-        $mform->addElement('static', $this->itemname, $this->labelintro, $message);
+        $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
+        $elementlabel = $elementnumber.strip_tags($this->labelintro);
+        $mform->addElement('static', $this->itemname, $elementlabel, $message);
     }
 
     /*

@@ -36,13 +36,16 @@ function xmldb_surveyfield_select_upgrade($oldversion) {
 
     if ($oldversion < 2013062701) {
         // Define field downloadformat to be added to survey_date.
-        $table = new xmldb_table('survey_date');
+        $table = new xmldb_table('survey_select');
         $field = new xmldb_field('downloadformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');
 
         // Conditionally launch add field downloadformat.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+
+        // set default
+        $DB->set_field('survey_select', 'downloadformat', 0);
 
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013062701, 'surveyfield', 'select');

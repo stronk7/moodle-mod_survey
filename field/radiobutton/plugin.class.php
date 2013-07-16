@@ -319,7 +319,7 @@ class surveyfield_radiobutton extends surveyitem_base {
         $class = array('class' => 'indent-'.$this->indent);
         $elementgroup = array();
         foreach ($labels as $k => $label) {
-            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $label, $k, $class);
+            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $label, "$k", $class);
             $class = ($this->adjustment == SURVEY_VERTICAL) ? array('class' => 'indent-'.$this->indent) : '';
         }
 
@@ -385,8 +385,12 @@ class surveyfield_radiobutton extends surveyitem_base {
 
             switch ($this->defaultoption) {
                 case SURVEY_CUSTOMDEFAULT:
-                    $index = array_search($this->defaultvalue, $labels);
-                    $mform->setDefault($this->itemname, $index);
+                    if ($index = array_search($this->defaultvalue, $labels)) {
+                        $mform->setDefault($this->itemname, $index);
+                    } else {
+                        $mform->setDefault($this->itemname, 'other');
+                        $mform->setDefault($this->itemname.'_text', $othervalue);
+                    }
                     break;
                 case SURVEY_INVITATIONDEFAULT:
                     $mform->setDefault($this->itemname, SURVEY_INVITATIONVALUE);
@@ -396,9 +400,6 @@ class surveyfield_radiobutton extends surveyitem_base {
                     break;
                 default:
                     debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
-            }
-            if (!empty($this->labelother)) {
-                $mform->setDefault($this->itemname.'_text', $othervalue);
             }
         } else {
             $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE); // free

@@ -25,7 +25,7 @@
 
 $string['pluginname'] = 'Label';
 $string['userfriendlypluginname'] = 'Label';
-$string['labelintro'] = 'Label of the label item';
+$string['labelintro'] = 'Label of the label element';
 $string['labelintro_help'] = 'The text that will be shown on the left of the label in the form';
 $string['content_editor'] = 'Label content';
 $string['content_editor_help'] = 'The content of the label as it will be shown to remote user';

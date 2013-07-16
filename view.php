@@ -61,6 +61,15 @@ $userpage_manager = new mod_survey_userpagemanager($cm, $survey, $submissionid, 
 $userpage_manager->prevent_direct_user_input();
 $userpage_manager->survey_add_custom_css();
 
+// redirect if no items were created and you are supposed to create them
+if ($userpage_manager->canaccessadvanceditems) {
+    if (!$userpage_manager->count_input_items()) {
+        $paramurl = array('id' => $cm->id);
+        $returnurl = new moodle_url('items_manage.php', $paramurl);
+        redirect($returnurl);
+    }
+}
+
 $hassubmitbutton = ($userpage_manager->currentpage != SURVEY_SUBMISSION_READONLY);
 $hassubmitbutton = $hassubmitbutton && ($userpage_manager->currentpage != SURVEY_ITEMS_PREVIEW);
 
@@ -155,8 +164,10 @@ include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 // ////////////////////////////
 // if survey is without items, alert and stop
-if (!$userpage_manager->count_input_items()) {
-    $userpage_manager->noitem_stopexecution();
+if (!$userpage_manager->canaccessadvanceditems) {
+    if (!$userpage_manager->count_input_items()) {
+        $userpage_manager->noitem_stopexecution();
+    }
 }
 // end of: if survey is without items, alert and stop
 // ////////////////////////////

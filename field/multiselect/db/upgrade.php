@@ -58,6 +58,9 @@ function xmldb_surveyfield_multiselect_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
+        // set default
+        $DB->set_field('survey_multiselect', 'downloadformat', 0);
+
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013062201, 'surveyfield', 'multiselect');
     }
