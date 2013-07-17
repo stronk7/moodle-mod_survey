@@ -58,7 +58,7 @@ class survey_searchform extends moodleform {
                 $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->get_indent())); // here I  do not strip tags to content
             }
 
-            $item->userform_mform_element($mform, $survey, $canaccessadvanceditems, null, true);
+            $item->userform_mform_element($mform, true);
 
             if ($fullinfo = $item->userform_get_full_info(true)) {
                 $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo);

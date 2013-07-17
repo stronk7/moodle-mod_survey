@@ -29,9 +29,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
-require_once($CFG->dirroot.'/mod/survey/format/fieldset/lib.php');
+require_once($CFG->dirroot.'/mod/survey/format/fieldsetend/lib.php');
 
-class surveyformat_fieldset extends surveyitem_base {
+class surveyformat_fieldsetend extends surveyitem_base {
 
     /*
      * $surveyid = the id of the survey
@@ -47,18 +47,6 @@ class surveyformat_fieldset extends surveyitem_base {
      * $pluginid = the ID of the survey_fieldset record
      */
     public $pluginid = 0;
-
-    /*******************************************************************/
-
-    /*
-     * $fslabel = the content of the message
-     */
-    public $fslabel = '';
-
-    /*
-     * $fslabel_sid = the content of the message
-     */
-    public $fslabel_sid = null;
 
     /*
      * $flag = features describing the object
@@ -81,19 +69,19 @@ class surveyformat_fieldset extends surveyitem_base {
      */
     public function __construct($itemid=0) {
         $this->type = SURVEY_TYPEFORMAT;
-        $this->plugin = 'fieldset';
+        $this->plugin = 'fieldsetend';
 
         $this->flag = new stdclass();
         $this->flag->issearchable = false;
         $this->flag->couldbeparent = false;
-        $this->flag->useplugintable = true;
+        $this->flag->useplugintable = false;
 
         // list of fields I do not want to have in the item definition form
         $this->item_form_requires['common_fs'] = false;
-        $this->item_form_requires['extranote'] = false;
         $this->item_form_requires['content_editor'] = false;
         $this->item_form_requires['customnumber'] = false;
         $this->item_form_requires['extrarow'] = false;
+        $this->item_form_requires['extranote'] = false;
         $this->item_form_requires['required'] = false;
         $this->item_form_requires['variable'] = false;
         $this->item_form_requires['insearchform'] = false;
@@ -114,11 +102,6 @@ class surveyformat_fieldset extends surveyitem_base {
     public function item_load($itemid) {
         // Do parent item loading stuff here (surveyitem_base::item_load($itemid)))
         parent::item_load($itemid);
-
-        // multilang load support for builtin survey
-        // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = array('content', 'fslabel');
-        $this->item_builtin_string_load_support($fieldlist);
     }
 
     /*
@@ -132,11 +115,8 @@ class surveyformat_fieldset extends surveyitem_base {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
-        // multilang save support for builtin survey
-        // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = array('fslabel'); // built-in label index
-        $record->fslabel = substr($record->fslabel, 0, 128); // 128 is maximum allowed length I can save
-        $this->item_builtin_string_save_support($record, $fieldlist);
+        $record->content = SURVEYFORMAT_FIELDSETEND_CONTENT;
+        $this->content_format = FORMAT_HTML;
 
         // Do parent item saving stuff here (surveyitem_base::item_save($record)))
         return parent::item_save($record);
@@ -169,7 +149,7 @@ class surveyformat_fieldset extends surveyitem_base {
      * @return
      */
     public function item_get_main_text() {
-        return $this->fslabel;
+        return SURVEYFORMAT_FIELDSETEND_CONTENT;
     }
 
     // MARK userform
@@ -185,9 +165,63 @@ class surveyformat_fieldset extends surveyitem_base {
      * @return
      */
     public function userform_mform_element($mform, $searchform) {
+        global $DB, $USER, $PAGE;
+
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        $mform->addElement('header', $this->itemname, $this->fslabel);
+        /* I hate the first solution with all my soul because it leave an empty row in the user form page
+         * but, as opposite solution, I have to:
+         * -> add global $DB, $USER, $PAGE;
+         * -> get $cm = $PAGE->cm;
+         * -> get $context = context_module::instance($cm->id);
+         * -> get has_capability('mod/survey:accessadvanceditems', $context, null, true);
+         * -> make the query to get the ID of the next item (remember that next item depends from your permissions to see advanced items)
+         * -> instanciate $item class
+         * -> ask if $item uses an extrarow
+         * -> ask $item->userform_mform_element_is_group()
+         * finally write the simple:
+         *     $mform->closeHeaderBefore($nextitem->itemname.'_extrarow');
+         * or
+         *     $mform->closeHeaderBefore($nextitem->itemname);
+         * or
+         *     $mform->closeHeaderBefore($nextitem->itemname.'_group');
+         * ALL OF THIS TO CLOSE A FIELDSET? CRAZY!!!
+         * yes, we are.
+         */
+        if (false) {
+            $mform->addElement('static', $this->itemname, '', '', array('class' => 'hidefull')); // <-- class does not work for labels. See: MDL-28194
+            $mform->closeHeaderBefore($this->itemname);
+        } else {
+            $cm = $PAGE->cm;
+            $context = context_module::instance($cm->id);
+            $canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $context, null, true);
+            $sql = 'SELECT id, type, plugin
+                FROM {survey_item}
+                WHERE surveyid = :surveyid
+                    AND sortindex > :sortindex
+                    AND hide = 0
+                    AND plugin <> "pagebreak"';
+            if (!$canaccessadvanceditems) {
+                $sql .= ' AND advanced = 0';
+            }
+            $sql .= ' ORDER BY sortindex
+                LIMIT 1';
+
+            $sqlparams = array('surveyid' => $cm->instance, 'sortindex' => $this->sortindex);
+            $itemseed = $DB->get_record_sql($sql, $sqlparams, IGNORE_MISSING);
+            if ($itemseed) { // The element really exists
+                $nextitem = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
+                if ($nextitem->extrarow) {
+                    $mform->closeHeaderBefore($nextitem->itemname.'_extrarow');
+                } else {
+                    if ($nextitem->userform_mform_element_is_group()) {
+                        $mform->closeHeaderBefore($nextitem->itemname.'_group');
+                    } else {
+                        $mform->closeHeaderBefore($nextitem->itemname);
+                    }
+                }
+            }
+        }
     }
 
     /*

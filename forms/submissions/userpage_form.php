@@ -86,7 +86,7 @@ class survey_submissionform extends moodleform {
             if (!$itemseeds->valid()) {
                 // no items are in this page
                 // display a message
-                $mform->addElement('static', 'noitemshere', get_string('note', 'survey'), 'How can I be here if ($formpage > 0) ?');
+                $mform->addElement('static', 'noitemshere', get_string('note', 'survey'), 'ERROR: How can I be here if ($formpage > 0) ?');
             }
 
             $context = context_module::instance($cmid);
@@ -128,7 +128,7 @@ class survey_submissionform extends moodleform {
                         $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->get_indent())); // here I  do not strip tags to content
                     }
 
-                    $item->userform_mform_element($mform, $survey, $canaccessadvanceditems, $parentitem);
+                    $item->userform_mform_element($mform, false);
 
                     if ($fullinfo = $item->userform_get_full_info(false)) {
                         $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo);

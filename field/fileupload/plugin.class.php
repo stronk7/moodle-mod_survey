@@ -106,15 +106,6 @@ class surveyfield_fileupload extends surveyitem_base {
 
         $this->context = context_module::instance($cm->id);
 
-        /*
-         * this item is not searchable
-         * so the default inherited from itembase.class.php
-         * public $insearchform = 1;
-         * can not match the plugin_form element
-         * So I change it
-         */
-        $this->insearchform = 0;
-
         if (!empty($itemid)) {
             $this->item_load($itemid);
         }
@@ -185,7 +176,7 @@ class surveyfield_fileupload extends surveyitem_base {
      * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvanceditems, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $searchform) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
         $fieldname = $this->itemname.'_filemanager';
@@ -272,19 +263,7 @@ class surveyfield_fileupload extends surveyitem_base {
             // next
             file_save_draft_area_files($answer['filemanager'], $this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id, $attachmentoptions);
 
-            // needed only for export purposes
-            $fs = get_file_storage();
-            // last
-            // if ($files = $fs->get_area_files($this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, 'sortorder', false)) {
-            // next
-            if ($files = $fs->get_area_files($this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id, 'sortorder', false)) {
-                foreach ($files as $file) {
-                    $oldfiles[] = $file->get_filename();
-                }
-                $olduserdata->content = implode(', ', $oldfiles);
-            } else {
-                $olduserdata->content = '';
-            }
+            $olduserdata->content = ''; // nothing is expected here
         }
     }
 

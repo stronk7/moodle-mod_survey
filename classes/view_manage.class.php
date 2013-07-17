@@ -530,7 +530,7 @@ class mod_survey_submissionmanager {
         if ($this->canmanageallsubmissions) {
             return true;
         }
-        if (!$this->managesubmissions) {
+        if (!$this->canmanagesubmissions) {
             print_error('incorrectaccessdetected', 'survey');
         }
         if ($this->action == SURVEY_NOACTION) {

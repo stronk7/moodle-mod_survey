@@ -163,7 +163,7 @@ class surveyformat_pagebreak extends surveyitem_base {
      * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvanceditems, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $searchform) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
         // this function is never called because to simulate a page break, I show anly fields before this field
 

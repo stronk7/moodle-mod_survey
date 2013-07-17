@@ -26,7 +26,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') OR die();
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/datetime/lib.php');
@@ -328,7 +328,7 @@ class surveyfield_datetime extends surveyitem_base {
      * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvanceditems, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $searchform) {
         global $DB, $USER;
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
@@ -534,7 +534,7 @@ class surveyfield_datetime extends surveyitem_base {
      */
     public function userform_save_preprocessing($answer, $olduserdata) {
         if (isset($answer['noanswer'])) {
-            $olduserdata->content = null;
+            $olduserdata->content = SURVEY_NOANSWERVALUE;
         } else {
             $olduserdata->content = $this->item_datetime_to_unix_time($answer['year'], $answer['month'], $answer['day'], $answer['hour'], $answer['minute']);
         }

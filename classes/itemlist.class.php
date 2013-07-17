@@ -391,10 +391,10 @@ class mod_survey_itemlist {
             // *************************************** availability
             if ($item->get_hide()) {
                 $message = get_string('hidden', 'survey');
-                $icons = '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+                $icons = '<img src="'.$OUTPUT->pix_url('absent', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
 
                 // $message = get_string('hidden', 'survey');
-                $icons .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
+                $icons .= '<img src="'.$OUTPUT->pix_url('absent', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
             } else {
                 if (!$item->get_advanced()) {
                     $message = get_string('available', 'survey');
@@ -433,9 +433,9 @@ class mod_survey_itemlist {
                         $basepath = new moodle_url('items_manage.php', $paramurl);
 
                         $icons .= '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
-                        $icons .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>';
+                        $icons .= '<img src="'.$OUTPUT->pix_url('absent', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>';
                     } else {
-                        $icons .= '<img src="'.$OUTPUT->pix_url('missing', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
+                        $icons .= '<img src="'.$OUTPUT->pix_url('absent', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
                     }
                 }
             }

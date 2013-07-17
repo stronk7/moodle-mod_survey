@@ -311,7 +311,7 @@ class surveyfield_age extends surveyitem_base {
      * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvanceditems, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $searchform) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
         $years = array();
@@ -496,7 +496,7 @@ class surveyfield_age extends surveyitem_base {
      */
     public function userform_save_preprocessing($answer, $olduserdata) {
         if (isset($answer['noanswer'])) {
-            $olduserdata->content = null;
+            $olduserdata->content = SURVEY_NOANSWERVALUE;
         } else {
             $olduserdata->content = $this->item_age_to_unix_time($answer['year'], $answer['month']);
         }
@@ -523,14 +523,6 @@ class surveyfield_age extends surveyitem_base {
                     $prefill[$this->itemname.'_month'] = $datearray['mon'];
                     $prefill[$this->itemname.'_year'] = $datearray['year'];
                 }
-            // } else {
-                // nothing was set
-                // do not accept defaults but overwrite them
-            }
-
-            // _noanswer
-            if (!$this->required) { // if this item foresaw the $this->itemname.'_noanswer'
-                $prefill[$this->itemname.'_noanswer'] = is_null($fromdb->content) ? 1 : 0;
             }
         } // else use item defaults
 

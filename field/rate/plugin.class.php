@@ -115,16 +115,7 @@ class surveyfield_rate extends surveyitem_base {
 
         $this->item_form_requires['insearchform'] = false;
 
-        /*
-         * this item is not searchable
-         * so the default inherited from itembase.class.php
-         * public $insearchform = 1;
-         * can not match the plugin_form element
-         * So I change it
-         */
-        $this->insearchform = 0;
-
-        $this->extrarow = 1; // define the value of the checkbox
+        $this->extrarow = 1; // define the default value the corresponding checkbox
         // item_form_requires['extrarow'] = true: show extrarow checkbox
         // item_form_requires['extrarow'] = false: do not show extrarow checkbox
         // item_form_requires['extrarow'] = 'disable': disable the extrarow checkbox
@@ -325,7 +316,7 @@ class surveyfield_rate extends surveyitem_base {
      * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvanceditems, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $searchform) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
         $options = survey_textarea_to_array($this->options);
@@ -513,7 +504,7 @@ class surveyfield_rate extends surveyitem_base {
      */
     public function userform_save_preprocessing($answer, $olduserdata) {
         if (isset($answer['noanswer'])) {
-            $olduserdata->content = null;
+            $olduserdata->content = SURVEY_NOANSWERVALUE;
         } else {
             $return = array();
             foreach ($answer as $answeredrate) {

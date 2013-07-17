@@ -114,15 +114,6 @@ class surveyfield_textarea extends surveyitem_base {
 
         $this->item_form_requires['insearchform'] = false;
 
-        /*
-         * this item is not searchable
-         * so the default inherited from itembase.class.php
-         * public $insearchform = 1;
-         * can not match the plugin_form element
-         * So I change it
-         */
-        $this->insearchform = 0;
-
         // if this routine is executed at survey instance creation time
         // (this happens if a builtin survey is requested)
         // $cm does not exist
@@ -255,7 +246,7 @@ class surveyfield_textarea extends surveyitem_base {
      * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvanceditems, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $searchform) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
         // TODO: make issearchable true
 

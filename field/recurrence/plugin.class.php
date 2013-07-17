@@ -323,7 +323,7 @@ class surveyfield_recurrence extends surveyitem_base {
      * @param $searchform
      * @return
      */
-    public function userform_mform_element($mform, $survey, $canaccessadvanceditems, $parentitem=null, $searchform=false) {
+    public function userform_mform_element($mform, $searchform) {
         global $DB, $USER;
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
@@ -521,7 +521,7 @@ class surveyfield_recurrence extends surveyitem_base {
      */
     public function userform_save_preprocessing($answer, $olduserdata) {
         if (isset($answer['noanswer'])) {
-            $olduserdata->content = null;
+            $olduserdata->content = SURVEY_NOANSWERVALUE;
         } else {
             $olduserdata->content = $this->item_recurrence_to_unix_time($answer['month'], $answer['day']);
         }
