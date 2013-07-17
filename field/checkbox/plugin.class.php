@@ -508,7 +508,7 @@ class surveyfield_checkbox extends surveyitem_base {
             }
         }
         if ($this->labelother) {
-            if (array_search($this->itemname.'_text', $request)) {
+            if (array_search($this->itemname.'_text', $request) !== false) {
                 $status = $status && (isset($data[$this->itemname.'_check']));
             } else {
                 $status = $status && (!isset($data[$this->itemname.'_check']));

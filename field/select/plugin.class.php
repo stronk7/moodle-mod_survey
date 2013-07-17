@@ -269,7 +269,7 @@ class surveyfield_select extends surveyitem_base {
         $labels = $this->item_get_labels_array('options');
 
         if (empty($this->labelother)) {
-            $status = array_search($childvalue, $labels) ? true : false;
+            $status = (array_search($childvalue, $labels) !== false) ? true : false;
         } else {
             $status = true;
         }
@@ -501,7 +501,7 @@ class surveyfield_select extends surveyitem_base {
 
         if ($index !== false) {
             $status = ($givenanswer == $index);
-        } else {
+        } else { // other
             $status = ($givenanswer == $child_parentvalue);
         }
 

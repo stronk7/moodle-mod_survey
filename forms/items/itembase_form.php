@@ -385,13 +385,13 @@ class surveyitem_baseform extends moodleform {
         // you choosed a parentid but you are missing the parentcontent
         if (empty($data['parentid']) && (strlen($data['parentcontent']) > 0)) { // $data['parentcontent'] can be = 0
             $a = get_string('parentcontent', 'survey');
-            $errors['parentcontent'] = get_string('missingparentid_err', 'survey', $a);
+            $errors['parentid'] = get_string('missingparentid_err', 'survey', $a);
         }
 
         // you did not choose a parent item but you entered an answer
         if ( !empty($data['parentid']) && (strlen($data['parentcontent']) == 0) ) { // $data['parentcontent'] can be = 0
             $a = get_string('parentid', 'survey');
-            $errors['parentid'] = get_string('missingparentcontent_err', 'survey', $a);
+            $errors['parentcontent'] = get_string('missingparentcontent_err', 'survey', $a);
         }
 
         return $errors;

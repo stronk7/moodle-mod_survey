@@ -273,7 +273,7 @@ class surveyfield_radiobutton extends surveyitem_base {
         $labels = $this->item_get_labels_array('options');
 
         if (empty($this->labelother)) {
-            $status = array_search($childvalue, $labels) ? true : false;
+            $status = (array_search($childvalue, $labels) !== false) ? true : false;
         } else {
             $status = true;
         }
@@ -385,7 +385,8 @@ class surveyfield_radiobutton extends surveyitem_base {
 
             switch ($this->defaultoption) {
                 case SURVEY_CUSTOMDEFAULT:
-                    if ($index = array_search($this->defaultvalue, $labels)) {
+                    $index = array_search($this->defaultvalue, $labels);
+                    if ($index !== false) {
                         $mform->setDefault($this->itemname, $index);
                     } else {
                         $mform->setDefault($this->itemname, 'other');
