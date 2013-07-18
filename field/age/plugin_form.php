@@ -90,8 +90,8 @@ class survey_pluginform extends surveyitem_baseform {
         $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
         $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_age'), ' ', false);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_age');
-        $mform->setDefault($fieldname.'_year', 0);
-        $mform->setDefault($fieldname.'_month', 0);
+        $mform->setDefault($fieldname.'_year', '0');
+        $mform->setDefault($fieldname.'_month', '0');
         //$mform->disabledIf($fieldname.'_group', $fieldname.'_select', 'neq', constant($constantname));
 
         // ----------------------------------------
@@ -104,7 +104,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_age'), ' ', false);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_age');
         $mform->setDefault($fieldname.'_year', $maximumage);
-        $mform->setDefault($fieldname.'_month', 11);
+        $mform->setDefault($fieldname.'_month', '11');
 
         $this->add_item_buttons();
     }

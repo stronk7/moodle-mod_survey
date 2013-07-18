@@ -317,7 +317,7 @@ class surveyfield_integer extends surveyitem_base {
                         $defaultinteger = SURVEY_NOANSWERVALUE;
                         break;
                 }
-                $mform->setDefault($this->itemname, $defaultinteger);
+                $mform->setDefault($this->itemname, "$defaultinteger");
             }
         } else {
             $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE);

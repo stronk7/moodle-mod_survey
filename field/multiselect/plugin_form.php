@@ -75,7 +75,7 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'heightinrows';
         $options = array_combine(range(3, 12), range(3, 12));
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_multiselect'), $options);
-        $mform->setDefault($fieldname, 4);
+        $mform->setDefault($fieldname, '4');
         $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------

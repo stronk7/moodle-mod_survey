@@ -55,7 +55,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_rate'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_rate');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, 0);
+        $mform->setDefault($fieldname, '0');
 
         // ----------------------------------------
         // newitem::options
@@ -118,7 +118,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'surveyfield_rate'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_rate');
         $mform->setType($fieldname, PARAM_TEXT);
-        $mform->setDefault($fieldname, 0);
+        $mform->setDefault($fieldname, '0');
 
         $this->add_item_buttons();
     }

@@ -345,7 +345,7 @@ class surveyfield_rate extends surveyitem_base {
                     switch ($this->defaultoption) {
                         case SURVEY_CUSTOMDEFAULT:
                             $defaultindex = array_search($defaultvalues[$k], $rates);
-                            $mform->setDefault($uniquename, $defaultindex);
+                            $mform->setDefault($uniquename, "$defaultindex");
                             break;
                         case SURVEY_INVITATIONDEFAULT:
                             $mform->setDefault($uniquename, SURVEY_INVITATIONVALUE);
@@ -369,7 +369,7 @@ class surveyfield_rate extends surveyitem_base {
                     switch ($this->defaultoption) {
                         case SURVEY_CUSTOMDEFAULT:
                             $defaultindex = array_search($defaultvalues[$k], $rates);
-                            $mform->setDefault($uniquename, $defaultindex);
+                            $mform->setDefault($uniquename, "$defaultindex");
                             break;
                         case SURVEY_INVITATIONDEFAULT:
                             $mform->setDefault($uniquename, SURVEY_INVITATIONVALUE);
@@ -411,7 +411,7 @@ class surveyfield_rate extends surveyitem_base {
                 $optionindex++;
             }
             if ($this->defaultoption == SURVEY_NOANSWERDEFAULT) {
-                $mform->setDefault($this->itemname.'_noanswer', 1);
+                $mform->setDefault($this->itemname.'_noanswer', '1');
             }
         }
     }

@@ -86,7 +86,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_character'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_character');
         $mform->disabledIf($fieldname, 'pattern_check', 'notchecked');
-        $mform->setDefault($fieldname, 0);
+        $mform->setDefault($fieldname, '0');
         $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------
@@ -96,7 +96,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_character'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_character');
         $mform->disabledIf($fieldname, 'pattern_check', 'notchecked');
-        $mform->setDefault($fieldname, 255);
+        $mform->setDefault($fieldname, '255');
         $mform->setType($fieldname, PARAM_INT);
 
         $this->add_item_buttons();

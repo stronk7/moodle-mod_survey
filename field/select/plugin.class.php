@@ -337,7 +337,7 @@ class surveyfield_select extends surveyitem_base {
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
                         $index = array_search($this->defaultvalue, $labels);
-                        $mform->setDefault($this->itemname, $index);
+                        $mform->setDefault($this->itemname, "$index");
                         break;
                     case SURVEY_INVITATIONDEFAULT:
                         $mform->setDefault($this->itemname, SURVEY_INVITATIONVALUE);
@@ -377,10 +377,10 @@ class surveyfield_select extends surveyitem_base {
 
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
-                        if (array_key_exists($this->defaultvalue, $labels)) {
-                            $mform->setDefault($this->itemname, $this->defaultvalue);
-                        } else {
-                            $mform->setDefault($this->itemname, 'other');
+                        $index = array_search($this->defaultvalue, $labels);
+                        $mform->setDefault($this->itemname, "$index");
+                        if ($index == 'other') {
+                            $mform->setDefault($this->itemname.'_text', $othervalue);
                         }
                         break;
                     case SURVEY_INVITATIONDEFAULT:
@@ -392,7 +392,6 @@ class surveyfield_select extends surveyitem_base {
                     default:
                         debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
                 }
-                $mform->setDefault($this->itemname.'_text', $othervalue);
             } else {
                 $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE);
             }

@@ -51,5 +51,18 @@ function xmldb_surveyfield_select_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013062701, 'surveyfield', 'select');
     }
 
+    if ($oldversion < 2013071801) {
+
+        // Changing precision of field defaultvalue on table survey_select to (32).
+        $table = new xmldb_table('survey_select');
+        $field = new xmldb_field('defaultvalue', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'defaultvalue_sid');
+
+        // Launch change of precision for field defaultvalue.
+        $dbman->change_field_precision($table, $field);
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013071801, 'surveyfield', 'select');
+    }
+
     return true;
 }

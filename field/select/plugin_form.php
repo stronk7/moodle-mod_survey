@@ -127,7 +127,7 @@ class survey_pluginform extends surveyitem_baseform {
         }
         if (!empty($clean_labelother)) {
             if (strpos($clean_labelother, SURVEY_OTHERSEPARATOR) === false) {
-                $values[] = '';
+                $values[] = $clean_labelother;
                 $labels[] = $clean_labelother;
             } else {
                 $pair = explode(SURVEY_OTHERSEPARATOR, $clean_labelother);

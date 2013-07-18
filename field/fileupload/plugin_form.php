@@ -54,7 +54,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_fileupload'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_fileupload');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, 1048576);
+        $mform->setDefault($fieldname, '1048576');
 
         // ----------------------------------------
         // newitem::maxbytes
@@ -64,7 +64,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_fileupload'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_fileupload');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, 1048576);
+        $mform->setDefault($fieldname, '1048576');
 
         // ----------------------------------------
         // newitem::filetypes

@@ -107,7 +107,7 @@ class survey_pluginform extends surveyitem_baseform {
         $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
         $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_shortdate'), ' ', false);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_shortdate');
-        $mform->setDefault($fieldname.'_month', 1);
+        $mform->setDefault($fieldname.'_month', '1');
         $mform->setDefault($fieldname.'_year', $startyear);
 
         // ----------------------------------------
@@ -119,7 +119,7 @@ class survey_pluginform extends surveyitem_baseform {
         $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
         $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_shortdate'), ' ', false);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_shortdate');
-        $mform->setDefault($fieldname.'_month', 12);
+        $mform->setDefault($fieldname.'_month', '12');
         $mform->setDefault($fieldname.'_year', $stopyear);
 
         $this->add_item_buttons();

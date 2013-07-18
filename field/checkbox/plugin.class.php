@@ -275,7 +275,7 @@ class surveyfield_checkbox extends surveyitem_base {
             $elementgroup[] = $mform->createElement('checkbox', $uniqueid, '', $label, $class);
 
             if (!$searchform) {
-                if (in_array($label, $defaults)) {
+                if (in_array($label, $defaults) !== false) {
                     $mform->setDefault($uniqueid, '1');
                 }
             }
@@ -291,7 +291,7 @@ class surveyfield_checkbox extends surveyitem_base {
 
             if (!$searchform) {
                 $mform->setDefault($this->itemname.'_text', $othervalue);
-                if (($othervalue) && in_array($othervalue, $defaults)) {
+                if (($othervalue) && (in_array($othervalue, $defaults) !== false)) {
                     $mform->setDefault($this->itemname.'_other', '1');
                 }
             }

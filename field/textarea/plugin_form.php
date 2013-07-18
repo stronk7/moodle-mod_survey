@@ -60,7 +60,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_textarea'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_textarea');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, 12);
+        $mform->setDefault($fieldname, '12');
 
         // ----------------------------------------
         // newitem::areacols
@@ -69,7 +69,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_textarea'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_textarea');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, 60);
+        $mform->setDefault($fieldname, '60');
 
         // /////////////////////////////////////////////////////////////////////////////////////////////////
         // here I open a new fieldset
@@ -84,7 +84,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_textarea'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_textarea');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, 0);
+        $mform->setDefault($fieldname, '0');
 
         // ----------------------------------------
         // newitem::maxlength

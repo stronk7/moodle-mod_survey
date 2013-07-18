@@ -387,7 +387,7 @@ class surveyfield_radiobutton extends surveyitem_base {
                 case SURVEY_CUSTOMDEFAULT:
                     $index = array_search($this->defaultvalue, $labels);
                     if ($index !== false) {
-                        $mform->setDefault($this->itemname, $index);
+                        $mform->setDefault($this->itemname, "$index");
                     } else {
                         $mform->setDefault($this->itemname, 'other');
                         $mform->setDefault($this->itemname.'_text', $othervalue);

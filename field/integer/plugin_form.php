@@ -67,7 +67,7 @@ class survey_pluginform extends surveyitem_baseform {
         $mform->setDefault('defaultoption', SURVEY_INVITATIONDEFAULT);
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
         if (is_null($item->defaultvalue) || ($item->defaultvalue == SURVEY_INVITATIONDEFAULT)) {
-            $mform->setDefault($fieldname, $item->lowerbound);
+            $mform->setDefault($fieldname, "$item->lowerbound");
         }
 
         // /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ class survey_pluginform extends surveyitem_baseform {
         $fieldname = 'upperbound';
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_integer'), $integers);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_integer');
-        $mform->setDefault($fieldname, $maximuminteger);
+        $mform->setDefault($fieldname, "$maximuminteger");
 
         $this->add_item_buttons();
     }
