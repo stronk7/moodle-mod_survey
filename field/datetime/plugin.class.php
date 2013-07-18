@@ -293,7 +293,7 @@ class surveyfield_datetime extends surveyitem_base {
         $option = array();
         $timenow = time();
 
-        $option[''] = get_string('unixtime', 'survey');
+        $option['unixtime'] = get_string('unixtime', 'survey');
         for ( $i = 1; $i < 13; $i++ ) {
             $strname = 'strftime'.str_pad($i, 2, '0', STR_PAD_LEFT);
             $option[$strname] = userdate($timenow, get_string($strname, 'surveyfield_datetime')); // Lunedì 17 Giugno, 05.15
@@ -587,23 +587,40 @@ class surveyfield_datetime extends surveyitem_base {
      * @return
      */
     public function userform_db_to_export($answer, $format='') {
+        // content
         $content = $answer->content;
         if ($content == SURVEY_NOANSWERVALUE) { // answer was "no answer"
             return get_string('answerisnoanswer', 'survey');
         }
-        if (!$content === null) { // item was disabled
+        if ($content === null) { // item was disabled
             return get_string('notanswereditem', 'survey');
         }
 
-        if (!empty($format)) {
-            return userdate($content, $format, 0);
-        } else {
-            if (!$this->downloadformat) { // return unixtime
-                return $content;
-            } else {
-                return userdate($content, get_string($this->downloadformat, 'surveyfield_datetime'), 0);
-            }
+        // format
+        if ($format == SURVEY_FIRENDLYFORMAT) {
+            $format = $this->get_friendlyformat();
         }
+        if (empty($format)) {
+            $format = $this->downloadformat;
+        }
+
+        // output
+        if ($format == 'unixtime') {
+            return $content;
+        } else {
+            return userdate($content, get_string($format, 'surveyfield_date'), 0);
+        }
+    }
+
+    /*
+     * get_friendlyformat
+     * returns true if the useform mform element for this item id is a group and false if not
+     *
+     * @param
+     * @return
+     */
+    public function get_friendlyformat() {
+        return 'strftime01';
     }
 
     /*

@@ -491,22 +491,39 @@ class surveyfield_boolean extends surveyitem_base {
      * @return
      */
     public function userform_db_to_export($answer, $format='') {
+        // content
         $content = $answer->content;
         if ($content == SURVEY_NOANSWERVALUE) { // answer was "no answer"
             return get_string('answerisnoanswer', 'survey');
         }
-        if (!$content === null) { // item was disabled
+        if ($content === null) { // item was disabled
             return get_string('notanswereditem', 'survey');
         }
 
+        // format
+        if ($format == SURVEY_FIRENDLYFORMAT) {
+            $format = $this->get_friendlyformat();
+        }
         if (empty($format)) {
             $format = $this->downloadformat;
         }
 
+        // output
         $answers = explode('/', get_string($format, 'surveyfield_boolean'));
         $return = ($content) ? $answers[0] : $answers[1];
 
         return $return;
+    }
+
+    /*
+     * get_friendlyformat
+     * returns true if the useform mform element for this item id is a group and false if not
+     *
+     * @param
+     * @return
+     */
+    public function get_friendlyformat() {
+        return 'strfbool1';
     }
 
     /*

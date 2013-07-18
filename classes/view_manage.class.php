@@ -582,6 +582,8 @@ class mod_survey_submissionmanager {
         require_once($CFG->libdir.'/tcpdf/tcpdf.php');
         require_once($CFG->libdir.'/tcpdf/config/tcpdf_config.php');
 
+        $emptyanswer = get_string('notanswereditem', 'survey');
+
         $submission = $DB->get_record('survey_submissions', array('id' => $this->submissionid));
         $user = $DB->get_record('user', array('id' => $submission->userid));
         $userdatarecord = $DB->get_records('survey_userdata', array('submissionid' => $this->submissionid), '', 'itemid, id, content');
@@ -636,8 +638,8 @@ class mod_survey_submissionmanager {
         $pdf->AddPage();
 
         $col1nunit = 1;
-        $col2nunit = 3;
-        $col3nunit = 4;
+        $col2nunit = 6;
+        $col3nunit = 3;
         $firstcolwidth = $pdf->getPageWidth();
         $firstcolwidth -= PDF_MARGIN_LEFT;
         $firstcolwidth -= PDF_MARGIN_RIGHT;
@@ -652,81 +654,66 @@ class mod_survey_submissionmanager {
         // 1: to the beginning of the next line
         // 2: below
 
-        $htmllabeltemplate = '<table style="width:100%;"><tr><td style="width:'.$firstcolwidth.'%;text-align:right;">@@col1@@</td>';
+        $htmllabeltemplate = '<table style="width:100%;"><tr><td style="width:'.$firstcolwidth.'%;text-align:left;">@@col1@@</td>';
         $htmllabeltemplate .= '<td style="width:'.$lasttwocolumns.'%;text-align:left;">@@col2@@</td></tr></table>';
 
-        $htmlstandardtemplate = '<table style="width:100%;"><tr><td style="width:'.$firstcolwidth.'%;text-align:right;">@@col1@@</td>';
+        $htmlstandardtemplate = '<table style="width:100%;"><tr><td style="width:'.$firstcolwidth.'%;text-align:left;">@@col1@@</td>';
         $htmlstandardtemplate .= '<td style="width:'.$secondcolwidth.'%;text-align:left;">@@col2@@</td>';
         $htmlstandardtemplate .= '<td style="width:'.$thirdcolwidth.'%;text-align:left;">@@col3@@</td></tr></table>';
 
         $border = array('T' => array('width' => 0.2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 1, 'color' => array(179, 219, 181)));
         foreach($itemseeds as $itemseed) {
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
-            if (($item->get_plugin() == 'pagebreak') || ($item->get_plugin() == 'fieldset')) {
+            // ($itemseed->plugin == 'pagebreak') is not selected by survey_fetch_items_seeds
+            if (($itemseed->plugin == 'fieldset') || ($itemseed->plugin == 'fieldsetend')) {
                 continue;
             }
-            if ($item->get_plugin() == 'label') {
+            if ($itemseed->plugin == 'label') {
                 // first column
                 $html = $htmllabeltemplate;
-                $content = ($item->get_customnumber()) ? $item->get_customnumber().': ' : '';
+                $content = ($item->get_customnumber()) ? $item->get_customnumber().':' : '';
+                $content = htmlspecialchars($content, ENT_NOQUOTES, 'UTF-8');
                 $html = str_replace('@@col1@@', $content, $html);
 
                 // second column: colspan 2
                 $content = trim(strip_tags($item->get_content()), " \t\n\r");
-                $html = str_replace('@@col2@@', $content, $html);
+                // why does $content here is already html encoded so that I do not have to apply htmlspecialchars?
+                // $content = htmlspecialchars($content, ENT_NOQUOTES, 'UTF-8');
+                $html = str_replace('@@col2@@', $content.'___LABEL___', $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true); // this is like span 2
                 continue;
             }
 
 
-            if ($item->get_extrarow()) {
-                // first row
-                // first column
-                $html = $htmllabeltemplate;
-                $content = ($item->get_customnumber()) ? $item->get_customnumber().': ' : '';
-                $html = str_replace('@@col1@@', $content, $html);
+            // first column
+            $html = $htmlstandardtemplate;
+            $content = ($item->get_customnumber()) ? $item->get_customnumber().':' : '';
+            $content = htmlspecialchars($content, ENT_NOQUOTES, 'UTF-8');
+            $html = str_replace('@@col1@@', $content, $html);
 
-                // second column: colspan 2
-                $content = trim(strip_tags($item->get_content()), " \t\n\r");
-                $html = str_replace('@@col2@@', $content, $html);
-                $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, 'R', true);
+            // second column
+            $content = trim(strip_tags($item->get_content()), " \t\n\r");
+            // why does $content here is already html encoded so that I do not have to apply htmlspecialchars?
+            // because it comes from an editor?
+            // $content = htmlspecialchars($content, ENT_NOQUOTES, 'UTF-8');
+            $html = str_replace('@@col2@@', $content, $html);
 
-                // second row
-                // first column
-                $html = $htmlstandardtemplate;
-                $html = str_replace('@@col1@@', '', $html);
-
-                // second column
-                $html = str_replace('@@col2@@', '', $html);
-
-                // third column
-                if (isset($userdatarecord[$item->get_itemid()])) {
-                    $content = $item->userform_db_to_export($userdatarecord[$item->get_itemid()]);
+            // third column
+            if (isset($userdatarecord[$item->get_itemid()])) {
+                $content = $item->userform_db_to_export($userdatarecord[$item->get_itemid()], SURVEY_FIRENDLYFORMAT);
+                if ($item->get_plugin() != 'textarea') { // content does not come from an html editor
+                    $content = htmlspecialchars($content, ENT_NOQUOTES, 'UTF-8');
                 } else {
-                    $content = '';
+                    if (!$item->get_useeditor()) { // content does not come from an html editor
+                        $content = htmlspecialchars($content, ENT_NOQUOTES, 'UTF-8');
+                    }
                 }
-                $html = str_replace('@@col3@@', $content, $html);
-                $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true);
-            } else { // I need to draw two cells in the same row
-                // first row
-                // first column
-                $html = $htmlstandardtemplate;
-                $content = ($item->get_customnumber()) ? $item->get_customnumber().': ' : '';
-                $html = str_replace('@@col1@@', $content, $html);
-
-                // second column
-                $content = trim(strip_tags($item->get_content()), " \t\n\r");
-                $html = str_replace('@@col2@@', $content, $html);
-
-                // third column
-                if (isset($userdatarecord[$item->get_itemid()])) {
-                    $content = $item->userform_db_to_export($userdatarecord[$item->get_itemid()]);
-                } else {
-                    $content = '';
-                }
-                $html = str_replace('@@col3@@', $content, $html);
-                $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true);
+            } else {
+                // $content = $emptyanswer;
+                $content = '';
             }
+            $html = str_replace('@@col3@@', $content, $html);
+            $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true);
         }
 
         $filename = $this->survey->name.'_'.$this->submissionid.'.pdf';

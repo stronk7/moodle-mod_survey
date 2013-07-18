@@ -182,6 +182,10 @@ define('SURVEY_IGNOREITEMS', '3');
 // empty template field
 define('SURVEY_EMPTYTEMPLATEFIELD', '@@NULL@@');
 
+// friendly format
+define('SURVEY_FIRENDLYFORMAT', -1);
+
+
 /*
  * survey_user_can_do_anything
  * @param
@@ -813,15 +817,15 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
      * SURVEY_TABITEMS
      */
     // PARENT
-    $paramurl = array('s' => $cm->instance);
-    $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
-
-    // CHILDREN
-    if ($canpreview) {
-        $localparamurl = array('s' => $cm->instance, 'act' => SURVEY_PREVIEWSURVEY);
-        $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/view.php', $localparamurl), navigation_node::TYPE_SETTING);
-    }
     if ($canmanageitems) {
+        $paramurl = array('s' => $cm->instance);
+        $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
+
+        // CHILDREN
+        if ($canpreview) {
+            $localparamurl = array('s' => $cm->instance, 'act' => SURVEY_PREVIEWSURVEY);
+            $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/view.php', $localparamurl), navigation_node::TYPE_SETTING);
+        }
         $navnode->add(get_string('tabitemspage2', 'survey'), new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_SETTING);
         if ($countparents) {
             $navnode->add(get_string('tabitemspage3', 'survey'), new moodle_url('/mod/survey/items_validate.php', $paramurl), navigation_node::TYPE_SETTING);
@@ -858,6 +862,8 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
 
     $cancreatemastertemplate = has_capability('mod/survey:createmastertemplate', $context, null, true);
     $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $context, null, true);
+
+    $canaccessreports = has_capability('mod/survey:accessreports', $context, null, true);
 
     $hassubmissions = survey_count_submissions($cm->instance);
 
@@ -902,13 +908,15 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
     /*
      * SURVEY REPORTS
      */
-    if ($surveyreportlist = get_plugin_list('surveyreport')) {
-        $icon = new pix_icon('i/report', '', 'moodle', array('class'=>'icon'));
-        $reportnode = $surveynode->add(get_string('report'), null, navigation_node::TYPE_CONTAINER);
-        $paramurl = array('s' => $PAGE->cm->instance);
-        foreach ($surveyreportlist as $pluginname => $pluginpath) {
-            $paramurl['rname'] = $pluginname;
-            $reportnode->add(get_string('pluginname', 'surveyreport_'.$pluginname), new moodle_url('view_report.php', $paramurl), navigation_node::TYPE_SETTING, null, null, $icon);
+    if ($canaccessreports) {
+        if ($surveyreportlist = get_plugin_list('surveyreport')) {
+            $icon = new pix_icon('i/report', '', 'moodle', array('class'=>'icon'));
+            $reportnode = $surveynode->add(get_string('report'), null, navigation_node::TYPE_CONTAINER);
+            $paramurl = array('s' => $PAGE->cm->instance);
+            foreach ($surveyreportlist as $pluginname => $pluginpath) {
+                $paramurl['rname'] = $pluginname;
+                $reportnode->add(get_string('pluginname', 'surveyreport_'.$pluginname), new moodle_url('view_report.php', $paramurl), navigation_node::TYPE_SETTING, null, null, $icon);
+            }
         }
     }
 }

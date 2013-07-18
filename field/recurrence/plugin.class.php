@@ -284,7 +284,7 @@ class surveyfield_recurrence extends surveyitem_base {
         $option = array();
         $timenow = time();
 
-        $option[''] = get_string('unixtime', 'survey');
+        $option['unixtime'] = get_string('unixtime', 'survey');
         $option['strftime1'] = userdate($timenow, get_string('strftime1', 'surveyfield_recurrence')); // 21 Giugno
         $option['strftime2'] = userdate($timenow, get_string('strftime2', 'surveyfield_recurrence')); // 21 Giu
         $option['strftime3'] = userdate($timenow, get_string('strftime3', 'surveyfield_recurrence')); // 21/06
@@ -571,19 +571,40 @@ class surveyfield_recurrence extends surveyitem_base {
      * @return
      */
     public function userform_db_to_export($answer, $format='') {
+        // content
         $content = $answer->content;
         if ($content == SURVEY_NOANSWERVALUE) { // answer was "no answer"
             return get_string('answerisnoanswer', 'survey');
         }
-        if (!$content === null) { // item was disabled
+        if ($content === null) { // item was disabled
             return get_string('notanswereditem', 'survey');
         }
 
+        // format
+        if ($format == SURVEY_FIRENDLYFORMAT) {
+            $format = $this->get_friendlyformat();
+        }
         if (empty($format)) {
             $format = $this->downloadformat;
         }
 
-        return userdate($content, $format, 0);
+        // output
+        if ($format == 'unixtime') {
+            return $content;
+        } else {
+            return userdate($content, get_string($format, 'surveyfield_date'), 0);
+        }
+    }
+
+    /*
+     * get_friendlyformat
+     * returns true if the useform mform element for this item id is a group and false if not
+     *
+     * @param
+     * @return
+     */
+    public function get_friendlyformat() {
+        return 'strftime3';
     }
 
     /*

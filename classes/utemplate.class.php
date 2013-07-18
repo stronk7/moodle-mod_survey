@@ -575,21 +575,24 @@ class mod_survey_usertemplate extends mod_survey_template {
      * @return null
      */
     public function get_sharinglevel_options() {
-        global $DB, $COURSE, $USER;
+        global $DB, $COURSE, $USER, $SITE;
 
         $options = array();
         $options[CONTEXT_USER.'_'.$USER->id] = get_string('user').': '.fullname($USER);
 
         $options[CONTEXT_MODULE.'_'.$this->cm->id] = get_string('module', 'survey').': '.$this->survey->name;
 
-        $options[CONTEXT_COURSE.'_'.$COURSE->id] = get_string('course').': '.$COURSE->shortname;
+        if ($COURSE->id != $SITE->id) { // I am not in homepage
+            $options[CONTEXT_COURSE.'_'.$COURSE->id] = get_string('course').': '.$COURSE->shortname;
 
-        $categorystr = get_string('category').': ';
-        $category = $DB->get_record('course_categories', array('id' => $COURSE->category), 'id, name');
-        $options[CONTEXT_COURSECAT.'_'.$COURSE->category] = $categorystr.$category->name;
-        while (!empty($category->parent)) {
-            $category = $DB->get_record('course_categories', array('id' => $category->parent), 'id, name');
-            $options[CONTEXT_COURSECAT.'_'.$category->id] = $categorystr.$category->name;
+            $categorystr = get_string('category').': ';
+            $category = $DB->get_record('course_categories', array('id' => $COURSE->category), 'id, name');
+            $options[CONTEXT_COURSECAT.'_'.$COURSE->category] = $categorystr.$category->name;
+
+            while (!empty($category->parent)) {
+                $category = $DB->get_record('course_categories', array('id' => $category->parent), 'id, name');
+                $options[CONTEXT_COURSECAT.'_'.$category->id] = $categorystr.$category->name;
+            }
         }
 
         $options[CONTEXT_SYSTEM.'_0'] = get_string('site');

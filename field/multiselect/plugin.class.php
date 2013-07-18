@@ -467,12 +467,17 @@ class surveyfield_multiselect extends surveyitem_base {
      * @return
      */
     public function userform_db_to_export($answer, $format='') {
+        // content
         $content = $answer->content;
         // SURVEY_NOANSWERVALUE does not exist here
-        if (!$content === null) { // item was disabled
+        if ($content === null) { // item was disabled
             return get_string('notanswereditem', 'survey');
         }
 
+        // format
+        if ($format == SURVEY_FIRENDLYFORMAT) {
+            $format = $this->get_friendlyformat();
+        }
         if (empty($format)) {
             $format = $this->downloadformat;
         }
@@ -480,9 +485,14 @@ class surveyfield_multiselect extends surveyitem_base {
         // $answers is an array like: array(1,1,0,0)
         switch ($format) {
             case SURVEYFIELD_MULTISELECT_RETURNVALUES:
+            case SURVEYFIELD_MULTISELECT_RETURNLABELS:
                 $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $content);
                 $output = array();
-                $values = $this->item_get_values_array('options');
+                if ($format == SURVEYFIELD_MULTISELECT_RETURNVALUES) {
+                    $values = $this->item_get_values_array('options');
+                } else { // $format == SURVEYFIELD_MULTISELECT_RETURNLABELS
+                    $values = $this->item_get_labels_array('options');
+                }
 
                 $standardanswerscount = count($values);
                 foreach ($values as $k => $value) {
@@ -502,6 +512,17 @@ class surveyfield_multiselect extends surveyitem_base {
         }
 
         return $return;
+    }
+
+    /*
+     * get_friendlyformat
+     * returns true if the useform mform element for this item id is a group and false if not
+     *
+     * @param
+     * @return
+     */
+    public function get_friendlyformat() {
+        return SURVEYFIELD_MULTISELECT_RETURNLABELS;
     }
 
     /*

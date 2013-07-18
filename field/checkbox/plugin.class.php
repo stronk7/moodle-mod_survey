@@ -600,37 +600,33 @@ class surveyfield_checkbox extends surveyitem_base {
      * @return
      */
     public function userform_db_to_export($answer, $format='') {
+        // content
         $content = $answer->content;
         // SURVEY_NOANSWERVALUE does not exist here
-        if (!$content === null) { // item was disabled
+        if ($content === null) { // item was disabled
             return get_string('notanswereditem', 'survey');
         }
 
+        // format
+        if ($format == SURVEY_FIRENDLYFORMAT) {
+            $format = $this->get_friendlyformat();
+        }
         if (empty($format)) {
             $format = $this->downloadformat;
         }
 
+        // output
         // $answers is an array like: array(1,1,0,0,'dummytext')
         switch ($format) {
             case SURVEYFIELD_CHECKBOX_RETURNVALUES:
-                $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $content);
-                $output = array();
-                $values = $this->item_get_values_array('options');
-                $standardanswerscount = count($values);
-                foreach ($values as $k => $value) {
-                    if ($answers[$k] == 1) {
-                        $output[] = $value;
-                    }
-                }
-                if (!empty($this->labelother)) {
-                    $output[] = end($answers); // last element of the array $answers
-                }
-                $return = implode(SURVEY_OUTPUTMULTIVALUESEPARATOR, $output);
-                break;
             case SURVEYFIELD_CHECKBOX_RETURNLABELS:
                 $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $content);
                 $output = array();
-                $values = $this->item_get_labels_array('options');
+                if ($format == SURVEYFIELD_CHECKBOX_RETURNVALUES) {
+                    $values = $this->item_get_values_array('options');
+                } else { // $format == SURVEYFIELD_CHECKBOX_RETURNLABELS
+                    $values = $this->item_get_labels_array('options');
+                }
                 $standardanswerscount = count($values);
                 foreach ($values as $k => $value) {
                     if ($answers[$k] == 1) {
@@ -638,9 +634,19 @@ class surveyfield_checkbox extends surveyitem_base {
                     }
                 }
                 if (!empty($this->labelother)) {
-                    $output[] = end($answers); // last element of the array $answers
+                    $value = end($answers);
+                    if (!empty($value)) {
+                        $output[] = $value; // last element of the array $answers
+                    }
                 }
-                $return = implode(SURVEY_OUTPUTMULTIVALUESEPARATOR, $output);
+
+                if (!empty($output)) {
+                    $return = implode(SURVEY_OUTPUTMULTIVALUESEPARATOR, $output);
+                } else {
+                    if ($format == SURVEYFIELD_CHECKBOX_RETURNLABELS) {
+                        $return = get_string('emptyanswer', 'survey');
+                    }
+                }
                 break;
             case SURVEYFIELD_CHECKBOX_RETURNPOSITION:
                 // here I will ALWAYS HAVE 0/1 so each separator is welcome, even ','
@@ -652,6 +658,17 @@ class surveyfield_checkbox extends surveyitem_base {
         }
 
         return $return;
+    }
+
+    /*
+     * get_friendlyformat
+     * returns true if the useform mform element for this item id is a group and false if not
+     *
+     * @param
+     * @return
+     */
+    public function get_friendlyformat() {
+        return SURVEYFIELD_CHECKBOX_RETURNLABELS;
     }
 
     /*

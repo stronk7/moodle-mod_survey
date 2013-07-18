@@ -542,7 +542,7 @@ class surveyfield_age extends surveyitem_base {
         if ($content == SURVEY_NOANSWERVALUE) { // answer was "no answer"
             return get_string('answerisnoanswer', 'survey');
         }
-        if (!$content === null) { // item was disabled
+        if ($content === null) { // item was disabled
             return get_string('notanswereditem', 'survey');
         }
 

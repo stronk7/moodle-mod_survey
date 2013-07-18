@@ -562,14 +562,19 @@ class surveyfield_rate extends surveyitem_base {
      * @return
      */
     public function userform_db_to_export($answer, $format='') {
+        // content
         $content = $answer->content;
         if ($content == SURVEY_NOANSWERVALUE) { // answer was "no answer"
             return get_string('answerisnoanswer', 'survey');
         }
-        if (!$content === null) { // item was disabled
+        if ($content === null) { // item was disabled
             return get_string('notanswereditem', 'survey');
         }
 
+        // format
+        if ($format == SURVEY_FIRENDLYFORMAT) {
+            $format = $this->get_friendlyformat();
+        }
         if (empty($format)) {
             $format = $this->downloadformat;
         }
@@ -602,6 +607,17 @@ class surveyfield_rate extends surveyitem_base {
         }
 
         return $return;
+    }
+
+    /*
+     * get_friendlyformat
+     * returns true if the useform mform element for this item id is a group and false if not
+     *
+     * @param
+     * @return
+     */
+    public function get_friendlyformat() {
+        return SURVEYFIELD_RATE_RETURNLABELS;
     }
 
     /*

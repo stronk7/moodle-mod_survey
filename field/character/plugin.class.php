@@ -433,11 +433,7 @@ class surveyfield_character extends surveyitem_base {
      */
     public function userform_save_preprocessing($answer, $olduserdata) {
         if (isset($answer['mainelement'])) {
-            if (strlen($answer['mainelement'])) {
-                $olduserdata->content = $answer['mainelement'];
-            } else {
-                $olduserdata->content = SURVEY_NOANSWERVALUE;
-            }
+            $olduserdata->content = $answer['mainelement'];
             return;
         }
 
@@ -461,6 +457,36 @@ class surveyfield_character extends surveyitem_base {
         } // else use item defaults
 
         return $prefill;
+    }
+
+    /*
+     * userform_db_to_export
+     * strating from the info stored in the database, this function returns the corresponding content for the export file
+     *
+     * @param $answers
+     * @param $format
+     * @return
+     */
+    public function userform_db_to_export($answer, $format='') {
+        // content
+        $content = trim($answer->content);
+        // SURVEY_NOANSWERVALUE does not exist here
+        if ($content === null) { // item was disabled
+            return get_string('notanswereditem', 'survey');
+        }
+
+        // output
+        if (strlen($content)) {
+            $return = $content;
+        } else {
+            if ($format == SURVEY_FIRENDLYFORMAT) {
+                $return = get_string('emptyanswer', 'survey');
+            } else {
+                $return = '';
+            }
+        }
+
+        return $return;
     }
 
     /*

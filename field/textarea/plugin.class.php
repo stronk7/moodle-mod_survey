@@ -234,6 +234,18 @@ class surveyfield_textarea extends surveyitem_base {
         return $values;
     }
 
+    // MARK get
+
+    /*
+     * get_useeditor
+     *
+     * @param $field
+     * @return
+     */
+    public function get_useeditor() {
+        return $this->useeditor;
+    }
+
     // MARK userform
 
     /*
