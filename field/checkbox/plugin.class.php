@@ -275,7 +275,8 @@ class surveyfield_checkbox extends surveyitem_base {
             $elementgroup[] = $mform->createElement('checkbox', $uniqueid, '', $label, $class);
 
             if (!$searchform) {
-                if (in_array($label, $defaults) !== false) {
+                $index = in_array($label, $defaults);
+                if ($index !== false) {
                     $mform->setDefault($uniqueid, '1');
                 }
             }
@@ -290,9 +291,10 @@ class surveyfield_checkbox extends surveyitem_base {
             $mform->setType($this->itemname.'_text', PARAM_ALPHANUMEXT);
 
             if (!$searchform) {
-                $mform->setDefault($this->itemname.'_text', $othervalue);
-                if (($othervalue) && (in_array($othervalue, $defaults) !== false)) {
+                $index = in_array($otherlabel, $defaults);
+                if ($index !== false) {
                     $mform->setDefault($this->itemname.'_other', '1');
+                    $mform->setDefault($this->itemname.'_text', $othervalue);
                 }
             }
             $mform->disabledIf($this->itemname.'_text', $this->itemname.'_other', 'notchecked');
