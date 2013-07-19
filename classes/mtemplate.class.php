@@ -571,12 +571,15 @@ class mod_survey_mastertemplate extends mod_survey_template {
                         GROUP BY si.plugin';
                 $pluginseeds = $DB->get_records_sql($sql, $sqlparam);
 
+                $pluginonly = $sqlparam;
                 foreach ($pluginseeds as $pluginseed) {
-                    $pluginonly = $sqlparam + array('plugin' => $pluginseed->plugin);
-                    $deletelist = $DB->get_recordset('survey_item', $pluginonly, 'id', 'id');
                     $tablename = 'survey_'.$pluginseed->plugin;
-                    foreach($deletelist as $todelete) {
-                        $DB->delete_records($tablename, array('itemid' => $todelete->id));
+                    if ($dbman->table_exists($tablename)) {
+                        $pluginonly['plugin'] = $pluginseed->plugin;
+                        $deletelist = $DB->get_recordset('survey_item', $pluginonly, 'id', 'id');
+                        foreach($deletelist as $todelete) {
+                            $DB->delete_records($tablename, array('itemid' => $todelete->id));
+                        }
                     }
                     $deletelist->close();
                 }
