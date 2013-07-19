@@ -608,7 +608,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
         $dbman = $DB->get_manager();
 
-        if ($itemseeds = $DB->get_recordset('survey_item', array('surveyid' => 0, 'externalname' => $this->mtemplatename), 'id', 'id, plugin')) {
+        if ($itemseeds = $DB->get_recordset('survey_item', array('surveyid' => 0, 'template' => $this->mtemplatename), 'id', 'id, plugin')) {
             $sortindexoffset = $DB->get_field('survey_item', 'MAX(sortindex)', array('surveyid' => $this->survey->id));
             foreach ($itemseeds as $itemseed) {
                 $plugintable = 'survey_'.$itemseed->plugin;
@@ -618,15 +618,15 @@ class mod_survey_mastertemplate extends mod_survey_template {
                                 JOIN {'.$plugintable.'} plugin ON plugin.itemid = si.id
                             WHERE si.surveyid = 0
                                 AND si.id = :surveyitemid
-                                AND si.externalname = :externalname';
+                                AND si.template = :template';
                 } else {
                     $sql = 'SELECT *
                             FROM {survey_item} si
                             WHERE si.surveyid = 0
                                 AND si.id = :surveyitemid
-                                AND si.externalname = :externalname';
+                                AND si.template = :template';
                 }
-                $record = $DB->get_record_sql($sql, array('surveyitemid' => $itemseed->id, 'externalname' => $this->mtemplatename));
+                $record = $DB->get_record_sql($sql, array('surveyitemid' => $itemseed->id, 'template' => $this->mtemplatename));
 
                 unset($record->id);
                 $record->surveyid = $this->survey->id;
@@ -635,7 +635,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
                 if (!empty($record->parentid)) {
                     // in the atabase, records of plugins (the ones with surveyid = 0) store sortorder in the parentid field. This for portability reasons.
                     $newsortindex = $record->parentid + $sortindexoffset;
-                    $sqlparams = array('surveyid' => $this->survey->id, 'externalname' => $this->mtemplatename, 'sortindex' => $newsortindex);
+                    $sqlparams = array('surveyid' => $this->survey->id, 'template' => $this->mtemplatename, 'sortindex' => $newsortindex);
                     $record->parentid = $DB->get_field('survey_item', 'id', $sqlparams, MUST_EXIST);
                 }
 

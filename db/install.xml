@@ -46,11 +46,11 @@
         <FIELD NAME="surveyid"         TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="id"               NEXT="type"/>
 
         <FIELD NAME="type"             TYPE="char" LENGTH="32"     NOTNULL="true"                  DEFAULT="err" SEQUENCE="false" PREVIOUS="surveyid"         NEXT="plugin"/>
-        <FIELD NAME="plugin"           TYPE="char" LENGTH="32"     NOTNULL="true"                  DEFAULT="err" SEQUENCE="false" PREVIOUS="type"             NEXT="externalname"/>
+        <FIELD NAME="plugin"           TYPE="char" LENGTH="32"     NOTNULL="true"                  DEFAULT="err" SEQUENCE="false" PREVIOUS="type"             NEXT="template"/>
 
-        <FIELD NAME="externalname"     TYPE="char" LENGTH="32"     NOTNULL="false"                               SEQUENCE="false" PREVIOUS="plugin"           NEXT="content_sid"/>
+        <FIELD NAME="template"         TYPE="char" LENGTH="32"     NOTNULL="false"                               SEQUENCE="false" PREVIOUS="plugin"           NEXT="content_sid"/>
 
-        <FIELD NAME="content_sid"      TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="externalname"     NEXT="content"/>
+        <FIELD NAME="content_sid"      TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="template"         NEXT="content"/>
         <FIELD NAME="content"          TYPE="text" LENGTH="small"  NOTNULL="false"                               SEQUENCE="false" PREVIOUS="content_sid"      NEXT="contentformat"/>
         <FIELD NAME="contentformat"    TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="content"          NEXT="customnumber"/>
 

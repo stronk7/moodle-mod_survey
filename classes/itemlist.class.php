@@ -957,7 +957,7 @@ class mod_survey_itemlist {
                     }
 
                     // get the content of the item for the closing message
-                    $deletingrecord = $DB->get_record('survey_item', array('id' => $this->itemid), 'id, content, content_sid, externalname, sortindex', MUST_EXIST);
+                    $deletingrecord = $DB->get_record('survey_item', array('id' => $this->itemid), 'id, content, content_sid, template, sortindex', MUST_EXIST);
                     $killedsortindex = $deletingrecord->sortindex;
 
                     $a = survey_get_sid_field_content($deletingrecord);

@@ -63,11 +63,11 @@ class surveyitem_base {
     public $itemname = '';
 
     /*
-     * $externalname = a string specifing the origin of the item.
+     * $template = a string specifing the origin of the item.
      * empty: user made it
      * non empty: belong to a built-in survey
      */
-    public $externalname = '';
+    public $template = '';
 
     /*
      * $content_sid = a number specifing the ID of the builtin survey item.
@@ -484,7 +484,7 @@ class surveyitem_base {
      * @return
      */
     public function item_builtin_string_load_support($fields=null) {
-        if (empty($this->externalname)) {
+        if (empty($this->template)) {
             return;
         }
 
@@ -505,7 +505,7 @@ class surveyitem_base {
             }
 
             $stringindex = $fieldname.sprintf('%02d', $this->{$fieldname.'_sid'});
-            $this->{$fieldname} = get_string($stringindex, 'surveytemplate_'.$this->externalname);
+            $this->{$fieldname} = get_string($stringindex, 'surveytemplate_'.$this->template);
         }
     }
 
@@ -518,7 +518,7 @@ class surveyitem_base {
      * @return
      */
     public function item_builtin_string_save_support(&$record, $fields=null) {
-        if (empty($this->externalname)) {
+        if (empty($this->template)) {
             return;
         }
 
@@ -533,7 +533,7 @@ class surveyitem_base {
             // special care for content editor
             if (!is_null($this->content_sid)) { // if 'content' is supposed to be multilang
                 $stringindex = 'content'.sprintf('%02d', $this->content_sid);
-                $referencestring = get_string($stringindex, 'surveytemplate_'.$this->externalname);
+                $referencestring = get_string($stringindex, 'surveytemplate_'.$this->template);
 
                 if ($record->content_editor['text'] === $referencestring) {
                     // leave the field empty
@@ -552,7 +552,7 @@ class surveyitem_base {
         foreach ($fields as $fieldname) {
             if (!is_null($this->{$fieldname.'_sid'})) { // if the field $fieldname is multilang
                 $stringindex = $fieldname.sprintf('%02d', $this->{$fieldname.'_sid'});
-                $referencestring = get_string($stringindex, 'surveytemplate_'.$this->externalname);
+                $referencestring = get_string($stringindex, 'surveytemplate_'.$this->template);
 
                 $record->{$fieldname} = str_replace("\r", '', $record->{$fieldname});
                 if ($record->{$fieldname} === $referencestring) {
@@ -856,7 +856,7 @@ class surveyitem_base {
         $values = array_combine(array_values($sistructure), array_pad(array('err'), count($sistructure), 'err'));
 
         // STEP 02: make corrections
-        // $si_fields = array('surveyid', 'type', 'plugin', 'externalname',
+        // $si_fields = array('surveyid', 'type', 'plugin', 'template',
         //                    'content_sid', 'content', 'contentformat', 'customnumber',
         //                    'extrarow', 'extranote', 'required', 'hideinstructions', 'variable',
         //                    'indent', 'hide', 'insearchform', 'advanced',
@@ -879,7 +879,7 @@ class surveyitem_base {
         /*------------------------------------------------*/
         unset($values['id']);
 
-        // $si_fields = array('surveyid', 'type', 'plugin', 'externalname'...
+        // $si_fields = array('surveyid', 'type', 'plugin', 'template'...
 
         // override: $value['surveyid']
         /*------------------------------------------------*/
@@ -893,9 +893,9 @@ class surveyitem_base {
         /*------------------------------------------------*/
         $values['plugin'] = '\''.$this->plugin.'\'';
 
-        // update: $data->externalname
+        // update: $data->template
         /*------------------------------------------------*/
-        $values['externalname'] = '\''.$pluginname.'\'';
+        $values['template'] = '\''.$pluginname.'\'';
 
         // $si_fields = array(...'content_sid', 'content', 'contentformat', 'customnumber',
 

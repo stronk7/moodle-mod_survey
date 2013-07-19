@@ -34,13 +34,13 @@ require_once($CFG->dirroot.'/mod/survey/template/lib.php');
 function surveytemplate_attls_add() {
     global $DB, $CFG;
 
-    $externalname = 'attls'; // it must match the name of the parent folder of this file
+    $template = 'attls'; // it must match the name of the parent folder of this file
     $timenow = time();
     $sortindex = 0;
 
     $content_sid = 0;
     // ////////////// SURVEY_ITEM
-    $si_fields = array('surveyid'      , 'type'         , 'plugin'          , 'externalname'  ,
+    $si_fields = array('surveyid'      , 'type'         , 'plugin'          , 'template'  ,
                        'content_sid'   , 'content'      , 'contentformat'   , 'customnumber'  ,
                        'extrarow'      , 'extranote'    , 'hideinstructions', 'required'      ,
                        'variable'      , 'indent'       , 'hide'            , 'insearchform'  ,
@@ -78,7 +78,7 @@ function surveytemplate_attls_add() {
     // survey_item
     /*------------------------------------------------*/
     $content_sid++;
-    $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
+    $values = array(0, SURVEY_TYPEFORMAT, 'label', $template,
                     $content_sid, null, FORMAT_HTML, null,
                     0, '', 0, null,
                     '', 0, 0, 1,
@@ -101,7 +101,7 @@ function surveytemplate_attls_add() {
     // survey_item
     /*------------------------------------------------*/
     // $content_sid++; content_sid is not supposed to grow for fieldset
-    $values = array(0, SURVEY_TYPEFORMAT, 'fieldset', $externalname,
+    $values = array(0, SURVEY_TYPEFORMAT, 'fieldset', $template,
                     null, null, FORMAT_HTML, null,
                     0, '', 0, null,
                     '', 0, 0, 1,
@@ -126,7 +126,7 @@ function surveytemplate_attls_add() {
         // survey_item
         /*------------------------------------------------*/
         $content_sid++;
-        $values = array(0, SURVEY_TYPEFIELD, 'radiobutton', $externalname,
+        $values = array(0, SURVEY_TYPEFIELD, 'radiobutton', $template,
                         $content_sid, null, FORMAT_HTML, null,
                         0, '', 0, SURVEY_REQUIREDITEM,
                         '', 0, 0, 1,

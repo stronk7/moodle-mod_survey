@@ -143,13 +143,13 @@ function survey_get_my_groups($cm) {
  */
 function survey_get_sid_field_content($record) {
     // this function is the equivalent of the method item_builtin_string_load_support in itembase.class.php
-    if (empty($record->externalname)) {
+    if (empty($record->template)) {
         return $record->content;
     } else {
         // get the string 'content_sid'
-        // from surveytemplate_{$this->externalname}.php file
+        // from surveytemplate_{$this->template}.php file
         $stringindex = 'content'.sprintf('%02d', $record->content_sid);
-        $return = get_string($stringindex, 'surveytemplate_'.$record->externalname);
+        $return = get_string($stringindex, 'surveytemplate_'.$record->template);
 
         return $return;
     }

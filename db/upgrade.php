@@ -140,5 +140,18 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013071101, 'survey');
     }
 
+    if ($oldversion < 2013071901) {
+
+        // Rename field externalname on table survey_item to template.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('externalname', XMLDB_TYPE_CHAR, '32', null, null, null, null, 'plugin');
+
+        // Launch rename field externalname.
+        $dbman->rename_field($table, $field, 'template');
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013071901, 'survey');
+    }
+
     return true;
 }

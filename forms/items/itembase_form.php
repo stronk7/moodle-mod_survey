@@ -80,9 +80,9 @@ class surveyitem_baseform extends moodleform {
         }
 
         // ----------------------------------------
-        // newitem::externalname
+        // newitem::template
         // ----------------------------------------
-        $fieldname = 'externalname';
+        $fieldname = 'template';
         $mform->addElement('hidden', $fieldname, '');
         $mform->setType($fieldname, PARAM_RAW);
 

@@ -34,13 +34,13 @@ require_once($CFG->dirroot.'/mod/survey/template/lib.php');
 function surveytemplate_criticalincidents_add() {
     global $DB, $CFG;
 
-    $externalname = 'criticalincidents'; // it must match the name of the parent folder of this file
+    $template = 'criticalincidents'; // it must match the name of the parent folder of this file
     $timenow = time();
     $sortindex = 0;
 
     $content_sid = 0;
     // ////////////// SURVEY_ITEM
-    $si_fields = array('surveyid'      , 'type'         , 'plugin'          , 'externalname',
+    $si_fields = array('surveyid'      , 'type'         , 'plugin'          , 'template',
                        'content_sid'   , 'content'      , 'contentformat'   , 'customnumber',
                        'extrarow'      , 'extranote'    , 'hideinstructions', 'required'    ,
                        'variable'      , 'indent'       , 'hide'            , 'insearchform',
@@ -70,7 +70,7 @@ function surveytemplate_criticalincidents_add() {
     // survey_item
     /*------------------------------------------------*/
     $content_sid++;
-    $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
+    $values = array(0, SURVEY_TYPEFORMAT, 'label', $template,
                     $content_sid, null, FORMAT_HTML, null,
                     0, '', 0, null,
                     '', 0, 0, 1,
@@ -94,7 +94,7 @@ function surveytemplate_criticalincidents_add() {
         // survey_item
         /*------------------------------------------------*/
         $content_sid++;
-        $values = array(0, SURVEY_TYPEFIELD, 'textarea', $externalname,
+        $values = array(0, SURVEY_TYPEFIELD, 'textarea', $template,
                         $content_sid, null, FORMAT_HTML, null,
                         0, '', 0, SURVEY_REQUIREDITEM,
                         '', 0, 0, 1,

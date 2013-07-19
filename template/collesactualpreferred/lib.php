@@ -34,13 +34,13 @@ require_once($CFG->dirroot.'/mod/survey/template/lib.php');
 function surveytemplate_collesactualpreferred_add() {
     global $DB;
 
-    $externalname = 'collesactualpreferred'; // it must match the name of the parent folder of this file
+    $template = 'collesactualpreferred'; // it must match the name of the parent folder of this file
     $timenow = time();
     $sortindex = 0;
 
     $content_sid = 0;
     // ////////////// SURVEY_ITEM
-    $si_fields = array('surveyid'      , 'type'         , 'plugin'          , 'externalname',
+    $si_fields = array('surveyid'      , 'type'         , 'plugin'          , 'template',
                        'content_sid'   , 'content'      , 'contentformat'   , 'customnumber',
                        'extrarow'      , 'extranote'    , 'hideinstructions', 'required'    ,
                        'variable'      , 'indent'       , 'hide'            , 'insearchform',
@@ -90,7 +90,7 @@ function surveytemplate_collesactualpreferred_add() {
     // survey_item
     /*------------------------------------------------*/
     $content_sid++;
-    $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
+    $values = array(0, SURVEY_TYPEFORMAT, 'label', $template,
                     $content_sid, null, FORMAT_HTML, null,
                     0, '', 0, null,
                     '', 0, 0, 1,
@@ -118,7 +118,7 @@ function surveytemplate_collesactualpreferred_add() {
         // survey_item
         /*------------------------------------------------*/
         // $content_sid++; content_sid is not supposed to grow for fieldset
-        $values = array(0, SURVEY_TYPEFORMAT, 'fieldset', $externalname,
+        $values = array(0, SURVEY_TYPEFORMAT, 'fieldset', $template,
                     null, null, FORMAT_HTML, null,
                     0, '', 0, null,
                     '', 0, 0, 1,
@@ -142,7 +142,7 @@ function surveytemplate_collesactualpreferred_add() {
         /*------------------------------------------------*/
         // $content_sid++; do not increase here because content of label does not change during the survey
         //                 and I gat the string for label always from content00
-        $values = array(0, SURVEY_TYPEFORMAT, 'label', $externalname,
+        $values = array(0, SURVEY_TYPEFORMAT, 'label', $template,
                         0, null, FORMAT_HTML, '',
                         0, '', 0, null,
                         '', 0, 0, 1,
@@ -169,7 +169,7 @@ function surveytemplate_collesactualpreferred_add() {
                 // survey_item
                 /*------------------------------------------------*/
                 $content_sid++;
-                $values = array(0, SURVEY_TYPEFIELD, 'radiobutton', $externalname,
+                $values = array(0, SURVEY_TYPEFIELD, 'radiobutton', $template,
                                 $content_sid, null, FORMAT_HTML, null,
                                 0, '', 0, SURVEY_REQUIREDITEM,
                                 '', 0, 0, 1,
@@ -199,7 +199,7 @@ function surveytemplate_collesactualpreferred_add() {
     // survey_item
     /*------------------------------------------------*/
     $content_sid++;
-    $values = array(0, SURVEY_TYPEFIELD, 'select', $externalname,
+    $values = array(0, SURVEY_TYPEFIELD, 'select', $template,
                     $content_sid, null, FORMAT_HTML, null,
                     0, '', 0, SURVEY_REQUIREDITEM,
                     '', 0, 0, 1,
@@ -226,7 +226,7 @@ function surveytemplate_collesactualpreferred_add() {
     // survey_item
     /*------------------------------------------------*/
     $content_sid++;
-    $values = array(0, SURVEY_TYPEFIELD, 'textarea', $externalname,
+    $values = array(0, SURVEY_TYPEFIELD, 'textarea', $template,
                     $content_sid, null, FORMAT_HTML, null,
                     0, '', 0, SURVEY_OPTIONALITEM,
                     '', 0, 0, 1,
