@@ -216,7 +216,7 @@ class surveyformat_label extends surveyitem_base {
      * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvanceditems, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey) {
         // nothing to do here
     }
 

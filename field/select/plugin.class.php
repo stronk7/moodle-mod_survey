@@ -379,9 +379,6 @@ class surveyfield_select extends surveyitem_base {
                     case SURVEY_CUSTOMDEFAULT:
                         $index = array_search($this->defaultvalue, $labels);
                         $mform->setDefault($this->itemname, "$index");
-                        if ($index == 'other') {
-                            $mform->setDefault($this->itemname.'_text', $othervalue);
-                        }
                         break;
                     case SURVEY_INVITATIONDEFAULT:
                         $mform->setDefault($this->itemname, SURVEY_INVITATIONVALUE);
@@ -391,6 +388,10 @@ class surveyfield_select extends surveyitem_base {
                         break;
                     default:
                         debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
+                }
+                // $this->itemname.'_text' has to ALWAYS get a default (if required) even if it is not selected
+                if (!empty($this->labelother)) {
+                    $mform->setDefault($this->itemname.'_text', $othervalue);
                 }
             } else {
                 $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE);
@@ -409,7 +410,7 @@ class surveyfield_select extends surveyitem_base {
      * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvanceditems, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey) {
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 

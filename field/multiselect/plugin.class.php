@@ -203,20 +203,11 @@ class surveyfield_multiselect extends surveyitem_base {
         foreach ($childlabels as $childlabel) {
             if (array_search($childlabel, $labels) === false) {
                 $errcount++;
+                break;
             }
         }
-        switch ($errcount) {
-            case 0:
-                $status = true;
-                break;
-            case 1:
-                $status = !empty($this->labelother);
-                break;
-            default:
-                $status = false;
-        }
 
-        return $status;
+        return ($errcount == 0);
     }
 
     /*
@@ -305,7 +296,7 @@ class surveyfield_multiselect extends surveyitem_base {
      * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvanceditems, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey) {
         if ($this->required) {
             if ($this->extrarow) {
                 $errorkey = $this->itemname.'_extrarow';

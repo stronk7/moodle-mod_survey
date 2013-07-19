@@ -325,6 +325,7 @@ class surveyfield_radiobutton extends surveyitem_base {
 
         if (!empty($this->labelother)) {
             list($othervalue, $otherlabel) = $this->item_get_other();
+            $labels['other'] = $otherlabel;
 
             $class = ($this->adjustment == SURVEY_VERTICAL) ? array('class' => 'indent-'.$this->indent) : '';
             $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $otherlabel, 'other', $class);
@@ -388,9 +389,6 @@ class surveyfield_radiobutton extends surveyitem_base {
                     $index = array_search($this->defaultvalue, $labels);
                     if ($index !== false) {
                         $mform->setDefault($this->itemname, "$index");
-                    } else {
-                        $mform->setDefault($this->itemname, 'other');
-                        $mform->setDefault($this->itemname.'_text', $othervalue);
                     }
                     break;
                 case SURVEY_INVITATIONDEFAULT:
@@ -401,6 +399,10 @@ class surveyfield_radiobutton extends surveyitem_base {
                     break;
                 default:
                     debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
+            }
+            // $this->itemname.'_text' has to ALWAYS get a default (if required) even if it is not selected
+            if (!empty($this->labelother)) {
+                $mform->setDefault($this->itemname.'_text', $othervalue);
             }
         } else {
             $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE); // free
@@ -416,7 +418,7 @@ class surveyfield_radiobutton extends surveyitem_base {
      * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvanceditems, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey) {
         // this plugin displays as a set of radio buttons. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 

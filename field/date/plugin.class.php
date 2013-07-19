@@ -419,7 +419,7 @@ class surveyfield_date extends surveyitem_base {
      * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvanceditems, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey) {
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 

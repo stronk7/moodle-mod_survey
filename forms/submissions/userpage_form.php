@@ -262,7 +262,7 @@ class survey_submissionform extends moodleform {
                 }
 
                 if ($itemisenabled) {
-                    $item->userform_mform_validation($data, $errors, $survey, $canaccessadvanceditems, $parentitem);
+                    $item->userform_mform_validation($data, $errors, $survey);
                 // } else {
                     // echo 'parent item didn\'t allow the validation of the child item '.$item->itemid.', plugin = '.$item->plugin.'('.$item->content.')<br />';
                 }

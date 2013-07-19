@@ -208,7 +208,7 @@ class surveyfield_fileupload extends surveyitem_base {
      * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvanceditems, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey) {
         if ($this->required) {
             if ($this->extrarow) {
                 $errorkey = $this->itemname.'_extrarow';

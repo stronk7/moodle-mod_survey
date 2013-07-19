@@ -350,7 +350,7 @@ class surveyfield_checkbox extends surveyitem_base {
      * @param $parentitem
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey, $canaccessadvanceditems, $parentitem=null) {
+    public function userform_mform_validation($data, &$errors, $survey) {
         if ($this->required) {
             $labels = $this->item_get_labels_array('options');
 
