@@ -53,7 +53,7 @@ class surveyfield_numeric extends surveyitem_base {
     /*
      * $defaultvalue = the value of the field when the form is initially displayed.
      */
-    public $defaultvalue = 0;
+    public $defaultvalue = '';
 
     /*
      * $decimalseparator
@@ -161,7 +161,7 @@ class surveyfield_numeric extends surveyitem_base {
         $record->signed = isset($record->signed) ? 1 : 0;
 
         // float numbers need more attention because I can write them using , or .
-        if (!empty($record->defaultvalue)) {
+        if (strlen($record->defaultvalue)) {
             $record->defaultvalue = unformat_float($record->defaultvalue, true);
         } else {
             $record->defaultvalue = null;
@@ -287,7 +287,7 @@ class surveyfield_numeric extends surveyitem_base {
         $mform->setType($this->itemname, PARAM_RAW); // see: moodlelib.php lines 133+
         if (!$searchform) {
             if (strlen($this->defaultvalue)) {
-                $mform->setDefault($this->itemname, $this->defaultvalue);
+                $mform->setDefault($this->itemname, "$this->defaultvalue");
             }
 
             if ($this->required) {

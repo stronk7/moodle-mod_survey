@@ -333,7 +333,7 @@ class surveyfield_multiselect extends surveyitem_base {
         $mformelementinfo->operator = 'neq';
         $mformelementinfo->content = $key;
         $disabilitationinfo[] = $mformelementinfo;
-// $mform->disabledIf('survey_field_select_2491', 'survey_field_multiselect_2490[]', 'neq', array(0,4));
+        // $mform->disabledIf('survey_field_select_2491', 'survey_field_multiselect_2490[]', 'neq', array(0,4));
 
         return $disabilitationinfo;
     }

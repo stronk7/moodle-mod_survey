@@ -105,8 +105,9 @@ class survey_pluginform extends surveyitem_baseform {
         $errors = parent::validation($data, $files);
 
         // constrain default between boundaries
-        if ($data['defaultvalue']) {
-            if (!$thenumber = unformat_float($data['defaultvalue'], true)) {
+        if (strlen($data['defaultvalue'])) {
+            $thenumber = unformat_float($data['defaultvalue'], true);
+            if (!is_numeric($thenumber)) {
                 $errors['defaultvalue'] = get_string('default_notanumber', 'surveyfield_numeric');
             } else {
                 // if it is < 0 but has been defined as unsigned, shouts
