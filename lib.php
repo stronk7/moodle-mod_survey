@@ -175,9 +175,11 @@ define('SURVEY_ITEMCONTENTFILEAREA', 'itemcontent');
 define('SURVEY_THANKSHTMLFILEAREA' , 'thankshtml');
 
 // otheritems
-define('SURVEY_HIDEITEMS'  , '1');
-define('SURVEY_DELETEITEMS', '2');
-define('SURVEY_IGNOREITEMS', '3');
+define('SURVEY_IGNOREITEMS'       , '1');
+define('SURVEY_HIDEITEMS'         , '2');
+define('SURVEY_DELETEALLITEMS'    , '3');
+define('SURVEY_DELETEVISIBLEITEMS', '4');
+define('SURVEY_DELETEHIDDENITEMS' , '5');
 
 // empty template field
 define('SURVEY_EMPTYTEMPLATEFIELD', '@@NULL@@');

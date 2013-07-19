@@ -73,6 +73,7 @@ class survey_searchform extends moodleform {
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('search'));
         $buttonarray[] = $mform->createElement('cancel', 'cancel', get_string('findall', 'survey'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('buttonar');
     }
 
     // function validation($data, $files) {

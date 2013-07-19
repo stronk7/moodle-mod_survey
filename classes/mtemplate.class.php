@@ -528,30 +528,63 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
         $dbman = $DB->get_manager();
 
-        if ($this->formdata->actionoverother == SURVEY_HIDEITEMS) {
-            // BEGIN: hide all other items
-            $DB->set_field('survey_item', 'hide', 1, array('surveyid' => $this->survey->id, 'hide' => 0));
-            // END: hide all other items
-        }
+        switch ($this->formdata->actionoverother) {
+            case SURVEY_HIDEITEMS:
+                // BEGIN: hide all other items
+                $DB->set_field('survey_item', 'hide', 1, array('surveyid' => $this->survey->id, 'hide' => 0));
+                // END: hide all other items
+                break;
+            case SURVEY_DELETEALLITEMS:
+                // BEGIN: delete all other items
+                $sqlparam = array('surveyid' => $this->survey->id);
+                $sql = 'SELECT si.plugin
+                        FROM {survey_item} si
+                        WHERE si.surveyid = :surveyid
+                        GROUP BY si.plugin';
 
-        if ($this->formdata->actionoverother == SURVEY_DELETEITEMS) {
-            // BEGIN: delete all other items
-            $sql = 'SELECT si.plugin
-                    FROM {survey_item} si
-                    WHERE si.surveyid = :surveyid
-                    GROUP BY si.plugin';
+                $pluginseeds = $DB->get_records_sql($sql, $sqlparam);
 
-            $pluginseeds = $DB->get_records_sql($sql, array('surveyid' => $this->survey->id));
-
-            foreach ($pluginseeds as $pluginseed) {
-                $tablename = 'survey_'.$pluginseed->plugin;
-                if ($dbman->table_exists($tablename)) {
-                    $DB->delete_records($tablename, array('surveyid' => $this->survey->id));
+                foreach ($pluginseeds as $pluginseed) {
+                    $tablename = 'survey_'.$pluginseed->plugin;
+                    if ($dbman->table_exists($tablename)) {
+                        $DB->delete_records($tablename, $sqlparam);
+                    }
                 }
-            }
-            $DB->delete_records('survey_item', array('surveyid' => $this->survey->id));
-            // END: delete all other items
+                $DB->delete_records('survey_item', $sqlparam);
+                // END: delete all other items
+                break;
+            case SURVEY_DELETEVISIBLEITEMS:
+            case SURVEY_DELETEHIDDENITEMS:
+                // BEGIN: delete other items
+                $sqlparam = array('surveyid' => $this->survey->id);
+                if ($this->formdata->actionoverother == SURVEY_DELETEVISIBLEITEMS) {
+                    $sqlparam['hide'] = 0;
+                }
+                if ($this->formdata->actionoverother == SURVEY_DELETEHIDDENITEMS) {
+                    $sqlparam['hide'] = 1;
+                }
 
+                $sql = 'SELECT si.plugin
+                        FROM {survey_item} si
+                        WHERE si.surveyid = :surveyid
+                            AND si.hide = :hide
+                        GROUP BY si.plugin';
+                $pluginseeds = $DB->get_records_sql($sql, $sqlparam);
+
+                foreach ($pluginseeds as $pluginseed) {
+                    $pluginonly = $sqlparam + array('plugin' => $pluginseed->plugin);
+                    $deletelist = $DB->get_recordset('survey_item', $pluginonly, 'id', 'id');
+                    $tablename = 'survey_'.$pluginseed->plugin;
+                    foreach($deletelist as $todelete) {
+                        $DB->delete_records($tablename, array('itemid' => $todelete->id));
+                    }
+                    $deletelist->close();
+                }
+                $DB->delete_records('survey_item', $sqlparam);
+                // END: delete other items
+                break;
+            default:
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->formdata->actionoverother = '.$this->formdata->actionoverother);
         }
 
         $this->mtemplatename = $this->formdata->mastertemplate;

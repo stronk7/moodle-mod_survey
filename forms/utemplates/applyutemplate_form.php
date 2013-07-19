@@ -75,7 +75,9 @@ class survey_applyutemplateform extends moodleform {
         $fieldname = 'actionoverother';
         $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('ignoreitems', 'survey'), SURVEY_IGNOREITEMS);
         $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('hideitems', 'survey'), SURVEY_HIDEITEMS);
-        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('deleteitems', 'survey'), SURVEY_DELETEITEMS);
+        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('deleteallitems', 'survey'), SURVEY_DELETEALLITEMS);
+        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('deletevisibleitems', 'survey'), SURVEY_DELETEVISIBLEITEMS);
+        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('deletehiddenitems', 'survey'), SURVEY_DELETEHIDDENITEMS);
         $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'survey'), '<br />', false);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'survey');
         $mform->setDefault($fieldname, SURVEY_IGNOREITEMS);
