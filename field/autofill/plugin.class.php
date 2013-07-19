@@ -356,11 +356,11 @@ class surveyfield_autofill extends surveyitem_base {
                         $olduserdata->content .= userdate($olduserdata->time, $format_time, 0);
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT03:
-                        $format_date = get_string("strftimedate");
+                        $format_date = get_string('strftimedate');
                         $olduserdata->content .= userdate($olduserdata->time, $format_date, 0);
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT04:
-                        $format_datetime = get_string("strftimedatetime");
+                        $format_datetime = get_string('strftimedatetime');
                         $olduserdata->content .= userdate($olduserdata->time, $format_datetime, 0);
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT05:

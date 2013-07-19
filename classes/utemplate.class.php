@@ -658,7 +658,7 @@ class mod_survey_usertemplate extends mod_survey_template {
                 foreach ($pluginseeds as $pluginseed) {
                     $tablename = 'survey_'.$pluginseed->plugin;
                     if ($dbman->table_exists($tablename)) {
-                        $pluginonly['plugin'] = $pluginseed->plugin;
+                        $pluginonly['plugin'] = $pluginseed->plugin;
                         $deletelist = $DB->get_recordset('survey_item', $pluginonly, 'id', 'id');
                         foreach($deletelist as $todelete) {
                             $DB->delete_records($tablename, array('itemid' => $todelete->id));
