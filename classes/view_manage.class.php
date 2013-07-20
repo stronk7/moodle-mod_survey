@@ -679,7 +679,7 @@ class mod_survey_submissionmanager {
                 $content = trim(strip_tags($item->get_content()), " \t\n\r");
                 // why does $content here is already html encoded so that I do not have to apply htmlspecialchars?
                 // $content = htmlspecialchars($content, ENT_NOQUOTES, 'UTF-8');
-                $html = str_replace('@@col2@@', $content.'___LABEL___', $html);
+                $html = str_replace('@@col2@@', $content, $html);
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true); // this is like span 2
                 continue;
             }

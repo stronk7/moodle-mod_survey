@@ -290,8 +290,11 @@ class surveyfield_character extends surveyitem_base {
 
         $options = array('class' => 'indent-'.$this->indent);
         $options['maxlength'] = $this->maxlength;
-        if ($this->maxlength < 21) {
+        $thresholdsize = 48;
+        if ($this->maxlength < $thresholdsize) {
             $options['size'] = $this->maxlength;
+        } else {
+            $options['size'] = $thresholdsize;
         }
         $mform->addElement('text', $this->itemname, $elementlabel, $options);
         $mform->setType($this->itemname, PARAM_RAW);
