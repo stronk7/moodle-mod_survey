@@ -391,7 +391,7 @@ function survey_delete_instance($id) {
     }
 
     // delete all associated survey_items
-    $DB->delete_records('survey_items', array('surveyid' => $survey->id));
+    $DB->delete_records('survey_item', array('surveyid' => $survey->id));
 
     // finally, delete the survey record
     $DB->delete_records('survey', array('id' => $survey->id));
