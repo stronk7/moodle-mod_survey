@@ -30,14 +30,9 @@ defined('MOODLE_INTERNAL') || die();
 
 define('SURVEYMTEMPLATE_NAMEPLACEHOLDER', '@@mTemplateNamePlaceholder@@');
 
-require_once($CFG->dirroot.'/mod/survey/classes/template.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/templatebase.class.php');
 
-class mod_survey_mastertemplate extends mod_survey_template {
-    /*
-     * $survey: the record of this survey
-     */
-    public $survey = null;
-
+class mod_survey_mastertemplate extends mod_survey_templatebase {
     /*
      * $libcontent: the content of the file lib.php that is going to populate the master template
      */
@@ -57,11 +52,6 @@ class mod_survey_mastertemplate extends mod_survey_template {
      * $mtemplatename: name of the master template to work with
      */
     public $mtemplatename = '';
-
-    /********************** this will be provided later
-     * $formdata: the form content as submitted by the user
-     */
-    public $formdata = null;
 
     /*
      * Class constructor
@@ -86,6 +76,9 @@ class mod_survey_mastertemplate extends mod_survey_template {
         $master_basepath = "$CFG->dirroot/mod/survey/templatemaster";
         $master_filelist = get_directory_list($master_basepath);
 
+        // I need to get xml content now because, to save time, I get xml AND $this->langtree contemporary
+        $xmlcontent = $this->build_xml();
+
         foreach ($master_filelist as $master_file) {
             $master_fileinfo = pathinfo($master_file);
             // create the structure of the temporary folder
@@ -95,46 +88,47 @@ class mod_survey_mastertemplate extends mod_survey_template {
 
             $temp_fullpath = $CFG->tempdir.'/'.$temp_path;
 
-// echo '<hr />Operate on the file: '.$master_file.'<br />';
-// echo $master_fileinfo["dirname"] . "<br />";
-// echo $master_fileinfo["basename"] . "<br />";
-// echo $master_fileinfo["extension"] . "<br />";
-// echo dirname($master_file) . "<br />";
+            // echo '<hr />Operate on the file: '.$master_file.'<br />';
+            // echo $master_fileinfo["dirname"] . "<br />";
+            // echo $master_fileinfo["basename"] . "<br />";
+            // echo $master_fileinfo["extension"] . "<br />";
+            // echo dirname($master_file) . "<br />";
 
             if ($master_fileinfo['basename'] == 'icon.gif') {
-                // copia icon.gif
+                // simply copy icon.gif
                 copy($master_basepath.'/'.$master_file, $temp_fullpath.'/'.$master_fileinfo['basename']);
                 continue;
             }
 
-            if ($master_fileinfo['dirname'] == 'lang/en') { // it is the lang file. It has already been done!
+            if ($master_fileinfo['basename'] == 'template.class.php') {
+                $templateclass = file_get_contents($master_basepath.'/'.$master_file);
+                // replace surveyTemplatePluginMaster with the name of the current survey
+                $templateclass = str_replace(SURVEYMTEMPLATE_NAMEPLACEHOLDER, $pluginname, $templateclass);
+
+                $temp_path = $CFG->tempdir.'/'.$temp_subdir.'/'.$master_fileinfo['basename'];
+
+                // create $temp_path
+                $filehandler = fopen($temp_path, 'w');
+                // write inside all the strings
+                fwrite($filehandler, $templateclass);
+                // close
+                fclose($filehandler);
                 continue;
             }
 
-            if ($master_fileinfo['basename'] == 'lib.php') {
-                // I need to scan all my surveyitem and plugin
-                // and copy them
-                // Start by reading the master
-                $this->libcontent = file_get_contents($master_basepath.'/'.$master_file);
-                // delete any trailing spaces or \n at the and of the file
-                $this->libcontent = rtrim($this->libcontent);
-                // drop off the closed brace at the end of the file
-                $this->libcontent = substr($this->libcontent, 0, -1);
-                // replace surveyTemplatePluginMaster with the name of the current survey
-                $this->libcontent = str_replace(SURVEYMTEMPLATE_NAMEPLACEHOLDER, $pluginname, $this->libcontent);
-                // finalize the libcontent
-                $this->lib_write_content();
-                // open
-                $filehandler = fopen($temp_basedir.'/'.$master_file, 'w');
-                // write
-                fwrite($filehandler, $this->libcontent);
+            if ($master_fileinfo['basename'] == 'template.xml') {
+                $temp_path = $CFG->tempdir.'/'.$temp_subdir.'/'.$master_fileinfo['basename'];
+
+                // create $temp_path
+                $filehandler = fopen($temp_path, 'w');
+                // write inside all the strings
+                fwrite($filehandler, $xmlcontent);
                 // close
                 fclose($filehandler);
+                continue;
+            }
 
-                // /////////////////////////////////////////////////////////////////////////////////////
-                // now write string file
-                // /////////////////////////////////////////////////////////////////////////////////////
-
+            if ($master_fileinfo['dirname'] == 'lang/en') {
                 // in which language the user is using Moodle?
                 $userlang = current_language();
                 $temp_path = $CFG->tempdir.'/'.$temp_subdir.'/lang/'.$userlang;
@@ -153,7 +147,6 @@ class mod_survey_mastertemplate extends mod_survey_template {
                 $filecopyright = str_replace(SURVEYMTEMPLATE_NAMEPLACEHOLDER, $pluginname, $filecopyright);
 
                 $savedstrings = $filecopyright.$this->extract_original_string();
-
                 // echo '<textarea rows="30" cols="100">'.$savedstrings.'</textarea>';
                 // die;
 
@@ -179,7 +172,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
                 continue;
             }
 
-            // for all the other files: survey.class.php, version.php
+            // for all the other files: version.php
             // read the master
             $filecontent = file_get_contents($master_basepath.'/'.$master_file);
             // replace surveyTemplatePluginMaster with the name of the current survey
@@ -197,12 +190,9 @@ class mod_survey_mastertemplate extends mod_survey_template {
         }
 
         $filenames = array(
-            'db/install.php',
-            'db/upgrade.php',
-            'db/upgradelib.php',
-            'lib.php',
+            'template.xml',
             'pix/icon.gif',
-            'survey.class.php',
+            'template.class.php',
             'version.php',
             'lang/en/surveytemplate_'.$pluginname.'.php',
         );
@@ -221,7 +211,7 @@ class mod_survey_mastertemplate extends mod_survey_template {
         $fp = get_file_packer('application/zip');
         $fp->archive_to_pathname($filelist, $exportfile);
 
-        $dirnames = array('db/', 'pix/', 'lang/en/');
+        $dirnames = array('pix/', 'lang/en/');
         if ($userlang != 'en') {
             $dirnames[] = 'lang/'.$userlang.'/';
         }
@@ -242,17 +232,13 @@ class mod_survey_mastertemplate extends mod_survey_template {
     }
 
     /*
-     * lib_write_content
+     * get_used_plugin
      *
      * @param
      * @return
      */
-    public function lib_write_content() {
+    public function get_used_plugin() {
         global $DB;
-
-        $pluginname = clean_filename($this->formdata->mastertemplatename);
-        $structures = array();
-        $sid = array();
 
         // STEP 01: make a list of used plugins
         $sql = 'SELECT si.plugin
@@ -260,51 +246,71 @@ class mod_survey_mastertemplate extends mod_survey_template {
                 WHERE si.surveyid = :surveyid
                 GROUP BY si.plugin';
         $params = array('surveyid' => $this->survey->id);
-        $itemseeds = $DB->get_records_sql($sql, $params);
+        $templateplugins = $DB->get_records_sql($sql, $params);
 
-        // STEP 02: verify $itemseeds is not empty
-        if (!count($itemseeds)) {
-            return;
-        }
-
-        // STEP 03: before adding the fictitious plugin 'item'
-        //          replace '// require_once(_LIBRARIES_)' with the list of require_once
-        $librarycall = 'require_once($CFG->dirroot.\'/mod/survey/lib.php\');'."\n";
-        $librarycall .= 'require_once($CFG->dirroot.\'/mod/survey/template/lib.php\');'."\n";
-        foreach ($itemseeds as $itemseed) {
-            $librarycall .= 'require_once($CFG->dirroot.\'/mod/survey/field/'.$itemseed->plugin.'/lib.php\');'."\n";
-        }
-        $this->libcontent = str_replace('// require_once(_LIBRARIES_);', $librarycall, $this->libcontent);
-
-        // STEP 04: add, at top of $itemseeds, the 'item' element
+        // STEP 02: add, at top of $templateplugins, the fictitious 'item' plugin
         $base = new stdClass();
         $base->plugin = 'item';
-        $itemseeds = array_merge(array('item' => $base), $itemseeds);
+        return array_merge(array('item' => $base), $templateplugins);
+    }
 
-        // STEP 05: create survey_$plugin table structure array
-        foreach ($itemseeds as $itemseed) {
-            $tablename = 'survey_'.$itemseed->plugin;
+    /*
+     * get_used_plugin
+     *
+     * @param
+     * @return
+     */
+    public function get_structures_sid_plugin($templateplugins) {
+        $structures = array();
+        $tablesid = array();
+        foreach ($templateplugins as $templateplugin) {
+            $tablename = 'survey_'.$templateplugin->plugin;
             if ($structure = $this->get_table_structure($tablename)) {
                 $structures[$tablename] = $structure;
 
                 // if there is a field ending in '_sid' create the line initializing the index
-                $currentsid = array();
+                $currenttablesid = array();
                 foreach ($structure as $field) {
                     if (substr($field, -4) == '_sid') {
-                        $currentsid[] .= $field;
+                        $currenttablesid[] = $field;
                         $field = substr($field, 0, -4);
-                        $this->langtree[$field] = array();
+                        $this->langtree[$templateplugin->plugin.'_'.$field] = array();
                     }
                 }
 
-                $sid[$tablename] = $currentsid;
-                $this->lib_write_table_structure($structure, $itemseed->plugin, $sid[$tablename]);
+                $tablesid[$tablename] = $currenttablesid;
             }
         }
 
-        $this->lib_write_structure_values_separator($pluginname);
+        return array($structures, $tablesid);
+    }
 
-        // STEP 06: make a list of all itemseeds
+
+    /*
+     * create_mtemplate
+     *
+     * @param
+     * @return
+     */
+    public function build_xml() {
+        global $DB;
+
+        // preliminary steps
+        $templateplugins = $this->get_used_plugin();
+
+// echo '$templateplugins:';
+// var_dump($templateplugins);
+
+        // STEP 03n: create survey_$plugin table structure array
+        list($structures, $tablesid) = $this->get_structures_sid_plugin($templateplugins);
+
+// echo '$structures:';
+// var_dump($structures);
+
+// echo '$tablesid:';
+// var_dump($tablesid);
+
+        // STEP 04n: make a list of all itemseeds
         $sql = 'SELECT si.id, si.type, si.plugin
                 FROM {survey_item} si
                 WHERE si.surveyid = :surveyid
@@ -313,150 +319,47 @@ class mod_survey_mastertemplate extends mod_survey_template {
         $itemseeds = $DB->get_records_sql($sql, $params);
 
         foreach ($itemseeds as $itemseed) {
-            $this->lib_write_intro_si_values($sid['survey_item']);
-
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
-            $values = $item->item_get_si_values($this->formdata, $structures['survey_item'], $sid['survey_item']);
+            // get values to write xml
+            $values = $item->item_get_si_values($this->formdata, $structures['survey_item'], $tablesid['survey_item']);
 
-            $this->lib_write_si_values($values);
-            $this->collect_strings($sid['survey_item'], $item);
+            // build lang tree for lang file
+            $this->build_langtree('item', $tablesid['survey_item'], $item);
 
             if ($item->get_useplugintable()) { // only page break does not use the plugin table
                 $tablename = 'survey_'.$itemseed->plugin;
-                $currentsid = $sid[$tablename];
+                $currentsid = $tablesid[$tablename];
                 $currentstructure = $structures[$tablename];
-                $this->lib_write_intro_plugin_values($itemseed->plugin, $currentsid);
 
+                // get values to write xml
                 $values = $item->item_get_plugin_values($currentstructure, $currentsid);
 
-                $this->lib_write_plugin_values($values, $tablename, $itemseed->plugin);
-
-                $this->collect_strings($sid[$tablename], $item);
+                // build lang tree for lang file
+                $this->build_langtree($itemseed->plugin, $tablesid[$tablename], $item);
             }
-
-            $this->libcontent .= '//----------------------------------------------------------------------------//'."\n";
         }
 
-        $this->libcontent .= '}'."\n";
+        // echo '$this->langtree:';
+        // var_dump($this->langtree);
+
+        // return XML content
+        return $this->write_template_content(SURVEY_MASTERTEMPLATE);
     }
 
     /*
-     * lib_write_table_structure
-     *
-     * @param $structure
-     * @param $plugin
-     * @param $sid
-     * @return
-     */
-    public function lib_write_table_structure($structure, $plugin, $sid) {
-        $varprefix = ($plugin == 'item') ? 'si' : $plugin;
-
-        foreach ($sid as $singlesid) {
-            $this->libcontent .= '    $'.$singlesid.' = 0;'."\n";
-        }
-        $this->libcontent .= '    // ////////////// SURVEY_'.strtoupper($plugin)."\n";
-        $this->libcontent .= '    $'.$varprefix.'_fields = array(\'';
-        $this->libcontent .= implode('\',\'', $structure);
-        $this->libcontent .= '\');'."\n";
-        $this->libcontent .= "\n";
-    }
-
-    /*
-     * lib_write_structure_values_separator
-     *
-     * @param $pluginname
-     * @return
-     */
-    public function lib_write_structure_values_separator($pluginname) {
-        $this->libcontent .= '    // ////////////////////////////////////////////////////////////////////////////////////////////'."\n";
-        $this->libcontent .= '    // ////////////////////////////////////////////////////////////////////////////////////////////'."\n";
-        $this->libcontent .= '    // // '.strtoupper($pluginname)."\n";
-        $this->libcontent .= '    // ////////////////////////////////////////////////////////////////////////////////////////////'."\n";
-        $this->libcontent .= '    // ////////////////////////////////////////////////////////////////////////////////////////////'."\n";
-    }
-
-    /*
-     * lib_write_intro_si_values
-     *
-     * @param $si_sid
-     * @return
-     */
-    public function lib_write_intro_si_values($si_sid) {
-        $this->libcontent .= "\n".'    $sortindex++; // <--- new item is going to be added'."\n\n";
-        $indent = '';
-
-        $this->libcontent .= '    // survey_item'."\n";
-        $this->libcontent .= '    /*------------------------------------------------*/'."\n";
-
-        // TODO: where do I assign a valur to $this->si_sid?
-        foreach ($si_sid as $singlesid) {
-            $this->libcontent .= $indent.'    $'.$singlesid.'++;'."\n";
-        }
-    }
-
-    /*
-     * lib_write_si_values
-     *
-     * @param $values
-     * @return
-     */
-    public function lib_write_si_values($values) {
-        $this->libcontent .= '    $values = array(';
-        // $this->libcontent .= implode(',', $values);
-        $this->libcontent .= $this->wrap_line($values, 20);
-        $this->libcontent .= ');'."\n";
-        // Take care you always write sortindex instead of parentid
-        $this->libcontent .= '    $itemid = $DB->insert_record(\'survey_item\', array_combine($si_fields, $values));'."\n";
-
-        $this->libcontent .= "\n";
-    }
-
-    /*
-     * lib_write_intro_plugin_values
-     *
-     * @param $currentplugin
-     * @param $currentsid
-     * @return
-     */
-    public function lib_write_intro_plugin_values($currentplugin, $currentsid) {
-        $this->libcontent .= '        // survey_'.$currentplugin."\n";
-        $this->libcontent .= '        /*------------------------------------------------*/'."\n";
-
-        foreach ($currentsid as $singlesid) {
-            $this->libcontent .= '        $'.$singlesid.'++;'."\n";
-        }
-    }
-
-    /*
-     * lib_write_plugin_values
-     *
-     * @param $values
-     * @param $tablename
-     * @param $currentplugin
-     * @return
-     */
-    public function lib_write_plugin_values($values, $tablename, $currentplugin) {
-        $this->libcontent .= '        $values = array(';
-        // $this->libcontent .= implode(',', $values);
-        $this->libcontent .= $this->wrap_line($values, 24);
-        $this->libcontent .= ');'."\n";
-        $this->libcontent .= '        $itemid = $DB->insert_record(\''.$tablename.'\', array_combine($'.$currentplugin.'_fields, $values));'."\n";
-        $this->libcontent .= "    //---------- end of this item\n\n";
-    }
-
-    /*
-     * collect_strings
+     * build_langtree
      *
      * @param $currentsid
      * @param $values
      * @return
      */
-    public function collect_strings($currentsid, $values) {
+    public function build_langtree($plugin, $currentsid, $item) {
         foreach ($currentsid as $singlesid) {
             $field = substr($singlesid, 0, -4);
-            $stringindex = sprintf('%02d', 1+count($this->langtree[$field]));
-            $this->langtree[$field][$field.$stringindex] = str_replace("\r", '', $values->{$field});
+            $frankenstinname = $plugin.'_'.$field;
+            $stringindex = sprintf('%02d', 1+count($this->langtree[$frankenstinname]));
+            $this->langtree[$frankenstinname][$frankenstinname.'_'.$stringindex] = str_replace("\r", '', $item->item_get_generic_field($field));
         }
     }
 
@@ -494,160 +397,5 @@ class mod_survey_mastertemplate extends mod_survey_template {
             }
         }
         return "\n".implode("\n", $stringsastext);
-    }
-
-    /*
-     * wrap_line
-     *
-     * @param $values
-     * @param $lineindent
-     * @return
-     */
-    public function wrap_line($values, $lineindent=20) {
-        $return = '';
-        $segments = array_chunk($values, 4);
-        $countsegments = count($segments)-1;
-        foreach ($segments as $k => $segment) {
-            $return .= implode(',', $segment);
-            if ($k < $countsegments) {
-                $return .= ",\n".str_repeat(' ', $lineindent);
-            }
-        }
-
-        return $return;
-    }
-
-    /*
-     * apply_mtemplate
-     *
-     * @param
-     * @return null
-     */
-    public function apply_mtemplate() {
-        global $DB;
-
-        $dbman = $DB->get_manager();
-
-        switch ($this->formdata->actionoverother) {
-            case SURVEY_HIDEITEMS:
-                // BEGIN: hide all other items
-                $DB->set_field('survey_item', 'hide', 1, array('surveyid' => $this->survey->id, 'hide' => 0));
-                // END: hide all other items
-                break;
-            case SURVEY_DELETEALLITEMS:
-                // BEGIN: delete all other items
-                $sqlparam = array('surveyid' => $this->survey->id);
-                $sql = 'SELECT si.plugin
-                        FROM {survey_item} si
-                        WHERE si.surveyid = :surveyid
-                        GROUP BY si.plugin';
-
-                $pluginseeds = $DB->get_records_sql($sql, $sqlparam);
-
-                foreach ($pluginseeds as $pluginseed) {
-                    $tablename = 'survey_'.$pluginseed->plugin;
-                    if ($dbman->table_exists($tablename)) {
-                        $DB->delete_records($tablename, $sqlparam);
-                    }
-                }
-                $DB->delete_records('survey_item', $sqlparam);
-                // END: delete all other items
-                break;
-            case SURVEY_DELETEVISIBLEITEMS:
-            case SURVEY_DELETEHIDDENITEMS:
-                // BEGIN: delete other items
-                $sqlparam = array('surveyid' => $this->survey->id);
-                if ($this->formdata->actionoverother == SURVEY_DELETEVISIBLEITEMS) {
-                    $sqlparam['hide'] = 0;
-                }
-                if ($this->formdata->actionoverother == SURVEY_DELETEHIDDENITEMS) {
-                    $sqlparam['hide'] = 1;
-                }
-
-                $sql = 'SELECT si.plugin
-                        FROM {survey_item} si
-                        WHERE si.surveyid = :surveyid
-                            AND si.hide = :hide
-                        GROUP BY si.plugin';
-                $pluginseeds = $DB->get_records_sql($sql, $sqlparam);
-
-                $pluginonly = $sqlparam;
-                foreach ($pluginseeds as $pluginseed) {
-                    $tablename = 'survey_'.$pluginseed->plugin;
-                    if ($dbman->table_exists($tablename)) {
-                        $pluginonly['plugin'] = $pluginseed->plugin;
-                        $deletelist = $DB->get_recordset('survey_item', $pluginonly, 'id', 'id');
-                        foreach($deletelist as $todelete) {
-                            $DB->delete_records($tablename, array('itemid' => $todelete->id));
-                        }
-                    }
-                    $deletelist->close();
-                }
-                $DB->delete_records('survey_item', $sqlparam);
-                // END: delete other items
-                break;
-            default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->formdata->actionoverother = '.$this->formdata->actionoverother);
-        }
-
-        $this->mtemplatename = $this->formdata->mastertemplate;
-
-        // BEGIN: add records from survey plugin
-        $this->add_items_from_plugin();
-        // END: add records from survey plugin
-    }
-
-    /*
-     * add_items_from_plugin
-     *
-     * @param
-     * @return
-     */
-    public function add_items_from_plugin() {
-        global $DB;
-
-        $dbman = $DB->get_manager();
-
-        if ($itemseeds = $DB->get_recordset('survey_item', array('surveyid' => 0, 'template' => $this->mtemplatename), 'id', 'id, plugin')) {
-            $sortindexoffset = $DB->get_field('survey_item', 'MAX(sortindex)', array('surveyid' => $this->survey->id));
-            foreach ($itemseeds as $itemseed) {
-                $plugintable = 'survey_'.$itemseed->plugin;
-                if ($dbman->table_exists($plugintable)) {
-                    $sql = 'SELECT *
-                            FROM {survey_item} si
-                                JOIN {'.$plugintable.'} plugin ON plugin.itemid = si.id
-                            WHERE si.surveyid = 0
-                                AND si.id = :surveyitemid
-                                AND si.template = :template';
-                } else {
-                    $sql = 'SELECT *
-                            FROM {survey_item} si
-                            WHERE si.surveyid = 0
-                                AND si.id = :surveyitemid
-                                AND si.template = :template';
-                }
-                $record = $DB->get_record_sql($sql, array('surveyitemid' => $itemseed->id, 'template' => $this->mtemplatename));
-
-                unset($record->id);
-                $record->surveyid = $this->survey->id;
-                $record->sortindex += $sortindexoffset;
-                // recalculate parentid that is still pointing to the record with surveyid = 0
-                if (!empty($record->parentid)) {
-                    // in the atabase, records of plugins (the ones with surveyid = 0) store sortorder in the parentid field. This for portability reasons.
-                    $newsortindex = $record->parentid + $sortindexoffset;
-                    $sqlparams = array('surveyid' => $this->survey->id, 'template' => $this->mtemplatename, 'sortindex' => $newsortindex);
-                    $record->parentid = $DB->get_field('survey_item', 'id', $sqlparams, MUST_EXIST);
-                }
-
-                // survey_item
-                $record->itemid = $DB->insert_record('survey_item', $record);
-
-                // $plugintable
-                if ($dbman->table_exists($plugintable)) {
-                    $DB->insert_record($plugintable, $record, false);
-                }
-            }
-            $itemseeds->close();
-        }
     }
 }

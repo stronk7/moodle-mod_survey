@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/format/label/lib.php');
 
-class surveyformat_label extends surveyitem_base {
+class surveyformat_label extends mod_survey_itembase {
 
     /*
      * $surveyid = the id of the survey
@@ -137,12 +137,12 @@ class surveyformat_label extends surveyitem_base {
      * @return
      */
     public function item_load($itemid) {
-        // Do parent item loading stuff here (surveyitem_base::item_load($itemid)))
+        // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
         parent::item_load($itemid);
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = array('content', 'labelintro');
+        $fieldlist = $this->item_get_multilang_fields();
         $this->item_builtin_string_load_support($fieldlist);
     }
 
@@ -159,10 +159,10 @@ class surveyformat_label extends surveyitem_base {
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = array('labelintro'); // built-in label index
+        $fieldlist = $this->item_get_multilang_fields();
         $this->item_builtin_string_save_support($record, $fieldlist);
 
-        // Do parent item saving stuff here (surveyitem_base::item_save($record)))
+        // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
     }
 
@@ -183,6 +183,19 @@ class surveyformat_label extends surveyitem_base {
         }
 
         return $values;
+    }
+
+    /*
+     * item_get_multilang_fields
+     *
+     * @param
+     * @return
+     */
+    public function item_get_multilang_fields() {
+        $fieldlist = parent::item_get_multilang_fields();
+        $fieldlist['label'] = array('labelintro');
+
+        return $fieldlist;
     }
 
     // MARK userform

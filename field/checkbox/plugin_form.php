@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 require_once($CFG->dirroot.'/mod/survey/forms/items/itembase_form.php');
 require_once($CFG->dirroot.'/mod/survey/field/checkbox/lib.php');
 
-class survey_pluginform extends surveyitem_baseform {
+class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
         // -------------------------------------------------------------------------------

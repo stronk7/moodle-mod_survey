@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/format/pagebreak/lib.php');
 
-class surveyformat_pagebreak extends surveyitem_base {
+class surveyformat_pagebreak extends mod_survey_itembase {
 
     /*
      * $surveyid = the id of the survey
@@ -102,7 +102,7 @@ class surveyformat_pagebreak extends surveyitem_base {
      * @return
      */
     public function item_load($itemid) {
-        // Do parent item loading stuff here (surveyitem_base::item_load($itemid)))
+        // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
         parent::item_load($itemid);
     }
 
@@ -120,7 +120,7 @@ class surveyformat_pagebreak extends surveyitem_base {
         $record->content = SURVEYFORMAT_PAGEBREAK_CONTENT;
         $this->content_format = FORMAT_HTML;
 
-        // Do parent item saving stuff here (surveyitem_base::item_save($record)))
+        // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
     }
 
@@ -149,6 +149,16 @@ class surveyformat_pagebreak extends surveyitem_base {
      */
     public function item_get_main_text() {
         return SURVEYFORMAT_PAGEBREAK_CONTENT;
+    }
+
+    /*
+     * item_get_multilang_fields
+     *
+     * @param
+     * @return
+     */
+    public function item_get_multilang_fields() {
+        return false;
     }
 
     // MARK userform

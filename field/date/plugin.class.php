@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/date/lib.php');
 
-class surveyfield_date extends surveyitem_base {
+class surveyfield_date extends mod_survey_itembase {
 
     /*
      * $surveyid = the id of the survey
@@ -122,7 +122,7 @@ class surveyfield_date extends surveyitem_base {
      * @return
      */
     public function item_load($itemid) {
-        // Do parent item loading stuff here (surveyitem_base::item_load($itemid)))
+        // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
         parent::item_load($itemid);
 
         // multilang load support for builtin survey
@@ -148,9 +148,10 @@ class surveyfield_date extends surveyitem_base {
 
         // multilang save support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
-        $this->item_builtin_string_save_support($record);
+        $fieldlist = $this->item_get_multilang_fields();
+        $this->item_builtin_string_save_support($record, $fieldlist);
 
-        // Do parent item saving stuff here (surveyitem_base::item_save($record)))
+        // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
     }
 
@@ -306,6 +307,16 @@ class surveyfield_date extends surveyitem_base {
          */
 
         return $option;
+    }
+
+    /*
+     * item_get_multilang_fields
+     *
+     * @param
+     * @return
+     */
+    public function item_get_multilang_fields() {
+        return parent::item_get_multilang_fields();
     }
 
     // MARK userform

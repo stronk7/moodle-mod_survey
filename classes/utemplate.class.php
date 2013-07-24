@@ -28,9 +28,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/survey/classes/template.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/templatebase.class.php');
 
-class mod_survey_usertemplate extends mod_survey_template {
+class mod_survey_usertemplate extends mod_survey_templatebase {
     /*
      * $cm
      */
@@ -40,11 +40,6 @@ class mod_survey_usertemplate extends mod_survey_template {
      * $context
      */
     public $context = null;
-
-    /*
-     * $survey: the record of this survey
-     */
-    public $survey = null;
 
     /*
      * $utemplateid: the ID of the current working user template
@@ -65,12 +60,6 @@ class mod_survey_usertemplate extends mod_survey_template {
      * $candeleteutemplates
      */
     public $candeleteutemplates = false;
-
-    /********************** this will be provided later
-     * $formdata: the form content as submitted by the user
-     */
-    public $formdata = null;
-
 
     /*
      * Class constructor
@@ -119,78 +108,6 @@ class mod_survey_usertemplate extends mod_survey_template {
         fclose($xmlfile);
         unlink($exportdir.'/'.$exportfilename);
         die;
-    }
-
-    /*
-     * write_utemplate
-     *
-     * @param
-     * @return
-     */
-    public function write_utemplate() {
-        global $DB;
-
-        $where = array('surveyid' => $this->survey->id);
-        $itemseeds = $DB->get_records('survey_item', $where, 'sortindex', 'id, type, plugin');
-
-        $xmltemplate = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><items></items>');
-        foreach ($itemseeds as $itemseed) {
-
-            $id = $itemseed->id;
-            $type = $itemseed->type;
-            $plugin = $itemseed->plugin;
-            $item = survey_get_item($id, $type, $plugin);
-            $xmlitem = $xmltemplate->addChild('item');
-
-            // survey_item
-            $structure = $this->get_table_structure('survey_item');
-
-            $xmltable = $xmlitem->addChild('survey_item');
-            foreach ($structure as $field) {
-                if ($field == 'parentid') {
-                    if ($item->get_parentid()) {
-                        $sqlparams = array('id' => $item->get_parentid());
-                        // I store sortindex instead of parentid, because at restore time parent id will change
-                        $val = $DB->get_field('survey_item', 'sortindex', $sqlparams);
-                    } else {
-                        $val = 0;
-                    }
-                } else {
-                    $item_field = $item->item_get_generic_field($field);
-                    if (is_null($item_field)) {
-                        $val = SURVEY_EMPTYTEMPLATEFIELD;
-                    } else {
-                        $val = $item_field;
-                    }
-                }
-                $xmlfield = $xmltable->addChild($field, $val);
-            }
-
-            if ($item->get_useplugintable()) { // only page break does not use the plugin table
-                // child table
-                $structure = $this->get_table_structure('survey_'.$plugin);
-
-                $xmltable = $xmlitem->addChild('survey_'.$plugin);
-                foreach ($structure as $field) {
-                    $item_field = $item->item_get_generic_field($field);
-                    if (is_null($item_field)) {
-                        $xmlfield = $xmltable->addChild($field, SURVEY_EMPTYTEMPLATEFIELD);
-                    } else {
-                        $xmlfield = $xmltable->addChild($field, $item_field);
-                    }
-                }
-            }
-        }
-
-        $dom = new DOMDocument('1.0');
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-        $dom->loadXML($xmltemplate->asXML());
-
-        // echo '$xmltemplate = <br />';
-        // print_object($xmltemplate);
-
-        return $dom->saveXML();
     }
 
     /*
@@ -385,7 +302,7 @@ class mod_survey_usertemplate extends mod_survey_template {
     public function save_utemplate() {
         global $USER;
 
-        $xmlcontent = $this->write_utemplate();
+        $xmlcontent = $this->write_template_content(SURVEY_USERTEMPLATE);
         // echo '<textarea rows="80" cols="100">'.$xmlcontent.'</textarea>';
 
         $fs = get_file_storage();
@@ -598,137 +515,6 @@ class mod_survey_usertemplate extends mod_survey_template {
         $options[CONTEXT_SYSTEM.'_0'] = get_string('site');
 
         return $options;
-    }
-
-    /*
-     * apply_utemplate
-     *
-     * @param
-     * @return null
-     */
-    public function apply_utemplate() {
-        global $DB;
-
-        $dbman = $DB->get_manager();
-
-        switch ($this->formdata->actionoverother) {
-            case SURVEY_HIDEITEMS:
-                // BEGIN: hide all other items
-                $DB->set_field('survey_item', 'hide', 1, array('surveyid' => $this->survey->id, 'hide' => 0));
-                // END: hide all other items
-                break;
-            case SURVEY_DELETEALLITEMS:
-                // BEGIN: delete all other items
-                $sqlparam = array('surveyid' => $this->survey->id);
-                $sql = 'SELECT si.plugin
-                        FROM {survey_item} si
-                        WHERE si.surveyid = :surveyid
-                        GROUP BY si.plugin';
-
-                $pluginseeds = $DB->get_records_sql($sql, $sqlparam);
-
-                foreach ($pluginseeds as $pluginseed) {
-                    $tablename = 'survey_'.$pluginseed->plugin;
-                    if ($dbman->table_exists($tablename)) {
-                        $DB->delete_records($tablename, $sqlparam);
-                    }
-                }
-                $DB->delete_records('survey_item', $sqlparam);
-                // END: delete all other items
-                break;
-            case SURVEY_DELETEVISIBLEITEMS:
-            case SURVEY_DELETEHIDDENITEMS:
-                // BEGIN: delete other items
-                $sqlparam = array('surveyid' => $this->survey->id);
-                if ($this->formdata->actionoverother == SURVEY_DELETEVISIBLEITEMS) {
-                    $sqlparam['hide'] = 0;
-                }
-                if ($this->formdata->actionoverother == SURVEY_DELETEHIDDENITEMS) {
-                    $sqlparam['hide'] = 1;
-                }
-
-                $sql = 'SELECT si.plugin
-                        FROM {survey_item} si
-                        WHERE si.surveyid = :surveyid
-                            AND si.hide = :hide
-                        GROUP BY si.plugin';
-                $pluginseeds = $DB->get_records_sql($sql, $sqlparam);
-
-                $pluginonly = $sqlparam;
-                foreach ($pluginseeds as $pluginseed) {
-                    $tablename = 'survey_'.$pluginseed->plugin;
-                    if ($dbman->table_exists($tablename)) {
-                        $pluginonly['plugin'] = $pluginseed->plugin;
-                        $deletelist = $DB->get_recordset('survey_item', $pluginonly, 'id', 'id');
-                        foreach($deletelist as $todelete) {
-                            $DB->delete_records($tablename, array('itemid' => $todelete->id));
-                        }
-                    }
-                    $deletelist->close();
-                }
-                $DB->delete_records('survey_item', $sqlparam);
-                // END: delete other items
-                break;
-            default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->formdata->actionoverother = '.$this->formdata->actionoverother);
-        }
-
-        $this->utemplateid = $this->formdata->usertemplate;
-        if (!empty($this->utemplateid)) { // something was selected
-            // BEGIN: add records from template
-            $this->add_items_from_utemplate();
-            // END: add records from template
-        }
-    }
-
-    /*
-     * add_items_from_utemplate
-     *
-     * @param $templateid
-     * @return
-     */
-    public function add_items_from_utemplate() {
-        global $DB;
-
-        $templatecontent = $this->get_utemplate_content();
-
-        $xmltext = simplexml_load_string($templatecontent);
-
-        // echo '<h2>Items saved in the file ('.count($xmltext->item).')</h2>';
-
-        $sortindexoffset = $DB->get_field('survey_item', 'MAX(sortindex)', array('surveyid' => $this->survey->id));
-        foreach ($xmltext->children() as $item) {
-            // echo '<h3>Count of tables for the current item: '.count($item->children()).'</h3>';
-            foreach ($item->children() as $table) {
-                $tablename = $table->getName();
-                // echo '<h4>Count of fields of the table '.$tablename.': '.count($table->children()).'</h4>';
-                $record = array();
-                foreach ($table->children() as $field) {
-                    $fieldname = $field->getName();
-                    $fieldvalue = (string)$field;
-                    // echo '<div>Table: '.$table->getName().', Field: '.$fieldname.', content: '.$field.'</div>';
-                    if ($fieldvalue == SURVEY_EMPTYTEMPLATEFIELD) {
-                        $record[$fieldname] = null;
-                    } else {
-                        $record[$fieldname] = $fieldvalue;
-                    }
-                }
-
-                unset($record['id']);
-                $record['surveyid'] = $this->survey->id;
-                if ($tablename == 'survey_item') {
-                    $record['sortindex'] += $sortindexoffset;
-                    if (!empty($record['parentid'])) {
-                        $sqlparams = array('surveyid' => $this->survey->id, 'sortindex' => ($record['parentid'] + $sortindexoffset));
-                        $record['parentid'] = $DB->get_field('survey_item', 'id', $sqlparams, MUST_EXIST);
-                    }
-                    $itemid = $DB->insert_record($tablename, $record);
-                } else {
-                    $record['itemid'] = $itemid;
-                    $DB->insert_record($tablename, $record, false);
-                }
-            }
-        }
     }
 
     /*

@@ -148,8 +148,8 @@ function survey_get_sid_field_content($record) {
     } else {
         // get the string 'content_sid'
         // from surveytemplate_{$this->template}.php file
-        $stringindex = 'content'.sprintf('%02d', $record->content_sid);
-        $return = get_string($stringindex, 'surveytemplate_'.$record->template);
+        $stringindex = sprintf('%02d', $record->content_sid);
+        $return = get_string('item_content_'.$stringindex, 'surveytemplate_'.$record->template);
 
         return $return;
     }

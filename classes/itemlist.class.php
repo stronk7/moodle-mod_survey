@@ -163,6 +163,9 @@ class mod_survey_itemlist {
                 // it was required to move the item $this->itemid
                 // no action is foreseen, only page reload
                 break;
+            case SURVEY_RESTOREMULTILANG:
+                $this->manage_item_restoremultilang();
+                break;
             case SURVEY_CHANGEORDER:
                 // it was required to move the item $this->itemid
                 $this->reorder_items();
@@ -277,6 +280,7 @@ class mod_survey_itemlist {
         $hidetitle = get_string('hidefield', 'survey');
         $showtitle = get_string('showfield', 'survey');
         $deletetitle = get_string('delete');
+        $multilangtitle = get_string('multilang', 'survey');
         $indenttitle = get_string('indent', 'survey');
         $moveheretitle = get_string('movehere');
         $namenotset = get_string('namenotset', 'survey');
@@ -486,11 +490,20 @@ class mod_survey_itemlist {
 
                 // *************************************** SURVEY_DELETEITEM
                 if (!$this->hassubmissions || $CFG->survey_forcemodifications) {
-                    $paramurl = $paramurl_base + array('act' => SURVEY_DELETEITEM, 'itm' => $item->sortindex);
+                    $paramurl = $paramurl_base + array('act' => SURVEY_DELETEITEM);
                     $basepath = new moodle_url('items_manage.php', $paramurl);
 
                     $icons .= '<a class="editing_update" title="'.$deletetitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$deletetitle.'" title="'.$deletetitle.'" /></a>&nbsp;';
+                }
+
+                // *************************************** SURVEY_RESTOREMULTILANG
+                if ($item->get_template() && $item->item_get_multilang_fields()) {
+                    $paramurl = $paramurl_base + array('act' => SURVEY_RESTOREMULTILANG);
+                    $basepath = new moodle_url('items_manage.php', $paramurl);
+
+                    $icons .= '<a class="editing_update" title="'.$multilangtitle.'" href="'.$basepath.'">';
+                    $icons .= '<img src="'.$OUTPUT->pix_url('multilang', 'survey').'" class="iconsmall" alt="'.$multilangtitle.'" title="'.$multilangtitle.'" /></a>&nbsp;';
                 }
 
                 // *************************************** SURVEY_REQUIRED ON/OFF
@@ -665,7 +678,8 @@ class mod_survey_itemlist {
         $itemstoprocess = count($tohidelist);
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             if ($itemstoprocess > 1) { // ask for confirmation
-                $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);
+                $item = survey_get_item($this->itemid, $this->type, $this->plugin);
+                $itemcontent = $item->get_content();
 
                 $a = new stdClass();
                 $a->parentid = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
@@ -674,7 +688,7 @@ class mod_survey_itemlist {
 
                 $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_HIDEITEM);
 
-                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'type' => $this->type);
+                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'plugin' => $this->plugin, 'type' => $this->type);
                 $urlyes = new moodle_url('items_manage.php', $optionsyes);
                 $buttonyes = new single_button($urlyes, get_string('confirmitemstohide', 'survey'));
 
@@ -725,7 +739,8 @@ class mod_survey_itemlist {
         $itemstoprocess = count($toshowlist); // this is the list of ancestors
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             if ($itemstoprocess > 1) { // ask for confirmation
-                $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);
+                $item = survey_get_item($this->itemid, $this->type, $this->plugin);
+                $itemcontent = $item->get_content();
 
                 $a = new stdClass();
                 $a->lastitem = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
@@ -734,7 +749,7 @@ class mod_survey_itemlist {
 
                 $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_SHOWITEM, 'itemid' => $this->itemid);
 
-                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'type' => $this->type);
+                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'plugin' => $this->plugin, 'type' => $this->type);
                 $urlyes = new moodle_url('items_manage.php', $optionsyes);
                 $buttonyes = new single_button($urlyes, get_string('confirmitemstoshow', 'survey'));
 
@@ -791,7 +806,8 @@ class mod_survey_itemlist {
         $itemstoprocess = count($toadvancedlist);
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             if (count($toadvancedlist) > 1) { // ask for confirmation
-                $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);
+                $item = survey_get_item($this->itemid, $this->type, $this->plugin);
+                $itemcontent = $item->get_content();
 
                 $a = new stdClass();
                 $a->parentid = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
@@ -800,7 +816,7 @@ class mod_survey_itemlist {
 
                 $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_MAKELIMITED);
 
-                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'type' => $this->type);
+                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'plugin' => $this->plugin, 'type' => $this->type);
                 $urlyes = new moodle_url('items_manage.php', $optionsyes);
                 $buttonyes = new single_button($urlyes, get_string('confirmitemstoadvanced', 'survey'));
 
@@ -851,7 +867,8 @@ class mod_survey_itemlist {
         $itemstoprocess = count($tostandardlist); // this is the list of ancestors
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             if ($itemstoprocess > 1) { // ask for confirmation
-                $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);
+                $item = survey_get_item($this->itemid, $this->type, $this->plugin);
+                $itemcontent = $item->get_content();
 
                 $a = new stdClass();
                 $a->lastitem = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
@@ -860,7 +877,7 @@ class mod_survey_itemlist {
 
                 $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_MAKEFORALL, 'itemid' => $this->itemid);
 
-                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'type' => $this->type);
+                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'plugin' => $this->plugin, 'type' => $this->type);
                 $urlyes = new moodle_url('items_manage.php', $optionsyes);
                 $buttonyes = new single_button($urlyes, get_string('confirmitemstostandard', 'survey'));
 
@@ -908,11 +925,10 @@ class mod_survey_itemlist {
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             // ask for confirmation
             // in the frame of the confirmation I need to declare whether some child will break the link
-            $itemcontent = $DB->get_field('survey_item', 'content', array('id' => $this->itemid), MUST_EXIST);
+            $item = survey_get_item($this->itemid, $this->type, $this->plugin);
+            $itemcontent = $item->get_content();
+
             $a = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
-            if (empty($a)) {
-                $a = get_string('userfriendlypluginname', 'surveyformat_'.$plugin);
-            }
             $message = get_string('askdeleteoneitem', 'survey', $a);
 
             // is there any child item link to break
@@ -927,7 +943,7 @@ class mod_survey_itemlist {
 
             $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_DELETEITEM);
 
-            $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'plugin' => $this->plugin, 'type' => $this->type, 'itemid' => $this->itemid, 'itm' => $this->itemtomove);
+            $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'plugin' => $this->plugin, 'type' => $this->type);
             $urlyes = new moodle_url('items_manage.php', $optionsyes);
             $buttonyes = new single_button($urlyes, $labelyes);
 
@@ -949,26 +965,17 @@ class mod_survey_itemlist {
                         // because one I reorder orderindex in childdren items (in db) changes from the one stored in $childitems
                         // and at the second cycle I reorder wrong items
                         foreach ($childrenseeds as $childseed) {
-                            require_once($CFG->dirroot.'/mod/survey/'.$childseed->type.'/'.$childseed->plugin.'/plugin.class.php');
-                            $itemclass = 'survey'.$childseed->type.'_'.$childseed->plugin;
-                            $item = new $itemclass($childseed->id);
+                            $item = survey_get_item($childseed->id, $childseed->type, $childseed->plugin);
                             $item->item_delete_item($childseed->id);
                         }
                     }
 
                     // get the content of the item for the closing message
-                    $deletingrecord = $DB->get_record('survey_item', array('id' => $this->itemid), 'id, content, content_sid, template, sortindex', MUST_EXIST);
-                    $killedsortindex = $deletingrecord->sortindex;
+                    $item = survey_get_item($this->itemid, $this->type, $this->plugin);
+                    $itemcontent = $item->get_content();
 
-                    $a = survey_get_sid_field_content($deletingrecord);
-                    if (empty($a)) {
-                        $a = get_string('userfriendlypluginname', 'surveyformat_'.$this->plugin);
-                    }
-
-                    require_once($CFG->dirroot.'/mod/survey/'.$this->type.'/'.$this->plugin.'/plugin.class.php');
-                    $itemclass = 'survey'.$this->type.'_'.$this->plugin;
-                    $item = new $itemclass($this->itemid);
-
+                    $a = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+                    $killedsortindex = $item->get_sortindex();
                     $item->item_delete_item($this->itemid);
 
                     // renum sortindex
@@ -990,6 +997,73 @@ class mod_survey_itemlist {
                     } else {
                         $message = get_string('itemdeleted', 'survey', $a);
                     }
+                    echo $OUTPUT->box($message, 'notice centerpara');
+                    break;
+                case SURVEY_CONFIRMED_NO:
+                    $message = get_string('usercanceled', 'survey');
+                    echo $OUTPUT->notification($message, 'notifyproblem');
+                    break;
+                default:
+                    debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->confirm = '.$this->confirm);
+            }
+        }
+    }
+
+    /*
+     * manage_item_restoremultilang
+     *
+     * @param
+     * @return
+     */
+    public function manage_item_restoremultilang() {
+        global $CFG, $DB, $OUTPUT;
+
+        if ($this->confirm == SURVEY_UNCONFIRMED) {
+            // ask for confirmation
+            $item = survey_get_item($this->itemid);
+            $itemcontent = $item->get_content();
+
+            $a = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+            $message = get_string('askmultilangrestore', 'survey', $a);
+
+            $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_RESTOREMULTILANG);
+
+            $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'plugin' => $this->plugin, 'type' => $this->type);
+            $urlyes = new moodle_url('items_manage.php', $optionsyes);
+            $buttonyes = new single_button($urlyes, get_string('yes'));
+
+            $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
+            $urlno = new moodle_url('items_manage.php', $optionsno);
+            $buttonno = new single_button($urlno, get_string('no'));
+
+            echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
+            echo $OUTPUT->footer();
+            die;
+        } else {
+            switch ($this->confirm) {
+                case SURVEY_CONFIRMED_YES:
+                    $item = survey_get_item($this->itemid, $this->type, $this->plugin);
+                    $pluginfields = $item->item_get_multilang_fields();
+                    $template = $item->get_template();
+
+                    $record = array();
+                    foreach ($pluginfields as $plugin => $fieldnames) {
+                        foreach ($fieldnames as $fieldname) {
+                            $sid = $item->item_get_generic_field($fieldname.'_sid');
+                            if (!empty($sid)) { // ok, the field is supposed to be multilan but... is it used or unused?
+                                // to restore multilang behaviour the field needs to be EMPTY
+                                $record[$fieldname] = null;
+                            }
+                        }
+                        if ($plugin == 'item') {
+                            $record['id'] = $this->itemid;
+                        } else {
+                            $record['id'] = $DB->get_field('survey_'.$plugin, 'id', array('itemid' => $this->itemid));
+                        }
+                        $DB->update_record('survey_'.$plugin, $record);
+                    }
+
+                    $message = get_string('multilangrestored', 'survey');
                     echo $OUTPUT->box($message, 'notice centerpara');
                     break;
                 case SURVEY_CONFIRMED_NO:
@@ -1130,10 +1204,7 @@ class mod_survey_itemlist {
             $current_hide = $item->get_hide();
 
             if ($item->get_parentid()) {
-                $parentseed = $DB->get_record('survey_item', array('id' => $item->get_parentid()), 'plugin', MUST_EXIST);
-                require_once($CFG->dirroot.'/mod/survey/field/'.$parentseed->plugin.'/plugin.class.php');
-                $itemclass = 'surveyfield_'.$parentseed->plugin;
-                $parentitem = new $itemclass($item->get_parentid());
+                $parentitem = survey_get_item($item->get_parentid()); // here I do not know type and plugin
             }
 
             $tablerow = array();

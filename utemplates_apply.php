@@ -84,7 +84,7 @@ $apply_utemplate = new survey_applyutemplateform($formurl, $formparams);
 // ////////////////////////////
 // manage form submission
 if ($utemplate_manager->formdata = $apply_utemplate->get_data()) {
-    $utemplate_manager->apply_utemplate();
+    $utemplate_manager->apply_template(SURVEY_USERTEMPLATE);
 
     $redirecturl = new moodle_url('items_manage.php', $paramurl);
     redirect($redirecturl);
@@ -117,7 +117,7 @@ $a = new stdClass();
 $a->usertemplate = get_string('usertemplate', 'survey');
 $a->none = get_string('notanyset', 'survey');
 $a->actionoverother = get_string('actionoverother', 'survey');
-$a->delete = get_string('delete', 'survey');
+$a->deleteallitems = get_string('deleteallitems', 'survey');
 
 $message = get_string('applyutemplateinfo', 'survey', $a);
 echo $OUTPUT->box($message, 'generaltable generalbox boxaligncenter boxwidthnormal');

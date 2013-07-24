@@ -88,33 +88,37 @@ define('SURVEY_TYPEFIELD' , 'field');
 define('SURVEY_TYPEFORMAT', 'format');
 
 // ACTIONS
-    define('SURVEY_NOACTION'      , '0');
+    define('SURVEY_NOACTION'          , '0');
+
     // ITEM MANAGEMENT section
-    define('SURVEY_EDITITEM'      , '1');
-    define('SURVEY_CHANGEORDERASK', '2');
-    define('SURVEY_CHANGEORDER'   , '3');
-    define('SURVEY_HIDEITEM'      , '4');
-    define('SURVEY_SHOWITEM'      , '5');
-    define('SURVEY_DELETEITEM'    , '6');
-    define('SURVEY_REQUIREDOFF'   , '7');
-    define('SURVEY_REQUIREDON'    , '8');
-    define('SURVEY_CHANGEINDENT'  , '9');
-    define('SURVEY_ADDTOSEARCH'   ,'10');
-    define('SURVEY_OUTOFSEARCH'   ,'11');
-    define('SURVEY_MAKEFORALL'    ,'12');
-    define('SURVEY_MAKELIMITED'   ,'13');
+    define('SURVEY_EDITITEM'          , '1');
+    define('SURVEY_CHANGEORDERASK'    , '2');
+    define('SURVEY_CHANGEORDER'       , '3');
+    define('SURVEY_HIDEITEM'          , '4');
+    define('SURVEY_SHOWITEM'          , '5');
+    define('SURVEY_DELETEITEM'        , '6');
+    define('SURVEY_RESTOREMULTILANG'  , '7');
+    define('SURVEY_REQUIREDOFF'       , '8');
+    define('SURVEY_REQUIREDON'        , '9');
+    define('SURVEY_CHANGEINDENT'      ,'10');
+    define('SURVEY_ADDTOSEARCH'       ,'11');
+    define('SURVEY_OUTOFSEARCH'       ,'12');
+    define('SURVEY_MAKEFORALL'        ,'13');
+    define('SURVEY_MAKELIMITED'       ,'14');
 
     // RESPONSES section
-    define('SURVEY_EDITRESPONSE'      ,'14');
-    define('SURVEY_READONLYRESPONSE'  ,'15');
-    define('SURVEY_DELETERESPONSE'    ,'16');
-    define('SURVEY_DELETEALLRESPONSES','17');
-    define('SURVEY_RESPONSETOPDF'     ,'18');
+    define('SURVEY_EDITRESPONSE'      ,'15');
+    define('SURVEY_READONLYRESPONSE'  ,'16');
+    define('SURVEY_DELETERESPONSE'    ,'17');
+    define('SURVEY_DELETEALLRESPONSES','18');
+    define('SURVEY_RESPONSETOPDF'     ,'19');
+
     // SURVEY section
-    define('SURVEY_PREVIEWSURVEY'     ,'19');
+    define('SURVEY_PREVIEWSURVEY'     ,'20');
+
     // UTEMPLATE section
-    define('SURVEY_DELETEUTEMPLATE'   ,'20');
-    define('SURVEY_EXPORTUTEMPLATE'   ,'21');
+    define('SURVEY_DELETEUTEMPLATE'   ,'21');
+    define('SURVEY_EXPORTUTEMPLATE'   ,'22');
 
 // OVERFLOW
 define('SURVEY_LEFT_OVERFLOW' , -10);
@@ -187,6 +191,9 @@ define('SURVEY_EMPTYTEMPLATEFIELD', '@@NULL@@');
 // friendly format
 define('SURVEY_FIRENDLYFORMAT', -1);
 
+// friendly format
+define('SURVEY_USERTEMPLATE', 0);
+define('SURVEY_MASTERTEMPLATE', 1);
 
 /*
  * survey_user_can_do_anything

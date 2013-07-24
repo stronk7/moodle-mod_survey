@@ -47,6 +47,27 @@ function xmldb_surveyformat_fieldset_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013042901, 'surveyformat', 'fieldset');
     }
 
+    if ($oldversion < 2013072301) {
+
+        // Rename field fslabel_sid on table survey_fieldset to label_sid.
+        $table = new xmldb_table('survey_fieldset');
+        $field = new xmldb_field('fslabel_sid', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'itemid');
+
+        // Launch rename field fslabel_sid.
+        $dbman->rename_field($table, $field, 'label_sid');
+
+
+        // Rename field fslabel on table survey_fieldset to label.
+        $table = new xmldb_table('survey_fieldset');
+        $field = new xmldb_field('fslabel', XMLDB_TYPE_CHAR, '128', null, null, null, null, 'fslabel_sid');
+
+        // Launch rename field fslabel.
+        $dbman->rename_field($table, $field, 'label');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013072301, 'surveyformat', 'fieldset');
+    }
+
     return true;
 }
 

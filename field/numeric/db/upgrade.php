@@ -66,5 +66,20 @@ function xmldb_surveyfield_numeric_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013062501, 'surveyfield', 'numeric');
     }
 
+    if ($oldversion < 2013072401) {
+
+        // Define field defaultvalue_sid to be dropped from survey_numeric.
+        $table = new xmldb_table('survey_numeric');
+        $field = new xmldb_field('defaultvalue_sid');
+
+        // Conditionally launch drop field defaultvalue_sid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013072401, 'survey');
+    }
+
     return true;
 }

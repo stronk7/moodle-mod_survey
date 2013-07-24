@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 /*
  * The base class defining an item
  */
-class surveyitem_base {
+class mod_survey_itembase {
 
     /***********************************************************************************/
     /* BEGIN OF FIELDS OF SURVEY_ITEMS CLASS */
@@ -483,29 +483,40 @@ class surveyitem_base {
      * @param string $fields
      * @return
      */
-    public function item_builtin_string_load_support($fields=null) {
+    public function item_builtin_string_load_support($pluginfields=null) {
+        global $CFG;
+
         if (empty($this->template)) {
             return;
         }
 
-        if (is_null($fields)) {
-            $fields = array('content');
+        // Take care: I verify the existence of the english folder even if, maybe, I will ask for the string in a different language
+        if (!file_exists($CFG->dirroot.'/mod/survey/template/'.$this->template.'/lang/en/surveytemplate_'.$this->template.'.php')) {
+            // this template does not support multilang
+            return;
         }
-        if (!is_array($fields)) {
+
+        // if (is_null($pluginfields)) {
+        //     $pluginfields = array('item' => array('content'));
+        // }
+        if (!is_array($pluginfields)) {
             print_error('Array or null are expected in item_builtin_string_load_support');
         }
 
-        // special care for content editor
-        foreach ($fields as $fieldname) {
-            if (!isset($this->{$fieldname.'_sid'})) {
-                continue;
-            }
-            if (!strlen($this->{$fieldname.'_sid'})) {
-                continue;
-            }
+        foreach ($pluginfields as $plugin => $fieldnames) {
+            foreach ($fieldnames as $fieldname) {
+                if (!isset($this->{$fieldname.'_sid'})) {
+                    continue;
+                }
+                if (!strlen($this->{$fieldname.'_sid'})) {
+                    continue;
+                }
 
-            $stringindex = $fieldname.sprintf('%02d', $this->{$fieldname.'_sid'});
-            $this->{$fieldname} = get_string($stringindex, 'surveytemplate_'.$this->template);
+                if (empty($this->{$fieldname})) {
+                    $stringkey = $plugin.'_'.$fieldname.'_'.sprintf('%02d', $this->{$fieldname.'_sid'});
+                    $this->{$fieldname} = get_string($stringkey, 'surveytemplate_'.$this->template);
+                } // else $this->{$fieldname} hold a custom content: do not touch it
+            }
         }
     }
 
@@ -514,52 +525,36 @@ class surveyitem_base {
      * starting from the item object, replace 'content' and $fields for builtin survey
      *
      * @param StdClass $record
-     * @param string $fields
+     * @param string $pluginfields
      * @return
      */
-    public function item_builtin_string_save_support(&$record, $fields=null) {
+    public function item_builtin_string_save_support(&$record, $pluginfields=null) {
         if (empty($this->template)) {
             return;
         }
-
-        if (is_null($fields)) {
-            $fields = array('content');
+        if (is_null($pluginfields)) {
+            return;
         }
-        if (!is_array($fields)) {
+
+        if (!is_array($pluginfields)) {
             print_error('Array or null are expected in item_builtin_string_save_support');
         }
 
-        if (in_array('content', $fields)) {
-            // special care for content editor
-            if (!is_null($this->content_sid)) { // if 'content' is supposed to be multilang
-                $stringindex = 'content'.sprintf('%02d', $this->content_sid);
-                $referencestring = get_string($stringindex, 'surveytemplate_'.$this->template);
-
-                if ($record->content_editor['text'] === $referencestring) {
-                    // leave the field empty
-                    $record->content_editor['text'] = null;
-                // } else {
-                    // $record->content_editor['text'] holds a custom text. Do not touch it.
-                }
-            }
-
-            // content has already been managed: take it off now
-            $fields = array_diff($fields, array('content'));
-        }
-
         // usually this routine is not executed
-        // $fields['options'] = 'options_sid';
-        foreach ($fields as $fieldname) {
-            if (!is_null($this->{$fieldname.'_sid'})) { // if the field $fieldname is multilang
-                $stringindex = $fieldname.sprintf('%02d', $this->{$fieldname.'_sid'});
-                $referencestring = get_string($stringindex, 'surveytemplate_'.$this->template);
+        // $pluginfields['options'] = 'options_sid';
+        foreach ($pluginfields as $plugin => $fieldnames) {
+            foreach ($fieldnames as $fieldname) {
+                if (!is_null($this->{$fieldname.'_sid'})) { // if the field $fieldname is multilang
+                    $stringkey = $plugin.'_'.$fieldname.'_'.sprintf('%02d', $this->{$fieldname.'_sid'});
+                    $referencestring = get_string($stringkey, 'surveytemplate_'.$this->template);
 
-                $record->{$fieldname} = str_replace("\r", '', $record->{$fieldname});
-                if ($record->{$fieldname} === $referencestring) {
-                    // leave the field empty
-                    $record->{$fieldname} = null;
-                // } else {
-                    // $this->{$fieldname} holds a custom text. Do not touch it.
+                    $record->{$fieldname} = str_replace("\r", '', $referencestring);
+                    if (($plugin == 'item') && ($fieldname == 'content')) {
+                        $record->contentformat = FORMAT_HTML;
+                    }
+                    if ($record->{$fieldname} === $referencestring) {
+                        $record->{$fieldname} = null;
+                    } // else $this->{$fieldname} hold a custom content: do not touch it
                 }
             }
         }
@@ -601,10 +596,9 @@ class surveyitem_base {
      * item_delete_item
      *
      * @param $itemid
-     * @param $displaymessage
      * @return
      */
-    public function item_delete_item($itemid, $displaymessage=false) {
+    public function item_delete_item($itemid) {
         global $DB, $cm, $USER, $COURSE, $OUTPUT;
 
         $recordtokill = $DB->get_record('survey_item', array('id' => $itemid));
@@ -625,7 +619,7 @@ class surveyitem_base {
         survey_reset_items_pages($cm->instance);
 
         // delete records from survey_userdata
-        // if, at the end, the related survey_submissions has no data, then, delete it too.
+        // if, at the end, the related survey_submission has no data, then, delete it too.
         if ($DB->delete_records('survey_userdata', array('itemid' => $itemid))) {
             add_to_log($COURSE->id, 'survey', 'delete fields', 'view.php?id='.$cm->id, get_string('surveyfield', 'survey'), $cm->id, $USER->id);
         } else {
@@ -643,15 +637,6 @@ class surveyitem_base {
             } else {
                 print_error('Unable to delete record id IN '.implode(',', $surveytodelete).' from survey_submissions');
             }
-        }
-
-        if ($displaymessage) {
-            $a = survey_get_sid_field_content($recordtokill);
-            if (empty($a)) {
-                $a = get_string('userfriendlypluginname', 'surveyformat_'.$plugin);
-            }
-            $message = get_string('itemdeleted', 'survey', $a);
-            echo $OUTPUT->box($message, 'notice centerpara');
         }
     }
 
@@ -1199,6 +1184,7 @@ class surveyitem_base {
      * @return
      */
     public function get_content() {
+        // TODO: what if this is an html with images, for instance?
         return $this->content;
     }
 
@@ -1220,6 +1206,16 @@ class surveyitem_base {
      */
     public function get_parentcontent() {
         return $this->parentcontent;
+    }
+
+    /*
+     * get_template
+     *
+     * @param
+     * @return
+     */
+    public function get_template() {
+        return $this->template;
     }
 
     /*
@@ -1420,6 +1416,19 @@ class surveyitem_base {
     public function parent_encode_content_to_value($parentcontent) {
         // whether not overridden by specific class method, return true
         return true; // nothing to do!
+    }
+
+    /*
+     * item_get_multilang_fields
+     *
+     * @param
+     * @return
+     */
+    public function item_get_multilang_fields() {
+        $fieldlist = array();
+        $fieldlist['item'] = array('content');
+
+        return $fieldlist;
     }
 
     // MARK userform

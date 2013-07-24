@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
-class surveyitem_baseform extends moodleform {
+class mod_survey_itembaseform extends moodleform {
 
     public function definition() {
         global $DB;

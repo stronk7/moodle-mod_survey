@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/format/fieldset/lib.php');
 
-class surveyformat_fieldset extends surveyitem_base {
+class surveyformat_fieldset extends mod_survey_itembase {
 
     /*
      * $surveyid = the id of the survey
@@ -51,14 +51,14 @@ class surveyformat_fieldset extends surveyitem_base {
     /*******************************************************************/
 
     /*
-     * $fslabel = the content of the message
+     * $label = the content of the message
      */
-    public $fslabel = '';
+    public $label = '';
 
     /*
-     * $fslabel_sid = the content of the message
+     * $label_sid = the content of the message
      */
-    public $fslabel_sid = null;
+    public $label_sid = null;
 
     /*
      * $flag = features describing the object
@@ -112,12 +112,12 @@ class surveyformat_fieldset extends surveyitem_base {
      * @return
      */
     public function item_load($itemid) {
-        // Do parent item loading stuff here (surveyitem_base::item_load($itemid)))
+        // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
         parent::item_load($itemid);
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = array('content', 'fslabel');
+        $fieldlist = $this->item_get_multilang_fields();
         $this->item_builtin_string_load_support($fieldlist);
     }
 
@@ -134,11 +134,12 @@ class surveyformat_fieldset extends surveyitem_base {
 
         // multilang save support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = array('fslabel'); // built-in label index
-        $record->fslabel = substr($record->fslabel, 0, 128); // 128 is maximum allowed length I can save
+        $record->label = substr($record->label, 0, 128); // 128 is maximum allowed length I can save
+
+        $fieldlist = $this->item_get_multilang_fields();
         $this->item_builtin_string_save_support($record, $fieldlist);
 
-        // Do parent item saving stuff here (surveyitem_base::item_save($record)))
+        // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
     }
 
@@ -169,7 +170,20 @@ class surveyformat_fieldset extends surveyitem_base {
      * @return
      */
     public function item_get_main_text() {
-        return $this->fslabel;
+        return $this->label;
+    }
+
+    /*
+     * item_get_multilang_fields
+     *
+     * @param
+     * @return
+     */
+    public function item_get_multilang_fields() {
+        $fieldlist = array();
+        $fieldlist['fieldset'] = array('label');
+
+        return $fieldlist;
     }
 
     // MARK userform
@@ -187,7 +201,7 @@ class surveyformat_fieldset extends surveyitem_base {
     public function userform_mform_element($mform, $searchform) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        $mform->addElement('header', $this->itemname, $this->fslabel);
+        $mform->addElement('header', $this->itemname, $this->label);
     }
 
     /*

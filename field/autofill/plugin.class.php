@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/mod/survey/classes/itembase.class.php');
 require_once($CFG->dirroot.'/mod/survey/field/autofill/lib.php');
 
-class surveyfield_autofill extends surveyitem_base {
+class surveyfield_autofill extends mod_survey_itembase {
 
     /*
      * $surveyid = the id of the survey
@@ -130,7 +130,7 @@ class surveyfield_autofill extends surveyitem_base {
      * @return
      */
     public function item_load($itemid) {
-        // Do parent item loading stuff here (surveyitem_base::item_load($itemid)))
+        // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
         parent::item_load($itemid);
 
         // multilang load support for builtin survey
@@ -157,7 +157,7 @@ class surveyfield_autofill extends surveyitem_base {
         // showfield
         $record->showfield = (isset($record->showfield)) ? 1 : 0;
 
-        // Do parent item saving stuff here (surveyitem_base::save($record)))
+        // Do parent item saving stuff here (mod_survey_itembase::save($record)))
         return parent::item_save($record);
     }
 
@@ -280,6 +280,16 @@ class surveyfield_autofill extends surveyitem_base {
         }
 
         return $values;
+    }
+
+    /*
+     * item_get_multilang_fields
+     *
+     * @param
+     * @return
+     */
+    public function item_get_multilang_fields() {
+        return false;
     }
 
     // MARK userform

@@ -82,7 +82,7 @@ if ($apply_mtemplate->is_cancelled()) {
 }
 
 if ($mtemplate_manager->formdata = $apply_mtemplate->get_data()) {
-    $mtemplate_manager->apply_mtemplate();
+    $mtemplate_manager->apply_template(SURVEY_MASTERTEMPLATE);
 
     $redirecturl = new moodle_url('items_manage.php', $paramurl);
     redirect($redirecturl);
