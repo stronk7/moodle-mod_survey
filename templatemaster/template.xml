@@ -13,3 +13,20 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/*
+ * Defines the version of survey surveyTemplatePluginNamePlaceholder subplugin
+ *
+ * This code fragment is called by moodle_needs_upgrading() and
+ * /admin/index.php
+ *
+ * @package    surveytemplate
+ * @subpackage surveyTemplatePluginNamePlaceholder
+ * @copyright  2013 kordan <kordan@mclink.it>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->version = 1965100401;
+$plugin->requires = 2010091600;  // Requires this Moodle version

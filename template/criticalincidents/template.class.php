@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -13,3 +14,24 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/*
+ * @package    surveytemplate
+ * @subpackage criticalincidents
+ * @copyright  2013 kordan <kordan@mclink.it>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+class surveytemplate_test {
+    /*
+     * template_supports_multilang
+     *
+     * @param $record
+     * @return true or false
+     */
+    public function template_supports_multilang() {
+        return true;
+    }
+}

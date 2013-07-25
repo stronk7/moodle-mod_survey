@@ -16,25 +16,16 @@
 
 /*
  * @package    surveytemplate
- * @subpackage surveyTemplatePluginNamePlaceholder
+ * @subpackage criticalincidents
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-// require_once(_LIBRARIES_);
+// $settings->add(new admin_setting_heading('surveytemplate_criticalincidents_settings', get_string('header_left', 'surveytemplate_criticalincidents'),
+//     get_string('header_right', 'surveytemplate_criticalincidents')));
 
-/*
- * surveytemplate_surveyTemplatePluginNamePlaceholder_add
- * @param
- * @return
- */
-function surveytemplate_surveyTemplatePluginNamePlaceholder_add() {
-    global $DB, $CFG;
-
-    $template = '@@mTemplateNamePlaceholder@@'; // it must match the name of the parent folder of this file
-    $timenow = time();
-    $sortindex = 0;
-
-}
+// $settings->add(new admin_setting_configcheckbox('surveytemplate_criticalincidents/extrarow',
+//     get_string('extrarow', 'surveytemplate_criticalincidents'),
+//     get_string('extrarow_desc', 'surveytemplate_criticalincidents'), 1));

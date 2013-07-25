@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,21 +17,21 @@
 
 /*
  * @package    surveytemplate
- * @subpackage collesactualpreferred
+ * @subpackage collespreferred
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-class surveytemplate_collesactualpreferred {
+class surveytemplate_test {
     /*
-     * apply_survey_settings
+     * template_supports_multilang
      *
      * @param $record
-     * @return record
+     * @return true or false
      */
-    public function apply_survey_settings($record) {
-        return $record;
+    public function template_supports_multilang() {
+        return true;
     }
 }

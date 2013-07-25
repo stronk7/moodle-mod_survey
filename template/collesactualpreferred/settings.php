@@ -15,30 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * This file replaces the legacy STATEMENTS section in db/install.xml,
- * lib.php/modulename_install() post installation hook and partially defaults.php
- *
  * @package    surveytemplate
- * @subpackage collespreferred
+ * @subpackage collesactualpreferred
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)).'/lib.php');
+// $settings->add(new admin_setting_heading('surveytemplate_collesactualpreferred_settings', get_string('header_left', 'surveytemplate_collesactualpreferred'),
+//     get_string('header_right', 'surveytemplate_collesactualpreferred')));
 
-/*
- * Post installation procedure
- */
-function xmldb_surveytemplate_collespreferred_install() {
-    surveytemplate_collespreferred_add();
-}
-
-/*
- * Post installation procedure recovery
- */
-function xmldb_surveytemplate_collespreferred_install_recovery() {
-    // global $CFG, $DB;
-    // require_once(dirname(__FILE__) . '/upgradelib.php');
-}
+// $settings->add(new admin_setting_configcheckbox('surveytemplate_collesactualpreferred/extrarow',
+//     get_string('extrarow', 'surveytemplate_collesactualpreferred'),
+//     get_string('extrarow_desc', 'surveytemplate_collesactualpreferred'), 1));

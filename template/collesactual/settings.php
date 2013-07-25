@@ -15,30 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Keeps track of upgrades to the surveytemplate collesactual
- *
  * @package    surveytemplate
  * @subpackage collesactual
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/*
- * Performs upgrade of the database structure and data
- *
- * @param int $oldversion the version we are upgrading from
- * @return bool true
- */
-function xmldb_surveytemplate_collesactual_upgrade($oldversion) {
-    global $DB;
+defined('MOODLE_INTERNAL') || die();
 
-    $dbman = $DB->get_manager();
+// $settings->add(new admin_setting_heading('surveytemplate_collesactual_settings', get_string('header_left', 'surveytemplate_collesactual'),
+//     get_string('header_right', 'surveytemplate_collesactual')));
 
-    // if ($oldversion < 2012101103) {
-
-        // survey savepoint reached
-    //    upgrade_plugin_savepoint(true, 2012062560, 'surveytemplate', 'collesactual');
-    // }
-
-    return true;
-}
+// $settings->add(new admin_setting_configcheckbox('surveytemplate_collesactual/extrarow',
+//     get_string('extrarow', 'surveytemplate_collesactual'),
+//     get_string('extrarow_desc', 'surveytemplate_collesactual'), 1));

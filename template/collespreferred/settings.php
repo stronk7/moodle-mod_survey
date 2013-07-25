@@ -13,3 +13,19 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/*
+ * @package    surveytemplate
+ * @subpackage collespreferred
+ * @copyright  2013 kordan <kordan@mclink.it>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+// $settings->add(new admin_setting_heading('surveytemplate_collespreferred_settings', get_string('header_left', 'surveytemplate_collespreferred'),
+//     get_string('header_right', 'surveytemplate_collespreferred')));
+
+// $settings->add(new admin_setting_configcheckbox('surveytemplate_collespreferred/extrarow',
+//     get_string('extrarow', 'surveytemplate_collespreferred'),
+//     get_string('extrarow_desc', 'surveytemplate_collespreferred'), 1));
