@@ -125,22 +125,6 @@ class surveyformat_pagebreak extends mod_survey_itembase {
     }
 
     /*
-     * item_get_plugin_values
-     *
-     * @param $pluginstructure
-     * @param $pluginsid
-     * @return
-     */
-    public function item_get_plugin_values($pluginstructure, $pluginsid) {
-        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
-
-        if ($reviewcounter != count($values)) {
-            print_error('survey_items values were not all checked. '.$reviewcounter.' reviewes vs '.count($values).' fields in the structure');
-        }
-        return $values;
-    }
-
-    /*
      * item_get_main_text
      * returns the content of the field defined as main
      *

@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Defines the version of survey surveyTemplatePluginNamePlaceholder subplugin
+ * Defines the version of survey surveyTemplate_@@templateNamePlaceholder@@ subplugin
  *
  * This code fragment is called by moodle_needs_upgrading() and
  * /admin/index.php
  *
  * @package    surveytemplate
- * @subpackage surveyTemplatePluginNamePlaceholder
+ * @subpackage surveyTemplate_@@templateNamePlaceholder@@
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

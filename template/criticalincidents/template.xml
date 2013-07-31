@@ -4,9 +4,7 @@
     <survey_item>
       <type>format</type>
       <plugin>label</plugin>
-      <template>criticalincidents</template>
-      <content_sid>1</content_sid>
-      <content/>
+      <content>item_content_01</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -21,13 +19,12 @@
       <sortindex>1</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471051</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_label>
-      <labelintro_sid>@@NULL@@</labelintro_sid>
       <labelintro/>
     </survey_label>
   </item>
@@ -35,9 +32,7 @@
     <survey_item>
       <type>field</type>
       <plugin>textarea</plugin>
-      <template>criticalincidents</template>
-      <content_sid>2</content_sid>
-      <content/>
+      <content>item_content_02</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -52,7 +47,7 @@
       <sortindex>2</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471051</timecreated>
       <timemodified>@@NULL@@</timemodified>
@@ -69,9 +64,7 @@
     <survey_item>
       <type>field</type>
       <plugin>textarea</plugin>
-      <template>criticalincidents</template>
-      <content_sid>3</content_sid>
-      <content/>
+      <content>item_content_03</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -86,7 +79,7 @@
       <sortindex>3</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471051</timecreated>
       <timemodified>@@NULL@@</timemodified>
@@ -103,9 +96,7 @@
     <survey_item>
       <type>field</type>
       <plugin>textarea</plugin>
-      <template>criticalincidents</template>
-      <content_sid>4</content_sid>
-      <content/>
+      <content>item_content_04</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -120,7 +111,7 @@
       <sortindex>4</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471051</timecreated>
       <timemodified>@@NULL@@</timemodified>
@@ -137,9 +128,7 @@
     <survey_item>
       <type>field</type>
       <plugin>textarea</plugin>
-      <template>criticalincidents</template>
-      <content_sid>5</content_sid>
-      <content/>
+      <content>item_content_05</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -154,7 +143,7 @@
       <sortindex>5</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471051</timecreated>
       <timemodified>@@NULL@@</timemodified>
@@ -171,9 +160,7 @@
     <survey_item>
       <type>field</type>
       <plugin>textarea</plugin>
-      <template>criticalincidents</template>
-      <content_sid>6</content_sid>
-      <content/>
+      <content>item_content_01</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -188,7 +175,7 @@
       <sortindex>6</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471051</timecreated>
       <timemodified>@@NULL@@</timemodified>

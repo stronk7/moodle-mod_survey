@@ -122,16 +122,12 @@ class surveyfield_checkbox extends mod_survey_itembase {
      * @return
      */
     public function item_load($itemid) {
-        // //////////////////////////////////
-        // Now execute very specific plugin level actions
-        // //////////////////////////////////
-        // multilang load support for builtin survey
-        // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = $this->item_get_multilang_fields();
-        $this->item_builtin_string_load_support($fieldlist);
-
         // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
         parent::item_load($itemid);
+
+        // multilang load support for builtin survey
+        // whether executed, the 'content' field is ALWAYS handled
+        $this->item_builtin_string_load_support();
     }
 
     /*
@@ -148,11 +144,6 @@ class surveyfield_checkbox extends mod_survey_itembase {
         // drop empty rows and trim trailing spaces from each textarea field
         $fieldlist = array('options', 'defaultvalue');
         $this->item_clean_textarea_fields($record, $fieldlist);
-
-        // multilang save support for builtin survey
-        // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = $this->item_get_multilang_fields();
-        $this->item_builtin_string_save_support($record, $fieldlist);
 
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
@@ -180,22 +171,14 @@ class surveyfield_checkbox extends mod_survey_itembase {
     }
 
     /*
-     * item_get_plugin_values
+     * item_get_friendlyformat
+     * returns true if the useform mform element for this item id is a group and false if not
      *
-     * @param $pluginstructure
-     * @param $pluginsid
+     * @param
      * @return
      */
-    public function item_get_plugin_values($pluginstructure, $pluginsid) {
-        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
-
-        // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, true);
-        if ($errindex !== false) {
-            print_error('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
-        }
-
-        return $values;
+    public function item_get_friendlyformat() {
+        return SURVEYFIELD_CHECKBOX_RETURNLABELS;
     }
 
     // MARK parent
@@ -625,7 +608,7 @@ class surveyfield_checkbox extends mod_survey_itembase {
 
         // format
         if ($format == SURVEY_FIRENDLYFORMAT) {
-            $format = $this->get_friendlyformat();
+            $format = $this->item_get_friendlyformat();
         }
         if (empty($format)) {
             $format = $this->downloadformat;
@@ -674,17 +657,6 @@ class surveyfield_checkbox extends mod_survey_itembase {
         }
 
         return $return;
-    }
-
-    /*
-     * get_friendlyformat
-     * returns true if the useform mform element for this item id is a group and false if not
-     *
-     * @param
-     * @return
-     */
-    public function get_friendlyformat() {
-        return SURVEYFIELD_CHECKBOX_RETURNLABELS;
     }
 
     /*

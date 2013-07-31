@@ -94,11 +94,21 @@ class mod_survey_templatebase {
             $xmlitem = $xmltemplate->addChild('item');
 
             // survey_item
-            $structure = $this->get_table_structure('survey_item');
-
             $xmltable = $xmlitem->addChild('survey_item');
+
+            if ($multilangfields = $item->item_get_multilang_fields()) { // pagebreak and fieldset have not multilang_fields
+                $this->build_langtree('item', $multilangfields, $item);
+            }
+
+            $structure = $this->get_table_structure('survey_item');
             foreach ($structure as $field) {
                 if ($field == 'surveyid') {
+                    continue;
+                }
+                if ($field == 'formpage') {
+                    continue;
+                }
+                if ($field == 'timemodified') {
                     continue;
                 }
                 if ($field == 'parentid') {
@@ -108,27 +118,31 @@ class mod_survey_templatebase {
                         // I store sortindex instead of parentid, because at restore time parent id will change
                         $val = $DB->get_field('survey_item', 'sortindex', $sqlparams);
                     } else {
-                        $val = 0;
+                        $val = SURVEY_EMPTYTEMPLATEFIELD;
                     }
 
                     $xmlfield = $xmltable->addChild($field, $val);
                     continue;
                 }
 
-                $val = $this->xml_get_field_content($item, 'item', $structure, $field, $counter, $templatetype);
+                $val = $this->xml_get_field_content($item, 'item', $field, $multilangfields);
                 $xmlfield = $xmltable->addChild($field, $val);
             }
 
             if ($item->get_useplugintable()) { // only page break does not use the plugin table
                 // child table
-                $structure = $this->get_table_structure('survey_'.$plugin);
-
                 $xmltable = $xmlitem->addChild('survey_'.$plugin);
+
+                $structure = $this->get_table_structure('survey_'.$plugin);
                 foreach ($structure as $field) {
+                    if ($field == 'itemid') {
+                        continue;
+                    }
                     if ($field == 'surveyid') {
                         continue;
                     }
-                    $val = $this->xml_get_field_content($item, $plugin, $structure, $field, $counter, $templatetype);
+
+                    $val = $this->xml_get_field_content($item, $plugin, $field, $multilangfields);
                     $xmlfield = $xmltable->addChild($field, $val);
                 }
             }
@@ -151,39 +165,26 @@ class mod_survey_templatebase {
      * @param
      * @return
      */
-    public function xml_get_field_content($item, $plugin, $structure, $field, &$counter, $templatetype) {
-        if ($templatetype == SURVEY_MASTERTEMPLATE) { // it is multilang
-            if (substr($field, -4) == '_sid') { // end with _sid
-                $counter[$plugin.'_'.$field] = (isset($counter[$plugin.'_'.$field])) ? ++$counter[$plugin.'_'.$field] : 1;
-                $val = $counter[$plugin.'_'.$field];
+    public function xml_get_field_content($item, $dummyplugin, $field, $multilangfields) {
 
-                return $val;
-            }
+        // 1st: which fields are multilang for the current item?
+        if (isset($multilangfields[$dummyplugin])) { // pagebreak and fieldset have not multilang_fields
+            if (in_array($field, $multilangfields[$dummyplugin])) { // if the field that is going to be assigned belongs to your multilang fields
+                $frankenstinname = $dummyplugin.'_'.$field;
 
-            $field_sid = $field.'_sid';
-            if (in_array($field_sid, $structure)) { // has corresponding _sid
-                $applymultilang = true;
-            } else {
-                $applymultilang = false;
-            }
-        } else {
-            $applymultilang = false;
-        }
-
-        if ($applymultilang) {
-            $val = '';
-        } else {
-            $item_field = $item->item_get_generic_field($field);
-            if (is_null($item_field)) {
-                $val = SURVEY_EMPTYTEMPLATEFIELD;
-            } else {
-                $val = $item_field;
-                if ($val == 0) {
-                    if (substr($field, -4) == '_sid') { // end with _sid
-                        $val = SURVEY_EMPTYTEMPLATEFIELD;
-                    }
+                if (isset($this->langtree[$frankenstinname])) {
+                    end($this->langtree[$frankenstinname]);
+                    $val = key($this->langtree[$frankenstinname]);
+                    return $val;
                 }
             }
+        }
+
+        $content = $item->item_get_generic_field($field);
+        if (!strlen($content)) {
+            $val = SURVEY_EMPTYTEMPLATEFIELD;
+        } else {
+            $val = $content;
         }
 
         return $val;
@@ -271,6 +272,12 @@ class mod_survey_templatebase {
             }
         } else {
             $this->mtemplatename = $this->formdata->mastertemplate;
+            $record = new StdClass();
+
+            $record->id = $this->survey->id;
+            $record->template = $this->mtemplatename;
+            $DB->update_record('survey', $record);
+
             $this->add_survey_from_template($templatetype);
         }
     }
@@ -297,38 +304,21 @@ class mod_survey_templatebase {
         // echo '<h2>Items saved in the file ('.count($xmltext->item).')</h2>';
 
         $sortindexoffset = $DB->get_field('survey_item', 'MAX(sortindex)', array('surveyid' => $this->survey->id));
-        foreach ($xmltext->children() as $item) {
-            // echo '<h3>Count of tables for the current item: '.count($item->children()).'</h3>';
-            foreach ($item->children() as $table) {
-                $tablename = $table->getName();
-                // echo '<h4>Count of fields of the table '.$tablename.': '.count($table->children()).'</h4>';
-                $plugin = substr($tablename, strlen('survey_'));
+        foreach ($xmltext->children() as $template_item) {
+            // echo '<h3>Count of tables for the current item: '.count($template_item->children()).'</h3>';
+            foreach ($template_item->children() as $template_table) {
+                $tablename = $template_table->getName();
+                // echo '<h4>Count of fields of the table '.$template_tablename.': '.count($template_table->children()).'</h4>';
                 $record = array();
-                foreach ($table->children() as $field) {
-                    $fieldname = $field->getName();
-                    if ($templatetype == SURVEY_MASTERTEMPLATE) { // it is multilang
-                        if (isset($record[$fieldname.'_sid']) && $record[$fieldname.'_sid']) { // has corresponding _sid
-                            $applymultilang = true;
-                        } else {
-                            $applymultilang = false;
-                        }
+                foreach ($template_table->children() as $template_field) {
+                    $fieldname = $template_field->getName();
+                    $fieldvalue = (string)$template_field;
+
+                    // does the field needs multilang management
+                    if ($fieldvalue == SURVEY_EMPTYTEMPLATEFIELD) {
+                        $record[$fieldname] = null;
                     } else {
-                        $applymultilang = false;
-                    }
-                    if ($applymultilang) {
-                        // $index = sprintf('%02d', $record[$fieldname.'_sid']);;
-                        // $record[$fieldname] = get_string($plugin.'_'.$fieldname.'_'.$index, 'surveytemplate_'.$templatename);
-                        // LEAVE THE FIELD EMPTY
-                    } else {
-                        $fieldvalue = (string)$field;
-// echo '$fieldname = '.$fieldname.'<br />';
-// echo '$fieldvalue = '.$fieldvalue.'<hr />';
-                        // echo '<div>Table: '.$table->getName().', Field: '.$fieldname.', content: '.$field.'</div>';
-                        if ($fieldvalue == SURVEY_EMPTYTEMPLATEFIELD) {
-                            $record[$fieldname] = null;
-                        } else {
-                            $record[$fieldname] = $fieldvalue;
-                        }
+                        $record[$fieldname] = $fieldvalue;
                     }
                 }
 

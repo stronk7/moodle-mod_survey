@@ -16,14 +16,14 @@
 
 /*
  * @package    surveytemplate
- * @subpackage surveyTemplatePluginNamePlaceholder
+ * @subpackage surveyTemplate_@@templateNamePlaceholder@@
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-class surveytemplate_surveyTemplatePluginNamePlaceholder {
+class surveytemplate_@@templateNamePlaceholder@@ {
     /*
      * apply_survey_settings
      *

@@ -142,6 +142,22 @@ class mod_survey_itemlist {
      * @param
      * @return
      */
+    public function drop_multilang() {
+        if ($this->survey->template) {
+            $this->action = SURVEY_DROPMULTILANG;
+            if ($this->confirm != SURVEY_UNCONFIRMED) {
+                $this->manage_actions();
+            }
+        }
+    }
+
+
+    /*
+     * manage_actions
+     *
+     * @param
+     * @return
+     */
     public function manage_actions() {
         global $OUTPUT, $DB;
 
@@ -163,8 +179,8 @@ class mod_survey_itemlist {
                 // it was required to move the item $this->itemid
                 // no action is foreseen, only page reload
                 break;
-            case SURVEY_RESTOREMULTILANG:
-                $this->manage_item_restoremultilang();
+            case SURVEY_DROPMULTILANG:
+                $this->manage_item_dropmultilang();
                 break;
             case SURVEY_CHANGEORDER:
                 // it was required to move the item $this->itemid
@@ -495,15 +511,6 @@ class mod_survey_itemlist {
 
                     $icons .= '<a class="editing_update" title="'.$deletetitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$deletetitle.'" title="'.$deletetitle.'" /></a>&nbsp;';
-                }
-
-                // *************************************** SURVEY_RESTOREMULTILANG
-                if ($item->get_template() && $item->item_get_multilang_fields()) {
-                    $paramurl = $paramurl_base + array('act' => SURVEY_RESTOREMULTILANG);
-                    $basepath = new moodle_url('items_manage.php', $paramurl);
-
-                    $icons .= '<a class="editing_update" title="'.$multilangtitle.'" href="'.$basepath.'">';
-                    $icons .= '<img src="'.$OUTPUT->pix_url('multilang', 'survey').'" class="iconsmall" alt="'.$multilangtitle.'" title="'.$multilangtitle.'" /></a>&nbsp;';
                 }
 
                 // *************************************** SURVEY_REQUIRED ON/OFF
@@ -1010,25 +1017,21 @@ class mod_survey_itemlist {
     }
 
     /*
-     * manage_item_restoremultilang
+     * manage_item_dropmultilang
      *
      * @param
      * @return
      */
-    public function manage_item_restoremultilang() {
+    public function manage_item_dropmultilang() {
         global $CFG, $DB, $OUTPUT;
 
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             // ask for confirmation
-            $item = survey_get_item($this->itemid);
-            $itemcontent = $item->get_content();
+            $message = get_string('mastertemplate_noedit', 'survey');
 
-            $a = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
-            $message = get_string('askmultilangrestore', 'survey', $a);
+            $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_DROPMULTILANG);
 
-            $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_RESTOREMULTILANG);
-
-            $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'plugin' => $this->plugin, 'type' => $this->type);
+            $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES);
             $urlyes = new moodle_url('items_manage.php', $optionsyes);
             $buttonyes = new single_button($urlyes, get_string('yes'));
 
@@ -1042,33 +1045,53 @@ class mod_survey_itemlist {
         } else {
             switch ($this->confirm) {
                 case SURVEY_CONFIRMED_YES:
-                    $item = survey_get_item($this->itemid, $this->type, $this->plugin);
-                    $pluginfields = $item->item_get_multilang_fields();
-                    $template = $item->get_template();
+                    $template = $this->survey->template;
+                    $where = array('surveyid' => $this->survey->id);
+                    $itemseeds = $DB->get_records('survey_item', $where, 'sortindex', 'id, type, plugin');
+                    foreach ($itemseeds as $itemseed) {
+                        $id = $itemseed->id;
+                        $type = $itemseed->type;
+                        $plugin = $itemseed->plugin;
+                        $item = survey_get_item($id, $type, $plugin);
+                        if ($multilangfields = $item->item_get_multilang_fields()) {
+                            foreach ($multilangfields as $plugin => $fieldnames) {
+                                $record = new StdClass();
+                                if ($plugin == 'item') {
+                                    $record->id = $item->get_itemid();
+                                } else {
+                                    $record->id = $item->get_pluginid();
+                                }
 
-                    $record = array();
-                    foreach ($pluginfields as $plugin => $fieldnames) {
-                        foreach ($fieldnames as $fieldname) {
-                            $sid = $item->item_get_generic_field($fieldname.'_sid');
-                            if (!empty($sid)) { // ok, the field is supposed to be multilan but... is it used or unused?
-                                // to restore multilang behaviour the field needs to be EMPTY
-                                $record[$fieldname] = null;
+                                $where = array('id' => $record->id);
+                                $fieldlist = implode(',', $multilangfields[$plugin]);
+                                $reference = $DB->get_record('survey_'.$plugin, $where, $fieldlist, MUST_EXIST);
+
+                                foreach ($fieldnames as $fieldname) {
+                                    $stringkey = $reference->{$fieldname};
+                                    if (strlen($stringkey)) {
+                                        $record->{$fieldname} = get_string($stringkey, 'surveytemplate_'.$template);
+                                    } else {
+                                        $record->{$fieldname} = null;
+                                    }
+                                }
+                                $DB->update_record('survey_'.$plugin, $record);
                             }
                         }
-                        if ($plugin == 'item') {
-                            $record['id'] = $this->itemid;
-                        } else {
-                            $record['id'] = $DB->get_field('survey_'.$plugin, 'id', array('itemid' => $this->itemid));
-                        }
-                        $DB->update_record('survey_'.$plugin, $record);
                     }
 
-                    $message = get_string('multilangrestored', 'survey');
-                    echo $OUTPUT->box($message, 'notice centerpara');
+                    $record = new StdClass();
+                    $record->id = $this->survey->id;
+                    $record->template = '';
+                    $DB->update_record('survey', $record);
+
+                    $paramurl = array('id' => $this->cm->id);
+                    $returnurl = new moodle_url('items_manage.php', $paramurl);
+                    redirect($returnurl);
                     break;
                 case SURVEY_CONFIRMED_NO:
-                    $message = get_string('usercanceled', 'survey');
-                    echo $OUTPUT->notification($message, 'notifyproblem');
+                    $paramurl = array('id' => $this->cm->id, 'act' => SURVEY_PREVIEWSURVEY);
+                    $returnurl = new moodle_url('view.php', $paramurl);
+                    redirect($returnurl);
                     break;
                 default:
                     debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->confirm = '.$this->confirm);

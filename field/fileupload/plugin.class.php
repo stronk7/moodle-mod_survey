@@ -137,32 +137,8 @@ class surveyfield_fileupload extends mod_survey_itembase {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
-        // multilang save support for builtin survey
-        // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = $this->item_get_multilang_fields();
-        $this->item_builtin_string_save_support($record, $fieldlist);
-
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
-    }
-
-    /*
-     * item_get_plugin_values
-     *
-     * @param $pluginstructure
-     * @param $pluginsid
-     * @return
-     */
-    public function item_get_plugin_values($pluginstructure, $pluginsid) {
-        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
-
-        // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, true);
-        if ($errindex !== false) {
-            print_error('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
-        }
-
-        return $values;
     }
 
     /*

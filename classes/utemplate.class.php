@@ -393,20 +393,27 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
             $contextstring = $this->get_contextstring_from_sharinglevel($contextlevel);
             $templates->{$contextstring} = $this->get_available_templates($contextid);
         }
-
         // echo '$templates:';
         // var_dump($templates);
 
+        $dummysort = $this->create_fictitious_table($templates, $table->get_sql_sort());
+
+        $row = 0;
         foreach ($templates as $contextstring => $contextfiles) {
             foreach ($contextfiles as $xmlfile) {
                 // echo '$xmlfile:';
                 // var_dump($xmlfile);
                 $tablerow = array();
-                $tablerow[] = $xmlfile->get_filename();
-                $tablerow[] = get_string($contextstring, 'survey');
-                $tablerow[] = userdate($xmlfile->get_timecreated());
+                // $tablerow[] = $xmlfile->get_filename();
+                $tablerow[] = $dummysort[$row]['templatename'];
+                // $tablerow[] = get_string($contextstring, 'survey');
+                $tablerow[] = $dummysort[$row]['sharinglevel'];
+                // $tablerow[] = userdate($xmlfile->get_timecreated());
+                $tablerow[] = userdate($dummysort[$row]['creationdate']);
 
-                $paramurl['fid'] = $xmlfile->get_id();
+                // $paramurl['fid'] = $xmlfile->get_id();
+                $paramurl['fid'] = $dummysort[$row]['xmlfileid'];
+                $row++;
 
                 $icons = '';
                 // *************************************** SURVEY_DELETEUTEMPLATE
@@ -437,6 +444,62 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
         $table->set_attribute('align', 'center');
         $table->summary = get_string('templatelist', 'survey');
         $table->print_html();
+    }
+
+    /*
+     * delete_utemplate
+     *
+     * @param
+     * @return null
+     */
+    public function create_fictitious_table($templates, $usersort) {
+        // original table per columns: originaltablepercols
+        $templatename_col = array();
+        $sharinglevel_col = array();
+        $creationdate_col = array();
+        $xmlfileid_col = array();
+        foreach ($templates as $contextstring => $contextfiles) {
+            foreach ($contextfiles as $xmlfile) {
+                $templatename_col[] = $xmlfile->get_filename();
+                $sharinglevel_col[] = get_string($contextstring, 'survey');
+                $creationdate_col[] = $xmlfile->get_timecreated();
+                $xmlfileid_col[] = $xmlfile->get_id();
+            }
+        }
+        $originaltablepercols = array($templatename_col, $sharinglevel_col, $creationdate_col, $xmlfileid_col);
+
+        // original table per rows: originaltableperrows
+        $originaltableperrows = array();
+        foreach($templatename_col as $k => $value) {
+            $tablerow = array();
+            $tablerow['templatename'] = $templatename_col[$k];
+            $tablerow['sharinglevel'] = $sharinglevel_col[$k];
+            $tablerow['creationdate'] = $creationdate_col[$k];
+            $tablerow['xmlfileid'] = $xmlfileid_col[$k];
+
+            $originaltableperrows[] = $tablerow;
+        }
+
+        // $usersort
+        $orderparts = explode(', ', $usersort);
+        $orderparts = str_replace('templatename', '0', $orderparts);
+        $orderparts = str_replace('sharinglevel', '1', $orderparts);
+        $orderparts = str_replace('timecreated', '2', $orderparts);
+
+        // $fieldindex and $sortflag
+        $fieldindex = array(0, 0, 0);
+        $sortflag = array(SORT_ASC, SORT_ASC, SORT_ASC);
+        foreach ($orderparts as $k => $orderpart) {
+            $pair = explode(' ', $orderpart);
+            $fieldindex[$k] = (int)$pair[0];
+            $sortflag[$k] = ($pair[1] == 'ASC') ? SORT_ASC : SORT_DESC;
+        }
+
+        array_multisort($originaltablepercols[$fieldindex[0]], $sortflag[0],
+                        $originaltablepercols[$fieldindex[1]], $sortflag[1],
+                        $originaltablepercols[$fieldindex[2]], $sortflag[2], $originaltableperrows);
+
+        return $originaltableperrows;
     }
 
     /*

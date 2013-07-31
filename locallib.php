@@ -44,7 +44,7 @@ function survey_get_item($itemid=0, $type='', $plugin='') {
         }
     }
 
-    if (empty($type) && empty($plugin)) { // I am asking for a template only
+    if (empty($type) && empty($plugin)) {
         $itemseed = $DB->get_record('survey_item', array('id' => $itemid), 'type, plugin', MUST_EXIST);
         $type = $itemseed->type;
         $plugin = $itemseed->plugin;
@@ -138,21 +138,24 @@ function survey_get_my_groups($cm) {
 
 /*
  * survey_get_sid_field_content
+ * this function is the equivalent of the method item_builtin_string_load_support in itembase.class.php
  * @param $record
  * @return
  */
 function survey_get_sid_field_content($record) {
-    // this function is the equivalent of the method item_builtin_string_load_support in itembase.class.php
-    if (empty($record->template)) {
-        return $record->content;
-    } else {
-        // get the string 'content_sid'
-        // from surveytemplate_{$this->template}.php file
-        $stringindex = sprintf('%02d', $record->content_sid);
-        $return = get_string('item_content_'.$stringindex, 'surveytemplate_'.$record->template);
 
-        return $return;
+    $surveyid = $record->surveyid;
+    $template = $DB->get_field('survey', 'template', array('id' => $surveyid), MUST_EXIST);
+    if (empty($template)) {
+        return;
     }
+
+    // get the string 'content_sid'
+    // from surveytemplate_{$this->template}.php file
+    $stringindex = sprintf('%02d', $record->content_sid);
+    $return = get_string('item_content_'.$stringindex, 'surveytemplate_'.$record->template);
+
+    return $return;
 }
 
 /*

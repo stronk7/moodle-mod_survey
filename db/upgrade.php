@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool
  */
 function xmldb_survey_upgrade($oldversion) {
-    global $DB;
+    global $DB, $CFG;
 
     $dbman = $DB->get_manager();
 
@@ -151,6 +151,92 @@ function xmldb_survey_upgrade($oldversion) {
 
         // Survey savepoint reached.
         upgrade_mod_savepoint(true, 2013071901, 'survey');
+    }
+
+    if ($oldversion < 2013072901) {
+        require_once($CFG->dirroot.'/mod/survey/locallib.php');
+
+        $where = array('surveyid' => 0);
+        $itemseeds = $DB->get_recordset('survey_item', $where, 'id', 'id, type, plugin');
+
+        foreach ($itemseeds as $itemseed) {
+            $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
+
+            $recordtokill = $DB->get_record('survey_item', array('id' => $itemseed->id));
+            if (!$DB->delete_records('survey_item', array('id' => $itemseed->id))) {
+                print_error('Unable to delete survey_item id='.$itemseed->id);
+            }
+
+            if ($item->flag->useplugintable) {
+                if (!$DB->delete_records('survey_'.$itemseed->plugin, array('id' => $item->get_pluginid()))) {
+                    print_error('Unable to delete record id = '.$item->get_pluginid().' from surveyitem_'.$itemseed->plugin);
+                }
+            }
+        }
+        $itemseeds->close();
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013072901, 'survey');
+    }
+
+    if ($oldversion < 2013072902) {
+
+        // Define field template to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('template');
+
+        // Conditionally launch drop field template.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field template to be added to survey.
+        $table = new xmldb_table('survey');
+        $field = new xmldb_field('template', XMLDB_TYPE_CHAR, '64', null, null, null, null, 'thankshtmlformat');
+
+        // Conditionally launch add field template.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Define field parentcontent_sid to be added to survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('parentcontent_sid', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'parentid');
+
+        // Conditionally launch add field parentcontent_sid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013072902, 'survey');
+    }
+
+    if ($oldversion < 2013073001) {
+
+        // Define field content_sid to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('content_sid');
+
+        // Conditionally launch drop field content_sid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field parentcontent_sid to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('parentcontent_sid');
+
+        // Conditionally launch drop field parentcontent_sid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013073001, 'survey');
     }
 
     return true;

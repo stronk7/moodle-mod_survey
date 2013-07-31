@@ -48,6 +48,13 @@ class survey_applymtemplateform extends moodleform {
         }
 
         // ----------------------------------------
+        // applymtemplate::otheritems
+        // ----------------------------------------
+        $fieldname = 'actionoverother';
+        $mform->addElement('hidden', $fieldname, SURVEY_DELETEALLITEMS);
+        $mform->setType($fieldname, PARAM_INT);
+
+        // ----------------------------------------
         // applymtemplate::mastertemplate
         // ----------------------------------------
         $fieldname = 'mastertemplate';
@@ -56,19 +63,6 @@ class survey_applymtemplateform extends moodleform {
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         }
-
-        // ----------------------------------------
-        // applymtemplate::otheritems
-        // ----------------------------------------
-        $fieldname = 'actionoverother';
-        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('ignoreitems', 'survey'), SURVEY_IGNOREITEMS);
-        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('hideitems', 'survey'), SURVEY_HIDEITEMS);
-        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('deleteallitems', 'survey'), SURVEY_DELETEALLITEMS);
-        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('deletevisibleitems', 'survey'), SURVEY_DELETEVISIBLEITEMS);
-        $elementgroup[] = $mform->createElement('radio', $fieldname, '', get_string('deletehiddenitems', 'survey'), SURVEY_DELETEHIDDENITEMS);
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'survey'), '<br />', false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'survey');
-        $mform->setDefault($fieldname, SURVEY_IGNOREITEMS);
 
         // -------------------------------------------------------------------------------
         // buttons

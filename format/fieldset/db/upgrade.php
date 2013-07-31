@@ -68,6 +68,21 @@ function xmldb_surveyformat_fieldset_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013072301, 'surveyformat', 'fieldset');
     }
 
+    if ($oldversion < 2013073001) {
+
+        // Define field content_sid to be dropped from survey_fieldset.
+        $table = new xmldb_table('survey_fieldset');
+        $field = new xmldb_field('label_sid');
+
+        // Conditionally launch drop field content_sid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013073001, 'surveyfield', 'fieldset');
+    }
+
     return true;
 }
 

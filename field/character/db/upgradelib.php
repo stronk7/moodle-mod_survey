@@ -22,3 +22,32 @@
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+/*
+ * Performs upgrade of the database structure and data
+ *
+ * @param int $oldversion the version we are upgrading from
+ * @return bool true
+ */
+function xmldb_surveyfield_character_upgrade($oldversion) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2013073001) {
+
+        // Define field content_sid to be dropped from survey_character.
+        $table = new xmldb_table('survey_character');
+        $field = new xmldb_field('defaultvalue_sid');
+
+        // Conditionally launch drop field content_sid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013073001, 'surveyfield', 'character');
+    }
+
+    return true;
+}

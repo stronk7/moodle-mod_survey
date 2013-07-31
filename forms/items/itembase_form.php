@@ -80,13 +80,6 @@ class mod_survey_itembaseform extends moodleform {
         }
 
         // ----------------------------------------
-        // newitem::template
-        // ----------------------------------------
-        $fieldname = 'template';
-        $mform->addElement('hidden', $fieldname, '');
-        $mform->setType($fieldname, PARAM_RAW);
-
-        // ----------------------------------------
         // newitem::content_sid
         // ----------------------------------------
         $fieldname = 'content_sid';

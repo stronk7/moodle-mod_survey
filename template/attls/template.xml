@@ -4,8 +4,6 @@
     <survey_item>
       <type>format</type>
       <plugin>label</plugin>
-      <template>attls</template>
-      <content_sid>1</content_sid>
       <content>item_content_01</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -21,22 +19,19 @@
       <sortindex>1</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent/>
+      <parentcontent>@@NULL@@</parentcontent>
       <parentvalue/>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_label>
-      <labelintro_sid>@@NULL@@</labelintro_sid>
-      <labelintro/>
+      <labelintro>@@NULL@@</labelintro>
     </survey_label>
   </item>
   <item>
     <survey_item>
       <type>format</type>
       <plugin>fieldset</plugin>
-      <template>attls</template>
-      <content_sid>@@NULL@@</content_sid>
       <content/>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -58,7 +53,6 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_fieldset>
-      <label_sid>1</label_sid>
       <label>fieldset_label_01</label>
     </survey_fieldset>
   </item>
@@ -66,8 +60,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>2</content_sid>
       <content>item_content_02</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -89,13 +81,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -103,8 +92,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>3</content_sid>
       <content>item_content_03</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -126,13 +113,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -140,8 +124,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>4</content_sid>
       <content>item_content_04</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -163,13 +145,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -177,8 +156,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>5</content_sid>
       <content>item_content_05</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -200,13 +177,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -214,8 +188,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>6</content_sid>
       <content>item_content_06</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -237,13 +209,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -251,8 +220,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>7</content_sid>
       <content>item_content_07</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -274,13 +241,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -288,8 +252,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>8</content_sid>
       <content>item_content_08</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -311,13 +273,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -325,8 +284,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>9</content_sid>
       <content>item_content_09</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -348,13 +305,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -362,8 +316,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>10</content_sid>
       <content>item_content_10</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -385,13 +337,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -399,8 +348,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>11</content_sid>
       <content>item_content_11</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -422,13 +369,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -436,8 +380,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>12</content_sid>
       <content>item_content_12</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -459,13 +401,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -473,8 +412,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>13</content_sid>
       <content>item_content_13</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -496,13 +433,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -510,8 +444,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>14</content_sid>
       <content>item_content_14</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -533,13 +465,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -547,8 +476,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>15</content_sid>
       <content>item_content_15</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -570,13 +497,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -584,8 +508,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>16</content_sid>
       <content>item_content_16</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -607,13 +529,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -621,8 +540,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>17</content_sid>
       <content>item_content_17</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -644,13 +561,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -658,8 +572,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>18</content_sid>
       <content>item_content_18</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -681,13 +593,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -695,8 +604,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>19</content_sid>
       <content>item_content_19</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -718,13 +625,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -732,8 +636,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>20</content_sid>
       <content>item_content_20</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -755,13 +657,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -769,8 +668,6 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>attls</template>
-      <content_sid>21</content_sid>
       <content>item_content_21</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -792,13 +689,10 @@
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
-      <labelother/>
+      <options>radiobutton_options_01</options>
+      <labelother>@@NULL@@</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
-      <defaultvalue/>
+      <defaultvalue>@@NULL@@</defaultvalue>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>

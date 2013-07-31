@@ -123,25 +123,6 @@ class surveyformat_fieldsetend extends mod_survey_itembase {
     }
 
     /*
-     * item_get_plugin_values
-     *
-     * @param $pluginstructure
-     * @param $pluginsid
-     * @return
-     */
-    public function item_get_plugin_values($pluginstructure, $pluginsid) {
-        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
-
-        // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, true);
-        if ($errindex !== false) {
-            print_error('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
-        }
-
-        return $values;
-    }
-
-    /*
      * item_get_main_text
      * returns the content of the field defined as main
      *

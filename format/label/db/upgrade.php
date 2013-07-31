@@ -34,11 +34,20 @@ function xmldb_surveyformat_label_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // if ($oldversion < 2012101103) {
+    if ($oldversion < 2013073001) {
 
-        // survey savepoint reached
-    //    upgrade_plugin_savepoint(true, 2012062560, 'surveyformat', 'label');
-    // }
+        // Define field content_sid to be dropped from survey_label.
+        $table = new xmldb_table('survey_label');
+        $field = new xmldb_field('labelintro_sid');
+
+        // Conditionally launch drop field content_sid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013073001, 'surveyfield', 'label');
+    }
 
     return true;
 }

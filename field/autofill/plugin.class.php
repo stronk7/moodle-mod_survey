@@ -235,61 +235,13 @@ class surveyfield_autofill extends mod_survey_itembase {
     }
 
     /*
-     * item_get_plugin_values
-     *
-     * @param $pluginstructure
-     * @param $pluginsid
-     * @return
-     */
-    public function item_get_plugin_values($pluginstructure, $pluginsid) {
-        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
-
-        // STEP 02: make corrections
-        // $si_fields = array('id', 'surveyid', 'itemid',
-        //                    'showfield', 'element_1', 'element_2',
-        //                    'element_3', 'element_4', 'element_5');
-        // 'id', 'surveyid', 'itemid' were managed by parent class
-        // here I manage element_x once again because they were not written using constants
-
-        // override: $value['element_x']
-        /*------------------------------------------------*/
-        for ($i = 1; $i <= 5; $i++) {
-            $fieldname = 'element_'.$i;
-            $values[$fieldname] = 'err';
-
-            if (empty($this->{$fieldname})) {
-                $values[$fieldname] = '\'\'';
-            } else {
-                for ($j = 1; $j <= SURVEYFIELD_AUTOFILL_CONTENTELEMENT_COUNT; $j++) {
-                    $refindex = constant('SURVEYFIELD_AUTOFILL_CONTENTELEMENT'.sprintf('%02d', $j));
-                    if ($this->{$fieldname} == $refindex) {
-                        $values[$fieldname] = 'SURVEYFIELD_AUTOFILL_CONTENTELEMENT'.sprintf('%02d', $i);
-                        break;
-                    }
-                }
-                if ($values[$fieldname] === 'err') {
-                    $values[$fieldname] === '\''.$this->{$fieldname}.'\'';
-                }
-            }
-        }
-
-        // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, true);
-        if ($errindex !== false) {
-            print_error('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
-        }
-
-        return $values;
-    }
-
-    /*
      * item_get_multilang_fields
      *
      * @param
      * @return
      */
     public function item_get_multilang_fields() {
-        return false;
+        return parent::item_get_multilang_fields();
     }
 
     // MARK userform

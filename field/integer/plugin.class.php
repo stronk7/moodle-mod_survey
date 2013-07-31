@@ -137,11 +137,6 @@ class surveyfield_integer extends mod_survey_itembase {
         // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
-        // multilang save support for builtin survey
-        // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = $this->item_get_multilang_fields();
-        $this->item_builtin_string_save_support($record, $fieldlist);
-
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
     }
@@ -217,22 +212,13 @@ class surveyfield_integer extends mod_survey_itembase {
     }
 
     /*
-     * item_get_plugin_values
+     * item_get_multilang_fields
      *
-     * @param $pluginstructure
-     * @param $pluginsid
+     * @param
      * @return
      */
-    public function item_get_plugin_values($pluginstructure, $pluginsid) {
-        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
-
-        // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, true);
-        if ($errindex !== false) {
-            print_error('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
-        }
-
-        return $values;
+    public function item_get_multilang_fields() {
+        return parent::item_get_multilang_fields();
     }
 
     // MARK parent
@@ -263,16 +249,6 @@ class surveyfield_integer extends mod_survey_itembase {
      */
     public function parent_encode_content_to_value($parentcontent) {
         return $parentcontent;
-    }
-
-    /*
-     * item_get_multilang_fields
-     *
-     * @param
-     * @return
-     */
-    public function item_get_multilang_fields() {
-        return parent::item_get_multilang_fields();
     }
 
     // MARK userform

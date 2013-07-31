@@ -69,7 +69,9 @@ require_capability('mod/survey:manageitems', $context);
 // calculations
 // ////////////////////////////////////////////////////////////
 $itemlist_manager = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
-                                           $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
+                                            $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
+// I need to execute this method before the page load because it modifies TAB elements
+$itemlist_manager->drop_multilang();
 
 // ////////////////////////////////////////////////////////////
 // output starts here
@@ -97,13 +99,15 @@ if ($itemlist_manager->hassubmissions) {
 }
 
 // add item form
-if (!$hassubmissions || $CFG->survey_forcemodifications) {
-    if (has_capability('mod/survey:additems', $context)) {
-        $paramurl = array('id' => $cm->id);
-        $formurl = new moodle_url('items_setup.php', $paramurl);
+if (!$itemlist_manager->survey->template) {
+    if (!$hassubmissions || $CFG->survey_forcemodifications) {
+        if (has_capability('mod/survey:additems', $context)) {
+            $paramurl = array('id' => $cm->id);
+            $formurl = new moodle_url('items_setup.php', $paramurl);
 
-        $itemtype = new survey_itemtypeform($formurl);
-        $itemtype->display();
+            $itemtype = new survey_itemtypeform($formurl);
+            $itemtype->display();
+        }
     }
 }
 

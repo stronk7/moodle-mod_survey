@@ -146,11 +146,6 @@ class surveyfield_datetime extends mod_survey_itembase {
         // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
-        // multilang save support for builtin survey
-        // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = $this->item_get_multilang_fields();
-        $this->item_builtin_string_save_support($record, $fieldlist);
-
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
     }
@@ -266,25 +261,6 @@ class surveyfield_datetime extends mod_survey_itembase {
     }
 
     /*
-     * item_get_plugin_values
-     *
-     * @param $pluginstructure
-     * @param $pluginsid
-     * @return
-     */
-    public function item_get_plugin_values($pluginstructure, $pluginsid) {
-        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
-
-        // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, true);
-        if ($errindex !== false) {
-            print_error('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
-        }
-
-        return $values;
-    }
-
-    /*
      * item_get_downloadformats
      *
      * @param
@@ -325,6 +301,17 @@ class surveyfield_datetime extends mod_survey_itembase {
      */
     public function item_get_multilang_fields() {
         return parent::item_get_multilang_fields();
+    }
+
+    /*
+     * item_get_friendlyformat
+     * returns true if the useform mform element for this item id is a group and false if not
+     *
+     * @param
+     * @return
+     */
+    public function item_get_friendlyformat() {
+        return 'strftime01';
     }
 
     // MARK userform
@@ -609,7 +596,7 @@ class surveyfield_datetime extends mod_survey_itembase {
 
         // format
         if ($format == SURVEY_FIRENDLYFORMAT) {
-            $format = $this->get_friendlyformat();
+            $format = $this->item_get_friendlyformat();
         }
         if (empty($format)) {
             $format = $this->downloadformat;
@@ -621,17 +608,6 @@ class surveyfield_datetime extends mod_survey_itembase {
         } else {
             return userdate($content, get_string($format, 'surveyfield_date'), 0);
         }
-    }
-
-    /*
-     * get_friendlyformat
-     * returns true if the useform mform element for this item id is a group and false if not
-     *
-     * @param
-     * @return
-     */
-    public function get_friendlyformat() {
-        return 'strftime01';
     }
 
     /*

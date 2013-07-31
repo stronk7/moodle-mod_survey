@@ -64,8 +64,6 @@ if ($counted < $submissionscount) {
 
 $answers->close();
 
-$item = survey_get_item($itemid);
-
 if (true) {
     $graph = new graph(SURVEY_GWIDTH, SURVEY_GHEIGHT);
     $graph->parameter['title'] = '';

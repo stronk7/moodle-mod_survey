@@ -63,13 +63,6 @@ class mod_survey_itembase {
     public $itemname = '';
 
     /*
-     * $template = a string specifing the origin of the item.
-     * empty: user made it
-     * non empty: belong to a built-in survey
-     */
-    public $template = '';
-
-    /*
      * $content_sid = a number specifing the ID of the builtin survey item.
      * empty: user made it
      * non empty: belong to a built-in survey
@@ -119,7 +112,7 @@ class mod_survey_itembase {
     public $variable = '';
 
     /*
-     * $indent = the indent of the item in the form layout/template
+     * $indent = the indent of the item in the form page
      */
     public $indent = 0;
 
@@ -480,81 +473,36 @@ class mod_survey_itembase {
      * item_builtin_string_load_support
      * This function is used to populate empty strings according to the user language
      *
-     * @param string $fields
+     * @param stdClass $survey
      * @return
      */
-    public function item_builtin_string_load_support($pluginfields=null) {
-        global $CFG;
+    public function item_builtin_string_load_support() {
+        global $CFG, $DB;
 
-        if (empty($this->template)) {
+        $surveyid = $this->get_surveyid();
+        $template = $DB->get_field('survey', 'template', array('id' => $surveyid), MUST_EXIST);
+        if (empty($template)) {
             return;
         }
 
         // Take care: I verify the existence of the english folder even if, maybe, I will ask for the string in a different language
-        if (!file_exists($CFG->dirroot.'/mod/survey/template/'.$this->template.'/lang/en/surveytemplate_'.$this->template.'.php')) {
+        if (!file_exists($CFG->dirroot.'/mod/survey/template/'.$template.'/lang/en/surveytemplate_'.$template.'.php')) {
             // this template does not support multilang
             return;
         }
 
-        // if (is_null($pluginfields)) {
-        //     $pluginfields = array('item' => array('content'));
-        // }
-        if (!is_array($pluginfields)) {
-            print_error('Array or null are expected in item_builtin_string_load_support');
-        }
-
-        foreach ($pluginfields as $plugin => $fieldnames) {
-            foreach ($fieldnames as $fieldname) {
-                if (!isset($this->{$fieldname.'_sid'})) {
-                    continue;
-                }
-                if (!strlen($this->{$fieldname.'_sid'})) {
-                    continue;
-                }
-
-                if (empty($this->{$fieldname})) {
-                    $stringkey = $plugin.'_'.$fieldname.'_'.sprintf('%02d', $this->{$fieldname.'_sid'});
-                    $this->{$fieldname} = get_string($stringkey, 'surveytemplate_'.$this->template);
-                } // else $this->{$fieldname} hold a custom content: do not touch it
-            }
-        }
-    }
-
-    /*
-     * item_builtin_string_save_support
-     * starting from the item object, replace 'content' and $fields for builtin survey
-     *
-     * @param StdClass $record
-     * @param string $pluginfields
-     * @return
-     */
-    public function item_builtin_string_save_support(&$record, $pluginfields=null) {
-        if (empty($this->template)) {
-            return;
-        }
-        if (is_null($pluginfields)) {
-            return;
-        }
-
-        if (!is_array($pluginfields)) {
-            print_error('Array or null are expected in item_builtin_string_save_support');
-        }
-
-        // usually this routine is not executed
-        // $pluginfields['options'] = 'options_sid';
-        foreach ($pluginfields as $plugin => $fieldnames) {
-            foreach ($fieldnames as $fieldname) {
-                if (!is_null($this->{$fieldname.'_sid'})) { // if the field $fieldname is multilang
-                    $stringkey = $plugin.'_'.$fieldname.'_'.sprintf('%02d', $this->{$fieldname.'_sid'});
-                    $referencestring = get_string($stringkey, 'surveytemplate_'.$this->template);
-
-                    $record->{$fieldname} = str_replace("\r", '', $referencestring);
-                    if (($plugin == 'item') && ($fieldname == 'content')) {
-                        $record->contentformat = FORMAT_HTML;
+        if ($multilangfields = $this->item_get_multilang_fields()) {
+            foreach ($multilangfields as $plugin => $fieldnames) {
+                foreach ($fieldnames as $fieldname) {
+                    if (!isset($this->{$fieldname})) {
+                        continue;
                     }
-                    if ($record->{$fieldname} === $referencestring) {
-                        $record->{$fieldname} = null;
-                    } // else $this->{$fieldname} hold a custom content: do not touch it
+                    if (!strlen($this->{$fieldname})) {
+                        continue;
+                    }
+
+                    $stringkey = $this->{$fieldname};
+                    $this->{$fieldname} = get_string($stringkey, 'surveytemplate_'.$template);
                 }
             }
         }
@@ -773,35 +721,6 @@ class mod_survey_itembase {
     }
 
     /*
-     * item_get_db_structure
-     * returns true if the useform mform element for this item id is a group and false if not
-     *
-     * @param $tablename
-     * @param $dropid
-     * @return
-     */
-    public function item_get_db_structure($tablename=null, $dropid=true) {
-        global $DB;
-
-        if (empty($tablename)) {
-            $tablename = 'survey_'.$this->plugin;
-        }
-
-        $dbstructure = array();
-        if ($dbfields = $DB->get_columns($tablename)) {
-            foreach ($dbfields as $dbfield) {
-                $dbstructure[] = $dbfield->name;
-            }
-        }
-
-        if ($dropid) {
-            array_shift($dbstructure); // drop the first item: ID
-        }
-
-        return $dbstructure;
-    }
-
-    /*
      * item_get_main_text
      * returns the content of the field defined as main
      *
@@ -810,329 +729,6 @@ class mod_survey_itembase {
      */
     public function item_get_main_text() {
         return $this->content;
-    }
-
-    /*
-     * item_get_si_values
-     * returns the content of the field defined as main
-     *
-     * @param $data
-     * @param $sistructure
-     * @param $sisid
-     * @return
-     */
-    public function item_get_si_values($data, $sistructure, $sisid) {
-        global $DB;
-
-        $pluginname = clean_filename($data->mastertemplatename);
-        // echo '$data:';
-        // var_dump($data);
-        // echo '$sistructure:';
-        // var_dump($sistructure);
-        // echo '$sisid:';
-        // var_dump($sisid);
-        // die;
-
-        $tablename = 'survey_item';
-
-        // STEP 01: define an associative array of values
-        // This loop assign the correct order to array elements
-        // Now I am free to access/modify array elements with random order
-        $values = array_combine(array_values($sistructure), array_pad(array('err'), count($sistructure), 'err'));
-
-        // STEP 02: make corrections
-        // $si_fields = array('surveyid', 'type', 'plugin', 'template',
-        //                    'content_sid', 'content', 'contentformat', 'customnumber',
-        //                    'extrarow', 'extranote', 'required', 'hideinstructions', 'variable',
-        //                    'indent', 'hide', 'insearchform', 'advanced',
-        //                    'sortindex', 'formpage', 'parentid',
-        //                    'parentcontent', 'parentvalue', 'timecreated', 'timemodified');
-
-        // let's start with _sid fields
-        foreach ($sisid as $sidfield) { // today is one but, maybe, tomorrow...
-            // override: $values[$content_sid];
-            /*------------------------------------------------*/
-            $values[$sidfield] = '$'.$sidfield;
-
-            // override: $value['content']
-            /*------------------------------------------------*/
-            $field = substr($sidfield, 0, -4);
-            $values[$field] = 'null';
-        }
-
-        // unset: $values['id']
-        /*------------------------------------------------*/
-        unset($values['id']);
-
-        // $si_fields = array('surveyid', 'type', 'plugin', 'template'...
-
-        // override: $value['surveyid']
-        /*------------------------------------------------*/
-        $values['surveyid'] = 0;
-
-        // override: $value['type']
-        /*------------------------------------------------*/
-        $values['type'] = $this->type;
-
-        // update: $this->plugin
-        /*------------------------------------------------*/
-        $values['plugin'] = '\''.$this->plugin.'\'';
-
-        // update: $data->template
-        /*------------------------------------------------*/
-        $values['template'] = '\''.$pluginname.'\'';
-
-        // $si_fields = array(...'content_sid', 'content', 'contentformat', 'customnumber',
-
-        // override: $value['content_sid'] has already been done
-        /*------------------------------------------------*/
-
-        // override: $value['content'] has already been done
-        /*------------------------------------------------*/
-
-        // override: $value['contentformat']
-        /*------------------------------------------------*/
-        switch ($this->contentformat) {
-            case FORMAT_PLAIN:
-                $values['contentformat'] = 'FORMAT_PLAIN'; // <-- TODO: is this correct?
-                break;
-            case FORMAT_HTML:
-                $values['contentformat'] = 'FORMAT_HTML';
-                break;
-            case '': // <-- whether $this->item_form_requires['content_editor'] = false;
-                $values['contentformat'] = '\'\'';
-                break;
-            default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->contentformat = '.$this->contentformat);
-        }
-
-        // override: $value['customnumber']
-        /*------------------------------------------------*/
-        if (empty($this->customnumber)) { // it may be '' or '0'
-            if (strlen($this->customnumber)) {
-                $values['customnumber'] = '0';
-            } else {
-                $values['customnumber'] = '\'\'';
-            }
-        } else {
-            $values['customnumber'] = '\''.$this->customnumber.'\'';
-        }
-
-        // $si_fields = array(...'extrarow', 'extranote', 'required', 'hideinstructions', 'variable',
-
-        // override: $value['extrarow']
-        /*------------------------------------------------*/
-        $values['extrarow'] = $this->extrarow;
-
-        // override: $value['extranote']
-        /*------------------------------------------------*/
-        $values['extranote'] = empty($this->extranote) ? '\'\'' : '\''.$this->extranote.'\'';
-
-        // override: $value['required']
-        /*------------------------------------------------*/
-        switch ($this->required) {
-            case SURVEY_REQUIREDITEM:
-                $values['required'] = 'SURVEY_REQUIREDITEM';
-                break;
-            case SURVEY_OPTIONALITEM:
-                $values['required'] = 'SURVEY_OPTIONALITEM';
-                break;
-            case '\'\'': // <-- each item with $this->item_form_requires['required'] = false;
-                $values['required'] = 'null';
-                break;
-            default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->required = '.$this->required);
-        }
-
-        // override: $value['hideinstructions']
-        /*------------------------------------------------*/
-        $values['hideinstructions'] = $this->hideinstructions;
-
-        // $si_fields = array(...'variable', 'indent', 'hide', 'insearchform',
-
-        // override: $value['variable']
-        /*------------------------------------------------*/
-        $values['variable'] = empty($this->variable) ? '\'\'' : '\''.$this->variable.'\'';
-
-        // override: $value['indent']
-        /*------------------------------------------------*/
-        $values['indent'] = $this->indent;
-
-        // override: $value['hide']
-        /*------------------------------------------------*/
-        $values['hide'] = $this->hide;
-
-        // override: $value['insearchform']
-        /*------------------------------------------------*/
-        $values['insearchform'] = $this->insearchform;
-
-        // $si_fields = array(...'advanced', 'sortindex', 'formpage', 'parentid',
-
-        // override: $value['advanced']
-        /*------------------------------------------------*/
-        $values['advanced'] = $this->advanced;
-
-        // override: $value['sortindex']
-        /*------------------------------------------------*/
-        $values['sortindex'] = '$sortindex';
-
-        // override: $value['formpage']
-        /*------------------------------------------------*/
-        $values['formpage'] = '\'\'';
-
-        // override: $value['parentid']
-        /*------------------------------------------------*/
-        // nelle plugin metto nel campo parentid il sortindex del parent record per identificare il parent record al momento del caricamento della plugin
-        if (empty($this->parentid)) {
-            $values['parentid'] = '0';
-        } else {
-            // I save sortindex instead of parentid for portability reason
-            $sqlparams = array('id' => $this->parentid);
-            $values['parentid'] = $DB->get_field('survey_item', 'sortindex', $sqlparams, MUST_EXIST);
-        }
-
-        // $si_fields = array(...'parentcontent', 'parentvalue', 'timecreated', 'timemodified');
-
-        // override: $value['parentcontent']
-        /*------------------------------------------------*/
-        if (empty($this->parentcontent)) { // it may be '' or '0'
-            if (strlen($this->parentcontent)) {
-                $values['parentcontent'] = '0';
-            } else {
-                $values['parentcontent'] = '\'\'';
-            }
-        } else {
-            $values['parentcontent'] = $this->parentcontent;
-        }
-
-        // override: $value['parentvalue']
-        /*------------------------------------------------*/
-        if (empty($this->parentvalue)) { // it may be '' or '0'
-            if (strlen($this->parentvalue)) {
-                $values['parentvalue'] = '0';
-            } else {
-                $values['parentvalue'] = 'null';
-            }
-        } else {
-            $values['parentvalue'] = $this->parentvalue;
-        }
-
-        // override: $value['timecreated']
-        /*------------------------------------------------*/
-        $values['timecreated'] = time();
-
-        // override: $value['timemodified']
-        /*------------------------------------------------*/
-        $values['timemodified'] = '\'\'';
-
-        // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, true);
-        if ($errindex !== false) {
-            print_error('$values[\''.$errindex.'\'] of survey_items was not properly managed');
-        }
-
-        return $values;
-    }
-
-    /*
-     * item_get_plugin_values
-     *
-     * @param $pluginstructure
-     * @param $pluginsid
-     * @return
-     */
-    public function item_get_plugin_values($pluginstructure, $pluginsid) {
-
-        // STEP 01: define an associative array of values
-        // This loop assign the correct order to array elements
-        // Now I am free to access/modify array elements with random order
-        $values = array_combine (array_values($pluginstructure), array_pad(array('err'), count($pluginstructure), 'err'));
-
-        // STEP 02: make few corrections
-
-        // let's start with _sid fields
-        foreach ($pluginsid as $sidfield) {
-            // update: $values['content_sid']
-            /*------------------------------------------------*/
-            $values[$sidfield] = '$'.$sidfield;
-
-            // override: $value['content']
-            /*------------------------------------------------*/
-            $field = substr($sidfield, 0, -4);
-            $values[$field] = 'null';
-        }
-
-        // unset: $values['id']
-        /*------------------------------------------------*/
-        unset($values['id']);
-
-        // override: $value['surveyid']
-        /*------------------------------------------------*/
-        $values['surveyid'] = 0;
-
-        // override: $value['itemid']
-        /*------------------------------------------------*/
-        $values['itemid'] = '$itemid';
-
-        if (in_array('defaultoption', $pluginstructure)) {
-            $values = $this->item_update_values_defaultoption($values);
-        }
-
-        foreach ($values as $k => $v) {
-            if ($v === 'err') { // the field has not been touched
-                // look at the value stored in $this
-                if (is_null($this->{$k})) {
-                    $values[$k] = 'null';
-                } else {
-                    if (empty($this->{$k})) {
-                        if (strlen($this->{$k})) {
-                            $values[$k] = '0';
-                        } else {
-                            $values[$k] = '\'\'';
-                        }
-                    } else {
-                        $values[$k] = '\''.$this->{$k}.'\'';
-                    }
-                }
-            }
-        }
-
-        return $values;
-    }
-
-    /*
-     * item_update_values_defaultoption
-     *
-     * @param $values
-     * @return
-     */
-    public function item_update_values_defaultoption($values) {
-        // override: $value['defaultoption']
-        /*------------------------------------------------*/
-        switch ($this->defaultoption) {
-            case SURVEY_CUSTOMDEFAULT:
-                $values['defaultoption'] = 'SURVEY_CUSTOMDEFAULT';
-                break;
-            case SURVEY_INVITATIONDEFAULT:
-                $values['defaultoption'] = 'SURVEY_INVITATIONDEFAULT';
-                break;
-            case SURVEY_NOANSWERDEFAULT:
-                $values['defaultoption'] = 'SURVEY_NOANSWERDEFAULT';
-                break;
-            case SURVEY_LIKELASTDEFAULT:
-                $values['defaultoption'] = 'SURVEY_LIKELASTDEFAULT';
-                break;
-            case SURVEY_TIMENOWDEFAULT:
-                $values['defaultoption'] = 'SURVEY_TIMENOWDEFAULT';
-                break;
-            case SURVEY_INVITATIONDBVALUE:
-                $values['defaultoption'] = 'SURVEY_INVITATIONDBVALUE';
-                break;
-            default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
-        }
-
-        return $values;
     }
 
     // MARK get
@@ -1189,6 +785,16 @@ class mod_survey_itembase {
     }
 
     /*
+     * get_surveyid
+     *
+     * @param
+     * @return
+     */
+    public function get_surveyid() {
+        return $this->surveyid;
+    }
+
+    /*
      * get_parentid
      *
      * @param
@@ -1209,13 +815,13 @@ class mod_survey_itembase {
     }
 
     /*
-     * get_template
+     * get_pluginid
      *
      * @param
      * @return
      */
-    public function get_template() {
-        return $this->template;
+    public function get_pluginid() {
+        return $this->pluginid;
     }
 
     /*
@@ -1426,7 +1032,7 @@ class mod_survey_itembase {
      */
     public function item_get_multilang_fields() {
         $fieldlist = array();
-        $fieldlist['item'] = array('content');
+        $fieldlist['item'] = array('content', 'parentcontent');
 
         return $fieldlist;
     }
@@ -1511,38 +1117,6 @@ class mod_survey_itembase {
         $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
 
         return ($givenanswer === $childitemrecord->parentvalue);
-    }
-
-    /*
-     * userform_can_show_item_as_child
-     *
-     * @param $submissionid
-     * @param $data
-     * @return
-     */
-    public function userform_can_show_item_as_child($submissionid, $data) {
-        global $DB;
-
-        if (!$this->parentid) { // item is not a child, show it
-            return true;
-        }
-
-        if (!$survey->newpageforchild) { // all in the same page (if page breaks are not added manually)
-            // parent item is probably in this same page BUT CAN even be in a previous page
-            foreach ($data as $itemname => $itemvalue) {
-                if (preg_match('~^(\w+)_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_(\w+)_([0-9]+)$~', $itemname, $match)) {
-                    if ($match[4] == $this->parentid) { // parent item has been found in this page
-                        return ($data[$itemname] == $this->parentcontent);
-                    }
-                }
-            }
-        }
-
-        // if execution is still here,
-        // parent item is in a previous page
-        $where = array('submissionid' => $submissionid, 'itemid' => $this->parentid);
-        $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
-        return ($givenanswer === $this->parentvalue);
     }
 
     /*

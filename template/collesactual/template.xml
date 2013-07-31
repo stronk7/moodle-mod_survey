@@ -4,9 +4,7 @@
     <survey_item>
       <type>format</type>
       <plugin>label</plugin>
-      <template>collesactual</template>
-      <content_sid>1</content_sid>
-      <content/>
+      <content>item_content_01</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -21,13 +19,12 @@
       <sortindex>1</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_label>
-      <labelintro_sid>@@NULL@@</labelintro_sid>
       <labelintro/>
     </survey_label>
   </item>
@@ -35,8 +32,6 @@
     <survey_item>
       <type>format</type>
       <plugin>fieldset</plugin>
-      <template>collesactual</template>
-      <content_sid>@@NULL@@</content_sid>
       <content/>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -52,13 +47,12 @@
       <sortindex>2</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_fieldset>
-      <label_sid>1</label_sid>
       <label>fieldset_label_01</label>
     </survey_fieldset>
   </item>
@@ -66,9 +60,7 @@
     <survey_item>
       <type>format</type>
       <plugin>label</plugin>
-      <template>collesactual</template>
-      <content_sid>2</content_sid>
-      <content/>
+      <content>item_content_02</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -83,13 +75,12 @@
       <sortindex>3</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_label>
-      <labelintro_sid>@@NULL@@</labelintro_sid>
       <labelintro/>
     </survey_label>
   </item>
@@ -97,9 +88,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>3</content_sid>
-      <content/>
+      <content>item_content_03</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -114,18 +103,15 @@
       <sortindex>4</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -134,9 +120,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>4</content_sid>
-      <content/>
+      <content>item_content_04</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -151,18 +135,15 @@
       <sortindex>5</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -171,9 +152,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>5</content_sid>
-      <content/>
+      <content>item_content_05</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -188,18 +167,15 @@
       <sortindex>6</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -208,9 +184,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>6</content_sid>
-      <content/>
+      <content>item_content_06</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -225,18 +199,15 @@
       <sortindex>7</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -245,8 +216,6 @@
     <survey_item>
       <type>format</type>
       <plugin>fieldset</plugin>
-      <template>collesactual</template>
-      <content_sid>@@NULL@@</content_sid>
       <content/>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -262,13 +231,12 @@
       <sortindex>8</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_fieldset>
-      <label_sid>2</label_sid>
       <label>fieldset_label_02</label>
     </survey_fieldset>
   </item>
@@ -276,9 +244,7 @@
     <survey_item>
       <type>format</type>
       <plugin>label</plugin>
-      <template>collesactual</template>
-      <content_sid>2</content_sid>
-      <content/>
+      <content>item_content_02</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -293,13 +259,12 @@
       <sortindex>9</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_label>
-      <labelintro_sid>@@NULL@@</labelintro_sid>
       <labelintro/>
     </survey_label>
   </item>
@@ -307,9 +272,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>7</content_sid>
-      <content/>
+      <content>item_content_07</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -324,18 +287,15 @@
       <sortindex>10</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -344,9 +304,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>8</content_sid>
-      <content/>
+      <content>item_content_08</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -361,18 +319,15 @@
       <sortindex>11</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -381,9 +336,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>9</content_sid>
-      <content/>
+      <content>item_content_09</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -398,18 +351,15 @@
       <sortindex>12</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -418,9 +368,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>10</content_sid>
-      <content/>
+      <content>item_content_10</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -435,18 +383,15 @@
       <sortindex>13</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -455,8 +400,6 @@
     <survey_item>
       <type>format</type>
       <plugin>fieldset</plugin>
-      <template>collesactual</template>
-      <content_sid>@@NULL@@</content_sid>
       <content/>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -472,13 +415,12 @@
       <sortindex>14</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_fieldset>
-      <label_sid>3</label_sid>
       <label>fieldset_label_03</label>
     </survey_fieldset>
   </item>
@@ -486,9 +428,7 @@
     <survey_item>
       <type>format</type>
       <plugin>label</plugin>
-      <template>collesactual</template>
-      <content_sid>2</content_sid>
-      <content/>
+      <content>item_content_02</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -503,13 +443,12 @@
       <sortindex>15</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_label>
-      <labelintro_sid>@@NULL@@</labelintro_sid>
       <labelintro/>
     </survey_label>
   </item>
@@ -517,9 +456,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>11</content_sid>
-      <content/>
+      <content>item_content_11</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -534,18 +471,15 @@
       <sortindex>16</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -554,9 +488,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>12</content_sid>
-      <content/>
+      <content>item_content_12</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -571,18 +503,15 @@
       <sortindex>17</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -591,9 +520,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>13</content_sid>
-      <content/>
+      <content>item_content_13</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -608,18 +535,15 @@
       <sortindex>18</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -628,9 +552,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>14</content_sid>
-      <content/>
+      <content>item_content_14</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -645,18 +567,15 @@
       <sortindex>19</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -665,8 +584,6 @@
     <survey_item>
       <type>format</type>
       <plugin>fieldset</plugin>
-      <template>collesactual</template>
-      <content_sid>@@NULL@@</content_sid>
       <content/>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -682,13 +599,12 @@
       <sortindex>20</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_fieldset>
-      <label_sid>4</label_sid>
       <label>fieldset_label_04</label>
     </survey_fieldset>
   </item>
@@ -696,9 +612,7 @@
     <survey_item>
       <type>format</type>
       <plugin>label</plugin>
-      <template>collesactual</template>
-      <content_sid>2</content_sid>
-      <content/>
+      <content>item_content_02</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -713,13 +627,12 @@
       <sortindex>21</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_label>
-      <labelintro_sid>@@NULL@@</labelintro_sid>
       <labelintro/>
     </survey_label>
   </item>
@@ -727,9 +640,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>15</content_sid>
-      <content/>
+      <content>item_content_15</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -744,18 +655,15 @@
       <sortindex>22</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -764,9 +672,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>16</content_sid>
-      <content/>
+      <content>item_content_16</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -781,18 +687,15 @@
       <sortindex>23</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -801,9 +704,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>17</content_sid>
-      <content/>
+      <content>item_content_17</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -818,18 +719,15 @@
       <sortindex>24</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -838,9 +736,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>18</content_sid>
-      <content/>
+      <content>item_content_18</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -855,18 +751,15 @@
       <sortindex>25</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -875,8 +768,6 @@
     <survey_item>
       <type>format</type>
       <plugin>fieldset</plugin>
-      <template>collesactual</template>
-      <content_sid>@@NULL@@</content_sid>
       <content/>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -892,13 +783,12 @@
       <sortindex>26</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_fieldset>
-      <label_sid>5</label_sid>
       <label>fieldset_label_05</label>
     </survey_fieldset>
   </item>
@@ -906,9 +796,7 @@
     <survey_item>
       <type>format</type>
       <plugin>label</plugin>
-      <template>collesactual</template>
-      <content_sid>2</content_sid>
-      <content/>
+      <content>item_content_02</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -923,13 +811,12 @@
       <sortindex>27</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_label>
-      <labelintro_sid>@@NULL@@</labelintro_sid>
       <labelintro/>
     </survey_label>
   </item>
@@ -937,9 +824,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>19</content_sid>
-      <content/>
+      <content>item_content_19</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -954,18 +839,15 @@
       <sortindex>28</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -974,9 +856,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>20</content_sid>
-      <content/>
+      <content>item_content_20</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -991,18 +871,15 @@
       <sortindex>29</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -1011,9 +888,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>21</content_sid>
-      <content/>
+      <content>item_content_21</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -1028,18 +903,15 @@
       <sortindex>30</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -1048,9 +920,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>22</content_sid>
-      <content/>
+      <content>item_content_22</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -1065,18 +935,15 @@
       <sortindex>31</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -1085,8 +952,6 @@
     <survey_item>
       <type>format</type>
       <plugin>fieldset</plugin>
-      <template>collesactual</template>
-      <content_sid>@@NULL@@</content_sid>
       <content/>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
@@ -1102,13 +967,12 @@
       <sortindex>32</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_fieldset>
-      <label_sid>6</label_sid>
       <label>fieldset_label_06</label>
     </survey_fieldset>
   </item>
@@ -1116,9 +980,7 @@
     <survey_item>
       <type>format</type>
       <plugin>label</plugin>
-      <template>collesactual</template>
-      <content_sid>2</content_sid>
-      <content/>
+      <content>item_content_02</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -1133,13 +995,12 @@
       <sortindex>33</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_label>
-      <labelintro_sid>@@NULL@@</labelintro_sid>
       <labelintro/>
     </survey_label>
   </item>
@@ -1147,9 +1008,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>23</content_sid>
-      <content/>
+      <content>item_content_23</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -1164,18 +1023,15 @@
       <sortindex>34</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -1184,9 +1040,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>24</content_sid>
-      <content/>
+      <content>item_content_24</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -1201,18 +1055,15 @@
       <sortindex>35</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -1221,9 +1072,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>25</content_sid>
-      <content/>
+      <content>item_content_25</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -1238,18 +1087,15 @@
       <sortindex>36</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -1258,9 +1104,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <template>collesactual</template>
-      <content_sid>26</content_sid>
-      <content/>
+      <content>item_content_26</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -1275,18 +1119,15 @@
       <sortindex>37</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
-      <options_sid>1</options_sid>
-      <options>radiobuttom_options_common</options>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>radiobutton_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <adjustment>1</adjustment>
     </survey_radiobutton>
@@ -1295,9 +1136,7 @@
     <survey_item>
       <type>field</type>
       <plugin>select</plugin>
-      <template>collesactual</template>
-      <content_sid>27</content_sid>
-      <content/>
+      <content>item_content_27</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -1312,18 +1151,15 @@
       <sortindex>38</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_select>
-      <options_sid>1</options_sid>
-      <options/>
-      <labelother_sid>@@NULL@@</labelother_sid>
+      <options>select_options_01</options>
       <labelother/>
       <defaultoption>2</defaultoption>
-      <defaultvalue_sid>@@NULL@@</defaultvalue_sid>
       <defaultvalue/>
       <downloadformat>0</downloadformat>
     </survey_select>
@@ -1332,9 +1168,7 @@
     <survey_item>
       <type>field</type>
       <plugin>textarea</plugin>
-      <template>collesactual</template>
-      <content_sid>28</content_sid>
-      <content/>
+      <content>item_content_28</content>
       <contentformat>1</contentformat>
       <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
@@ -1349,7 +1183,7 @@
       <sortindex>39</sortindex>
       <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent/>
       <parentvalue>@@NULL@@</parentvalue>
       <timecreated>1368471049</timecreated>
       <timemodified>@@NULL@@</timemodified>

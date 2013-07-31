@@ -84,7 +84,7 @@ if ($apply_mtemplate->is_cancelled()) {
 if ($mtemplate_manager->formdata = $apply_mtemplate->get_data()) {
     $mtemplate_manager->apply_template(SURVEY_MASTERTEMPLATE);
 
-    $redirecturl = new moodle_url('items_manage.php', $paramurl);
+    $redirecturl = new moodle_url('view.php', array('id' => $cm->id, 'act' => SURVEY_PREVIEWSURVEY));
     redirect($redirecturl);
 }
 // end of: manage form submission
@@ -93,7 +93,7 @@ if ($mtemplate_manager->formdata = $apply_mtemplate->get_data()) {
 // ////////////////////////////////////////////////////////////
 // output starts here
 // ////////////////////////////////////////////////////////////
-$PAGE->set_url('/mod/survey/mtemplates.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/survey/mtemplates.php', $paramurl);
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
 

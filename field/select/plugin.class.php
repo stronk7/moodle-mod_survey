@@ -127,8 +127,7 @@ class surveyfield_select extends mod_survey_itembase {
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = $this->item_get_multilang_fields();
-        $this->item_builtin_string_load_support($fieldlist);
+        $this->item_builtin_string_load_support();
 
         $this->item_custom_fields_to_form();
     }
@@ -149,11 +148,6 @@ class surveyfield_select extends mod_survey_itembase {
         $this->item_clean_textarea_fields($record, $fieldlist);
 
         $this->item_custom_fields_to_db($record);
-
-        // multilang save support for builtin survey
-        // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = $this->item_get_multilang_fields();
-        $this->item_builtin_string_save_support($record, $fieldlist);
 
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
@@ -239,22 +233,27 @@ class surveyfield_select extends mod_survey_itembase {
     }
 
     /*
-     * item_get_plugin_values
+     * item_get_friendlyformat
+     * returns true if the useform mform element for this item id is a group and false if not
      *
-     * @param $pluginstructure
-     * @param $pluginsid
+     * @param
      * @return
      */
-    public function item_get_plugin_values($pluginstructure, $pluginsid) {
-        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
+    public function item_get_friendlyformat() {
+        return SURVEYFIELD_SELECT_RETURNLABELS;
+    }
 
-        // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, true);
-        if ($errindex !== false) {
-            print_error('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
-        }
+    /*
+     * item_get_multilang_fields
+     *
+     * @param
+     * @return
+     */
+    public function item_get_multilang_fields() {
+        $fieldlist = parent::item_get_multilang_fields();
+        $fieldlist['select'] = array('options', 'labelother', 'defaultvalue');
 
-        return $values;
+        return $fieldlist;
     }
 
     // MARK parent
@@ -289,19 +288,6 @@ class surveyfield_select extends mod_survey_itembase {
      */
     public function parent_encode_content_to_value($parentcontent) {
         return $parentcontent;
-    }
-
-    /*
-     * item_get_multilang_fields
-     *
-     * @param
-     * @return
-     */
-    public function item_get_multilang_fields() {
-        $fieldlist = parent::item_get_multilang_fields();
-        $fieldlist['select'] = array('options', 'labelother', 'defaultvalue');
-
-        return $fieldlist;
     }
 
     // MARK userform
@@ -628,7 +614,7 @@ class surveyfield_select extends mod_survey_itembase {
 
         // format
         if ($format == SURVEY_FIRENDLYFORMAT) {
-            $format = $this->get_friendlyformat();
+            $format = $this->item_get_friendlyformat();
         }
         if (empty($format)) {
             $format = $this->downloadformat;
@@ -659,17 +645,6 @@ class surveyfield_select extends mod_survey_itembase {
         }
 
         return $return;
-    }
-
-    /*
-     * get_friendlyformat
-     * returns true if the useform mform element for this item id is a group and false if not
-     *
-     * @param
-     * @return
-     */
-    public function get_friendlyformat() {
-        return SURVEYFIELD_SELECT_RETURNLABELS;
     }
 
     /*

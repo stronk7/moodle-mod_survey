@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-define('SURVEYMTEMPLATE_NAMEPLACEHOLDER', '@@mTemplateNamePlaceholder@@');
+define('SURVEYTEMPLATE_NAMEPLACEHOLDER', '@@templateNamePlaceholder@@');
 
 require_once($CFG->dirroot.'/mod/survey/classes/templatebase.class.php');
 
@@ -70,6 +70,7 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
         global $CFG, $DB;
 
         $pluginname = clean_filename($this->formdata->mastertemplatename);
+        $pluginname = str_replace(' ', '_', $pluginname);
         $temp_subdir = "mod_survey/surveyplugins/$pluginname";
         $temp_basedir = $CFG->tempdir.'/'.$temp_subdir;
 
@@ -77,8 +78,10 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
         $master_filelist = get_directory_list($master_basepath);
 
         // I need to get xml content now because, to save time, I get xml AND $this->langtree contemporary
-        $xmlcontent = $this->build_xml();
-
+        // $xmlcontent = $this->build_xml();
+        $xmlcontent = $this->write_template_content(SURVEY_MASTERTEMPLATE);
+// echo '<textarea rows="10" cols="100">'.$xmlcontent.'</textarea>';
+// die;
         foreach ($master_filelist as $master_file) {
             $master_fileinfo = pathinfo($master_file);
             // create the structure of the temporary folder
@@ -102,9 +105,11 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
 
             if ($master_fileinfo['basename'] == 'template.class.php') {
                 $templateclass = file_get_contents($master_basepath.'/'.$master_file);
+// echo '<textarea rows="10" cols="100">'.$templateclass.'</textarea>';
                 // replace surveyTemplatePluginMaster with the name of the current survey
-                $templateclass = str_replace(SURVEYMTEMPLATE_NAMEPLACEHOLDER, $pluginname, $templateclass);
-
+                $templateclass = str_replace(SURVEYTEMPLATE_NAMEPLACEHOLDER, $pluginname, $templateclass);
+// echo '<textarea rows="10" cols="100">'.$templateclass.'</textarea>';
+// die;
                 $temp_path = $CFG->tempdir.'/'.$temp_subdir.'/'.$master_fileinfo['basename'];
 
                 // create $temp_path
@@ -144,7 +149,7 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
 
                 $filecopyright = file_get_contents($master_basepath.'/lang/en/surveytemplate_pluginname.php');
                 // replace surveyTemplatePluginMaster with the name of the current survey
-                $filecopyright = str_replace(SURVEYMTEMPLATE_NAMEPLACEHOLDER, $pluginname, $filecopyright);
+                $filecopyright = str_replace(SURVEYTEMPLATE_NAMEPLACEHOLDER, $pluginname, $filecopyright);
 
                 $savedstrings = $filecopyright.$this->extract_original_string();
                 // echo '<textarea rows="30" cols="100">'.$savedstrings.'</textarea>';
@@ -176,7 +181,7 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
             // read the master
             $filecontent = file_get_contents($master_basepath.'/'.$master_file);
             // replace surveyTemplatePluginMaster with the name of the current survey
-            $filecontent = str_replace(SURVEYMTEMPLATE_NAMEPLACEHOLDER, $pluginname, $filecontent);
+            $filecontent = str_replace(SURVEYTEMPLATE_NAMEPLACEHOLDER, $pluginname, $filecontent);
             if ($master_fileinfo['basename'] == 'version.php') {
                 $currentdate = gmdate("Ymd").'01';
                 $filecontent = str_replace('1965100401', $currentdate, $filecontent);
@@ -255,111 +260,24 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
     }
 
     /*
-     * get_used_plugin
-     *
-     * @param
-     * @return
-     */
-    public function get_structures_sid_plugin($templateplugins) {
-        $structures = array();
-        $tablesid = array();
-        foreach ($templateplugins as $templateplugin) {
-            $tablename = 'survey_'.$templateplugin->plugin;
-            if ($structure = $this->get_table_structure($tablename)) {
-                $structures[$tablename] = $structure;
-
-                // if there is a field ending in '_sid' create the line initializing the index
-                $currenttablesid = array();
-                foreach ($structure as $field) {
-                    if (substr($field, -4) == '_sid') {
-                        $currenttablesid[] = $field;
-                        $field = substr($field, 0, -4);
-                        $this->langtree[$templateplugin->plugin.'_'.$field] = array();
-                    }
-                }
-
-                $tablesid[$tablename] = $currenttablesid;
-            }
-        }
-
-        return array($structures, $tablesid);
-    }
-
-
-    /*
-     * create_mtemplate
-     *
-     * @param
-     * @return
-     */
-    public function build_xml() {
-        global $DB;
-
-        // preliminary steps
-        $templateplugins = $this->get_used_plugin();
-
-// echo '$templateplugins:';
-// var_dump($templateplugins);
-
-        // STEP 03n: create survey_$plugin table structure array
-        list($structures, $tablesid) = $this->get_structures_sid_plugin($templateplugins);
-
-// echo '$structures:';
-// var_dump($structures);
-
-// echo '$tablesid:';
-// var_dump($tablesid);
-
-        // STEP 04n: make a list of all itemseeds
-        $sql = 'SELECT si.id, si.type, si.plugin
-                FROM {survey_item} si
-                WHERE si.surveyid = :surveyid
-                ORDER BY si.sortindex';
-        $params = array('surveyid' => $this->survey->id);
-        $itemseeds = $DB->get_records_sql($sql, $params);
-
-        foreach ($itemseeds as $itemseed) {
-            $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
-
-            // get values to write xml
-            $values = $item->item_get_si_values($this->formdata, $structures['survey_item'], $tablesid['survey_item']);
-
-            // build lang tree for lang file
-            $this->build_langtree('item', $tablesid['survey_item'], $item);
-
-            if ($item->get_useplugintable()) { // only page break does not use the plugin table
-                $tablename = 'survey_'.$itemseed->plugin;
-                $currentsid = $tablesid[$tablename];
-                $currentstructure = $structures[$tablename];
-
-                // get values to write xml
-                $values = $item->item_get_plugin_values($currentstructure, $currentsid);
-
-                // build lang tree for lang file
-                $this->build_langtree($itemseed->plugin, $tablesid[$tablename], $item);
-            }
-        }
-
-        // echo '$this->langtree:';
-        // var_dump($this->langtree);
-
-        // return XML content
-        return $this->write_template_content(SURVEY_MASTERTEMPLATE);
-    }
-
-    /*
      * build_langtree
      *
      * @param $currentsid
      * @param $values
      * @return
      */
-    public function build_langtree($plugin, $currentsid, $item) {
-        foreach ($currentsid as $singlesid) {
-            $field = substr($singlesid, 0, -4);
-            $frankenstinname = $plugin.'_'.$field;
-            $stringindex = sprintf('%02d', 1+count($this->langtree[$frankenstinname]));
-            $this->langtree[$frankenstinname][$frankenstinname.'_'.$stringindex] = str_replace("\r", '', $item->item_get_generic_field($field));
+    public function build_langtree($dummyplugin, $multilangfields, $item) {
+        foreach ($multilangfields as $dummyplugin => $fieldnames) {
+            foreach ($fieldnames as $fieldname) {
+                $frankenstinname = $dummyplugin.'_'.$fieldname;
+                if (isset($this->langtree[$frankenstinname])) {
+                    $index = count($this->langtree[$frankenstinname]);
+                } else {
+                    $index = 0;
+                }
+                $stringindex = sprintf('%02d', 1+$index);
+                $this->langtree[$frankenstinname][$frankenstinname.'_'.$stringindex] = str_replace("\r", '', $item->item_get_generic_field($fieldname));
+            }
         }
     }
 

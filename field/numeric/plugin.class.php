@@ -137,8 +137,7 @@ class surveyfield_numeric extends mod_survey_itembase {
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = $this->item_get_multilang_fields();
-        $this->item_builtin_string_load_support($fieldlist);
+        $this->item_builtin_string_load_support();
 
         $this->item_custom_fields_to_form();
     }
@@ -176,11 +175,6 @@ class surveyfield_numeric extends mod_survey_itembase {
         } else {
             $record->upperbound = null;
         }
-
-        // multilang save support for builtin survey
-        // whether executed, the 'content' field is ALWAYS handled
-        $fieldlist = $this->item_get_multilang_fields();
-        $this->item_builtin_string_save_support($record, $fieldlist);
 
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
@@ -247,25 +241,6 @@ class surveyfield_numeric extends mod_survey_itembase {
      */
     public function item_get_parent_format() {
         return get_string('parentformatdecimal', 'surveyfield_'.$this->plugin, $this->decimalseparator);
-    }
-
-    /*
-     * item_get_plugin_values
-     *
-     * @param $pluginstructure
-     * @param $pluginsid
-     * @return
-     */
-    public function item_get_plugin_values($pluginstructure, $pluginsid) {
-        $values = parent::item_get_plugin_values($pluginstructure, $pluginsid);
-
-        // just a check before assuming all has been done correctly
-        $errindex = array_search('err', $values, true);
-        if ($errindex !== false) {
-            print_error('$values[\''.$errindex.'\'] of survey_'.$this->plugin.' was not properly managed');
-        }
-
-        return $values;
     }
 
     /*

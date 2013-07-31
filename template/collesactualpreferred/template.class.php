@@ -24,14 +24,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class surveytemplate_test {
+class surveytemplate_collesactualpreferred {
     /*
-     * template_supports_multilang
+     * apply_survey_settings
      *
      * @param $record
-     * @return true or false
+     * @return record
      */
-    public function template_supports_multilang() {
-        return true;
+    public function apply_survey_settings($record) {
+        return $record;
     }
 }

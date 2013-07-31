@@ -60,5 +60,40 @@ function xmldb_surveyfield_checkbox_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013062001, 'surveyfield', 'checkbox');
     }
 
+    if ($oldversion < 2013073001) {
+
+        // Define field content_sid to be dropped from survey_checkbox.
+        $table = new xmldb_table('survey_checkbox');
+        $field = new xmldb_field('options_sid');
+
+        // Conditionally launch drop field content_sid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field content_sid to be dropped from survey_checkbox.
+        $table = new xmldb_table('survey_checkbox');
+        $field = new xmldb_field('labelother_sid');
+
+        // Conditionally launch drop field content_sid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field content_sid to be dropped from survey_checkbox.
+        $table = new xmldb_table('survey_checkbox');
+        $field = new xmldb_field('defaultvalue_sid');
+
+        // Conditionally launch drop field content_sid.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013073001, 'surveyfield', 'checkbox');
+    }
+
     return true;
 }
