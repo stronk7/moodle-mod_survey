@@ -80,13 +80,6 @@ class mod_survey_itembaseform extends moodleform {
         }
 
         // ----------------------------------------
-        // newitem::content_sid
-        // ----------------------------------------
-        $fieldname = 'content_sid';
-        $mform->addElement('hidden', $fieldname, '');
-        $mform->setType($fieldname, PARAM_INT);
-
-        // ----------------------------------------
         // newitem::content & contentformat
         // ----------------------------------------
         $fieldname = 'content_editor';
@@ -230,8 +223,8 @@ class mod_survey_itembaseform extends moodleform {
             // create the list of each item with:
             //     sortindex lower than mine (whether already exists)
             //     $plugintemplate->flag->couldbeparent == true
-            //     basicform == my one <-- I jump this verification because the survey creator can, at every time, change the basicform of the current item
-            //         So I shify the verification of the holding form at the form verification time.
+            //     advanced == my one <-- I jump this verification because the survey creator can, at every time, change the basicform of the current item
+            //                            So I move the verification of the holding form at the form verification time.
 
             // build the list only for searchable plugins
             $pluginlist = survey_get_plugin_list(SURVEY_TYPEFIELD);
@@ -241,7 +234,7 @@ class mod_survey_itembaseform extends moodleform {
                     unset($pluginlist[$plugin]);
                 }
             }
-            $pluginwhere = '(\''.implode("','", $pluginlist).'\')';
+            $where = '(\''.implode("','", $pluginlist).'\')';
 
             $sql = 'SELECT *
                     FROM {survey_item}
@@ -251,7 +244,7 @@ class mod_survey_itembaseform extends moodleform {
                 $sql .= ' AND sortindex < :sortindex';
                 $sqlparams['sortindex'] = $item->get_sortindex();
             }
-            $sql .= ' AND plugin IN '.$pluginwhere.'
+            $sql .= ' AND plugin IN '.$where.'
                         ORDER BY sortindex';
             $parents = $DB->get_recordset_sql($sql, $sqlparams);
 
@@ -261,9 +254,9 @@ class mod_survey_itembaseform extends moodleform {
             $select->addOption(get_string('choosedots'), 0);
             foreach ($parents as $parent) {
                 $star = ($parent->advanced) ? '(*) ' : '';
-                $thiscontent = survey_get_sid_field_content($parent);
 
-                $content = $star.get_string('pluginname', 'surveyfield_'.$parent->plugin).' ['.$parent->sortindex.']: '.strip_tags($thiscontent);
+                // I do not need to take care of contents of items of master templates because if I am here, $parent is a standard item and not a multilang one
+                $content = $star.get_string('pluginname', 'surveyfield_'.$parent->plugin).' ['.$parent->sortindex.']: '.strip_tags($parent->content);
                 if (strlen($content) > $maxlength) {
                     $content = substr($content, 0, $maxlength);
                 }

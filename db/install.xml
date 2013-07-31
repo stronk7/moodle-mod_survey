@@ -49,10 +49,9 @@
         <FIELD NAME="surveyid"          TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="id"                NEXT="type"/>
 
         <FIELD NAME="type"              TYPE="char" LENGTH="32"     NOTNULL="true"                  DEFAULT="err" SEQUENCE="false" PREVIOUS="surveyid"          NEXT="plugin"/>
-        <FIELD NAME="plugin"            TYPE="char" LENGTH="32"     NOTNULL="true"                  DEFAULT="err" SEQUENCE="false" PREVIOUS="type"              NEXT="content_sid"/>
+        <FIELD NAME="plugin"            TYPE="char" LENGTH="32"     NOTNULL="true"                  DEFAULT="err" SEQUENCE="false" PREVIOUS="type"              NEXT="content"/>
 
-        <FIELD NAME="content_sid"       TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="plugin"            NEXT="content"/>
-        <FIELD NAME="content"           TYPE="text" LENGTH="small"  NOTNULL="false"                               SEQUENCE="false" PREVIOUS="content_sid"       NEXT="contentformat"/>
+        <FIELD NAME="content"           TYPE="text" LENGTH="small"  NOTNULL="false"                               SEQUENCE="false" PREVIOUS="plugin"            NEXT="contentformat"/>
         <FIELD NAME="contentformat"     TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="content"           NEXT="customnumber"/>
 
         <FIELD NAME="customnumber"      TYPE="char" LENGTH="64"     NOTNULL="false"                               SEQUENCE="false" PREVIOUS="contentformat"     NEXT="extrarow"/>
@@ -69,9 +68,8 @@
 
         <FIELD NAME="sortindex"         TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="limitedaccess"     NEXT="formpage"/>
         <FIELD NAME="formpage"          TYPE="int"  LENGTH="7"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="sortindex"         NEXT="parentid"/>
-        <FIELD NAME="parentid"          TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="true"               SEQUENCE="false" PREVIOUS="formpage"          NEXT="parentcontent_sid"/>
-        <FIELD NAME="parentcontent_sid" TYPE="int"  LENGTH="4"      NOTNULL="false"                               SEQUENCE="false" PREVIOUS="parentid"          NEXT="parentcontent"/>
-        <FIELD NAME="parentcontent"     TYPE="char" LENGTH="255"    NOTNULL="false"                               SEQUENCE="false" PREVIOUS="parentcontent_sid" NEXT="parentvalue"/>
+        <FIELD NAME="parentid"          TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="true"               SEQUENCE="false" PREVIOUS="formpage"          NEXT="parentcontent"/>
+        <FIELD NAME="parentcontent"     TYPE="char" LENGTH="255"    NOTNULL="false"                               SEQUENCE="false" PREVIOUS="parentid"          NEXT="parentvalue"/>
         <FIELD NAME="parentvalue"       TYPE="char" LENGTH="255"    NOTNULL="false"                               SEQUENCE="false" PREVIOUS="parentcontent"     NEXT="timecreated"/>
 
         <FIELD NAME="timecreated"       TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0"   SEQUENCE="false" PREVIOUS="parentvalue"       NEXT="timemodified"/>

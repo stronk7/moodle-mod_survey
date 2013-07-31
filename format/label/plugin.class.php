@@ -56,11 +56,6 @@ class surveyformat_label extends mod_survey_itembase {
     public $labelintro = '';
 
     /*
-     * $labelintro_sid
-     */
-    public $labelintro_sid = null;
-
-    /*
      * $builtinlindex
      */
     public $builtinlindex = '';

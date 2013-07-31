@@ -6,12 +6,11 @@
   <TABLES>
     <TABLE NAME="survey_label" COMMENT="label type">
       <FIELDS>
-        <FIELD NAME="id"             TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true"             SEQUENCE="true"                              NEXT="surveyid"/>
-        <FIELD NAME="surveyid"       TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id"               NEXT="itemid"/>
-        <FIELD NAME="itemid"         TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"         NEXT="labelintro_sid"/>
+        <FIELD NAME="id"             TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true"             SEQUENCE="true"                      NEXT="surveyid"/>
+        <FIELD NAME="surveyid"       TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id"       NEXT="itemid"/>
+        <FIELD NAME="itemid"         TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid" NEXT="labelintro"/>
 
-        <FIELD NAME="labelintro_sid" TYPE="int"  LENGTH="4"  NOTNULL="false"                             SEQUENCE="false" PREVIOUS="itemid"           NEXT="labelintro"/>
-        <FIELD NAME="labelintro"     TYPE="char" LENGTH="32" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="labelintro_sid"/>
+        <FIELD NAME="labelintro"     TYPE="char" LENGTH="32" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="itemid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

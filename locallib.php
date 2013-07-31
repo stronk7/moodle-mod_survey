@@ -137,28 +137,6 @@ function survey_get_my_groups($cm) {
 }
 
 /*
- * survey_get_sid_field_content
- * this function is the equivalent of the method item_builtin_string_load_support in itembase.class.php
- * @param $record
- * @return
- */
-function survey_get_sid_field_content($record) {
-
-    $surveyid = $record->surveyid;
-    $template = $DB->get_field('survey', 'template', array('id' => $surveyid), MUST_EXIST);
-    if (empty($template)) {
-        return;
-    }
-
-    // get the string 'content_sid'
-    // from surveytemplate_{$this->template}.php file
-    $stringindex = sprintf('%02d', $record->content_sid);
-    $return = get_string('item_content_'.$stringindex, 'surveytemplate_'.$record->template);
-
-    return $return;
-}
-
-/*
  * survey_need_group_filtering
  * this function answer the question: do I Need to filter group in my next task?
  * @param

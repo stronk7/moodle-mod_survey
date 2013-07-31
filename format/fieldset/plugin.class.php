@@ -56,11 +56,6 @@ class surveyformat_fieldset extends mod_survey_itembase {
     public $label = '';
 
     /*
-     * $label_sid = the content of the message
-     */
-    public $label_sid = null;
-
-    /*
      * $flag = features describing the object
      */
     public $flag;

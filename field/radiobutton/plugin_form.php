@@ -46,13 +46,6 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform = $this->_form;
 
         // ----------------------------------------
-        // newitem::options_sid
-        // ----------------------------------------
-        $fieldname = 'options_sid';
-        $mform->addElement('hidden', $fieldname, '');
-        $mform->setType($fieldname, PARAM_RAW);
-
-        // ----------------------------------------
         // newitem::options
         // ----------------------------------------
         $fieldname = 'options';

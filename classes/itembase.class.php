@@ -63,13 +63,6 @@ class mod_survey_itembase {
     public $itemname = '';
 
     /*
-     * $content_sid = a number specifing the ID of the builtin survey item.
-     * empty: user made it
-     * non empty: belong to a built-in survey
-     */
-    public $content_sid = null;
-
-    /*
      * $content = the text content of the item.
      */
     public $content = '';
@@ -494,13 +487,6 @@ class mod_survey_itembase {
         if ($multilangfields = $this->item_get_multilang_fields()) {
             foreach ($multilangfields as $plugin => $fieldnames) {
                 foreach ($fieldnames as $fieldname) {
-                    if (!isset($this->{$fieldname})) {
-                        continue;
-                    }
-                    if (!strlen($this->{$fieldname})) {
-                        continue;
-                    }
-
                     $stringkey = $this->{$fieldname};
                     $this->{$fieldname} = get_string($stringkey, 'surveytemplate_'.$template);
                 }

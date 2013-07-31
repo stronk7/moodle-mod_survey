@@ -44,11 +44,6 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
     public $langtree = array();
 
     /*
-     * $si_sid: Survey_item seed ID
-     */
-    public $si_sid = array();
-
-    /*
      * $mtemplatename: name of the master template to work with
      */
     public $mtemplatename = '';

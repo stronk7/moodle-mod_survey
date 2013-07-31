@@ -56,11 +56,6 @@ class surveyfield_radiobutton extends mod_survey_itembase {
     public $options = '';
 
     /*
-     * $options_sid
-     */
-    public $options_sid = null;
-
-    /*
      * $defaultoption
      */
     public $defaultoption = SURVEY_INVITATIONDEFAULT;

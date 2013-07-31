@@ -49,13 +49,6 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey', $typename));
 
         // ----------------------------------------
-        // newitem::labelintro_sid
-        // ----------------------------------------
-        $fieldname = 'labelintro_sid';
-        $mform->addElement('hidden', $fieldname, '');
-        $mform->setType($fieldname, PARAM_RAW);
-
-        // ----------------------------------------
         // newitem::labelintro
         // ----------------------------------------
         $fieldname = 'labelintro';

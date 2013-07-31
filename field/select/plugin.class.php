@@ -56,11 +56,6 @@ class surveyfield_select extends mod_survey_itembase {
     public $options = '';
 
     /*
-     * $options_sid
-     */
-    public $options_sid = null;
-
-    /*
      * $labelother = the text label for the optional option "other" in the form of "$value SURVEY_OTHERSEPARATOR $label"
      */
     public $labelother = '';

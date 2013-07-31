@@ -43,24 +43,28 @@ class survey_chooseitemform extends moodleform {
         // no matter for the page
         // elenco dei campi che l'utente vuole vedere nel file esportato
 
-        //$records = $DB->get_recordset_sql($itemssql, $sqlparams);
         $where = array();
         $where['surveyid'] = $survey->id;
         $where['type'] = SURVEY_TYPEFIELD;
         $where['advanced'] = 0;
         $where['hide'] = 0;
-        $records = $DB->get_recordset('survey_item', $where, 'sortindex');
+        $itemseeds = $DB->get_recordset('survey_item', $where, 'sortindex');
 
         // build options array
         $maxlength = 150;
         $options = array(get_string('choosedots'));
-        foreach ($records as $record) {
-            $thiscontent = survey_get_sid_field_content($record);
-            $content = get_string('pluginname', 'surveyfield_'.$record->plugin).': '.strip_tags($thiscontent);
+        foreach ($itemseeds as $itemseed) {
+            $thiscontent = survey_get_sid_field_content($itemseed);
+            if (!empty($survey->template)) {
+                $thiscontent = get_string($itemseed->content, 'surveytemplate_'.$survey->template);
+            } else {
+                $thiscontent = $itemseed->content;
+            }
+            $content = get_string('pluginname', 'surveyfield_'.$itemseed->plugin).': '.strip_tags($thiscontent);
             if (strlen($content) > $maxlength) {
                 $content = substr($content, 0, $maxlength);
             }
-            $options[$record->id] = $content;
+            $options[$itemseed->id] = $content;
         }
 
         $fieldname = 'itemid';

@@ -6,12 +6,11 @@
   <TABLES>
     <TABLE NAME="survey_fieldset" COMMENT="fieldset type">
       <FIELDS>
-        <FIELD NAME="id"        TYPE="int"  LENGTH="10"  NOTNULL="true"  UNSIGNED="true"             SEQUENCE="true"                            NEXT="surveyid"/>
-        <FIELD NAME="surveyid"  TYPE="int"  LENGTH="10"  NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id"             NEXT="itemid"/>
-        <FIELD NAME="itemid"    TYPE="int"  LENGTH="10"  NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"       NEXT="label_sid"/>
+        <FIELD NAME="id"        TYPE="int"  LENGTH="10"  NOTNULL="true"  UNSIGNED="true"             SEQUENCE="true"                      NEXT="surveyid"/>
+        <FIELD NAME="surveyid"  TYPE="int"  LENGTH="10"  NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id"       NEXT="itemid"/>
+        <FIELD NAME="itemid"    TYPE="int"  LENGTH="10"  NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid" NEXT="label"/>
 
-        <FIELD NAME="label_sid" TYPE="int"  LENGTH="4"   NOTNULL="false"                             SEQUENCE="false" PREVIOUS="itemid"         NEXT="label"/>
-        <FIELD NAME="label"     TYPE="char" LENGTH="128" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="label_sid"/>
+        <FIELD NAME="label"     TYPE="char" LENGTH="128" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="itemid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

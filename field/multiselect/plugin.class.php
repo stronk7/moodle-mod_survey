@@ -56,11 +56,6 @@ class surveyfield_multiselect extends mod_survey_itembase {
     public $options = '';
 
     /*
-     * $options_sid
-     */
-    public $options_sid = null;
-
-    /*
      * $defaultvalue = the value of the field when the form is initially displayed.
      */
     public $defaultvalue = '';

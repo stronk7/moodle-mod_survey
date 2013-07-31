@@ -6,16 +6,15 @@
   <TABLES>
     <TABLE NAME="survey_numeric" COMMENT="Numeric type surveyfield">
       <FIELDS>
-        <FIELD NAME="id"               TYPE="int"   LENGTH="10" NOTNULL="true"  UNSIGNED="true"              SEQUENCE="true"                              NEXT="surveyid"/>
-        <FIELD NAME="surveyid"         TYPE="int"   LENGTH="10" NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="id"               NEXT="itemid"/>
-        <FIELD NAME="itemid"           TYPE="int"   LENGTH="10" NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"         NEXT="defaultvalue_sid"/>
+        <FIELD NAME="id"               TYPE="int"   LENGTH="10" NOTNULL="true"  UNSIGNED="true"              SEQUENCE="true"                          NEXT="surveyid"/>
+        <FIELD NAME="surveyid"         TYPE="int"   LENGTH="10" NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="id"           NEXT="itemid"/>
+        <FIELD NAME="itemid"           TYPE="int"   LENGTH="10" NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"     NEXT="defaultvalue"/>
 
-        <FIELD NAME="defaultvalue_sid" TYPE="int"   LENGTH="4"  NOTNULL="false"                              SEQUENCE="false" PREVIOUS="itemid"           NEXT="defaultvalue"/>
-        <FIELD NAME="defaultvalue"     TYPE="float" LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="defaultvalue_sid" NEXT="signed"/>
+        <FIELD NAME="defaultvalue"     TYPE="float" LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="itemid"       NEXT="signed"/>
 
-        <FIELD NAME="signed"           TYPE="int"   LENGTH="4"  NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultvalue"     NEXT="lowerbound"/>
-        <FIELD NAME="lowerbound"       TYPE="float" LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="signed"           NEXT="upperbound"/>
-        <FIELD NAME="upperbound"       TYPE="float" LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="lowerbound"       NEXT="decimals"/>
+        <FIELD NAME="signed"           TYPE="int"   LENGTH="4"  NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultvalue" NEXT="lowerbound"/>
+        <FIELD NAME="lowerbound"       TYPE="float" LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="signed"       NEXT="upperbound"/>
+        <FIELD NAME="upperbound"       TYPE="float" LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="lowerbound"   NEXT="decimals"/>
         <FIELD NAME="decimals"         TYPE="int"   LENGTH="4"  NOTNULL="false" UNSIGNED="true"              SEQUENCE="false" PREVIOUS="upperbound"/>
       </FIELDS>
       <KEYS>
