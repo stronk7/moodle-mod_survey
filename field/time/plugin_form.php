@@ -145,11 +145,15 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $errors = parent::validation($data, $files);
 
+        $lowerbound = $item->item_time_to_unix_time($data['lowerbound_hour'], $data['lowerbound_minute']);
+        $upperbound = $item->item_time_to_unix_time($data['upperbound_hour'], $data['upperbound_minute']);
+        if ($lowerbound == $upperbound) {
+            $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_time');
+        }
+
         // constrain default between boundaries
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
             $defaultvalue = $item->item_time_to_unix_time($data['defaultvalue_hour'], $data['defaultvalue_minute']);
-            $lowerbound = $item->item_time_to_unix_time($data['lowerbound_hour'], $data['lowerbound_minute']);
-            $upperbound = $item->item_time_to_unix_time($data['upperbound_hour'], $data['upperbound_minute']);
 
             if ($lowerbound == $upperbound) {
                 $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_time');
@@ -157,20 +161,14 @@ class survey_pluginform extends mod_survey_itembaseform {
 
             if ($lowerbound < $upperbound) {
                 // internal range
-                if ($defaultvalue < $lowerbound) {
-                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_time');
-                }
-                if ($defaultvalue > $upperbound) {
+                if (($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound)) {
                     $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_time');
                 }
             }
 
             if ($lowerbound > $upperbound) {
                 // external range
-                if ($defaultvalue > $lowerbound) {
-                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_time');
-                }
-                if ($defaultvalue < $upperbound) {
+                if (($defaultvalue > $lowerbound) && ($defaultvalue < $upperbound)) {
                     $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_time');
                 }
             }

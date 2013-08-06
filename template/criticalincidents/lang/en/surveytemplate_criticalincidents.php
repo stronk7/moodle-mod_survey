@@ -31,3 +31,7 @@ $string['item_content_03'] = '<p>At what moment in class were you most distanced
 $string['item_content_04'] = '<p>What action from anyone in the forums did you find most affirming or helpful?</p>';
 $string['item_content_05'] = '<p>What action from anyone in the forums did you find most puzzling or confusing?</p>';
 $string['item_content_06'] = '<p>What event surprised you most?</p>';
+
+$string['item_parentcontent_01'] = '';
+
+$string['label_intro_01'] = '';

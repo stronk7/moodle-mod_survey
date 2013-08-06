@@ -233,6 +233,34 @@ class surveyfield_textarea extends mod_survey_itembase {
         return $this->useeditor;
     }
 
+    /**
+     * item_get_plugin_schema
+     * Return the xml schema for survey_<<plugin>> table.
+     *
+     * @return string
+     *
+     */
+    static function item_get_plugin_schema() {
+        $schema = <<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="survey_textarea">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:int" name="useeditor"/>
+                <xs:element type="xs:int" name="arearows"/>
+                <xs:element type="xs:int" name="areacols"/>
+                <xs:element type="xs:int" name="minlength"/>
+                <xs:element type="xs:int" name="maxlength"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+EOS;
+
+        return $schema;
+    }
+
     // MARK userform
 
     /*

@@ -286,6 +286,38 @@ class surveyfield_age extends mod_survey_itembase {
         return parent::item_get_multilang_fields();
     }
 
+    /**
+     * item_get_plugin_schema
+     * Return the xml schema for survey_<<plugin>> table.
+     *
+     * @return string
+     *
+     */
+    static function item_get_plugin_schema() {
+        $schema = <<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="survey_age">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:int" name="defaultoption"/>
+                <xs:element type="unixtime" name="defaultvalue"/>
+                <xs:element type="unixtime" name="lowerbound"/>
+                <xs:element type="unixtime" name="upperbound"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="unixtime">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="-?\d{0,10}"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
+EOS;
+
+        return $schema;
+    }
+
     // MARK userform
 
     /*

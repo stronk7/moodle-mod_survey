@@ -66,7 +66,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         // newitem::defaultvalue
         // ----------------------------------------
         $fieldname = 'defaultvalue';
-        $elementgroup=array();
+        $elementgroup = array();
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_select'), SURVEY_CUSTOMDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('invitationdefault', 'survey'), SURVEY_INVITATIONDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('noanswer', 'survey'), SURVEY_NOANSWERDEFAULT);

@@ -51,6 +51,7 @@ $string['strftime04'] = '%b \'%y';
 $string['strftime05'] = '%m/%Y';
 $string['strftime06'] = '%m/%y';
 
+$string['lowerequaltoupper'] = 'Lower and upper bounds need to be different';
 $string['currentshortdatedefault'] = 'Current short date';
 $string['invitationmonth'] = 'Choose a month';
 $string['invitationyear'] = 'Choose a year';

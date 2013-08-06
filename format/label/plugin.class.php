@@ -104,8 +104,6 @@ class surveyformat_label extends mod_survey_itembase {
 
         // list of fields I do not want to have in the item definition form
         $this->item_form_requires['common_fs'] = false;
-        // $this->item_form_requires['content_editor'] = false;
-        // $this->item_form_requires['customnumber'] = false;
         $this->item_form_requires['extrarow'] = false;
         $this->item_form_requires['extranote'] = false;
         $this->item_form_requires['required'] = false;
@@ -166,6 +164,30 @@ class surveyformat_label extends mod_survey_itembase {
         $fieldlist['label'] = array('labelintro');
 
         return $fieldlist;
+    }
+
+    /**
+     * item_get_plugin_schema
+     * Return the xml schema for survey_<<plugin>> table.
+     *
+     * @return string
+     *
+     */
+    static function item_get_plugin_schema() {
+        $schema = <<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="survey_label">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="labelintro"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+EOS;
+
+        return $schema;
     }
 
     // MARK userform

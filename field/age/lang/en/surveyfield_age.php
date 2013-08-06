@@ -49,5 +49,6 @@ $string['invitationyear'] = 'Choose a year';
 $string['invitationmonth'] = 'Choose a month';
 $string['uerr_agenotsetrequired'] = 'Please define a age';
 $string['uerr_agenotset'] = 'Please define a age or select the "{$a}" checkbox';
+$string['lowerequaltoupper'] = 'Lower and upper bounds need to be different';
 $string['aaa'] = '';
 $string['aaa'] = '';

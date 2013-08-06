@@ -151,6 +151,32 @@ class surveyfield_fileupload extends mod_survey_itembase {
         return parent::item_get_multilang_fields();
     }
 
+    /**
+     * item_get_plugin_schema
+     * Return the xml schema for survey_<<plugin>> table.
+     *
+     * @return string
+     *
+     */
+    static function item_get_plugin_schema() {
+        $schema = <<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="survey_fileupload">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:int" name="maxfiles"/>
+                <xs:element type="xs:int" name="maxbytes"/>
+                <xs:element type="xs:string" name="filetypes"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+EOS;
+
+        return $schema;
+    }
+
     // MARK userform
 
     /*

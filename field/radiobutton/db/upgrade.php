@@ -99,5 +99,20 @@ function xmldb_surveyfield_radiobutton_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013073001, 'surveyfield', 'radiobutton');
     }
 
+    if ($oldversion < 2013080301) {
+
+        // Define field downloadformat to be added to survey_radiobutton.
+        $table = new xmldb_table('survey_radiobutton');
+        $field = new xmldb_field('downloadformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');
+
+        // Conditionally launch add field downloadformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013080301, 'surveyfield', 'radiobutton');
+    }
+
     return true;
 }

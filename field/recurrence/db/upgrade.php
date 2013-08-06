@@ -35,7 +35,7 @@ function xmldb_surveyfield_recurrence_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2013061702) {
-        // Define field rangetype to be dropped from survey_time.
+        // Define field rangetype to be dropped from survey_recurrence.
         $table = new xmldb_table('survey_time');
         $field = new xmldb_field('rangetype');
 

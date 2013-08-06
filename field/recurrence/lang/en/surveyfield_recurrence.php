@@ -35,7 +35,7 @@ $string['invitationmonth'] = 'Choose a month';
 $string['invitationyear'] = 'Choose a year';
 $string['lowerbound_help'] = 'The lower recurrence the user will be allowed to enter';
 $string['lowerbound'] = 'Lower bound';
-$string['lowerequaltoupper'] = 'Lower and upper bounds need to be different';
+$string['lowerequaltoupper'] = 'Lower and upper bounds must be different';
 $string['outofrangedefault'] = 'Default does not fall within the specified range';
 $string['parentcontentinvalidrecurrence_err'] = 'Provided recurrence is not a regular recurrence';
 $string['parentcontentrecurrenceoutofrange_err'] = 'Provided recurrence is out of the range requested to the choosen item';
@@ -55,4 +55,7 @@ $string['uerr_recurrencenotsetrequired'] = 'Please define a recurrence';
 $string['upperbound_help'] = 'The upper recurrence the user will be allowed to enter';
 $string['upperbound'] = 'Upper bound';
 $string['userfriendlypluginname'] = 'Recurrence [dd/mm]';
-$string['incorrectrecurrence'] = 'Incorrect value entered';
+$string['notvalidlowerbound'] = 'Incorrect value entered';
+$string['notvalidupperbound'] = 'Incorrect value entered';
+$string['notvaliddefault'] = 'Incorrect value entered';
+

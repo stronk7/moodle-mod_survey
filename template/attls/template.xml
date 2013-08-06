@@ -6,10 +6,9 @@
       <plugin>label</plugin>
       <content>item_content_01</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
       <extranote/>
-      <required>@@NULL@@</required>
+      <required>0</required>
       <hideinstructions>0</hideinstructions>
       <variable/>
       <indent>0</indent>
@@ -17,15 +16,13 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>1</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <parentvalue/>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_label>
-      <labelintro>@@NULL@@</labelintro>
+      <labelintro>label_intro_01</labelintro>
     </survey_label>
   </item>
   <item>
@@ -34,23 +31,19 @@
       <plugin>fieldset</plugin>
       <content/>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>0</extrarow>
       <extranote/>
-      <required>@@NULL@@</required>
+      <required>0</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>2</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue/>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_fieldset>
       <label>fieldset_label_01</label>
@@ -62,29 +55,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_02</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>3</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -94,29 +83,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_03</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>4</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -126,29 +111,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_04</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>5</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -158,29 +139,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_05</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>6</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -190,29 +167,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_06</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>7</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -222,29 +195,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_07</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>8</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -254,29 +223,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_08</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>9</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -286,29 +251,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_09</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>10</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -318,29 +279,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_10</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>11</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -350,29 +307,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_11</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>12</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -382,29 +335,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_12</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>13</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -414,29 +363,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_13</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>14</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -446,29 +391,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_14</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>15</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -478,29 +419,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_15</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>16</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -510,29 +447,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_16</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>17</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -542,29 +475,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_17</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>18</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -574,29 +503,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_18</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>19</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -606,29 +531,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_19</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>20</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -638,29 +559,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_20</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>21</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>
@@ -670,29 +587,25 @@
       <plugin>radiobutton</plugin>
       <content>item_content_21</content>
       <contentformat>1</contentformat>
-      <customnumber>@@NULL@@</customnumber>
       <extrarow>1</extrarow>
       <extranote/>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
-      <variable>@@NULL@@</variable>
       <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>22</sortindex>
-      <formpage>1</formpage>
       <parentid>0</parentid>
-      <parentcontent>@@NULL@@</parentcontent>
-      <parentvalue>@@NULL@@</parentvalue>
+      <parentcontent>item_parentcontent_01</parentcontent>
       <timecreated>1368471049</timecreated>
-      <timemodified>@@NULL@@</timemodified>
     </survey_item>
     <survey_radiobutton>
       <options>radiobutton_options_01</options>
-      <labelother>@@NULL@@</labelother>
+      <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
-      <defaultvalue>@@NULL@@</defaultvalue>
+      <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
+      <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
     </survey_radiobutton>
   </item>

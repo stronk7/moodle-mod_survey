@@ -103,10 +103,28 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $errors = parent::validation($data, $files);
 
+        $lowerbound = $data['lowerbound'];
+        $upperbound =$data['upperbound'];
+        if ($lowerbound == $upperbound) {
+            $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_integer');
+        }
+
         // constrain default between boundaries
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
-            if ( ($data['defaultvalue'] < $data['lowerbound']) || ($data['defaultvalue'] > $data['upperbound']) ) {
-                $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_integer');
+            $defaultvalue = $data['defaultvalue'];
+
+            if ($lowerbound < $upperbound) {
+                // internal range
+                if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
+                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_integer');
+                }
+            }
+
+            if ($lowerbound > $upperbound) {
+                // external range
+                if (($defaultvalue > $lowerbound) && ($defaultvalue < $upperbound)) {
+                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_integer');
+                }
             }
         }
 

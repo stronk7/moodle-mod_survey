@@ -43,3 +43,4 @@ $string['uerr_lowerthanminimum'] = 'Provided value is lower than minimum allowed
 $string['upperbound_help'] = 'The upper integer the user will be allowed to enter';
 $string['upperbound'] = 'Upper bound';
 $string['userfriendlypluginname'] = 'Integer';
+$string['lowerequaltoupper'] = 'Lower and upper bounds need to be different';

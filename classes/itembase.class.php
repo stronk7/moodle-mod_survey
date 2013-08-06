@@ -265,7 +265,7 @@ class mod_survey_itembase {
 
         // manage other checkboxes content
         $checkboxessettings = array('advanced', 'insearchform', 'hideinstructions', 'required', 'hide');
-        foreach($checkboxessettings as $checkboxessetting) {
+        foreach ($checkboxessettings as $checkboxessetting) {
             $record->{$checkboxessetting} = isset($record->{$checkboxessetting}) ? 1 : 0;
         }
 
@@ -348,9 +348,6 @@ class mod_survey_itembase {
                 $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
                 $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
                 $record->contentformat = FORMAT_HTML;
-            } else { // i.e. fieldset
-                $record->content = null;
-                $record->contentformat = null;
             }
 
             // hide/unhide part 1
@@ -715,6 +712,64 @@ class mod_survey_itembase {
      */
     public function item_get_main_text() {
         return $this->content;
+    }
+
+    /*
+     * item_list_constraints
+     *
+     * @param
+     * @return list of contraints of the plugin in text format
+     */
+    public function item_list_constraints() {
+        // whether not overridden by specific class method...
+        // nothing to do!
+    }
+
+    /**
+     * item_get_plugin_schema
+     * Return the xml schema for survey_<<plugin>> table.
+     *
+     * @return string
+     *
+     */
+    static function item_get_item_schema() {
+        $schema = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $schema .= '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">'."\n";
+        $schema .= '    <xs:element name="survey_item">'."\n";
+        $schema .= '        <xs:complexType>'."\n";
+        $schema .= '            <xs:sequence>'."\n";
+        // $schema .= '                <xs:element type="xs:int" name="surveyid"/>'."\n";
+
+        $schema .= '                <xs:element type="xs:string" name="type"/>'."\n";
+        $schema .= '                <xs:element type="xs:string" name="plugin"/>'."\n";
+
+        $schema .= '                <xs:element type="xs:string" name="content"/>'."\n";
+        $schema .= '                <xs:element type="xs:int" name="contentformat"/>'."\n";
+
+        $schema .= '                <xs:element type="xs:string" name="customnumber" minOccurs="0"/>'."\n";
+        $schema .= '                <xs:element type="xs:int" name="extrarow"/>'."\n";
+        $schema .= '                <xs:element type="xs:string" name="extranote" minOccurs="0"/>'."\n";
+        $schema .= '                <xs:element type="xs:int" name="required"/>'."\n";
+        $schema .= '                <xs:element type="xs:int" name="hideinstructions"/>'."\n";
+        $schema .= '                <xs:element type="xs:string" name="variable" minOccurs="0"/>'."\n";
+        $schema .= '                <xs:element type="xs:int" name="indent"/>'."\n";
+        $schema .= '                <xs:element type="xs:int" name="hide"/>'."\n";
+        $schema .= '                <xs:element type="xs:int" name="insearchform"/>'."\n";
+        $schema .= '                <xs:element type="xs:int" name="advanced"/>'."\n";
+        $schema .= '                <xs:element type="xs:int" name="sortindex"/>'."\n";
+        // $schema .= '                <xs:element type="xs:int" name="formpage"/>'."\n";
+        $schema .= '                <xs:element type="xs:int" name="parentid" minOccurs="0"/>'."\n";
+        $schema .= '                <xs:element type="xs:string" name="parentcontent" minOccurs="0"/>'."\n";
+        $schema .= '                <xs:element type="xs:string" name="parentvalue" minOccurs="0"/>'."\n";
+
+        $schema .= '                <xs:element type="xs:int" name="timecreated"/>'."\n";
+        // $schema .= '                <xs:element type="xs:int" name="timemodified"/>'."\n";
+        $schema .= '            </xs:sequence>'."\n";
+        $schema .= '        </xs:complexType>'."\n";
+        $schema .= '    </xs:element>'."\n";
+        $schema .= '</xs:schema>';
+
+        return $schema;
     }
 
     // MARK get
@@ -1230,16 +1285,5 @@ class mod_survey_itembase {
         }
 
         return $content;
-    }
-
-    /*
-     * item_list_constraints
-     *
-     * @param
-     * @return list of contraints of the plugin in text format
-     */
-    public function item_list_constraints() {
-        // whether not overridden by specific class method...
-        // nothing to do!
     }
 }

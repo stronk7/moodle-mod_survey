@@ -125,7 +125,7 @@ class surveyformat_fieldset extends mod_survey_itembase {
         // //////////////////////////////////
         // Now execute very specific plugin level actions
         // //////////////////////////////////
-
+        $record->required = 0;
         $record->label = substr($record->label, 0, 128); // 128 is maximum allowed length I can save
 
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
@@ -154,6 +154,30 @@ class surveyformat_fieldset extends mod_survey_itembase {
         $fieldlist['fieldset'] = array('label');
 
         return $fieldlist;
+    }
+
+    /**
+     * item_get_plugin_schema
+     * Return the xml schema for survey_<<plugin>> table.
+     *
+     * @return string
+     *
+     */
+    static function item_get_plugin_schema() {
+        $schema = <<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="survey_fieldset">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="label"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+EOS;
+
+        return $schema;
     }
 
     // MARK userform

@@ -185,26 +185,12 @@ define('SURVEY_DELETEALLITEMS'    , '3');
 define('SURVEY_DELETEVISIBLEITEMS', '4');
 define('SURVEY_DELETEHIDDENITEMS' , '5');
 
-// empty template field
-define('SURVEY_EMPTYTEMPLATEFIELD', '@@NULL@@');
-
 // friendly format
 define('SURVEY_FIRENDLYFORMAT', -1);
 
 // friendly format
 define('SURVEY_USERTEMPLATE', 0);
 define('SURVEY_MASTERTEMPLATE', 1);
-
-/*
- * survey_user_can_do_anything
- * @param
- * @return
- */
-function survey_user_can_do_anything() {
-    $context = context_system::instance();
-
-    return (has_capability('moodle/site:doanything', $context));
-}
 
 // //////////////////////////////////////////////////////////////////////////////
 // Moodle core API                                                            //
@@ -928,7 +914,7 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
         $navnode->add(get_string('tabitemspage2', 'survey'), new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_SETTING);
         if (!$survey->template) {
             if ($countparents) {
-                $navnode->add(get_string('tabitemspage3', 'survey'), new moodle_url('/mod/survey/items_validate.php', $paramurl), navigation_node::TYPE_SETTING);
+                $navnode->add(get_string('tabitemspage4', 'survey'), new moodle_url('/mod/survey/items_validate.php', $paramurl), navigation_node::TYPE_SETTING);
             }
         }
     }

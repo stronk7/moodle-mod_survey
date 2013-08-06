@@ -44,6 +44,7 @@ $string['uerr_greaterthanmaximum'] = 'Provided value is greater than maximum all
 $string['customdefault'] = 'Custom';
 $string['downloadformat'] = 'Download format';
 $string['downloadformat_help'] = 'Choose the format of the answer as it appear once user attempts are downloaded';
+$string['lowerequaltoupper'] = 'Lower and upper bounds need to be different';
 $string['strftime01'] = '%A, %d %B %Y, %H:%M';
 $string['strftime02'] = '%A, %d %B %Y, %I:%M %p';
 $string['strftime03'] = '%a, %d %b %Y, %H:%M';

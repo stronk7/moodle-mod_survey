@@ -251,6 +251,33 @@ class surveyfield_integer extends mod_survey_itembase {
         return $parentcontent;
     }
 
+    /**
+     * item_get_plugin_schema
+     * Return the xml schema for survey_<<plugin>> table.
+     *
+     * @return string
+     *
+     */
+    static function item_get_plugin_schema() {
+        $schema = <<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="survey_integer">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:int" name="defaultoption"/>
+                <xs:element type="xs:int" name="defaultvalue"/>
+                <xs:element type="xs:int" name="lowerbound"/>
+                <xs:element type="xs:int" name="upperbound"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+EOS;
+
+        return $schema;
+    }
+
     // MARK userform
 
     /*

@@ -132,42 +132,36 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $errors = parent::validation($data, $files);
 
+        $lowerbound = $item->item_recurrence_to_unix_time($data['lowerbound_month'], $data['lowerbound_day']);
+        $upperbound = $item->item_recurrence_to_unix_time($data['upperbound_month'], $data['upperbound_day']);
+        if ($lowerbound == $upperbound) {
+            $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_recurrence');
+        }
+
         // constrain default between boundaries
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
             $defaultvalue = $item->item_recurrence_to_unix_time($data['defaultvalue_month'], $data['defaultvalue_day']);
-            $lowerbound = $item->item_recurrence_to_unix_time($data['lowerbound_month'], $data['lowerbound_day']);
-            $upperbound = $item->item_recurrence_to_unix_time($data['upperbound_month'], $data['upperbound_day']);
 
             if (!$item->item_check_monthday($data['defaultvalue_day'], $data['defaultvalue_month'])) {
-                $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_recurrence');
+                $errors['defaultvalue_group'] = get_string('notvaliddefault', 'surveyfield_recurrence');
             }
             if (!$item->item_check_monthday($data['lowerbound_day'], $data['lowerbound_month'])) {
-                $errors['lowerbound_group'] = get_string('outofrangedefault', 'surveyfield_recurrence');
+                $errors['lowerbound_group'] = get_string('notvalidlowerbound', 'surveyfield_recurrence');
             }
             if (!$item->item_check_monthday($data['upperbound_day'], $data['upperbound_month'])) {
-                $errors['upperbound_group'] = get_string('outofrangedefault', 'surveyfield_recurrence');
-            }
-
-            if ($lowerbound == $upperbound) {
-                $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_recurrence');
+                $errors['upperbound_group'] = get_string('notvalidupperbound', 'surveyfield_recurrence');
             }
 
             if ($lowerbound < $upperbound) {
                 // internal range
-                if ($defaultvalue < $lowerbound) {
-                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_recurrence');
-                }
-                if ($defaultvalue > $upperbound) {
+                if (($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound)) {
                     $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_recurrence');
                 }
             }
 
             if ($lowerbound > $upperbound) {
                 // external range
-                if ($defaultvalue > $lowerbound) {
-                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_recurrence');
-                }
-                if ($defaultvalue < $upperbound) {
+                if (($defaultvalue > $lowerbound) && ($defaultvalue < $upperbound)) {
                     $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_recurrence');
                 }
             }

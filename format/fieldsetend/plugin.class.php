@@ -143,6 +143,19 @@ class surveyformat_fieldsetend extends mod_survey_itembase {
         return false;
     }
 
+    /**
+     * item_get_plugin_schema
+     * Return the xml schema for survey_<<plugin>> table.
+     *
+     * @return string
+     *
+     */
+    static function item_get_plugin_schema() {
+        $schema = '';
+
+        return $schema;
+    }
+
     // MARK userform
 
     /*

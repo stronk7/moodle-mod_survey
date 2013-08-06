@@ -138,13 +138,28 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $errors = parent::validation($data, $files);
 
+        $lowerbound = $item->item_date_to_unix_time($data['lowerbound_year'], $data['lowerbound_month'], $data['lowerbound_day']);
+        $upperbound = $item->item_date_to_unix_time($data['upperbound_year'], $data['upperbound_month'], $data['upperbound_day']);
+        if ($lowerbound == $upperbound) {
+            $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_date');
+        }
+
         // constrain default between boundaries
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
             $defaultvalue = $item->item_date_to_unix_time($data['defaultvalue_year'], $data['defaultvalue_month'], $data['defaultvalue_day']);
-            $lowerbound = $item->item_date_to_unix_time($data['lowerbound_year'], $data['lowerbound_month'], $data['lowerbound_day']);
-            $upperbound = $item->item_date_to_unix_time($data['upperbound_year'], $data['upperbound_month'], $data['upperbound_day']);
-            if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
-                $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_date');
+
+            if ($lowerbound < $upperbound) {
+                // internal range
+                if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
+                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_date');
+                }
+            }
+
+            if ($lowerbound > $upperbound) {
+                // external range
+                if (($defaultvalue > $lowerbound) && ($defaultvalue < $upperbound)) {
+                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_date');
+                }
             }
         }
 

@@ -152,13 +152,27 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $errors = parent::validation($data, $files);
 
+        $lowerbound = $item->item_datetime_to_unix_time($data['lowerbound_year'], $data['lowerbound_month'], $data['lowerbound_day'], $data['defaultvalue_hour'], $data['defaultvalue_minute']);
+        $upperbound = $item->item_datetime_to_unix_time($data['upperbound_year'], $data['upperbound_month'], $data['upperbound_day'], $data['defaultvalue_hour'], $data['defaultvalue_minute']);
+        if ($lowerbound == $upperbound) {
+            $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_datetime');
+        }
+
         // constrain default between boundaries
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
             $defaultvalue = $item->item_datetime_to_unix_time($data['defaultvalue_year'], $data['defaultvalue_month'], $data['defaultvalue_day'], $data['defaultvalue_hour'], $data['defaultvalue_minute']);
-            $lowerbound = $item->item_datetime_to_unix_time($data['lowerbound_year'], $data['lowerbound_month'], $data['lowerbound_day'], $data['defaultvalue_hour'], $data['defaultvalue_minute']);
-            $upperbound = $item->item_datetime_to_unix_time($data['upperbound_year'], $data['upperbound_month'], $data['upperbound_day'], $data['defaultvalue_hour'], $data['defaultvalue_minute']);
-            if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
-                $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_datetime');
+            if ($lowerbound < $upperbound) {
+                // internal range
+                if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
+                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_datetime');
+                }
+            }
+
+            if ($lowerbound > $upperbound) {
+                // external range
+                if (($defaultvalue > $lowerbound) && ($defaultvalue < $upperbound)) {
+                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_datetime');
+                }
             }
         }
 

@@ -68,4 +68,27 @@ class survey_applymtemplateform extends moodleform {
         // buttons
         $this->add_action_buttons(true, get_string('continue'));
     }
+
+    public function validation($data, $files) {
+        global $USER;
+
+        $mform = $this->_form;
+
+        $cmid = $this->_customdata->cmid;
+        $survey = $this->_customdata->survey;
+        $utemplate_manager = $this->_customdata->utemplate_manager;
+
+        $errors = parent::validation($data, $files);
+
+        $templatename = $this->mtemplatename;
+        $template_path = $CFG->dirroot.'/mod/survey/template/'.$templatename.'/template.xml';
+        $templatecontent = file_get_contents($template_path);
+        $xml = @new SimpleXMLElement($templatecontent);
+        if (!$utemplate_manager->xml_check($xml)) {
+            $errors['mastertemplate'] = get_string('invalidtemplate', 'survey', $templatename);
+            return $errors;
+        }
+
+        return $errors;
+    }
 }

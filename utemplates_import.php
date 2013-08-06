@@ -84,6 +84,7 @@ $import_utemplate = new survey_importutemplateform($formurl, $formparams);
 
 // ////////////////////////////
 // manage form submission
+
 if ($utemplate_manager->formdata = $import_utemplate->get_data()) {
     $utemplate_manager->upload_utemplate();
 

@@ -49,6 +49,7 @@ $string['uerr_datenotsetrequired'] = 'Please define a date';
 $string['uerr_datenotset'] = 'Please define a date or select the "{$a}" checkbox';
 $string['downloadformat'] = 'Download format';
 $string['downloadformat_help'] = 'Choose the format of the answer as it appear once user attempts are downloaded';
+$string['lowerequaltoupper'] = 'Lower and upper bounds need to be different';
 $string['strftime01'] = '%A, %d %B %Y';
 $string['strftime02'] = '%A, %d %B \'%y';
 $string['strftime03'] = '%a, %d %b %Y';

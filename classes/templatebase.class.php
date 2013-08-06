@@ -96,8 +96,10 @@ class mod_survey_templatebase {
             // survey_item
             $xmltable = $xmlitem->addChild('survey_item');
 
-            if ($multilangfields = $item->item_get_multilang_fields()) { // pagebreak and fieldset have not multilang_fields
-                $this->build_langtree('item', $multilangfields, $item);
+            if ($templatetype == SURVEY_MASTERTEMPLATE) {
+                if ($multilangfields = $item->item_get_multilang_fields()) { // pagebreak and fieldset have not multilang_fields
+                    $this->build_langtree('item', $multilangfields, $item);
+                }
             }
 
             $structure = $this->get_table_structure('survey_item');
@@ -117,15 +119,19 @@ class mod_survey_templatebase {
                         $sqlparams = array('id' => $parentid);
                         // I store sortindex instead of parentid, because at restore time parent id will change
                         $val = $DB->get_field('survey_item', 'sortindex', $sqlparams);
-                    } else {
-                        $val = SURVEY_EMPTYTEMPLATEFIELD;
+                        $xmlfield = $xmltable->addChild($field, $val);
+                    // } else {
+                        // it is empty, do not evaluate: jump
                     }
 
-                    $xmlfield = $xmltable->addChild($field, $val);
                     continue;
                 }
 
-                $val = $this->xml_get_field_content($item, 'item', $field, $multilangfields);
+                if ($templatetype == SURVEY_MASTERTEMPLATE) {
+                    $val = $this->xml_get_field_content($item, 'item', $field, $multilangfields);
+                } else {
+                    $val = $item->item_get_generic_field($field);
+                }
                 $xmlfield = $xmltable->addChild($field, $val);
             }
 
@@ -135,28 +141,43 @@ class mod_survey_templatebase {
 
                 $structure = $this->get_table_structure('survey_'.$plugin);
                 foreach ($structure as $field) {
-                    if ($field == 'itemid') {
-                        continue;
-                    }
                     if ($field == 'surveyid') {
                         continue;
                     }
+                    if ($field == 'itemid') {
+                        continue;
+                    }
 
-                    $val = $this->xml_get_field_content($item, $plugin, $field, $multilangfields);
+                    if ($templatetype == SURVEY_MASTERTEMPLATE) {
+                        $val = $this->xml_get_field_content($item, $plugin, $field, $multilangfields);
+                    } else {
+                        $val = $item->item_get_generic_field($field);
+                    }
                     $xmlfield = $xmltable->addChild($field, $val);
                 }
             }
         }
 
-        $dom = new DOMDocument('1.0');
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-        $dom->loadXML($xmltemplate->asXML());
+        // $option == false if 100% waste of time BUT BUT BUT
+        // the output in the file is well written
+        // I prefer a more readable xml file instead of some milliseconds more
+        $option = false;
+        if ($option) {
+            // echo '$xmltemplate->asXML() = <br />';
+            // print_object($xmltemplate->asXML());
 
-        // echo '$xmltemplate = <br />';
-        // print_object($xmltemplate);
+            return $xmltemplate->asXML();
+        } else {
+            $dom = new DOMDocument('1.0');
+            $dom->preserveWhiteSpace = false;
+            $dom->formatOutput = true;
+            $dom->loadXML($xmltemplate->asXML());
 
-        return $dom->saveXML();
+            // echo '$xmltemplate = <br />';
+            // print_object($xmltemplate);
+
+            return $dom->saveXML();
+        }
     }
 
     /*
@@ -181,10 +202,11 @@ class mod_survey_templatebase {
         }
 
         $content = $item->item_get_generic_field($field);
-        if (!strlen($content)) {
-            $val = SURVEY_EMPTYTEMPLATEFIELD;
-        } else {
+        if (strlen($content)) {
             $val = $content;
+        } else {
+            // it is empty, do not evaluate: jump
+            $val = null;
         }
 
         return $val;
@@ -300,26 +322,22 @@ class mod_survey_templatebase {
             $templatecontent = $this->get_utemplate_content();
         }
 
-        $xmltext = simplexml_load_string($templatecontent);
-        // echo '<h2>Items saved in the file ('.count($xmltext->item).')</h2>';
+        $simplexml = new SimpleXMLElement($templatecontent);
+        // $simplexml = simplexml_load_string($templatecontent);
+        // echo '<h2>Items saved in the file ('.count($simplexml->item).')</h2>';
 
         $sortindexoffset = $DB->get_field('survey_item', 'MAX(sortindex)', array('surveyid' => $this->survey->id));
-        foreach ($xmltext->children() as $template_item) {
-            // echo '<h3>Count of tables for the current item: '.count($template_item->children()).'</h3>';
-            foreach ($template_item->children() as $template_table) {
-                $tablename = $template_table->getName();
-                // echo '<h4>Count of fields of the table '.$template_tablename.': '.count($template_table->children()).'</h4>';
+        foreach ($simplexml->children() as $xml_item) {
+            // echo '<h3>Count of tables for the current item: '.count($xml_item->children()).'</h3>';
+            foreach ($xml_item->children() as $xml_table) {
+                $tablename = $xml_table->getName();
+                // echo '<h4>Count of fields of the table '.$xml_tablename.': '.count($xml_table->children()).'</h4>';
                 $record = array();
-                foreach ($template_table->children() as $template_field) {
-                    $fieldname = $template_field->getName();
-                    $fieldvalue = (string)$template_field;
+                foreach ($xml_table->children() as $xml_field) {
+                    $fieldname = $xml_field->getName();
+                    $fieldvalue = (string)$xml_field;
 
-                    // does the field needs multilang management
-                    if ($fieldvalue == SURVEY_EMPTYTEMPLATEFIELD) {
-                        $record[$fieldname] = null;
-                    } else {
-                        $record[$fieldname] = $fieldvalue;
-                    }
+                    $record[$fieldname] = $fieldvalue;
                 }
 
                 unset($record['id']);
@@ -337,5 +355,66 @@ class mod_survey_templatebase {
                 }
             }
         }
+    }
+
+    /*
+     * xml_check
+     *
+     * @param $templateid
+     * @return
+     */
+    function xml_check($xml) {
+        global $CFG;
+
+        $simplexml = new SimpleXMLElement($xml);
+        foreach ($simplexml->children() as $xml_item) {
+            foreach ($xml_item->children() as $xml_table) {
+                // <survey_item>
+                // <survey_radiobutton>
+                $tablename = $xml_table->getName();
+
+                if ($tablename == 'survey_item') {
+                    $type = null;
+                    $plugin = null;
+                    foreach ($xml_table->children() as $xml_field) {
+                        $fieldname = $xml_field->getName();
+                        $fieldvalue = (string)$xml_field;
+
+                        if ($fieldname == 'type') {
+                            $type = $fieldvalue;
+                        }
+                        if ($fieldname == 'plugin') {
+                            $plugin = $fieldvalue;
+                        }
+                        if (($type) && ($plugin)) {
+                            require_once($CFG->dirroot.'/mod/survey/'.$type.'/'.$plugin.'/plugin.class.php');
+                            //$item = survey_get_item(0, $type, $plugin);
+                            $classname = 'survey'.$type.'_'.$plugin;
+                            $xsd = $classname::item_get_item_schema();
+                            break;
+                        }
+                    }
+                } else {
+                    $xsd = $classname::item_get_plugin_schema();
+                }
+
+                if (empty($xsd)) {
+                    debugging('$xsd was not found at '.__LINE__.' of '.__FILE__.'.');
+                }
+
+                $mdom = new DOMDocument();
+                if (!$mdom->loadXML($xml_table->asXML())) {
+                    $status = false;
+                } else {
+                    $status = $mdom->schemaValidateSource($xsd);
+                }
+                if (!status) {
+                    // Stop here. Continuing is useless
+                    break;
+                }
+            }
+        }
+
+        return $status;
     }
 }

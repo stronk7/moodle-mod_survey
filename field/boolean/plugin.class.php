@@ -242,6 +242,43 @@ class surveyfield_boolean extends mod_survey_itembase {
         return 'strfbool1';
     }
 
+    /*
+     * item_get_multilang_fields
+     *
+     * @param
+     * @return
+     */
+    public function item_get_multilang_fields() {
+        return parent::item_get_multilang_fields();
+    }
+
+    /**
+     * item_get_plugin_schema
+     * Return the xml schema for survey_<<plugin>> table.
+     *
+     * @return string
+     *
+     */
+    static function item_get_plugin_schema() {
+        $schema = <<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="survey_boolean">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:int" name="defaultoption"/>
+                <xs:element type="xs:int" name="defaultvalue"/>
+                <xs:element type="xs:string" name="downloadformat"/>
+                <xs:element type="xs:int" name="style"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+EOS;
+
+        return $schema;
+    }
+
     // MARK parent
 
     /*
@@ -268,16 +305,6 @@ class surveyfield_boolean extends mod_survey_itembase {
      */
     public function parent_encode_content_to_value($parentcontent) {
         return $parentcontent;
-    }
-
-    /*
-     * item_get_multilang_fields
-     *
-     * @param
-     * @return
-     */
-    public function item_get_multilang_fields() {
-        return parent::item_get_multilang_fields();
     }
 
     // MARK userform

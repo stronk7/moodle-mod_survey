@@ -16,8 +16,7 @@
         <FIELD NAME="downloadformat" TYPE="char" LENGTH="32" NOTNULL="false"                              SEQUENCE="false" PREVIOUS="defaultvalue"   NEXT="lowerbound"/>
 
         <FIELD NAME="lowerbound"     TYPE="int"  LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="downloadformat" NEXT="upperbound"/>
-        <FIELD NAME="upperbound"     TYPE="int"  LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="lowerbound"     NEXT="rangetype"/>
-        <FIELD NAME="rangetype"      TYPE="int"  LENGTH="4"  NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="upperbound"/>
+        <FIELD NAME="upperbound"     TYPE="int"  LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="lowerbound"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

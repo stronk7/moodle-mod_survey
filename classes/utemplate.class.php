@@ -291,6 +291,8 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
                 file_set_sortorder($contextid, 'mod_survey', SURVEY_TEMPLATEFILEAREA, 0, $file->get_filepath(), $file->get_filename(), 1);
             }
         }
+
+        $this->utemplateid = $file->get_id();
     }
 
     /*
@@ -447,7 +449,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
     }
 
     /*
-     * delete_utemplate
+     * create_fictitious_table
      *
      * @param
      * @return null
@@ -557,6 +559,9 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
     public function get_sharinglevel_options() {
         global $DB, $COURSE, $USER, $SITE;
 
+        $context = context_coursecat::instance($COURSE->category);
+        $can_manage_category = has_capability('moodle/category:manage', $context);
+
         $options = array();
         $options[CONTEXT_USER.'_'.$USER->id] = get_string('user').': '.fullname($USER);
 
@@ -565,17 +570,21 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
         if ($COURSE->id != $SITE->id) { // I am not in homepage
             $options[CONTEXT_COURSE.'_'.$COURSE->id] = get_string('course').': '.$COURSE->shortname;
 
-            $categorystr = get_string('category').': ';
-            $category = $DB->get_record('course_categories', array('id' => $COURSE->category), 'id, name');
-            $options[CONTEXT_COURSECAT.'_'.$COURSE->category] = $categorystr.$category->name;
+            if ($can_manage_category) { // is more than a teacher, is an admin
+                $categorystr = get_string('category').': ';
+                $category = $DB->get_record('course_categories', array('id' => $COURSE->category), 'id, name');
+                $options[CONTEXT_COURSECAT.'_'.$COURSE->category] = $categorystr.$category->name;
 
-            while (!empty($category->parent)) {
-                $category = $DB->get_record('course_categories', array('id' => $category->parent), 'id, name');
-                $options[CONTEXT_COURSECAT.'_'.$category->id] = $categorystr.$category->name;
+                while (!empty($category->parent)) {
+                    $category = $DB->get_record('course_categories', array('id' => $category->parent), 'id, name');
+                    $options[CONTEXT_COURSECAT.'_'.$category->id] = $categorystr.$category->name;
+                }
             }
         }
 
-        $options[CONTEXT_SYSTEM.'_0'] = get_string('site');
+        if ($can_manage_category) {
+            $options[CONTEXT_SYSTEM.'_0'] = get_string('site');
+        }
 
         return $options;
     }

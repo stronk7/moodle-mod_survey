@@ -128,4 +128,13 @@ $string['item_content_52'] = '<p>Do you have any other comments?</p>';
 // common strings
 // --------------
 $string['item_content_beginlabel'] = '<p>In this online unit...</p>';
+$string['item_parentcontent_01'] = '';
+
+$string['label_intro_01'] = '';
+
 $string['radiobutton_options_01'] = '1::Almost never'."\n".'2::Seldom'."\n".'3::Sometimes'."\n".'4::Often'."\n".'5::Almost always';
+$string['radiobutton_labelother_01'] = '';
+$string['radiobutton_defaultvalue_01'] = '';
+
+$string['select_labelother_01'] = '';
+$string['select_defaultvalue_01'] = '';

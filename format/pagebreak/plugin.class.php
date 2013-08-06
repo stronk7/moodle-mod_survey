@@ -118,8 +118,10 @@ class surveyformat_pagebreak extends mod_survey_itembase {
         // //////////////////////////////////
 
         $record->content = SURVEYFORMAT_PAGEBREAK_CONTENT;
-        $this->content_format = FORMAT_HTML;
-
+        $record->contentformat = FORMAT_HTML;
+        $record->indent = 0;
+echo '$record:';
+var_dump($record);
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
     }
@@ -143,6 +145,19 @@ class surveyformat_pagebreak extends mod_survey_itembase {
      */
     public function item_get_multilang_fields() {
         return false;
+    }
+
+    /**
+     * item_get_plugin_schema
+     * Return the xml schema for survey_<<plugin>> table.
+     *
+     * @return string
+     *
+     */
+    static function item_get_plugin_schema() {
+        $schema = '';
+
+        return $schema;
     }
 
     // MARK userform

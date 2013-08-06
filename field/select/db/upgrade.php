@@ -99,5 +99,20 @@ function xmldb_surveyfield_select_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013073001, 'surveyfield', 'select');
     }
 
+    if ($oldversion < 2013080301) {
+
+        // Define field downloadformat to be added to survey_select.
+        $table = new xmldb_table('survey_select');
+        $field = new xmldb_field('downloadformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'defaultvalue');
+
+        // Conditionally launch add field downloadformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013080301, 'surveyfield', 'select');
+    }
+
     return true;
 }

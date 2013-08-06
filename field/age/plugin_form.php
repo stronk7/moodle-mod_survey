@@ -123,14 +123,28 @@ class survey_pluginform extends mod_survey_itembaseform {
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);
         }
 
+        $lowerbound = $item->item_age_to_unix_time($data['lowerbound_year'], $data['lowerbound_month']);
+        $upperbound = $item->item_age_to_unix_time($data['upperbound_year'], $data['upperbound_month']);
+        if ($lowerbound == $upperbound) {
+            $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_age');
+        }
+
         // constrain default between boundaries
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
             $defaultvalue = $item->item_age_to_unix_time($data['defaultvalue_year'], $data['defaultvalue_month']);
-            $lowerbound = $item->item_age_to_unix_time($data['lowerbound_year'], $data['lowerbound_month']);
-            $upperbound = $item->item_age_to_unix_time($data['upperbound_year'], $data['upperbound_month']);
 
-            if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
-                $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_age');
+            if ($lowerbound < $upperbound) {
+                // internal range
+                if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
+                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_age');
+                }
+            }
+
+            if ($lowerbound > $upperbound) {
+                // external range
+                if (($defaultvalue > $lowerbound) && ($defaultvalue < $upperbound)) {
+                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_age');
+                }
             }
         }
 

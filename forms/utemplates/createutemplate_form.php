@@ -88,21 +88,19 @@ class survey_utemplatecreateform extends moodleform {
 
         $errors = parent::validation($data, $files);
 
-        if (!isset($data['overwrite'])) {
-            // get all template files
-            $contextid = $utemplate_manager->get_contextid_from_sharinglevel($data['sharinglevel']);
-            $componentfiles = $utemplate_manager->get_available_templates($contextid);
+        // get all template files
+        $contextid = $utemplate_manager->get_contextid_from_sharinglevel($data['sharinglevel']);
+        $componentfiles = $utemplate_manager->get_available_templates($contextid);
 
-            foreach ($componentfiles as $xmlfile) {
-                $comparename = str_replace(' ', '_', $data['templatename']).'.xml';
-                if ($comparename == $xmlfile->get_filename()) {
-                    if (isset($data['overwrite'])) {
-                        $xmlfile->delete();
-                    } else {
-                        $errors['templatename'] = get_string('enteruniquename', 'survey', $data['templatename']);
-                    }
-                    break;
+        $comparename = str_replace(' ', '_', $data['templatename']).'.xml';
+        foreach ($componentfiles as $xmlfile) {
+            if ($xmlfile->get_filename() == $comparename) {
+                if (isset($data['overwrite'])) {
+                    $xmlfile->delete();
+                } else {
+                    $errors['templatename'] = get_string('enteruniquename', 'survey', $data['templatename']);
                 }
+                break;
             }
         }
 

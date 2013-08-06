@@ -81,11 +81,6 @@ class surveyfield_time extends mod_survey_itembase {
     public $upperbound = 86340;
 
     /*
-     * $range = is the allowed date in between or external to boundary dates?
-     */
-    public $rangetype = 0;
-
-    /*
      * $flag = features describing the object
      */
     public $flag;
@@ -286,6 +281,35 @@ class surveyfield_time extends mod_survey_itembase {
      */
     public function item_get_multilang_fields() {
         return parent::item_get_multilang_fields();
+    }
+
+    /**
+     * item_get_plugin_schema
+     * Return the xml schema for survey_<<plugin>> table.
+     *
+     * @return string
+     *
+     */
+    static function item_get_plugin_schema() {
+        $schema = <<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="survey_time">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:int" name="step"/>
+                <xs:element type="xs:int" name="defaultoption"/>
+                <xs:element type="xs:int" name="defaultvalue"/>
+                <xs:element type="xs:string" name="downloadformat"/>
+                <xs:element type="xs:int" name="lowerbound"/>
+                <xs:element type="xs:int" name="upperbound"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+EOS;
+
+        return $schema;
     }
 
     // MARK userform

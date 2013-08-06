@@ -284,6 +284,36 @@ class surveyfield_rate extends mod_survey_itembase {
         return $fieldlist;
     }
 
+    /**
+     * item_get_plugin_schema
+     * Return the xml schema for survey_<<plugin>> table.
+     *
+     * @return string
+     *
+     */
+    static function item_get_plugin_schema() {
+        $schema = <<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="survey_rate">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="options"/>
+                <xs:element type="xs:string" name="rates"/>
+                <xs:element type="xs:int" name="defaultoption"/>
+                <xs:element type="xs:string" name="defaultvalue"/>
+                <xs:element type="xs:int" name="downloadformat"/>
+                <xs:element type="xs:int" name="style"/>
+                <xs:element type="xs:int" name="forcedifferentrates"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+EOS;
+
+        return $schema;
+    }
+
     // MARK userform
 
     /*
