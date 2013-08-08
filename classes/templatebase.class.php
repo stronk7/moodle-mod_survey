@@ -132,7 +132,12 @@ class mod_survey_templatebase {
                 } else {
                     $val = $item->item_get_generic_field($field);
                 }
-                $xmlfield = $xmltable->addChild($field, $val);
+
+                if ($val) {
+                    $xmlfield = $xmltable->addChild($field, $val);
+                // } else {
+                    // it is empty, do not evaluate: jump
+                }
             }
 
             if ($item->get_useplugintable()) { // only page break does not use the plugin table
@@ -153,7 +158,12 @@ class mod_survey_templatebase {
                     } else {
                         $val = $item->item_get_generic_field($field);
                     }
-                    $xmlfield = $xmltable->addChild($field, $val);
+
+                    if ($val) {
+                        $xmlfield = $xmltable->addChild($field, $val);
+                    // } else {
+                        // it is empty, do not evaluate: jump
+                    }
                 }
             }
         }

@@ -775,6 +775,9 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
 
     $context = context_module::instance($cm->id);
 
+    $canpreview = has_capability('mod/survey:preview', $context, null, true);
+    $canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
+
     $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $context, null, true);
     $cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
     $canimportusertemplates = has_capability('mod/survey:importusertemplates', $context, null, true);
@@ -786,6 +789,32 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
     $canaccessreports = has_capability('mod/survey:accessreports', $context, null, true);
 
     $hassubmissions = survey_count_submissions($cm->instance);
+
+    $whereparams = array('surveyid' => $cm->instance);
+    $countparents = $DB->count_records_select('survey_item', 'surveyid = :surveyid AND parentid <> 0', $whereparams);
+
+    /*
+     * SURVEY_TABITEMS
+     */
+    // PARENT
+    if (($canpreview) || ($canmanageitems && (!$survey->template))) {
+        $paramurl = array('s' => $cm->instance);
+        $navnode = $surveynode->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
+    }
+
+    // CHILDREN
+    if ($canpreview) {
+        $localparamurl = array('s' => $cm->instance, 'act' => SURVEY_PREVIEWSURVEY);
+        $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/view.php', $localparamurl), navigation_node::TYPE_SETTING);
+    }
+    if ($canmanageitems) {
+        $navnode->add(get_string('tabitemspage2', 'survey'), new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_SETTING);
+        if (!$survey->template) {
+            if ($countparents) {
+                $navnode->add(get_string('tabitemspage4', 'survey'), new moodle_url('/mod/survey/items_validate.php', $paramurl), navigation_node::TYPE_SETTING);
+            }
+        }
+    }
 
     /*
      * SURVEY_TABUTEMPLATES
@@ -859,16 +888,11 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     //$context = context_system::instance();
     $context = context_module::instance($cm->id);
 
-    $canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
-    $canpreview = has_capability('mod/survey:preview', $context, null, true);
     $cansubmit = has_capability('mod/survey:submit', $context, null, true);
     $cansearch = has_capability('mod/survey:searchsubmissions', $context, null, true);
     $canexportdata = has_capability('mod/survey:exportdata', $context, null, true);
 
     $hassubmissions = survey_count_submissions($cm->instance);
-
-    $whereparams = array('surveyid' => $cm->instance);
-    $countparents = $DB->count_records_select('survey_item', 'surveyid = :surveyid AND parentid <> 0', $whereparams);
 
     // $currentgroup = groups_get_activity_group($cm);
     // $groupmode = groups_get_activity_groupmode($cm);
@@ -894,29 +918,6 @@ function survey_extend_navigation(navigation_node $navref, stdclass $course, std
     }
     if ($canexportdata) {
         $navnode->add(get_string('tabsubmissionspage8', 'survey'), new moodle_url('/mod/survey/view_export.php', $paramurl), navigation_node::TYPE_SETTING);
-    }
-
-    /*
-     * SURVEY_TABITEMS
-     */
-    // PARENT
-    if (($canpreview) || ($canmanageitems && (!$survey->template))) {
-        $paramurl = array('s' => $cm->instance);
-        $navnode = $navref->add(SURVEY_TAB2NAME,  new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
-    }
-
-    // CHILDREN
-    if ($canpreview) {
-        $localparamurl = array('s' => $cm->instance, 'act' => SURVEY_PREVIEWSURVEY);
-        $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/view.php', $localparamurl), navigation_node::TYPE_SETTING);
-    }
-    if ($canmanageitems) {
-        $navnode->add(get_string('tabitemspage2', 'survey'), new moodle_url('/mod/survey/items_manage.php', $paramurl), navigation_node::TYPE_SETTING);
-        if (!$survey->template) {
-            if ($countparents) {
-                $navnode->add(get_string('tabitemspage4', 'survey'), new moodle_url('/mod/survey/items_validate.php', $paramurl), navigation_node::TYPE_SETTING);
-            }
-        }
     }
 }
 
