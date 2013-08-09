@@ -331,43 +331,68 @@ EOS;
             $errorkey = $this->itemname;
         }
 
+        $draftuserinput = $data[$this->itemname];
         if ($this->required) {
-            if (strlen($data[$this->itemname]) == 0) {
+            if (strlen($draftuserinput) == 0) {
                 $errors[$errorkey] = get_string('required');
                 return;
             }
         }
 
-        if (!isset($data[$this->itemname])) {
+        if (!isset($draftuserinput)) {
             return;
         }
 
         // if it is not a number, shouts
-        if (strlen($data[$this->itemname]) > 0) {
+        if (strlen($draftuserinput)) {
             $pattern = '~^\s*([0-9]+)'.$this->decimalseparator.'?([0-9]*)\s*$~';
-            if (!preg_match($pattern, $data[$this->itemname], $matches)) {
+            if (!preg_match($pattern, $draftuserinput, $matches)) {
                 $errors[$errorkey] = get_string('uerr_notanumber', 'surveyfield_numeric');
+                return;
             } else {
-                $thenumber = $matches[1].'.'.$matches[2];
+                $userinput = $matches[1].'.'.$matches[2];
                 // if it is < 0 but has been defined as unsigned, shouts
-                if (!$this->signed && ($thenumber < 0)) {
+                if (!$this->signed && ($userinput < 0)) {
                     $errors[$errorkey] = get_string('uerr_negative', 'surveyfield_numeric');
                 }
-                // if it is < $this->lowerbound, shouts
-                if (isset($this->lowerbound) && ($thenumber < $this->lowerbound)) {
-                    $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_numeric');
-                }
-                // if it is > $this->upperbound, shouts
-                if (isset($this->upperbound) && ($thenumber > $this->upperbound)) {
-                    $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_numeric');
-                }
                 // if it has decimal but has been defined as integer, shouts
-                $is_integer = (bool)(strval(intval($thenumber)) == strval($thenumber));
+                $is_integer = (bool)(strval(intval($userinput)) == strval($userinput));
                 if (($this->decimals == 0) && (!$is_integer)) {
                     $errors[$errorkey] = get_string('uerr_notinteger', 'surveyfield_numeric');
                 }
             }
         }
+
+        $haslowerbound = (strlen($this->lowerbound));
+        $hasupperbound = (strlen($this->upperbound));
+
+        if ($haslowerbound && $hasupperbound) {
+            if ($this->lowerbound < $this->upperbound) {
+                // internal range
+                if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
+                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_numeric');
+                }
+            }
+
+            if ($this->lowerbound > $this->upperbound) {
+                // external range
+                if (($userinput > $this->lowerbound) && ($userinput < $this->upperbound)) {
+                    $format = get_string($this->item_get_friendlyformat(), 'surveyfield_numeric');
+                    $a = new stdclass();
+                    $a->lowerbound = $this->lowerbound;
+                    $a->upperbound = $this->upperbound;
+                    $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_numeric', $a);
+                }
+            }
+        } else {
+            if ($haslowerbound && ($userinput < $this->lowerbound)) {
+                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_numeric');
+            }
+            if ($hasupperbound && ($userinput > $this->upperbound)) {
+                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_numeric');
+            }
+        }
+
     }
 
     /*
@@ -378,31 +403,49 @@ EOS;
      */
     public function userform_get_filling_instructions() {
 
+        $haslowerbound = (strlen($this->lowerbound));
+        $hasupperbound = (strlen($this->upperbound));
         $fillinginstruction = array();
 
         if (!empty($this->signed)) {
-            $fillinginstruction[] = get_string('hassign', 'surveyfield_numeric');
+            $fillinginstruction[] = get_string('restriction_hassign', 'surveyfield_numeric');
         }
-        if (!empty($this->lowerbound)) {
-            $a = $this->lowerbound;
-            $fillinginstruction[] = get_string('hasminvalue', 'surveyfield_numeric', $a);
+
+        if ($haslowerbound && $hasupperbound) {
+            $a = new StdClass();
+            $a->lowerbound = $this->lowerbound;
+            $a->upperbound = $this->upperbound;
+
+            if ($this->lowerbound < $this->upperbound) {
+                $fillinginstruction[] = get_string('restriction_lowerupper', 'surveyfield_numeric', $a);
+            }
+
+            if ($this->lowerbound > $this->upperbound) {
+                $fillinginstruction[] = get_string('restriction_upperlower', 'surveyfield_numeric', $a);
+            }
+        } else {
+            if ($haslowerbound) {
+                $a = $this->lowerbound;
+                $fillinginstruction[] = get_string('restriction_lower', 'surveyfield_numeric', $a);
+            }
+
+            if ($hasupperbound) {
+                $a = $this->upperbound;
+                $fillinginstruction[] = get_string('restriction_upper', 'surveyfield_numeric', $a);
+            }
         }
-        if (!empty($this->upperbound)) {
-            $a = $this->upperbound;
-            $fillinginstruction[] = get_string('hasmaxvalue', 'surveyfield_numeric', $a);
-        }
+
         if (!empty($this->decimals)) {
             $a = $this->decimals;
-            $fillinginstruction[] = get_string('hasdecimals', 'surveyfield_numeric', $a);
+            $fillinginstruction[] = get_string('restriction_hasdecimals', 'surveyfield_numeric', $a);
             $fillinginstruction[] = get_string('decimalautofix', 'surveyfield_numeric');
-        } else {
-            $fillinginstruction[] = get_string('isinteger', 'surveyfield_numeric');
-        }
-        if (!empty($this->decimals)) {
             // this sentence dials about decimal separator not about the expected value
             // so I leave it as last sentence
             $fillinginstruction[] = get_string('declaredecimalseparator', 'surveyfield_numeric', $this->decimalseparator);
+        } else {
+            $fillinginstruction[] = get_string('restriction_isinteger', 'surveyfield_numeric');
         }
+
         if (count($fillinginstruction)) {
             $fillinginstruction = get_string('number', 'surveyfield_numeric').implode('; ', $fillinginstruction);
         } else {

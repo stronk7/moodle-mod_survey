@@ -142,8 +142,9 @@ class survey_pluginform extends mod_survey_itembaseform {
 
             if ($lowerbound > $upperbound) {
                 // external range
-                if (($defaultvalue > $lowerbound) && ($defaultvalue < $upperbound)) {
-                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_age');
+                if (($defaultvalue > $upperbound) && ($defaultvalue < $lowerbound)) {
+                    $a = get_string('upperbound', 'surveyfield_age');
+                    $errors['defaultvalue_group'] = get_string('outofexternalrangedefault', 'surveyfield_age', $a);
                 }
             }
         }

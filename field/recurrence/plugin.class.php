@@ -477,38 +477,34 @@ EOS;
             $errors[$errorkey] = get_string('incorrectrecurrence', 'surveyfield_recurrence');
         }
 
+        $haslowerbound = ($this->lowerbound != $this->item_recurrence_to_unix_time(1, 1));
+        $hasupperbound = ($this->upperbound != $this->item_recurrence_to_unix_time(12, 31));
+
         $userinput = $this->item_recurrence_to_unix_time($data[$this->itemname.'_month'], $data[$this->itemname.'_day']);
 
         $format = get_string('strftimedateshort', 'langconfig');
-        if ($this->lowerbound < $this->upperbound) {
-            // internal range
-            if ($userinput < $this->lowerbound) {
-                $dummy = new StdClass();
-                $dummy->content = $this->lowerbound;
-                $a = $this->userform_db_to_export($dummy, $format);
-                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_recurrence', $a);
+        if ($haslowerbound && $hasupperbound) {
+            if ($this->lowerbound < $this->upperbound) {
+                // internal range
+                if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
+                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_recurrence');
+                }
             }
-            if ($userinput > $this->upperbound) {
-                $dummy = new StdClass();
-                $dummy->content = $this->upperbound;
-                $a = $this->userform_db_to_export($dummy, $format);
-                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_recurrence', $a);
-            }
-        }
 
-        if ($this->lowerbound > $this->upperbound) {
-            // external range
-            if ($userinput > $this->upperbound) {
-                $dummy = new StdClass();
-                $dummy->content = $this->lowerbound;
-                $a = $this->userform_db_to_export($dummy, $format);
-                $errors[$errorkey] = get_string('uerr_greaterthanminimum', 'surveyfield_recurrence', $a);
+            if ($this->lowerbound > $this->upperbound) {
+                // external range
+                if (($userinput > $this->lowerbound) && ($userinput < $this->upperbound)) {
+                    $a->lowerbound = userdate($this->lowerbound, get_string($format, 'surveyfield_recurrence'), 0);
+                    $a->upperbound = userdate($this->upperbound, get_string($format, 'surveyfield_recurrence'), 0);
+                    $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_recurrence', $a);
+                }
             }
-            if ($userinput < $this->upperbound) {
-                $dummy = new StdClass();
-                $dummy->content = $this->upperbound;
-                $a = $this->userform_db_to_export($dummy, $format);
-                $errors[$errorkey] = get_string('uerr_lowerthanmaximum', 'surveyfield_recurrence', $a);
+        } else {
+            if ($haslowerbound && ($userinput < $this->lowerbound)) {
+                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_recurrence');
+            }
+            if ($hasupperbound && ($userinput > $this->upperbound)) {
+                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_recurrence');
             }
         }
     }
@@ -522,20 +518,34 @@ EOS;
     public function userform_get_filling_instructions() {
         global $survey;
 
+        $haslowerbound = ($this->lowerbound != $this->item_recurrence_to_unix_time(1, 1));
+        $hasupperbound = ($this->upperbound != $this->item_recurrence_to_unix_time(12, 31));
+
         $format = get_string('strftimedateshort', 'langconfig');
+        if ($haslowerbound && $hasupperbound) {
+            $a = new StdClass();
+            $a->lowerbound = userdate($this->lowerbound, $format, 0);
+            $a->upperbound = userdate($this->upperbound, $format, 0);
 
-        $a = new StdClass();
-        $a->lowerbound = userdate($this->lowerbound, $format, 0);
-        $a->upperbound = userdate($this->upperbound, $format, 0);
+            if ($this->lowerbound < $this->upperbound) {
+                // internal range
+                $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_recurrence', $a);
+            }
 
-        if ($this->lowerbound < $this->upperbound) {
-            // internal range
-            $fillinginstruction = get_string('restriction_internal', 'surveyfield_recurrence', $a);
-        }
-
-        if ($this->lowerbound > $this->upperbound) {
-            // external range
-            $fillinginstruction = get_string('restriction_external', 'surveyfield_recurrence', $a);
+            if ($this->lowerbound > $this->upperbound) {
+                // external range
+                $fillinginstruction = get_string('restriction_upperlower', 'surveyfield_recurrence', $a);
+            }
+        } else {
+            $fillinginstruction = '';
+            if ($haslowerbound) {
+                $a = userdate($this->lowerbound, $format, 0);
+                $fillinginstruction = get_string('restriction_lower', 'surveyfield_recurrence', $a);
+            }
+            if ($hasupperbound) {
+                $a = userdate($this->upperbound, $format, 0);
+                $fillinginstruction = get_string('restriction_upper', 'surveyfield_recurrence', $a);
+            }
         }
 
         return $fillinginstruction;
@@ -623,7 +633,7 @@ EOS;
         if ($format == 'unixtime') {
             return $content;
         } else {
-            return userdate($content, get_string($format, 'surveyfield_date'), 0);
+            return userdate($content, get_string($format, 'surveyfield_recurrence'), 0);
         }
     }
 

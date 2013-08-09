@@ -23,37 +23,39 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['err_exceedingmonth'] = 'Specified month can not be greater than 12';
-$string['parentcontentdateoutofrange_err'] = 'Provided short date is out of the range requested to the choosen item';
-$string['pluginname'] = 'Short date';
-$string['userfriendlypluginname'] = 'Date (short) [mm/yyyy]';
+
+$string['currentshortdatedefault'] = 'Current short date';
+$string['customdefault'] = 'Custom';
+$string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';
 $string['defaultvalue_help'] = 'This is the short date the remote user will find answered by default. The default for this type of question is mandatory. If "Current short date" is choosed as default, boundaries are not supposed to apply.';
 $string['defaultvalue'] = 'Default';
-$string['defaultvalue_err'] = 'The default item "{$a}" was not found among options';
-$string['lowerbound_help'] = 'The lower date the user will be allowed to enter';
-$string['lowerbound'] = 'Lower bound';
-$string['upperbound_help'] = 'The upper date the user will be allowed to enter';
-$string['upperbound'] = 'Upper bound';
-$string['ierr_outofrangedefault'] = 'Default does not fall within the specified range';
-$string['ierr_invertupperlowerbounds'] = 'Upper bound must be greater than lower bound';
-$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a->lowerbound} and {$a->upperbound}';
-$string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
-$string['restriction_upper'] = 'Answer is supposed to be lower than {$a}';
-$string['uerr_lowerthanminimum'] = 'Provided value is lower than minimum allowed';
-$string['uerr_greaterthanmaximum'] = 'Provided value is greater than maximum allowed';
-$string['customdefault'] = 'Custom';
-$string['downloadformat'] = 'Download format';
 $string['downloadformat_help'] = 'Choose the format of the answer as it appear once user attempts are downloaded';
+$string['downloadformat'] = 'Download format';
+$string['outofrangedefault'] = 'Default does not fall within the specified range';
+$string['outofexternalrangedefault'] = 'Default does not fall within the specified range (see "{$a}" help)';
+$string['invitationmonth'] = 'Choose a month';
+$string['invitationyear'] = 'Choose a year';
+$string['lowerbound_help'] = 'The lowest date the user is allowed to enter';
+$string['lowerbound'] = 'Lower bound';
+$string['lowerequaltoupper'] = 'Lower and upper bounds need to be different';
+$string['parentcontentdateoutofrange_err'] = 'Provided short date is out of the range requested to the choosen item';
+$string['pluginname'] = 'Short date';
+$string['restriction_lower'] = 'Answer is supposed to be greater than {$a}';
+$string['restriction_lowerupper'] = 'Answer is supposed to fit between {$a->lowerbound} and {$a->upperbound}';
+$string['restriction_upperlower'] = 'Answer is supposed to be lower-equal than {$a->lowerbound} or greater-equal than {$a->upperbound}';
+$string['restriction_upper'] = 'Answer is supposed to be lower-equal than {$a}';
 $string['strftime01'] = '%B %Y';
 $string['strftime02'] = '%B \'%y';
 $string['strftime03'] = '%b %Y';
 $string['strftime04'] = '%b \'%y';
 $string['strftime05'] = '%m/%Y';
 $string['strftime06'] = '%m/%y';
-
-$string['lowerequaltoupper'] = 'Lower and upper bounds need to be different';
-$string['currentshortdatedefault'] = 'Current short date';
-$string['invitationmonth'] = 'Choose a month';
-$string['invitationyear'] = 'Choose a year';
-$string['uerr_shortdatenotset'] = 'Please choose a month or select "{$a}" checkbox';
+$string['uerr_greaterthanmaximum'] = 'Provided value is greater than maximum allowed';
+$string['uerr_lowerthanminimum'] = 'Provided value is lower than minimum allowed';
+$string['uerr_outofexternalrange'] = 'Provided value is supposed to be lower-equal than {$a->lowerbound} or greater-equal than {$a->upperbound}';
+$string['uerr_outofinternalrange'] = 'Provided value does not fall within the specified range';
+$string['uerr_shortdatenotset'] = 'Please choose a short date or select "{$a}" checkbox';
 $string['uerr_shortdatenotsetrequired'] = 'Please choose a year';
+$string['upperbound_help'] = 'The biggest date the user is allowed to enter.<br /><br />Upper and lower bound define a range.<br />If "lower bound" is lower than "upper bound" the user is forced to enter a value falling into the range.<br />If "lower bound" is greater than "upper bound" the user input is forced out from the range. i.e. the user input is supposed to be lower-equal than the lower bound OR grater-equal than the upper bound.';
+$string['upperbound'] = 'Upper bound';
+$string['userfriendlypluginname'] = 'Date (short) [mm/yyyy]';

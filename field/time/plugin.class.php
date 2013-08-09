@@ -144,6 +144,21 @@ class surveyfield_time extends mod_survey_itembase {
         // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
+        // round defaultvalue according to step
+        $timearray = $this->item_split_unix_time($record->defaultvalue);
+        $defaultvalue_hours = $timearray['hours'];
+        $defaultvalue_minute = $timearray['minutes'];
+
+        $stepscount = intval($defaultvalue_minute/$record->step);
+        $exceed = $defaultvalue_minute % $record->step;
+        if ($exceed < ($record->step/2)) {
+            $defaultvalue_minute = $stepscount * $record->step;
+        } else {
+            $defaultvalue_minute = (1 + $stepscount) * $record->step;
+        }
+        $record->defaultvalue = $this->item_time_to_unix_time($defaultvalue_hours, $defaultvalue_minute);
+        // end of: round defaultvalue according to step
+
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
     }
@@ -447,38 +462,34 @@ EOS;
             return;
         }
 
+        $haslowerbound = ($this->lowerbound != $this->item_time_to_unix_time(0, 0));
+        $hasupperbound = ($this->upperbound != $this->item_time_to_unix_time(23, 59));
+
         $userinput = $this->item_time_to_unix_time($data[$this->itemname.'_hour'], $data[$this->itemname.'_minute']);
 
-        $format = get_string('strftimetime', 'langconfig');
-        if ($this->lowerbound < $this->upperbound) {
-            // internal range
-            if ($userinput < $this->lowerbound) {
-                $dummy = new StdClass();
-                $dummy->content = $this->lowerbound;
-                $a = $this->userform_db_to_export($dummy, $format);
-                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_time', $a);
+        if ($haslowerbound && $hasupperbound) {
+            $format = get_string('strftimetime', 'langconfig');
+            if ($this->lowerbound < $this->upperbound) {
+                // internal range
+                if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
+                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_age');
+                }
             }
-            if ($userinput > $this->upperbound) {
-                $dummy = new StdClass();
-                $dummy->content = $this->lowerbound;
-                $a = $this->userform_db_to_export($dummy, $format);
-                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_time', $a);
-            }
-        }
 
-        if ($this->lowerbound > $this->upperbound) {
-            // external range
-            if ($userinput > $this->lowerbound) {
-                $dummy = new StdClass();
-                $dummy->content = $this->lowerbound;
-                $a = $this->userform_db_to_export($dummy, $format);
-                $errors[$errorkey] = get_string('uerr_greaterthanminimum', 'surveyfield_time', $a);
+            if ($this->lowerbound > $this->upperbound) {
+                // external range
+                $format = get_string('strftimedate', 'langconfig');
+                $a = new stdclass();
+                $a->lowerbound = userdate($this->lowerbound, get_string($format, 'surveyfield_age'), 0);
+                $a->upperbound = userdate($this->upperbound, get_string($format, 'surveyfield_age'), 0);
+                $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_age', $a);
             }
-            if ($userinput < $this->upperbound) {
-                $dummy = new StdClass();
-                $dummy->content = $this->lowerbound;
-                $a = $this->userform_db_to_export($dummy, $format);
-                $errors[$errorkey] = get_string('uerr_lowerthanmaximum', 'surveyfield_time', $a);
+        } else {
+            if ($haslowerbound && ($userinput < $this->lowerbound)) {
+                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_age');
+            }
+            if ($hasupperbound && ($userinput > $this->upperbound)) {
+                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_age');
             }
         }
     }
@@ -491,19 +502,34 @@ EOS;
      */
     public function userform_get_filling_instructions() {
 
+        $haslowerbound = ($this->lowerbound != $this->item_time_to_unix_time(0, 0));
+        $hasupperbound = ($this->upperbound != $this->item_time_to_unix_time(23, 59));
+
         $format = get_string('strftimetime', 'langconfig');
-        $a = new stdClass();
-        $a->lowerbound = userdate($this->lowerbound, $format, 0);
-        $a->upperbound = userdate($this->upperbound, $format, 0);
+        if ($haslowerbound && $hasupperbound) {
+            $a = new stdClass();
+            $a->lowerbound = userdate($this->lowerbound, $format, 0);
+            $a->upperbound = userdate($this->upperbound, $format, 0);
 
-        if ($this->lowerbound < $this->upperbound) {
-            // internal range
-            $fillinginstruction = get_string('restriction_internal', 'surveyfield_time', $a);
-        }
+            if ($this->lowerbound < $this->upperbound) {
+                // internal range
+                $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_time', $a);
+            }
 
-        if ($this->lowerbound > $this->upperbound) {
-            // external range
-            $fillinginstruction = get_string('restriction_external', 'surveyfield_time', $a);
+            if ($this->lowerbound > $this->upperbound) {
+                // external range
+                $fillinginstruction = get_string('restriction_upperlower', 'surveyfield_time', $a);
+            }
+        } else {
+            $fillinginstruction = '';
+            if ($haslowerbound) {
+                $a = userdate($this->lowerbound, $format, 0);
+                $fillinginstruction = get_string('restriction_lower', 'surveyfield_date', $a);
+            }
+            if ($hasupperbound) {
+                $a = userdate($this->upperbound, $format, 0);
+                $fillinginstruction = get_string('restriction_upper', 'surveyfield_date', $a);
+            }
         }
 
         return $fillinginstruction;
@@ -591,7 +617,7 @@ EOS;
         if ($format == 'unixtime') {
             return $content;
         } else {
-            return userdate($content, get_string($format, 'surveyfield_date'), 0);
+            return userdate($content, get_string($format, 'surveyfield_time'), 0);
         }
     }
 

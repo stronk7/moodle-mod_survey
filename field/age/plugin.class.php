@@ -260,7 +260,7 @@ class surveyfield_age extends mod_survey_itembase {
      * @return
      */
     public function item_composite_fields() {
-        return array('lowerbound', 'upperbound');
+        return array('defaultvalue', 'lowerbound', 'upperbound');
     }
 
     /*
@@ -271,7 +271,18 @@ class surveyfield_age extends mod_survey_itembase {
      * @return
      */
     public function item_age_to_text($agearray) {
-        $return = $agearray['year'].' '.get_string('years').' '.$agearray['mon'].' '.get_string('months', 'surveyfield_age');
+        $stryears = get_string('years');
+        $strmonths = get_string('months', 'surveyfield_age');
+
+        $return = '';
+        if (!empty($agearray['year'])) {
+            $return .= $agearray['year'].' '.$stryears;
+            if (!empty($agearray['mon'])) {
+                $return .= ' '.get_string('and', 'surveyfield_age').' '.$agearray['mon'].' '.$strmonths;
+            }
+        } else {
+            $return .= $agearray['mon'].' '.$strmonths;
+        }
 
         return $return;
     }
@@ -434,11 +445,31 @@ EOS;
 
         $userinput = $this->item_age_to_unix_time($data[$this->itemname.'_year'], $data[$this->itemname.'_month']);
 
-        if ($haslowerbound && ($userinput < $this->lowerbound)) {
-            $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_age');
-        }
-        if ($hasupperbound && ($userinput > $this->upperbound)) {
-            $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_age');
+        if ($haslowerbound && $hasupperbound) {
+            if ($this->lowerbound < $this->upperbound) {
+                // internal range
+                if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
+                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_age');
+                }
+            }
+
+            if ($this->lowerbound > $this->upperbound) {
+                // external range
+                if (($userinput > $this->lowerbound) && ($userinput < $this->upperbound)) {
+                    $format = get_string('strftimedate', 'langconfig');
+                    $a = new stdclass();
+                    $a->lowerbound = $this->item_age_to_text($this->item_split_unix_time($this->lowerbound));
+                    $a->upperbound = $this->item_age_to_text($this->item_split_unix_time($this->upperbound));
+                    $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_age', $a);
+                }
+            }
+        } else {
+            if ($haslowerbound && ($userinput < $this->lowerbound)) {
+                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_age');
+            }
+            if ($hasupperbound && ($userinput > $this->upperbound)) {
+                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_age');
+            }
         }
     }
 
@@ -454,49 +485,30 @@ EOS;
         $haslowerbound = ($this->lowerbound != $this->item_age_to_unix_time(0, 0));
         $hasupperbound = ($this->upperbound != $this->item_age_to_unix_time($maximumage, 11));
 
-        $strmonths = ' '.get_string('months', 'surveyfield_age');
-        $stryears = ' '.get_string('years');
-
         $a = '';
         $lowerbound = $this->item_split_unix_time($this->lowerbound);
         $upperbound = $this->item_split_unix_time($this->upperbound);
 
-        if ($haslowerbound) {
-            if (!empty($lowerbound['year'])) {
-                $a .= $lowerbound['year'].$stryears;
-                if (!empty($lowerbound['mon'])) {
-                    $a .= get_string('and', 'surveyfield_age').$lowerbound['mon'].$strmonths;
-                }
-            } else {
-                $a .= $lowerbound['mon'].$strmonths;
-            }
-        }
-
         if ($haslowerbound && $hasupperbound) {
-            $a .= get_string('and', 'surveyfield_age');
-        }
+            $a = new StdClass();
+            $a->lowerbound = $this->item_age_to_text($lowerbound);
+            $a->upperbound = $this->item_age_to_text($upperbound);
 
-        if ($hasupperbound) {
-            if (!empty($upperbound['year'])) {
-                $a .= $upperbound['year'].$stryears;
-                if (!empty($upperbound['mon'])) {
-                    $a .= get_string('and', 'surveyfield_age').$upperbound['mon'].$strmonths;
-                }
-            } else {
-                if (!empty($upperbound['mon'])) {
-                    $a .= $upperbound['mon'].$strmonths;
-                }
+            if ($this->lowerbound < $this->upperbound) {
+                $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_age', $a);
             }
-        }
 
-        if ($haslowerbound && $hasupperbound) {
-            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_age', $a);
+            if ($this->lowerbound > $this->upperbound) {
+                $fillinginstruction = get_string('restriction_upperlower', 'surveyfield_age', $a);
+            }
         } else {
-            $fillinginstruction = '';
             if ($haslowerbound) {
+                $a = $this->item_age_to_text($lowerbound);
                 $fillinginstruction = get_string('restriction_lower', 'surveyfield_age', $a);
             }
+
             if ($hasupperbound) {
+                $a = $this->item_age_to_text($upperbound);
                 $fillinginstruction = get_string('restriction_upper', 'surveyfield_age', $a);
             }
         }
@@ -566,7 +578,6 @@ EOS;
         }
 
         $agearray = $this->item_split_unix_time($content);
-
         return $this->item_age_to_text($agearray);
     }
 

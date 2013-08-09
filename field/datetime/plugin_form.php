@@ -152,8 +152,8 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $errors = parent::validation($data, $files);
 
-        $lowerbound = $item->item_datetime_to_unix_time($data['lowerbound_year'], $data['lowerbound_month'], $data['lowerbound_day'], $data['defaultvalue_hour'], $data['defaultvalue_minute']);
-        $upperbound = $item->item_datetime_to_unix_time($data['upperbound_year'], $data['upperbound_month'], $data['upperbound_day'], $data['defaultvalue_hour'], $data['defaultvalue_minute']);
+        $lowerbound = $item->item_datetime_to_unix_time($data['lowerbound_year'], $data['lowerbound_month'], $data['lowerbound_day'], $data['lowerbound_hour'], $data['lowerbound_minute']);
+        $upperbound = $item->item_datetime_to_unix_time($data['upperbound_year'], $data['upperbound_month'], $data['upperbound_day'], $data['upperbound_hour'], $data['upperbound_minute']);
         if ($lowerbound == $upperbound) {
             $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_datetime');
         }
@@ -170,8 +170,9 @@ class survey_pluginform extends mod_survey_itembaseform {
 
             if ($lowerbound > $upperbound) {
                 // external range
-                if (($defaultvalue > $lowerbound) && ($defaultvalue < $upperbound)) {
-                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_datetime');
+                if (($defaultvalue > $upperbound) && ($defaultvalue < $lowerbound)) {
+                    $a = get_string('upperbound', 'surveyfield_datetime');
+                    $errors['defaultvalue_group'] = get_string('outofexternalrangedefault', 'surveyfield_datetime', $a);
                 }
             }
         }

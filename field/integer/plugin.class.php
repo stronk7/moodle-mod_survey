@@ -378,11 +378,31 @@ EOS;
         if ($userinput == SURVEY_NOANSWERVALUE) {
             return;
         }
-        if ($haslowerbound && ($userinput < $this->lowerbound)) {
-            $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_integer');
-        }
-        if ($hasupperbound && ($userinput > $this->upperbound)) {
-            $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_integer');
+        if ($haslowerbound && $hasupperbound) {
+            if ($this->lowerbound < $this->upperbound) {
+                // internal range
+                if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
+                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_integer');
+                }
+            }
+
+            if ($this->lowerbound > $this->upperbound) {
+                // external range
+                if (($userinput > $this->lowerbound) && ($userinput < $this->upperbound)) {
+                    $format = get_string($this->item_get_friendlyformat(), 'surveyfield_integer');
+                    $a = new stdclass();
+                    $a->lowerbound = $this->lowerbound;
+                    $a->upperbound = $this->upperbound;
+                    $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_integer', $a);
+                }
+            }
+        } else {
+            if ($haslowerbound && ($userinput < $this->lowerbound)) {
+                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_integer');
+            }
+            if ($hasupperbound && ($userinput > $this->upperbound)) {
+                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_integer');
+            }
         }
     }
 
@@ -403,27 +423,27 @@ EOS;
         $lowerbound = $this->lowerbound;
         $upperbound = $this->upperbound;
 
-        if ($haslowerbound) {
-            if (!empty($this->lowerbound)) {
-                $a->lowerbound = $this->lowerbound;
-            }
-        }
-
-        if ($hasupperbound) {
-            if (!empty($this->upperbound)) {
-                $a->upperbound = $this->upperbound;
-            }
-        }
-
         if ($haslowerbound && $hasupperbound) {
-            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_integer', $a);
-        } else {
-            $fillinginstruction = '';
-            if ($haslowerbound) {
-                $fillinginstruction = get_string('restriction_lower', 'surveyfield_integer', $a->lowerbound);
+            $a = new StdClass();
+            $a->lowerbound = $lowerbound;
+            $a->upperbound = $upperbound;
+
+            if ($lowerbound < $upperbound) {
+                $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_integer', $a);
             }
+
+            if ($lowerbound > $upperbound) {
+                $fillinginstruction = get_string('restriction_upperlower', 'surveyfield_integer', $a);
+            }
+        } else {
+            if ($haslowerbound) {
+                $a = $lowerbound;
+                $fillinginstruction = get_string('restriction_lower', 'surveyfield_integer', $a);
+            }
+
             if ($hasupperbound) {
-                $fillinginstruction = get_string('restriction_upper', 'surveyfield_integer', $a->upperbound);
+                $a = $upperbound;
+                $fillinginstruction = get_string('restriction_upper', 'surveyfield_integer', $a);
             }
         }
 

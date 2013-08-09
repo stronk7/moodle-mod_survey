@@ -466,11 +466,31 @@ EOS;
 
         $userinput = $this->item_shortdate_to_unix_time($data[$this->itemname.'_month'], $data[$this->itemname.'_year']);
 
-        if ($haslowerbound && ($userinput < $this->lowerbound)) {
-            $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_shortdate');
-        }
-        if ($hasupperbound && ($userinput > $this->upperbound)) {
-            $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_shortdate');
+        if ($haslowerbound && $hasupperbound) {
+            if ($this->lowerbound < $this->upperbound) {
+                // internal range
+                if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
+                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_shortdate');
+                }
+            }
+
+            if ($this->lowerbound > $this->upperbound) {
+                // external range
+                if (($userinput > $this->lowerbound) && ($userinput < $this->upperbound)) {
+                    $format = get_string('strftimemonthyear', 'langconfig');
+                    $a = new stdclass();
+                    $a->lowerbound = userdate($this->lowerbound, $format, 0);
+                    $a->upperbound = userdate($this->upperbound, $format, 0);
+                    $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_shortdate', $a);
+                }
+            }
+        } else {
+            if ($haslowerbound && ($userinput < $this->lowerbound)) {
+                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_shortdate');
+            }
+            if ($hasupperbound && ($userinput > $this->upperbound)) {
+                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_shortdate');
+            }
         }
     }
 
@@ -491,7 +511,16 @@ EOS;
             $a = new StdClass();
             $a->lowerbound = userdate($this->lowerbound, $format, 0);
             $a->upperbound = userdate($this->upperbound, $format, 0);
-            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_shortdate', $a);
+
+            if ($this->lowerbound < $this->upperbound) {
+                // internal range
+                $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_shortdate', $a);
+            }
+
+            if ($this->lowerbound > $this->upperbound) {
+                // external range
+                $fillinginstruction = get_string('restriction_upperlower', 'surveyfield_shortdate', $a);
+            }
         } else {
             $fillinginstruction = '';
             if ($haslowerbound) {
@@ -589,7 +618,7 @@ EOS;
         if ($format == 'unixtime') {
             return $content;
         } else {
-            return userdate($content, get_string($format, 'surveyfield_date'), 0);
+            return userdate($content, get_string($format, 'surveyfield_shortdate'), 0);
         }
     }
 

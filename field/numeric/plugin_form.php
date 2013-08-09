@@ -104,46 +104,88 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $errors = parent::validation($data, $files);
 
+        $pattern = '~^\s*([0-9]+)'.$item->decimalseparator.'?([0-9]*)\s*$~';
+
+        $draftnumber = $data['lowerbound'];
         // constrain default between boundaries
-        if (strlen($data['defaultvalue'])) {
-            $thenumber = unformat_float($data['defaultvalue'], true);
-            if (!is_numeric($thenumber)) {
+        if (strlen($draftnumber)) {
+            if (!preg_match($pattern, $draftnumber, $matches)) {
+                $errors['lowerbound'] = get_string('lowerbound_notanumber', 'surveyfield_numeric');
+                return $errors;
+            } else {
+                // $lowerbound = $matches[1].'.'.$matches[2];
+                $lowerbound = unformat_float($draftnumber, true);
+            }
+        }
+
+        $draftnumber = $data['upperbound'];
+        // constrain default between boundaries
+        if (strlen($draftnumber)) {
+            if (!preg_match($pattern, $draftnumber, $matches)) {
+                $errors['upperbound'] = get_string('upperbound_notanumber', 'surveyfield_numeric');
+                return $errors;
+            } else {
+                // $upperbound = $matches[1].'.'.$matches[2];
+                $upperbound = unformat_float($draftnumber, true);
+            }
+        }
+
+        if ($lowerbound == $upperbound) {
+            $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_numeric');
+        }
+
+        // $default = unformat_float($data['defaultvalue'], true);
+        // if (!is_numeric($default)) {
+
+        $draftnumber = $data['defaultvalue'];
+        // constrain default between boundaries
+        if (strlen($draftnumber)) {
+            if (!preg_match($pattern, $draftnumber, $matches)) {
                 $errors['defaultvalue'] = get_string('default_notanumber', 'surveyfield_numeric');
             } else {
+                // $defaultvalue = $matches[1].'.'.$matches[2];
+                $defaultvalue = unformat_float($draftnumber, true);
                 // if it is < 0 but has been defined as unsigned, shouts
-                if ((!isset($data['signed'])) && ($thenumber < 0)) {
-                    $errors['defaultvalue'] = get_string('defaultsignnotunallowed', 'surveyfield_numeric');
+                if ((!isset($data['signed'])) && ($defaultvalue < 0)) {
+                    $errors['defaultvalue'] = get_string('defaultsignnotallowed', 'surveyfield_numeric');
                 }
 
-                // if it is < $this->lowerbound, shouts
-                if (strlen($data['lowerbound']) && ($thenumber < $data['lowerbound'])) {
-                    $errors['defaultvalue'] = get_string('default_outofrange', 'surveyfield_numeric');
-                }
-
-                // if it is > $this->upperbound, shouts
-                if (strlen($data['upperbound']) && ($thenumber > $data['upperbound'])) {
-                    $errors['defaultvalue'] = get_string('default_outofrange', 'surveyfield_numeric');
-                }
-
-                $is_integer = (bool)(strval(intval($thenumber)) == strval($thenumber));
+                $is_integer = (bool)(strval(intval($defaultvalue)) == strval($defaultvalue));
                 // if it has decimal but has been defined as integer, shouts
                 if ( ($data['decimals'] == 0) && (!$is_integer) ) {
                     $errors['defaultvalue'] = get_string('default_notinteger', 'surveyfield_numeric');
                 }
-            }
-        }
 
-        if (false === ($lowerbound = unformat_float($data['lowerbound'], true))) {
-            $errors['lowerbound'] = get_string('lowerbound_notanumber', 'surveyfield_numeric');
-        }
+                if (($lowerbound) && ($upperbound)) {
+                    if ($lowerbound < $upperbound) {
+                        // internal range
+                        if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
+                            $errors['defaultvalue'] = get_string('outofrangedefault', 'surveyfield_numeric');
+                        }
+                    }
 
-        if (false === ($upperbound = unformat_float($data['upperbound'], true))) {
-            $errors['upperbound'] = get_string('upperbound_notanumber', 'surveyfield_numeric');
-        }
+                    if ($lowerbound > $upperbound) {
+                        // external range
+                        if (($defaultvalue > $upperbound) && ($defaultvalue < $lowerbound)) {
+                            $a = get_string('upperbound', 'surveyfield_numeric');
+                            $errors['defaultvalue'] = get_string('outofexternalrangedefault', 'surveyfield_numeric', $a);
+                        }
+                    }
+                } else {
+                    if ($lowerbound) {
+                        // if defaultvalue is < $this->lowerbound, shouts
+                        if ($defaultvalue < $lowerbound) {
+                            $errors['defaultvalue'] = get_string('default_outofrange', 'surveyfield_numeric');
+                        }
+                    }
 
-        if (strlen($data['lowerbound']) && strlen($data['upperbound'])) {
-            if (($upperbound) && ($upperbound) && ($upperbound < $lowerbound)) {
-                $errors['upperbound'] = get_string('upperboundlowerthanlowerbound', 'surveyfield_numeric');
+                    if ($upperbound) {
+                        // if defaultvalue is > $this->upperbound, shouts
+                        if ($defaultvalue > $upperbound) {
+                            $errors['defaultvalue'] = get_string('default_outofrange', 'surveyfield_numeric');
+                        }
+                    }
+                }
             }
         }
 
