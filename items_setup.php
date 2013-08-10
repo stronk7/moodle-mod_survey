@@ -71,6 +71,7 @@ require_capability('mod/survey:additems', $context);
 // ////////////////////////////////////////////////////////////
 $itemlist_manager = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
                                            $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
+$itemlist_manager->prevent_direct_user_input();
 
 require_once($CFG->dirroot.'/mod/survey/'.$itemlist_manager->type.'/'.$itemlist_manager->plugin.'/plugin.class.php');
 require_once($CFG->dirroot.'/mod/survey/'.$itemlist_manager->type.'/'.$itemlist_manager->plugin.'/plugin_form.php');

@@ -1406,4 +1406,15 @@ class mod_survey_itemlist {
         echo $OUTPUT->box($message);
     }
 
+    /*
+     * prevent_direct_user_input
+     *
+     * @param
+     * @return
+     */
+    public function prevent_direct_user_input() {
+        if ($this->survey->template) {
+            print_error('incorrectaccessdetected', 'survey');
+        }
+    }
 }
