@@ -70,7 +70,7 @@ class survey_applymtemplateform extends moodleform {
     }
 
     public function validation($data, $files) {
-        global $USER;
+        global $USER, $CFG;
 
         $mform = $this->_form;
 
@@ -80,10 +80,10 @@ class survey_applymtemplateform extends moodleform {
 
         $errors = parent::validation($data, $files);
 
-        $templatename = $this->mtemplatename;
+        $templatename = $data['mastertemplate'];
         $template_path = $CFG->dirroot.'/mod/survey/template/'.$templatename.'/template.xml';
-        $templatecontent = file_get_contents($template_path);
-        $xml = @new SimpleXMLElement($templatecontent);
+        $xml = file_get_contents($template_path);
+        // $xml = @new SimpleXMLElement($templatecontent);
         if (!$utemplate_manager->xml_check($xml)) {
             $errors['mastertemplate'] = get_string('invalidtemplate', 'survey', $templatename);
             return $errors;

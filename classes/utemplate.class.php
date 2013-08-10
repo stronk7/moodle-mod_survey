@@ -52,9 +52,9 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
     public $confirm = SURVEY_UNCONFIRMED;
 
     /*
-     * $canexportutemplates
+     * $candownloadutemplates
      */
-    public $canexportutemplates = false;
+    public $candownloadutemplates = false;
 
     /*
      * $candeleteutemplates
@@ -71,7 +71,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
         $this->confirm = $confirm;
         $this->utemplateid = $utemplateid;
         $this->action = $action;
-        $this->canexportutemplates = has_capability('mod/survey:exportusertemplates', $context, null, true);
+        $this->candownloadutemplates = has_capability('mod/survey:downloadusertemplates', $context, null, true);
         $this->candeleteutemplates = has_capability('mod/survey:deleteusertemplates', $context, null, true);
     }
 
@@ -430,7 +430,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
                 }
 
                 // *************************************** SURVEY_EXPORTUTEMPLATE
-                if ($this->canexportutemplates) {
+                if ($this->candownloadutemplates) {
                     $paramurl['act'] = SURVEY_EXPORTUTEMPLATE;
                     $basepath = new moodle_url('utemplates_manage.php', $paramurl);
 
@@ -582,7 +582,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
             }
         }
 
-        if ($can_manage_category) {
+        if ($can_manage_category) { // TODO: how to verify if the user is a site admin?
             $options[CONTEXT_SYSTEM.'_0'] = get_string('site');
         }
 

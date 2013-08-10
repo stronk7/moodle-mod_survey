@@ -413,12 +413,9 @@ class mod_survey_templatebase {
                 }
 
                 $mdom = new DOMDocument();
-                if (!$mdom->loadXML($xml_table->asXML())) {
-                    $status = false;
-                } else {
-                    $status = $mdom->schemaValidateSource($xsd);
-                }
-                if (!status) {
+                $status = $mdom->loadXML($xml_table->asXML());
+                $status = $status && $mdom->schemaValidateSource($xsd);
+                if (!$status) {
                     // Stop here. Continuing is useless
                     break;
                 }

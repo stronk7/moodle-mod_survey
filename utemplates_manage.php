@@ -65,7 +65,7 @@ switch ($action) {
     case SURVEY_NOACTION:
         break;
     case SURVEY_EXPORTUTEMPLATE:
-        require_capability('mod/survey:exportusertemplates', $context);
+        require_capability('mod/survey:downloadusertemplates', $context);
         $utemplate_manager->export_utemplate();
         break;
     case SURVEY_DELETEUTEMPLATE:

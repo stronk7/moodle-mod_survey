@@ -219,7 +219,7 @@ switch ($currenttab) {
     case SURVEY_TABUTEMPLATES:
         // permissions
         $cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
-        $canimportusertemplates = has_capability('mod/survey:importusertemplates', $context, null, true);
+        $canuploadusertemplates = has_capability('mod/survey:uploadusertemplates', $context, null, true);
         $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
 
         if ($survey->template) {
@@ -244,7 +244,7 @@ switch ($currenttab) {
                 $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
             }
 
-            if ($canimportusertemplates) { // import
+            if ($canuploadusertemplates) { // upload
                 $elementurl = new moodle_url('/mod/survey/utemplates_import.php', $paramurl);
                 $strlabel = get_string('tabutemplatepage3', 'survey');
                 $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);

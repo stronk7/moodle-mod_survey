@@ -129,7 +129,7 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
         $elementurl = new moodle_url('/mod/survey/utemplates_manage.php', $localparamurl);
         mod/survey:manageusertemplates
         mod/survey:deleteusertemplates
-        mod/survey:exportusertemplates
+        mod/survey:downloadusertemplates
 
     SUB-TAB == SURVEY_UTEMPLATES_BUILD
         $elementurl = new moodle_url('/mod/survey/utemplates_create.php', $localparamurl);
@@ -137,7 +137,7 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
 
     SUB-TAB == SURVEY_UTEMPLATES_IMPORT
         $elementurl = new moodle_url('/mod/survey/utemplates_import.php', $localparamurl);
-        mod/survey:importusertemplates
+        mod/survey:uploadusertemplates
 
     SUB-TAB == SURVEY_UTEMPLATES_APPLY
         $elementurl = new moodle_url('/mod/survey/utemplates_apply.php', $localparamurl);
@@ -348,7 +348,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:exportusertemplates' => array(
+    'mod/survey:downloadusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -368,7 +368,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:importusertemplates' => array(
+    'mod/survey:uploadusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

@@ -780,7 +780,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
 
     $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $context, null, true);
     $cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
-    $canimportusertemplates = has_capability('mod/survey:importusertemplates', $context, null, true);
+    $canuploadusertemplates = has_capability('mod/survey:uploadusertemplates', $context, null, true);
     $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
 
     $cancreatemastertemplate = has_capability('mod/survey:createmastertemplate', $context, null, true);
@@ -831,7 +831,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
         if ($cancreateusertemplates) {
             $navnode->add(get_string('tabutemplatepage2', 'survey'), new moodle_url('/mod/survey/utemplates_create.php', $paramurl), navigation_node::TYPE_SETTING);
         }
-        if ($canimportusertemplates) {
+        if ($canuploadusertemplates) {
             $navnode->add(get_string('tabutemplatepage3', 'survey'), new moodle_url('/mod/survey/utemplates_import.php', $paramurl), navigation_node::TYPE_SETTING);
         }
         if ( (!$hassubmissions || $CFG->survey_forcemodifications) && $canapplyusertemplates ) {
