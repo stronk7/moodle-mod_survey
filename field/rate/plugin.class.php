@@ -301,7 +301,7 @@ class surveyfield_rate extends mod_survey_itembase {
                 <xs:element type="xs:string" name="options"/>
                 <xs:element type="xs:string" name="rates"/>
                 <xs:element type="xs:int" name="defaultoption"/>
-                <xs:element type="xs:string" name="defaultvalue"/>
+                <xs:element type="xs:string" name="defaultvalue" minOccurs="0"/>
                 <xs:element type="xs:int" name="downloadformat"/>
                 <xs:element type="xs:int" name="style"/>
                 <xs:element type="xs:int" name="forcedifferentrates"/>

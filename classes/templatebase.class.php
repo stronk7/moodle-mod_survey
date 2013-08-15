@@ -133,7 +133,7 @@ class mod_survey_templatebase {
                     $val = $item->item_get_generic_field($field);
                 }
 
-                if ($val) {
+                if (strlen($val)) {
                     $xmlfield = $xmltable->addChild($field, $val);
                 // } else {
                     // it is empty, do not evaluate: jump
@@ -233,7 +233,13 @@ class mod_survey_templatebase {
 
         $dbman = $DB->get_manager();
 
-        switch ($this->formdata->actionoverother) {
+        if ($templatetype == SURVEY_USERTEMPLATE) {
+            $actionoverother = $this->formdata->actionoverother;
+        } else {
+            $actionoverother = SURVEY_DELETEALLITEMS;
+        }
+
+        switch ($actionoverother) {
             case SURVEY_IGNOREITEMS:
                 break;
             case SURVEY_HIDEITEMS:
@@ -414,7 +420,8 @@ class mod_survey_templatebase {
 
                 $mdom = new DOMDocument();
                 $status = $mdom->loadXML($xml_table->asXML());
-                $status = $status && $mdom->schemaValidateSource($xsd);
+                $status = $status && @$mdom->schemaValidateSource($xsd);
+                // $status = $status && $mdom->schemaValidateSource($xsd);
                 if (!$status) {
                     // Stop here. Continuing is useless
                     break;

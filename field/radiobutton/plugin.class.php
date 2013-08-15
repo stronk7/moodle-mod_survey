@@ -307,7 +307,7 @@ class surveyfield_radiobutton extends mod_survey_itembase {
                 <xs:element type="xs:string" name="options"/>
                 <xs:element type="xs:string" name="labelother" minOccurs="0"/>
                 <xs:element type="xs:int" name="defaultoption"/>
-                <xs:element type="xs:string" name="defaultvalue"/>
+                <xs:element type="xs:string" name="defaultvalue" minOccurs="0"/>
                 <xs:element type="xs:int" name="downloadformat"/>
                 <xs:element type="xs:int" name="adjustment"/>
             </xs:sequence>

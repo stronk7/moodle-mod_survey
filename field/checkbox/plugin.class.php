@@ -254,8 +254,8 @@ class surveyfield_checkbox extends mod_survey_itembase {
         <xs:complexType>
             <xs:sequence>
                 <xs:element type="xs:string" name="options"/>
-                <xs:element type="xs:string" name="labelother"/>
-                <xs:element type="xs:string" name="defaultvalue"/>
+                <xs:element type="xs:string" name="labelother" minOccurs="0"/>
+                <xs:element type="xs:string" name="defaultvalue" minOccurs="0"/>
                 <xs:element type="xs:int" name="downloadformat"/>
                 <xs:element type="xs:int" name="adjustment"/>
             </xs:sequence>

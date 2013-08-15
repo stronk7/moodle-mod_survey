@@ -86,14 +86,18 @@ class survey_importutemplateform extends moodleform {
         $draftitemid = file_get_submitted_draft_itemid('importfile_filemanager');
         $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, '', false);
 
+        if (!count($draftfiles)) {
+            $errors['importfile_filemanager'] = get_string('missingfile', 'survey');
+        }
+
         $uploadedfiles = array();
         foreach ($draftfiles as $file) {
             $xmlfilename = $file->get_filename();
             $uploadedfiles[] = $xmlfilename;
             try {
                 $xmlfileid = $file->get_id();
-                $templatecontent = $utemplate_manager->get_utemplate_content($xmlfileid);
-                $xml = @new SimpleXMLElement($templatecontent);
+                $xml = $utemplate_manager->get_utemplate_content($xmlfileid);
+                // $xml = @new SimpleXMLElement($templatecontent);
                 if (!$utemplate_manager->xml_check($xml)) {
                     $errors['importfile_filemanager'] = get_string('invalidtemplate', 'survey', $xmlfilename);
                     return $errors;

@@ -252,7 +252,7 @@ class surveyfield_character extends mod_survey_itembase {
     <xs:element name="survey_character">
         <xs:complexType>
             <xs:sequence>
-                <xs:element type="xs:string" name="defaultvalue"/>
+                <xs:element type="xs:string" name="defaultvalue" minOccurs="0"/>
                 <xs:element type="xs:string" name="pattern"/>
                 <xs:element type="xs:int" name="minlength"/>
                 <xs:element type="xs:int" name="maxlength"/>

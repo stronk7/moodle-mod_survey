@@ -267,10 +267,10 @@ class surveyfield_numeric extends mod_survey_itembase {
     <xs:element name="survey_numeric">
         <xs:complexType>
             <xs:sequence>
-                <xs:element type="xs:decimal" name="defaultvalue"/>
+                <xs:element type="xs:decimal" name="defaultvalue" minOccurs="0"/>
                 <xs:element type="xs:int" name="signed"/>
-                <xs:element type="xs:decimal" name="lowerbound"/>
-                <xs:element type="xs:decimal" name="upperbound"/>
+                <xs:element type="xs:decimal" name="lowerbound" minOccurs="0"/>
+                <xs:element type="xs:decimal" name="upperbound" minOccurs="0"/>
                 <xs:element type="xs:int" name="decimals"/>
             </xs:sequence>
         </xs:complexType>

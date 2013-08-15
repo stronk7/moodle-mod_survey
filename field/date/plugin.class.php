@@ -321,7 +321,7 @@ class surveyfield_date extends mod_survey_itembase {
         <xs:complexType>
             <xs:sequence>
                 <xs:element type="xs:int" name="defaultoption"/>
-                <xs:element type="unixtime" name="defaultvalue"/>
+                <xs:element type="unixtime" name="defaultvalue" minOccurs="0"/>
                 <xs:element type="xs:string" name="downloadformat"/>
                 <xs:element type="unixtime" name="lowerbound"/>
                 <xs:element type="unixtime" name="upperbound"/>

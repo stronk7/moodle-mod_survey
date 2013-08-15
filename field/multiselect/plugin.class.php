@@ -237,7 +237,7 @@ class surveyfield_multiselect extends mod_survey_itembase {
         <xs:complexType>
             <xs:sequence>
                 <xs:element type="xs:string" name="options"/>
-                <xs:element type="xs:string" name="defaultvalue"/>
+                <xs:element type="xs:string" name="defaultvalue" minOccurs="0"/>
                 <xs:element type="xs:string" name="downloadformat"/>
                 <xs:element type="xs:int" name="heightinrows"/>
             </xs:sequence>

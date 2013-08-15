@@ -48,13 +48,6 @@ class survey_applymtemplateform extends moodleform {
         }
 
         // ----------------------------------------
-        // applymtemplate::otheritems
-        // ----------------------------------------
-        $fieldname = 'actionoverother';
-        $mform->addElement('hidden', $fieldname, SURVEY_DELETEALLITEMS);
-        $mform->setType($fieldname, PARAM_INT);
-
-        // ----------------------------------------
         // applymtemplate::mastertemplate
         // ----------------------------------------
         $fieldname = 'mastertemplate';
