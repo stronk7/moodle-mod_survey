@@ -374,12 +374,12 @@ class mod_survey_templatebase {
     }
 
     /*
-     * xml_check
+     * validate_xml
      *
      * @param $templateid
      * @return
      */
-    function xml_check($xml) {
+    function validate_xml($xml) {
         global $CFG;
 
         $simplexml = new SimpleXMLElement($xml);

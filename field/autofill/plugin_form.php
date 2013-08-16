@@ -67,9 +67,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         }
 
         // ----------------------------------------
-        // newitem::showfield
+        // newitem::hiddenfield
         // ----------------------------------------
-        $fieldname = 'showfield';
+        $fieldname = 'hiddenfield';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'surveyfield_autofill'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_autofill');
         $mform->setType($fieldname, PARAM_INT);

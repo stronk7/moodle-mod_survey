@@ -53,7 +53,7 @@ class surveyfield_autofill extends mod_survey_itembase {
     /*
      * $element_1 = is the static text visible in the mform?
      */
-    public $showfield = false;
+    public $hiddenfield = false;
 
     /*
      * $element_1 = element for $content
@@ -154,8 +154,8 @@ class surveyfield_autofill extends mod_survey_itembase {
         // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
-        // showfield
-        $record->showfield = (isset($record->showfield)) ? 1 : 0;
+        // hiddenfield
+        $record->hiddenfield = (isset($record->hiddenfield)) ? 1 : 0;
 
         // Do parent item saving stuff here (mod_survey_itembase::save($record)))
         return parent::item_save($record);
@@ -258,7 +258,7 @@ class surveyfield_autofill extends mod_survey_itembase {
     <xs:element name="survey_autofill">
         <xs:complexType>
             <xs:sequence>
-                <xs:element type="xs:int" name="showfield"/>
+                <xs:element type="xs:int" name="hiddenfield"/>
                 <xs:element type="xs:string" name="element_1"/>
                 <xs:element type="xs:string" name="element_2"/>
                 <xs:element type="xs:string" name="element_3"/>
@@ -296,13 +296,13 @@ EOS;
             }
 
             $label = $this->userform_calculate_content();
-            if ($this->showfield) {
+            $mform->addElement('hidden', $this->itemname, $label);
+            $mform->setType($this->itemname, PARAM_RAW);
+            if (!$this->hiddenfield) {
                 // class doesn't work for this mform element
                 // $mform->addElement('static', 'dummyfieldname', $elementlabel, $label, array('class' => 'indent-'.$this->indent));
                 $mform->addElement('static', $this->itemname.'_static', $elementlabel, $label);
             }
-            $mform->addElement('hidden', $this->itemname, $label);
-            $mform->setType($this->itemname, PARAM_RAW);
         } else {
             // $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent));
             $mform->addElement('text', $this->itemname, $elementlabel);

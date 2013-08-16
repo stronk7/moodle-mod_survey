@@ -8,10 +8,10 @@
       <FIELDS>
         <FIELD NAME="id"           TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true"             SEQUENCE="true"                          NEXT="surveyid"/>
         <FIELD NAME="surveyid"     TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id"           NEXT="itemid"/>
-        <FIELD NAME="itemid"       TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"     NEXT="showfield"/>
+        <FIELD NAME="itemid"       TYPE="int"  LENGTH="10" NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"     NEXT="hiddenfield"/>
 
-        <FIELD NAME="showfield"    TYPE="int"  LENGTH="4"  NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="itemid"       NEXT="element_1"/>
-        <FIELD NAME="element_1"    TYPE="char" LENGTH="32" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="showfield"    NEXT="element_2"/>
+        <FIELD NAME="hiddenfield"  TYPE="int"  LENGTH="4"  NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="itemid"       NEXT="element_1"/>
+        <FIELD NAME="element_1"    TYPE="char" LENGTH="32" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="hiddenfield"  NEXT="element_2"/>
         <FIELD NAME="element_2"    TYPE="char" LENGTH="32" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="element_1"    NEXT="element_3"/>
         <FIELD NAME="element_3"    TYPE="char" LENGTH="32" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="element_2"    NEXT="element_4"/>
         <FIELD NAME="element_4"    TYPE="char" LENGTH="32" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="element_3"    NEXT="element_5"/>

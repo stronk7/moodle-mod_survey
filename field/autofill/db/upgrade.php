@@ -34,6 +34,19 @@ function xmldb_surveyfield_autofill_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    if ($oldversion < 2013081601) {
+
+        // Rename field showfield on table survey_autofill to hiddenfield.
+        $table = new xmldb_table('survey_autofill');
+        $field = new xmldb_field('showfield', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'itemid');
+
+        // Launch rename field showfield.
+        $dbman->rename_field($table, $field, 'hiddenfield');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013081601, 'surveyfield', 'autofill');
+    }
+
     return true;
 }
 

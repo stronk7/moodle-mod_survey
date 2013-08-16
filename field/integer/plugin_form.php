@@ -104,7 +104,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $errors = parent::validation($data, $files);
 
         $lowerbound = $data['lowerbound'];
-        $upperbound =$data['upperbound'];
+        $upperbound = $data['upperbound'];
         if ($lowerbound == $upperbound) {
             $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_integer');
         }

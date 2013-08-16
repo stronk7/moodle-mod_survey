@@ -251,6 +251,13 @@ class mod_survey_itembase {
 
         $timenow = time();
 
+        // is this useless?
+        // foreach ($this->item_form_requires as $k => $v) {
+        //     if (!$v) {
+        //         unset($record->{$k});
+        //     }
+        // }
+
         // the surveyitem lies in two different tables
         // survey_item
         // survey_<<plugin>>

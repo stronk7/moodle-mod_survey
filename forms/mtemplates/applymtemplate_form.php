@@ -77,7 +77,7 @@ class survey_applymtemplateform extends moodleform {
         $template_path = $CFG->dirroot.'/mod/survey/template/'.$templatename.'/template.xml';
         $xml = file_get_contents($template_path);
         // $xml = @new SimpleXMLElement($templatecontent);
-        if (!$utemplate_manager->xml_check($xml)) {
+        if (!$utemplate_manager->validate_xml($xml)) {
             $errors['mastertemplate'] = get_string('invalidtemplate', 'survey', $templatename);
             return $errors;
         }

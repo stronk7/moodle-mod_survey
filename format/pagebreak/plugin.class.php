@@ -119,9 +119,18 @@ class surveyformat_pagebreak extends mod_survey_itembase {
 
         $record->content = SURVEYFORMAT_PAGEBREAK_CONTENT;
         $record->contentformat = FORMAT_HTML;
-        $record->indent = 0;
-echo '$record:';
-var_dump($record);
+        // unset($record->indent);
+        // unset($record->customnumber);
+        // unset($record->extrarow);
+        // unset($record->extranote);
+        // unset($record->required);
+        // unset($record->variable);
+        // unset($record->insearchform);
+        // unset($record->advanced);
+        // unset($record->parentid);
+        // unset($record->indent);
+        // unset($record->hideinstructions);
+
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
     }

@@ -240,20 +240,6 @@ class surveyfield_date extends mod_survey_itembase {
     }
 
     /*
-     * item_atomize_parent_content
-     * starting from parentcontent, this function returns it splitted into an array
-     *
-     * @param $parentcontent
-     * @return
-     */
-    public function item_atomize_parent_content($parentcontent) {
-        $pattern = '~^([0-9]+)/([0-9]+)/([0-9]{4})$~';
-        preg_match($pattern, $parentcontent, $matches);
-
-        return $matches;
-    }
-
-    /*
      * item_get_downloadformats
      *
      * @param

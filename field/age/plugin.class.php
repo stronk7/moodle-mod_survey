@@ -239,20 +239,6 @@ class surveyfield_age extends mod_survey_itembase {
     }
 
     /*
-     * item_atomize_parent_content
-     * starting from parentcontent, this function returns it splitted into an array
-     *
-     * @param $parentcontent
-     * @return
-     */
-    public function item_atomize_parent_content($parentcontent) {
-        $pattern = '~^([0-9]+)/([0-9]+)$~';
-        preg_match($pattern, $parentcontent, $matches);
-
-        return $matches;
-    }
-
-    /*
      * item_composite_fields
      * get the list of composite fields
      *
@@ -489,27 +475,28 @@ EOS;
         $lowerbound = $this->item_split_unix_time($this->lowerbound);
         $upperbound = $this->item_split_unix_time($this->upperbound);
 
+        $fillinginstruction = '';
         if ($haslowerbound && $hasupperbound) {
             $a = new StdClass();
             $a->lowerbound = $this->item_age_to_text($lowerbound);
             $a->upperbound = $this->item_age_to_text($upperbound);
 
             if ($this->lowerbound < $this->upperbound) {
-                $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_age', $a);
+                $fillinginstruction .= get_string('restriction_lowerupper', 'surveyfield_age', $a);
             }
 
             if ($this->lowerbound > $this->upperbound) {
-                $fillinginstruction = get_string('restriction_upperlower', 'surveyfield_age', $a);
+                $fillinginstruction .= get_string('restriction_upperlower', 'surveyfield_age', $a);
             }
         } else {
             if ($haslowerbound) {
                 $a = $this->item_age_to_text($lowerbound);
-                $fillinginstruction = get_string('restriction_lower', 'surveyfield_age', $a);
+                $fillinginstruction .= get_string('restriction_lower', 'surveyfield_age', $a);
             }
 
             if ($hasupperbound) {
                 $a = $this->item_age_to_text($upperbound);
-                $fillinginstruction = get_string('restriction_upper', 'surveyfield_age', $a);
+                $fillinginstruction .= get_string('restriction_upper', 'surveyfield_age', $a);
             }
         }
 

@@ -104,12 +104,11 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $errors = parent::validation($data, $files);
 
-        $pattern = '~^\s*([0-9]+)'.$item->decimalseparator.'?([0-9]*)\s*$~';
-
         $draftnumber = $data['lowerbound'];
         // constrain default between boundaries
         if (strlen($draftnumber)) {
-            if (!preg_match($pattern, $draftnumber, $matches)) {
+            $matches = $this->item_atomize_number($draftnumber);
+            if (empty($matches)) {
                 $errors['lowerbound'] = get_string('lowerbound_notanumber', 'surveyfield_numeric');
                 return $errors;
             } else {
@@ -121,7 +120,8 @@ class survey_pluginform extends mod_survey_itembaseform {
         $draftnumber = $data['upperbound'];
         // constrain default between boundaries
         if (strlen($draftnumber)) {
-            if (!preg_match($pattern, $draftnumber, $matches)) {
+            $matches = $this->item_atomize_number($draftnumber);
+            if (empty($matches)) {
                 $errors['upperbound'] = get_string('upperbound_notanumber', 'surveyfield_numeric');
                 return $errors;
             } else {
@@ -140,7 +140,8 @@ class survey_pluginform extends mod_survey_itembaseform {
         $draftnumber = $data['defaultvalue'];
         // constrain default between boundaries
         if (strlen($draftnumber)) {
-            if (!preg_match($pattern, $draftnumber, $matches)) {
+            $matches = $this->item_atomize_number($draftnumber);
+            if (empty($matches)) {
                 $errors['defaultvalue'] = get_string('default_notanumber', 'surveyfield_numeric');
             } else {
                 // $defaultvalue = $matches[1].'.'.$matches[2];

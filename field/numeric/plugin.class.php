@@ -220,14 +220,14 @@ class surveyfield_numeric extends mod_survey_itembase {
     }
 
     /*
-     * item_atomize_parent_content
+     * item_atomize_number
      * starting from parentcontent, this function returns it splitted into an array
      *
      * @param $parentcontent
      * @return
      */
-    public function item_atomize_parent_content($parentcontent) {
-        $pattern = '~^\s*([0-9]+)'.get_string('decsep', 'langconfig').'?([0-9]*)\s*$~';
+    public function item_atomize_number($parentcontent) {
+        $pattern = '~^\s*(-?)([0-9]+)'.get_string('decsep', 'langconfig').'?([0-9]*)\s*$~';
         preg_match($pattern, $parentcontent, $matches);
 
         return $matches;
@@ -345,12 +345,12 @@ EOS;
 
         // if it is not a number, shouts
         if (strlen($draftuserinput)) {
-            $pattern = '~^\s*([0-9]+)'.$this->decimalseparator.'?([0-9]*)\s*$~';
-            if (!preg_match($pattern, $draftuserinput, $matches)) {
+            $matches = $this->item_atomize_number($draftuserinput);
+            if (empty($matches)) {
                 $errors[$errorkey] = get_string('uerr_notanumber', 'surveyfield_numeric');
                 return;
             } else {
-                $userinput = $matches[1].'.'.$matches[2];
+                $userinput = unformat_float($draftuserinput, true);
                 // if it is < 0 but has been defined as unsigned, shouts
                 if (!$this->signed && ($userinput < 0)) {
                     $errors[$errorkey] = get_string('uerr_negative', 'surveyfield_numeric');
@@ -471,8 +471,8 @@ EOS;
             if (empty($this->decimals)) {
                 $olduserdata->content = $answer['mainelement'];
             } else {
-                $matches = $this->item_atomize_parent_content($answer['mainelement']);
-                $decimals = isset($matches[2]) ? $matches[2] : '';
+                $matches = $this->item_atomize_number($answer['mainelement']);
+                $decimals = isset($matches[3]) ? $matches[3] : '';
                 if (strlen($decimals) > $this->decimals) {
                     // round it
                     $decimals = round((float)$decimals, $this->decimals);
@@ -481,10 +481,13 @@ EOS;
                     // padright
                     $decimals = str_pad($decimals, $this->decimals, '0', STR_PAD_RIGHT);
                 }
-                if (isset($matches[1])) {
+                if (isset($matches[2])) {
                     // I DO ALWATYS save using english decimal separator
                     // At load time, the number will be formatted according to user settings
-                    $olduserdata->content = $matches[1].'.'.$decimals;
+                    $olduserdata->content = $matches[2].'.'.$decimals;
+                    if ($matches[1] == '-') {
+                        $olduserdata->content *= -1;
+                    }
                 } else {
                     // in the SEARCH form the remote user entered something very wrong
                     // remember: the for search form NO VALIDATION IS PERFORMED

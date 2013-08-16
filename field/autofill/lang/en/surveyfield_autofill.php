@@ -51,10 +51,8 @@ $string['contentselect_err'] = 'At least one element has to be not null';
 $string['contenttext_err'] = 'The requested text can be null';
 $string['dateandtime'] = 'Date and time';
 $string['custominfo'] = 'Custom info';
-$string['showfield'] = 'Display in the survey';
-$string['showfield_help'] = 'This option allow you to hide or show this autofill item from the survey form. Once you choose to show it, the item will be shown in each form it belongs: basic and/or advanced one';
+$string['hiddenfield'] = 'Make hidden';
+$string['hiddenfield_help'] = 'This option allow you to hide or show this autofill element from the survey form. Selecting this checkbox the element will be added to the form as hidden field so the user will not see it.';
 $string['cannotcheck'] = 'Please check it by yourself.';
 $string['submission'] = 'Response';
 $string['latevalue'] = 'Content will be added at submission time';
-
-
