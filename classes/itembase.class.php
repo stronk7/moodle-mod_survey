@@ -63,53 +63,6 @@ class mod_survey_itembase {
     public $itemname = '';
 
     /*
-     * $content = the text content of the item.
-     */
-    public $content = '';
-
-    /*
-     * $contentformat = the text format of the item.
-     * public $contentformat = '';
-     */
-    public $contentformat = '';
-
-    /*
-     * $customnumber = the custom number of the item.
-     * It usually is 1. 1.1, a, 2.1.a...
-     */
-    public $customnumber = '';
-
-    /*
-     * $extrarow = is the extrarow required?
-     */
-    public $extrarow = 0;
-
-    /*
-     * $extranote = an optional text describing the item
-     */
-    public $extranote = '';
-
-    /*
-     * $required = boolean. O == optional item; 1 == mandatory item
-     */
-    public $required = 0;
-
-    /*
-     * $hideinstructions = boolean. Exceptionally hide filling instructions
-     */
-    public $hideinstructions = 0;
-
-    /*
-     * $variable = the name of the field storing data in the db table
-     */
-    public $variable = '';
-
-    /*
-     * $indent = the indent of the item in the form page
-     */
-    public $indent = 0;
-
-    /*
      * $hide = is this field going to be shown in the form?
      */
     public $hide = 0;
@@ -174,11 +127,11 @@ class mod_survey_itembase {
     /*
      * $item_form_requires = list of fields the survey creator will need/see/use in the item definition form
      * By default each item is present in the form
-     * so, in each child class, I only need to "deactivate" fields I don't want to see
+     * so, in each child class, I only need to "deactivate" mform element I don't want to have/see/use
      */
     public $item_form_requires = array(
         'common_fs' => true,
-        'content_editor' => true,
+        'content' => true,
         'customnumber' => true,
         'extrarow' => true,
         'extranote' => true,
@@ -209,16 +162,10 @@ class mod_survey_itembase {
             debugging('Something was wrong at line '.__LINE__.' of file '.__FILE__.'! Can not load an item without its ID');
         }
 
-        if ($this->flag->useplugintable) {
-            $sql = 'SELECT *, si.id as itemid, plg.id as pluginid
-                    FROM {survey_item} si
-                        JOIN {survey_'.$this->plugin.'} plg ON si.id = plg.itemid
-                    WHERE si.id = :surveyitemid';
-        } else {
-            $sql = 'SELECT *, si.id as itemid
-                    FROM {survey_item} si
-                    WHERE si.id = :surveyitemid';
-        }
+        $sql = 'SELECT *, si.id as itemid, plg.id as pluginid
+                FROM {survey_item} si
+                    JOIN {survey_'.$this->plugin.'} plg ON si.id = plg.itemid
+                WHERE si.id = :surveyitemid';
 
         if ($record = $DB->get_record_sql($sql, array('surveyitemid' => $itemid))) {
             foreach ($record as $option => $value) {
@@ -324,11 +271,7 @@ class mod_survey_itembase {
             // itemid
             if ($record->itemid = $DB->insert_record('survey_item', $record)) {
                 // $tablename
-                if ($this->flag->useplugintable) {
-                    if ($DB->insert_record($tablename, $record)) {
-                        $this->userfeedback += 1; // 0*2^1+1*2^0
-                    }
-                } else {
+                if ($DB->insert_record($tablename, $record)) {
                     $this->userfeedback += 1; // 0*2^1+1*2^0
                 }
             }
@@ -336,25 +279,33 @@ class mod_survey_itembase {
             $logaction = ($this->userfeedback == SURVEY_NOFEEDBACK) ? 'add item failed' : 'add item';
 
             // special care for the "editor" field
-            if ($this->item_form_requires['content_editor']) { // i.e. content
-                $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
-                $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
-                $record->contentformat = FORMAT_HTML;
+            if ($this->item_form_requires['content']) { // i.e. content
+                if ($this->flag->usescontenteditor) {
+                    $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
+                    $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
+                    $record->contentformat = FORMAT_HTML;
 
-                // survey_item
-                // id
-                $record->id = $record->itemid;
+                    // survey_item
+                    // id
+                    $record->id = $record->itemid;
 
-                $DB->update_record('survey_item', $record);
+                    $DB->update_record('survey_item', $record);
+                // } else {
+                    // record->content follows stnandard flow and has already been saved at record save time
+                }
             }
 
         } else {
 
             // special care for the "editor" field
-            if ($this->item_form_requires['content_editor']) { // i.e. content
-                $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
-                $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
-                $record->contentformat = FORMAT_HTML;
+            if ($this->item_form_requires['content']) { // i.e. content
+                if ($this->flag->usescontenteditor) {
+                    $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
+                    $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
+                    $record->contentformat = FORMAT_HTML;
+                // } else {
+                    // record->content follows stnandard flow and will be evaluated in the standard way
+                }
             }
 
             // hide/unhide part 1
@@ -374,15 +325,11 @@ class mod_survey_itembase {
 
             if ($DB->update_record('survey_item', $record)) {
                 // $tablename
-                if ($this->flag->useplugintable) {
-                    $record->id = $record->pluginid;
-                    if ($DB->update_record($tablename, $record)) {
-                        $this->userfeedback += 3; // 1*2^1+1*2^0 alias: editing + success
-                    } else {
-                        $this->userfeedback += 2; // 1*2^1+0*2^0 alias: editing + fail
-                    }
-                } else {
+                $record->id = $record->pluginid;
+                if ($DB->update_record($tablename, $record)) {
                     $this->userfeedback += 3; // 1*2^1+1*2^0 alias: editing + success
+                } else {
+                    $this->userfeedback += 2; // 1*2^1+0*2^0 alias: editing + fail
                 }
             } else {
                 $this->userfeedback += 2; // 1*2^1+0*2^0 alias: editing + fail
@@ -489,8 +436,15 @@ class mod_survey_itembase {
         }
 
         if ($multilangfields = $this->item_get_multilang_fields()) {
+// if ($this->plugin == 'select') {
+//     echo '$multilangfields:';
+//     var_dump($multilangfields);
+// }
             foreach ($multilangfields as $plugin => $fieldnames) {
                 foreach ($fieldnames as $fieldname) {
+// if ($this->plugin == 'select') {
+//     echo '$fieldname = '.$fieldname.'<br />';
+// }
                     $stringkey = $this->{$fieldname};
                     $this->{$fieldname} = get_string($stringkey, 'surveytemplate_'.$template);
                 }
@@ -544,10 +498,8 @@ class mod_survey_itembase {
             print_error('Unable to delete survey_item id='.$itemid);
         }
 
-        if ($this->flag->useplugintable) {
-            if (!$DB->delete_records('survey_'.$this->plugin, array('id' => $this->pluginid))) {
-                print_error('Unable to delete record id = '.$this->pluginid.' from surveyitem_'.$this->plugin);
-            }
+        if (!$DB->delete_records('survey_'.$this->plugin, array('id' => $this->pluginid))) {
+            print_error('Unable to delete record id = '.$this->pluginid.' from surveyitem_'.$this->plugin);
         }
 
         if (isset($cm)) {
@@ -711,17 +663,6 @@ class mod_survey_itembase {
     }
 
     /*
-     * item_get_main_text
-     * returns the content of the field defined as main
-     *
-     * @param
-     * @return
-     */
-    public function item_get_main_text() {
-        return $this->content;
-    }
-
-    /*
      * item_list_constraints
      *
      * @param
@@ -750,26 +691,18 @@ class mod_survey_itembase {
         $schema .= '                <xs:element type="xs:string" name="type"/>'."\n";
         $schema .= '                <xs:element type="xs:string" name="plugin"/>'."\n";
 
-        $schema .= '                <xs:element type="xs:string" name="content"/>'."\n";
-        $schema .= '                <xs:element type="xs:int" name="contentformat"/>'."\n";
-
-        $schema .= '                <xs:element type="xs:string" name="customnumber" minOccurs="0"/>'."\n";
-        $schema .= '                <xs:element type="xs:int" name="extrarow"/>'."\n";
-        $schema .= '                <xs:element type="xs:string" name="extranote" minOccurs="0"/>'."\n";
-        $schema .= '                <xs:element type="xs:int" name="required"/>'."\n";
-        $schema .= '                <xs:element type="xs:int" name="hideinstructions"/>'."\n";
-        $schema .= '                <xs:element type="xs:string" name="variable" minOccurs="0"/>'."\n";
-        $schema .= '                <xs:element type="xs:int" name="indent"/>'."\n";
         $schema .= '                <xs:element type="xs:int" name="hide"/>'."\n";
         $schema .= '                <xs:element type="xs:int" name="insearchform"/>'."\n";
         $schema .= '                <xs:element type="xs:int" name="advanced"/>'."\n";
+
         $schema .= '                <xs:element type="xs:int" name="sortindex"/>'."\n";
         // $schema .= '                <xs:element type="xs:int" name="formpage"/>'."\n";
+
         $schema .= '                <xs:element type="xs:int" name="parentid" minOccurs="0"/>'."\n";
         $schema .= '                <xs:element type="xs:string" name="parentcontent" minOccurs="0"/>'."\n";
         $schema .= '                <xs:element type="xs:string" name="parentvalue" minOccurs="0"/>'."\n";
 
-        $schema .= '                <xs:element type="xs:int" name="timecreated"/>'."\n";
+        // $schema .= '                <xs:element type="xs:int" name="timecreated"/>'."\n";
         // $schema .= '                <xs:element type="xs:int" name="timemodified"/>'."\n";
         $schema .= '            </xs:sequence>'."\n";
         $schema .= '        </xs:complexType>'."\n";
@@ -779,8 +712,6 @@ class mod_survey_itembase {
         return $schema;
     }
 
-    // MARK get
-
     /*
      * item_get_generic_field
      *
@@ -788,8 +719,14 @@ class mod_survey_itembase {
      * @return
      */
     public function item_get_generic_field($field) {
-        return $this->{$field};
+        if (isset($this->{$field})) {
+            return $this->{$field};
+        } else {
+            return false;
+        }
     }
+
+    // MARK get
 
     /*
      * get_itemid
@@ -843,6 +780,76 @@ class mod_survey_itembase {
     }
 
     /*
+     * get_pluginid
+     *
+     * @param
+     * @return
+     */
+    public function get_pluginid() {
+        return $this->pluginid;
+    }
+
+    /*
+     * get_itemname
+     *
+     * @param
+     * @return
+     */
+    public function get_itemname() {
+        return $this->itemname;
+    }
+
+    /*
+     * get_hide
+     *
+     * @param
+     * @return
+     */
+    public function get_hide() {
+        return $this->hide;
+    }
+
+    /*
+     * get_insearchform
+     *
+     * @param
+     * @return
+     */
+    public function get_insearchform() {
+        return $this->insearchform;
+    }
+
+    /*
+     * get_advanced
+     *
+     * @param
+     * @return
+     */
+    public function get_advanced() {
+        return $this->advanced;
+    }
+
+    /*
+     * get_sortindex
+     *
+     * @param
+     * @return
+     */
+    public function get_sortindex() {
+        return $this->sortindex;
+    }
+
+    /*
+     * get_formpage
+     *
+     * @param
+     * @return
+     */
+    public function get_formpage() {
+        return $this->formpage;
+    }
+
+    /*
      * get_parentid
      *
      * @param
@@ -863,73 +870,17 @@ class mod_survey_itembase {
     }
 
     /*
-     * get_pluginid
-     *
-     * @param
-     * @return
-     */
-    public function get_pluginid() {
-        return $this->pluginid;
-    }
-
-    /*
-     * get_sortindex
-     *
-     * @param
-     * @return
-     */
-    public function get_sortindex() {
-        return $this->sortindex;
-    }
-
-    /*
-     * get_hide
-     *
-     * @param
-     * @return
-     */
-    public function get_hide() {
-        return $this->hide;
-    }
-
-    /*
-     * get_advanced
-     *
-     * @param
-     * @return
-     */
-    public function get_advanced() {
-        return $this->advanced;
-    }
-
-    /*
-     * get_insearchform
-     *
-     * @param
-     * @return
-     */
-    public function get_insearchform() {
-        return $this->insearchform;
-    }
-
-    /*
      * get_variable
      *
      * @param
      * @return
      */
     public function get_variable() {
-        return $this->variable;
-    }
-
-    /*
-     * get_formpage
-     *
-     * @param
-     * @return
-     */
-    public function get_formpage() {
-        return $this->formpage;
+        if (isset($this->variable)) {
+            return $this->variable;
+        } else {
+            return false;
+        }
     }
 
     /*
@@ -939,17 +890,11 @@ class mod_survey_itembase {
      * @return
      */
     public function get_customnumber() {
-        return $this->customnumber;
-    }
-
-    /*
-     * get_labelintro
-     *
-     * @param
-     * @return
-     */
-    public function get_labelintro() {
-        return $this->labelintro;
+        if (isset($this->customnumber)) {
+            return $this->customnumber;
+        } else {
+            return false;
+        }
     }
 
     /*
@@ -959,7 +904,11 @@ class mod_survey_itembase {
      * @return
      */
     public function get_required() {
-        return $this->required;
+        if (isset($this->required)) {
+            return $this->required;
+        } else {
+            return false;
+        }
     }
 
     /*
@@ -969,7 +918,25 @@ class mod_survey_itembase {
      * @return
      */
     public function get_indent() {
-        return $this->indent;
+        if (isset($this->indent)) {
+            return $this->indent;
+        } else {
+            return false;
+        }
+    }
+
+    /*
+     * get_extrarow
+     *
+     * @param
+     * @return
+     */
+    public function get_hideinstructions() {
+        if (isset($this->hideinstructions)) {
+            return $this->hideinstructions;
+        } else {
+            return false;
+        }
     }
 
     /*
@@ -979,27 +946,11 @@ class mod_survey_itembase {
      * @return
      */
     public function get_extrarow() {
-        return $this->extrarow;
-    }
-
-    /*
-     * get_itemname
-     *
-     * @param
-     * @return
-     */
-    public function get_itemname() {
-        return $this->itemname;
-    }
-
-    /*
-     * get_useplugintable
-     *
-     * @param
-     * @return
-     */
-    public function get_useplugintable() {
-        return $this->flag->useplugintable;
+        if (isset($this->extrarow)) {
+            return $this->extrarow;
+        } else {
+            return false;
+        }
     }
 
     /*
@@ -1080,7 +1031,8 @@ class mod_survey_itembase {
      */
     public function item_get_multilang_fields() {
         $fieldlist = array();
-        $fieldlist['item'] = array('content', 'parentcontent');
+        $fieldlist['item'] = array('parentcontent');
+        $fieldlist[$this->plugin] = array('content');
 
         return $fieldlist;
     }
@@ -1098,7 +1050,7 @@ class mod_survey_itembase {
         global $CFG;
 
         if (!$searchform) {
-            if (!$this->hideinstructions) {
+            if (!$this->get_hideinstructions()) {
                $fillinginstruction = $this->userform_get_filling_instructions();
             }
             if (isset($this->extranote)) {
@@ -1106,7 +1058,7 @@ class mod_survey_itembase {
             }
         } else {
             if ($CFG->survey_fillinginstructioninsearch) {
-                if (!$this->hideinstructions) {
+                if (!$this->get_hideinstructions()) {
                     $fillinginstruction = $this->userform_get_filling_instructions();
                 }
             }

@@ -41,33 +41,16 @@ class survey_pluginform extends mod_survey_itembaseform {
         // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
-        $fieldname = 'specializations';
-        $typename = get_string('pluginname', 'surveyformat_'.$item->plugin);
-        $mform->addElement('header', $fieldname, get_string($fieldname, 'survey', $typename));
-
-        // ----------------------------------------
-        // newitem::content
-        // ----------------------------------------
-        $fieldname = 'label';
-        $mform->addElement('text', $fieldname, get_string('fieldsetname', 'surveyformat_fieldset'), array('maxlength' => '128', 'size' => '50'));
-        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
-        $mform->addHelpButton($fieldname, 'fieldsetname', 'surveyformat_fieldset');
-        $mform->setType($fieldname, PARAM_TEXT);
-
-        // ----------------------------------------
-        // newitem::contentformat
-        // ----------------------------------------
-        $fieldname = 'contentformat';
-        $mform->addElement('hidden', $fieldname, PARAM_CLEANHTML);
-        $mform->setType($fieldname, PARAM_RAW);
-
         // -------------------------------------------------------------------------------
         // I close with the common section of the form
         parent::definition();
 
         $this->add_item_buttons();
+    }
+
+    public function validation($data, $files) {
+        if (strlen($data['content']) > 128) {
+            $errors['content'] = get_string('contenttoolong', 'survey');
+        }
     }
 }

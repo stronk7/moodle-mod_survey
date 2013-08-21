@@ -82,13 +82,21 @@ class mod_survey_itembaseform extends moodleform {
         // ----------------------------------------
         // newitem::content & contentformat
         // ----------------------------------------
-        $fieldname = 'content_editor';
         if ($item->get_item_form_requires($fieldname)) {
-            $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES);
-            $mform->addElement('editor', $fieldname, get_string($fieldname, 'survey'), null, $editoroptions);
-            $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
-            $mform->addHelpButton($fieldname, $fieldname, 'survey');
-            $mform->setType($fieldname, PARAM_CLEANHTML);
+            if ($item->flag->usescontenteditor) {
+                $fieldname = 'content_editor';
+                $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES);
+                $mform->addElement('editor', $fieldname, get_string($fieldname, 'survey'), null, $editoroptions);
+                $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+                $mform->addHelpButton($fieldname, $fieldname, 'survey');
+                $mform->setType($fieldname, PARAM_CLEANHTML);
+            } else {
+                $fieldname = 'content';
+                $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'), array('maxlength' => '128', 'size' => '50'));
+                $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+                $mform->addHelpButton($fieldname, $fieldname, 'survey');
+                $mform->setType($fieldname, PARAM_TEXT);
+            }
         }
 
         // ----------------------------------------
@@ -235,7 +243,6 @@ class mod_survey_itembaseform extends moodleform {
                 }
             }
             $where = '(\''.implode("','", $pluginlist).'\')';
-
             $sql = 'SELECT *
                     FROM {survey_item}
                     WHERE surveyid = :surveyid';
@@ -246,24 +253,25 @@ class mod_survey_itembaseform extends moodleform {
             }
             $sql .= ' AND plugin IN '.$where.'
                         ORDER BY sortindex';
-            $parents = $DB->get_recordset_sql($sql, $sqlparams);
+            $parentsseeds = $DB->get_recordset_sql($sql, $sqlparams);
 
             $maxlength = 80;
             $quickform = new HTML_QuickForm();
             $select = $quickform->createElement('select', $fieldname, get_string($fieldname, 'survey'));
             $select->addOption(get_string('choosedots'), 0);
-            foreach ($parents as $parent) {
-                $star = ($parent->advanced) ? '(*) ' : '';
+            foreach ($parentsseeds as $parentsseed) {
+                $parentitem = survey_get_item($parentsseed->id, $parentsseed->type, $parentsseed->plugin);
+                $star = ($parentitem->get_advanced()) ? '(*) ' : '';
 
                 // I do not need to take care of contents of items of master templates because if I am here, $parent is a standard item and not a multilang one
-                $content = $star.get_string('pluginname', 'surveyfield_'.$parent->plugin).' ['.$parent->sortindex.']: '.strip_tags($parent->content);
+                $content = $star.get_string('pluginname', 'surveyfield_'.$parentitem->get_plugin()).' ['.$parentitem->get_sortindex().']: '.strip_tags($parentitem->get_content());
                 if (strlen($content) > $maxlength) {
                     $content = substr($content, 0, $maxlength);
                 }
-                $disabled = ($parent->hide == 1) ? array('disabled' => 'disabled') : null;
-                $select->addOption($content, $parent->id, $disabled);
+                $disabled = ($parentitem->get_hide() == 1) ? array('disabled' => 'disabled') : null;
+                $select->addOption($content, $parentitem->itemid, $disabled);
             }
-            $parents->close();
+            $parentsseeds->close();
 
             $mform->addElement($select);
             $mform->addHelpButton($fieldname, $fieldname, 'survey');

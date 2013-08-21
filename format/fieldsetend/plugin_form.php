@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 require_once($CFG->dirroot.'/mod/survey/forms/items/itembase_form.php');
-require_once($CFG->dirroot.'/mod/survey/format/fieldset/lib.php');
+require_once($CFG->dirroot.'/mod/survey/format/fieldsetend/lib.php');
 
 class survey_pluginform extends mod_survey_itembaseform {
 

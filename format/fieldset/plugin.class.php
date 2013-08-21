@@ -34,36 +34,16 @@ require_once($CFG->dirroot.'/mod/survey/format/fieldset/lib.php');
 class surveyformat_fieldset extends mod_survey_itembase {
 
     /*
-     * $surveyid = the id of the survey
+     * $content = the text content of the item.
      */
-    // public $surveyid = 0;
-
-    /*
-     * $itemid = the ID of the survey_item record
-     */
-    // public $itemid = 0;
-
-    /*
-     * $pluginid = the ID of the survey_fieldset record
-     */
-    public $pluginid = 0;
+    public $content = '';
 
     /*******************************************************************/
-
-    /*
-     * $label = the content of the message
-     */
-    public $label = '';
 
     /*
      * $flag = features describing the object
      */
     public $flag;
-
-    /*
-     * $item_form_requires = list of fields I will see in the form
-     * public $item_form_requires;
-     */
 
     /*******************************************************************/
 
@@ -78,22 +58,20 @@ class surveyformat_fieldset extends mod_survey_itembase {
         $this->type = SURVEY_TYPEFORMAT;
         $this->plugin = 'fieldset';
 
-        $this->flag = new stdclass();
+        $this->flag = new stdClass();
         $this->flag->issearchable = false;
         $this->flag->couldbeparent = false;
-        $this->flag->useplugintable = true;
+        $this->flag->usescontenteditor = false;
 
         // list of fields I do not want to have in the item definition form
-        $this->item_form_requires['common_fs'] = false;
-        $this->item_form_requires['extranote'] = false;
-        $this->item_form_requires['content_editor'] = false;
-        $this->item_form_requires['customnumber'] = false;
-        $this->item_form_requires['extrarow'] = false;
-        $this->item_form_requires['required'] = false;
-        $this->item_form_requires['variable'] = false;
-        $this->item_form_requires['insearchform'] = false;
-        $this->item_form_requires['indent'] = false;
-        $this->item_form_requires['hideinstructions'] = false;
+        // $this->item_form_requires['common_fs'] = false;
+        $this->item_form_requires['extranote'] = false;        // <-- actually the field has been removed so I do not need it in the item form
+        $this->item_form_requires['customnumber'] = false;     // <-- actually the field has been removed so I do not need it in the item form
+        $this->item_form_requires['extrarow'] = false;         // <-- actually the field has been removed so I do not need it in the item form
+        $this->item_form_requires['required'] = false;         // <-- actually the field has been removed so I do not need it in the item form
+        $this->item_form_requires['variable'] = false;         // <-- actually the field has been removed so I do not need it in the item form
+        $this->item_form_requires['indent'] = false;           // <-- actually the field has been removed so I do not need it in the item form
+        $this->item_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
@@ -125,22 +103,29 @@ class surveyformat_fieldset extends mod_survey_itembase {
         // //////////////////////////////////
         // Now execute very specific plugin level actions
         // //////////////////////////////////
-        $record->required = 0;
-        $record->label = substr($record->label, 0, 128); // 128 is maximum allowed length I can save
+
+        // ------ begin of fields saved in survey_items ------ //
+        /* surveyid
+         * type
+         * plugin
+
+         * hide
+         * insearchform
+         * advanced
+
+         * sortindex
+         * formpage
+
+         * timecreated
+         * timemodified
+         */
+        // ------- end of fields saved in survey_items ------- //
+
+        // ------ begin of fields saved in this plugin table ------ //
+        // ------- end of fields saved in this plugin table ------- //
 
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
-    }
-
-    /*
-     * item_get_main_text
-     * returns the content of the field defined as main
-     *
-     * @param
-     * @return
-     */
-    public function item_get_main_text() {
-        return $this->label;
     }
 
     /*
@@ -150,8 +135,7 @@ class surveyformat_fieldset extends mod_survey_itembase {
      * @return
      */
     public function item_get_multilang_fields() {
-        $fieldlist = array();
-        $fieldlist['fieldset'] = array('label');
+        $fieldlist = parent::item_get_multilang_fields();
 
         return $fieldlist;
     }
@@ -170,7 +154,7 @@ class surveyformat_fieldset extends mod_survey_itembase {
     <xs:element name="survey_fieldset">
         <xs:complexType>
             <xs:sequence>
-                <xs:element type="xs:string" name="label"/>
+                <xs:element type="xs:string" name="content"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -195,7 +179,7 @@ EOS;
     public function userform_mform_element($mform, $searchform) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        $mform->addElement('header', $this->itemname, $this->label);
+        $mform->addElement('header', $this->itemname, $this->content);
     }
 
     /*

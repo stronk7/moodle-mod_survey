@@ -6,16 +6,35 @@
   <TABLES>
     <TABLE NAME="survey_numeric" COMMENT="Numeric type surveyfield">
       <FIELDS>
-        <FIELD NAME="id"               TYPE="int"   LENGTH="10" NOTNULL="true"  UNSIGNED="true"              SEQUENCE="true"                          NEXT="surveyid"/>
-        <FIELD NAME="surveyid"         TYPE="int"   LENGTH="10" NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="id"           NEXT="itemid"/>
-        <FIELD NAME="itemid"           TYPE="int"   LENGTH="10" NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"     NEXT="defaultvalue"/>
+        <FIELD NAME="id"               TYPE="int"   LENGTH="10"    NOTNULL="true"  UNSIGNED="true"              SEQUENCE="true"                             NEXT="surveyid"/>
+        <FIELD NAME="surveyid"         TYPE="int"   LENGTH="10"    NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="id"              NEXT="itemid"/>
+        <FIELD NAME="itemid"           TYPE="int"   LENGTH="10"    NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"        NEXT="content"/>
 
-        <FIELD NAME="defaultvalue"     TYPE="float" LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="itemid"       NEXT="signed"/>
+        <!-- begin of fields for itembase_form.php -->
+        <FIELD NAME="content"          TYPE="text"  LENGTH="small" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="itemid"           NEXT="contentformat"/>
+        <FIELD NAME="contentformat"    TYPE="int"   LENGTH="4"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="content"          NEXT="customnumber"/>
 
-        <FIELD NAME="signed"           TYPE="int"   LENGTH="4"  NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultvalue" NEXT="lowerbound"/>
-        <FIELD NAME="lowerbound"       TYPE="float" LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="signed"       NEXT="upperbound"/>
-        <FIELD NAME="upperbound"       TYPE="float" LENGTH="10" NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="lowerbound"   NEXT="decimals"/>
-        <FIELD NAME="decimals"         TYPE="int"   LENGTH="4"  NOTNULL="false" UNSIGNED="true"              SEQUENCE="false" PREVIOUS="upperbound"/>
+        <FIELD NAME="customnumber"     TYPE="char"  LENGTH="64"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="contentformat"    NEXT="extrarow"/>
+        <FIELD NAME="extrarow"         TYPE="int"   LENGTH="4"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="customnumber"     NEXT="extranote"/>
+        <FIELD NAME="extranote"        TYPE="char"  LENGTH="255"   NOTNULL="false"                             SEQUENCE="false" PREVIOUS="extrarow"         NEXT="required"/>
+        <FIELD NAME="required"         TYPE="int"   LENGTH="4"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="extranote"        NEXT="hideinstructions"/>
+        <FIELD NAME="hideinstructions" TYPE="int"   LENGTH="4"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="required"         NEXT="variable"/>
+        <FIELD NAME="variable"         TYPE="char"  LENGTH="64"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="hideinstructions" NEXT="indent"/>
+        <FIELD NAME="indent"           TYPE="int"   LENGTH="4"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="variable"         NEXT="defaultvalue"/>
+
+        <!-- <FIELD NAME="parentid"         TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="true"             SEQUENCE="false" PREVIOUS="indent"           NEXT="parentcontent"/> -->
+        <!-- <FIELD NAME="parentcontent"    TYPE="char" LENGTH="255"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="parentid"         NEXT="parentvalue"/> -->
+        <!-- <FIELD NAME="parentvalue"      TYPE="char" LENGTH="255"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="parentcontent"/> -->
+        <!-- end of fields for itembase_form.php -->
+
+        <!-- begin of fields for this specific plugin -->
+        <FIELD NAME="defaultvalue"     TYPE="float" LENGTH="10"    NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="indent"          NEXT="signed"/>
+
+        <FIELD NAME="signed"           TYPE="int"   LENGTH="4"     NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultvalue"    NEXT="lowerbound"/>
+        <FIELD NAME="lowerbound"       TYPE="float" LENGTH="10"    NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="signed"          NEXT="upperbound"/>
+        <FIELD NAME="upperbound"       TYPE="float" LENGTH="10"    NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="lowerbound"      NEXT="decimals"/>
+        <FIELD NAME="decimals"         TYPE="int"   LENGTH="4"     NOTNULL="false" UNSIGNED="true"              SEQUENCE="false" PREVIOUS="upperbound"/>
+        <!-- end of fields for this specific plugin -->
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

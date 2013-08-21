@@ -863,7 +863,7 @@ class mod_survey_userpagemanager {
 
         if ($this->maxassignedpage > 1) {
             // if $formpage == 0 no more pages with items are available
-            $a = new stdclass();
+            $a = new stdClass();
             $a->formpage = $this->formpage;
             if ($this->formpage == SURVEY_LEFT_OVERFLOW) {
                 $a->formpage = 1;

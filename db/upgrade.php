@@ -167,10 +167,8 @@ function xmldb_survey_upgrade($oldversion) {
                 print_error('Unable to delete survey_item id='.$itemseed->id);
             }
 
-            if ($item->flag->useplugintable) {
-                if (!$DB->delete_records('survey_'.$itemseed->plugin, array('id' => $item->get_pluginid()))) {
-                    print_error('Unable to delete record id = '.$item->get_pluginid().' from surveyitem_'.$itemseed->plugin);
-                }
+            if (!$DB->delete_records('survey_'.$itemseed->plugin, array('id' => $item->get_pluginid()))) {
+                print_error('Unable to delete record id = '.$item->get_pluginid().' from surveyitem_'.$itemseed->plugin);
             }
         }
         $itemseeds->close();
@@ -237,6 +235,146 @@ function xmldb_survey_upgrade($oldversion) {
 
         // Survey savepoint reached.
         upgrade_mod_savepoint(true, 2013073001, 'survey');
+    }
+
+    if ($oldversion < 2013082001) {
+        require_once($CFG->dirroot.'/mod/survey/locallib.php');
+
+        $allitems = $DB->get_recordset('survey_item');
+        foreach ($allitems as $currentitem) {
+            $item = survey_get_item($currentitem->id, $currentitem->type, $currentitem->plugin);
+            if ( ($currentitem->plugin == 'pagebreak') || ($currentitem->plugin == 'fieldsetend') ) {
+                $record = new stdClass();
+                $record->surveyid = $currentitem->surveyid;
+                $record->itemid = $currentitem->id;
+                if ($currentitem->plugin == 'pagebreak') {
+                    $record->content = '<hr />';
+                }
+                if ($currentitem->plugin == 'fieldsetend') {
+                    $record->content = '<div style="text-align:right;">__|</div>';
+                }
+                $DB->insert_record('survey_'.$currentitem->plugin, $record);
+            } else {
+                $record = $DB->get_record('survey_'.$currentitem->plugin, array('itemid' => $currentitem->id));
+                $record->content = $currentitem->content;
+                $record->contentformat = $currentitem->contentformat;
+                if ($item->get_customnumber() !== false) {
+                    $record->customnumber = $currentitem->customnumber;
+                }
+                if ($item->get_extrarow() !== false) {
+                    $record->extrarow = $currentitem->extrarow;
+                }
+                if ($item->get_extranote() !== false) {
+                    $record->extranote = $currentitem->extranote;
+                }
+                if ($item->get_required() !== false) {
+                    $record->required = $currentitem->required;
+                }
+                if ($item->get_hideinstructions() !== false) {
+                    $record->hideinstructions = $currentitem->hideinstructions;
+                }
+                if ($item->get_variable() !== false) {
+                    $record->variable = $currentitem->variable;
+                }
+                if ($item->get_indent() !== false) {
+                    $record->indent = $currentitem->indent;
+                }
+                $DB->update_record('survey_'.$currentitem->plugin, $record);
+            }
+        }
+        $allitems->close();
+
+        // Define field content to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('content');
+
+        // Conditionally launch drop field plugin.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field contentformat to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('contentformat');
+
+        // Conditionally launch drop field plugin.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field customnumber to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('customnumber');
+
+        // Conditionally launch drop field plugin.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field extrarow to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('extrarow');
+
+        // Conditionally launch drop field plugin.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field extranote to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('extranote');
+
+        // Conditionally launch drop field plugin.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field required to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('required');
+
+        // Conditionally launch drop field plugin.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field hideinstructions to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('hideinstructions');
+
+        // Conditionally launch drop field plugin.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field variable to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('variable');
+
+        // Conditionally launch drop field plugin.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field indent to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('indent');
+
+        // Conditionally launch drop field plugin.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013082001, 'survey');
     }
 
     return true;

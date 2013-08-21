@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Strings for component 'item_character', language 'en', branch 'MOODLE_23_STABLE'
+ * Strings for component 'field_character', language 'en', branch 'MOODLE_23_STABLE'
  *
  * @package    survey
  * @subpackage character

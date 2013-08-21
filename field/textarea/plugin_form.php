@@ -59,8 +59,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $fieldname = 'arearows';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_textarea'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_textarea');
+        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, '12');
+        $mform->setDefault($fieldname, SURVEYFIELD_TEXTAREA_DEFAULTROWS);
 
         // ----------------------------------------
         // newitem::areacols
@@ -68,8 +69,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $fieldname = 'areacols';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_textarea'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_textarea');
+        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, '60');
+        $mform->setDefault($fieldname, SURVEYFIELD_TEXTAREA_DEFAULTCOLS);
 
         // /////////////////////////////////////////////////////////////////////////////////////////////////
         // here I open a new fieldset
@@ -83,8 +85,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $fieldname = 'minlength';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_textarea'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_textarea');
+        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, '0');
+        $mform->setDefault($fieldname, 0);
 
         // ----------------------------------------
         // newitem::maxlength
@@ -92,13 +95,19 @@ class survey_pluginform extends mod_survey_itembaseform {
         $fieldname = 'maxlength';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_textarea'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_textarea');
+        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_INT);
+        $mform->setDefault($fieldname, 1024);
 
         $this->add_item_buttons();
     }
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+
+        if ($data['maxlength'] <= $data['minlength']) {
+            $errors['maxlength'] = get_string('maxlengthlowerthanminlength', 'surveyfield_textarea');
+        }
 
         return $errors;
     }

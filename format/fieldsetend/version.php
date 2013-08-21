@@ -15,18 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Defines the version of survey fieldset subplugin
+ * Defines the version of survey fieldsetend subplugin
  *
  * This code fragment is called by moodle_needs_upgrading() and
  * /admin/index.php
  *
  * @package    surveyitem
- * @subpackage fieldset
+ * @subpackage fieldsetend
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2013042901;
+$plugin->version = 2013081902;
 $plugin->requires = 2010091600;  // Requires this Moodle version

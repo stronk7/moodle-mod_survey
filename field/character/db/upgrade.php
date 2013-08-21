@@ -34,5 +34,101 @@ function xmldb_surveyfield_character_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    if ($oldversion < 2013081901) {
+
+        // Define field content to be added to survey_character.
+        $table = new xmldb_table('survey_character');
+        $field = new xmldb_field('content', XMLDB_TYPE_TEXT, null, null, null, null, null, 'itemid');
+
+        // Conditionally launch add field content.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Define field contentformat to be added to survey_character.
+        $table = new xmldb_table('survey_character');
+        $field = new xmldb_field('contentformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'content');
+
+        // Conditionally launch add field contentformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Define field customnumber to be added to survey_character.
+        $table = new xmldb_table('survey_character');
+        $field = new xmldb_field('customnumber', XMLDB_TYPE_CHAR, '64', null, null, null, null, 'contentformat');
+
+        // Conditionally launch add field customnumber.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Define field extrarow to be added to survey_character.
+        $table = new xmldb_table('survey_character');
+        $field = new xmldb_field('extrarow', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'customnumber');
+
+        // Conditionally launch add field extrarow.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Define field extranote to be added to survey_character.
+        $table = new xmldb_table('survey_character');
+        $field = new xmldb_field('extranote', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'extrarow');
+
+        // Conditionally launch add field extranote.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Define field required to be added to survey_character.
+        $table = new xmldb_table('survey_character');
+        $field = new xmldb_field('required', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'extranote');
+
+        // Conditionally launch add field required.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Define field hideinstructions to be added to survey_character.
+        $table = new xmldb_table('survey_character');
+        $field = new xmldb_field('hideinstructions', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'required');
+
+        // Conditionally launch add field hideinstructions.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Define field variable to be added to survey_character.
+        $table = new xmldb_table('survey_character');
+        $field = new xmldb_field('variable', XMLDB_TYPE_CHAR, '64', null, null, null, null, 'hideinstructions');
+
+        // Conditionally launch add field variable.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Define field indent to be added to survey_character.
+        $table = new xmldb_table('survey_character');
+        $field = new xmldb_field('indent', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'variable');
+
+        // Conditionally launch add field indent.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013081901, 'surveyfield', 'character');
+    }
+
     return true;
 }

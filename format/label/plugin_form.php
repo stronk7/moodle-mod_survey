@@ -49,9 +49,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey', $typename));
 
         // ----------------------------------------
-        // newitem::labelintro
+        // newitem::leftlabel
         // ----------------------------------------
-        $fieldname = 'labelintro';
+        $fieldname = 'leftlabel';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyformat_label'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyformat_label');
         $mform->setType($fieldname, PARAM_TEXT);

@@ -34,19 +34,46 @@ require_once($CFG->dirroot.'/mod/survey/field/boolean/lib.php');
 class surveyfield_boolean extends mod_survey_itembase {
 
     /*
-     * $surveyid = the id of the survey
+     * $content = the text content of the item.
      */
-    // public $surveyid = 0;
+    public $content = '';
 
     /*
-     * $itemid = the ID of the survey_item record
+     * $contentformat = the text format of the item.
+     * public $contentformat = '';
      */
-    // public $itemid = 0;
+    public $contentformat = '';
 
     /*
-     * $pluginid = the ID of the survey_boolean record
+     * $customnumber = the custom number of the item.
+     * It usually is 1. 1.1, a, 2.1.a...
      */
-    public $pluginid = 0;
+    public $customnumber = '';
+
+    /*
+     * $extrarow = is the extrarow required?
+     */
+    public $extrarow = 0;
+
+    /*
+     * $extranote = an optional text describing the item
+     */
+    public $extranote = '';
+
+    /*
+     * $required = boolean. O == optional item; 1 == mandatory item
+     */
+    public $required = 0;
+
+    /*
+     * $variable = the name of the field storing data in the db table
+     */
+    public $variable = '';
+
+    /*
+     * $indent = the indent of the item in the form page
+     */
+    public $indent = 0;
 
     /*******************************************************************/
 
@@ -75,11 +102,6 @@ class surveyfield_boolean extends mod_survey_itembase {
      */
     public $flag;
 
-    /*
-     * $item_form_requires = list of fields I will see in the form
-     * public $item_form_requires;
-     */
-
     /*******************************************************************/
 
     /*
@@ -93,12 +115,12 @@ class surveyfield_boolean extends mod_survey_itembase {
         $this->type = SURVEY_TYPEFIELD;
         $this->plugin = 'boolean';
 
-        $this->flag = new stdclass();
+        $this->flag = new stdClass();
         $this->flag->issearchable = true;
         $this->flag->couldbeparent = true;
-        $this->flag->useplugintable = true;
+        $this->flag->usescontenteditor = true;
 
-        $this->item_form_requires['hideinstructions'] = false;
+        $this->item_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
@@ -133,8 +155,30 @@ class surveyfield_boolean extends mod_survey_itembase {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
+        // ------ begin of fields saved in survey_items ------ //
+        /* surveyid
+         * type
+         * plugin
+
+         * hide
+         * insearchform
+         * advanced
+
+         * sortindex
+         * formpage
+
+         * timecreated
+         * timemodified
+         */
+        // ------- end of fields saved in survey_items ------- //
+
+        // ------ begin of fields saved in this plugin table ------ //
         // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
+
+        $record->hideinstructions = 1;
+        // ------- end of fields saved in this plugin table ------- //
+
 
         // Do parent item saving stuff here (field_base::save($record)))
         return parent::item_save($record);
@@ -249,7 +293,9 @@ class surveyfield_boolean extends mod_survey_itembase {
      * @return
      */
     public function item_get_multilang_fields() {
-        return parent::item_get_multilang_fields();
+        $fieldlist = parent::item_get_multilang_fields();
+
+        return $fieldlist;
     }
 
     /**
@@ -266,8 +312,18 @@ class surveyfield_boolean extends mod_survey_itembase {
     <xs:element name="survey_boolean">
         <xs:complexType>
             <xs:sequence>
+                <xs:element type="xs:string" name="content"/>
+                <xs:element type="xs:int" name="contentformat"/>
+
+                <xs:element type="xs:string" name="customnumber" minOccurs="0"/>
+                <xs:element type="xs:int" name="extrarow"/>
+                <xs:element type="xs:string" name="extranote" minOccurs="0"/>
+                <xs:element type="xs:int" name="required"/>
+                <xs:element type="xs:string" name="variable" minOccurs="0"/>
+                <xs:element type="xs:int" name="indent"/>
+
                 <xs:element type="xs:int" name="defaultoption"/>
-                <xs:element type="xs:int" name="defaultvalue"/>
+                <xs:element type="xs:int" name="defaultvalue" minOccurs="0"/>
                 <xs:element type="xs:string" name="downloadformat"/>
                 <xs:element type="xs:int" name="style"/>
             </xs:sequence>

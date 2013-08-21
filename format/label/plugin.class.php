@@ -34,51 +34,33 @@ require_once($CFG->dirroot.'/mod/survey/format/label/lib.php');
 class surveyformat_label extends mod_survey_itembase {
 
     /*
-     * $surveyid = the id of the survey
-     */
-    // public $surveyid = 0;
-
-    /*
-     * $itemid = the ID of the survey_item record
-     */
-    // public $itemid = 0;
-
-    /*
-     * $pluginid = the ID of the survey_label record
-     */
-    public $pluginid = 0;
-
-    /*******************************************************************/
-
-    /*
-     * $labelintro = the content of the message
-     */
-    public $labelintro = '';
-
-    /*
-     * $builtinlindex
-     */
-    public $builtinlindex = '';
-
-    /*
-     * $content = the content of the message
+     * $content = the text content of the item.
      */
     public $content = '';
 
     /*
-     * $contentformat = the message format
+     * $contentformat = the text format of the item.
+     * public $contentformat = '';
      */
-    public $contentformat = FORMAT_HTML;
+    public $contentformat = '';
+
+    /*
+     * $customnumber = the custom number of the item.
+     * It usually is 1. 1.1, a, 2.1.a...
+     */
+    public $customnumber = '';
+
+    /*******************************************************************/
+
+    /*
+     * $leftlabel = label on the left of the label content
+     */
+    public $leftlabel;
 
     /*
      * $flag = features describing the object
      */
     public $flag;
-
-    /*
-     * $item_form_requires = list of fields I will see in the form
-     * public $item_form_requires;
-     */
 
     /*******************************************************************/
 
@@ -97,26 +79,21 @@ class surveyformat_label extends mod_survey_itembase {
         $this->type = SURVEY_TYPEFORMAT;
         $this->plugin = 'label';
 
-        $this->flag = new stdclass();
+        $this->flag = new stdClass();
         $this->flag->issearchable = false;
         $this->flag->couldbeparent = false;
-        $this->flag->useplugintable = true;
+        $this->flag->usescontenteditor = true;
 
         // list of fields I do not want to have in the item definition form
-        $this->item_form_requires['common_fs'] = false;
+        // $this->item_form_requires['common_fs'] = false;
         $this->item_form_requires['extrarow'] = false;
         $this->item_form_requires['extranote'] = false;
         $this->item_form_requires['required'] = false;
         $this->item_form_requires['variable'] = false;
         $this->item_form_requires['indent'] = false;
-        $this->item_form_requires['hideinstructions'] = false;
+        $this->item_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
 
-        // if the item is constructed at survey instance creation
-        // (this happen if a builtin survey is requested)
-        // $cm does not exist
-        if (isset($cm)) {
-            $this->context = context_module::instance($cm->id);
-        }
+        $this->context = context_module::instance($cm->id);
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
@@ -149,6 +126,26 @@ class surveyformat_label extends mod_survey_itembase {
         // Now execute very specific plugin level actions
         // //////////////////////////////////
 
+        // ------ begin of fields saved in survey_items ------ //
+        /* surveyid
+         * type
+         * plugin
+
+         * hide
+         * insearchform
+         * advanced
+
+         * sortindex
+         * formpage
+
+         * timecreated
+         * timemodified
+         */
+        // ------- end of fields saved in survey_items ------- //
+
+        // ------ begin of fields saved in this plugin table ------ //
+        // ------- end of fields saved in this plugin table ------- //
+
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
     }
@@ -161,7 +158,7 @@ class surveyformat_label extends mod_survey_itembase {
      */
     public function item_get_multilang_fields() {
         $fieldlist = parent::item_get_multilang_fields();
-        $fieldlist['label'] = array('labelintro');
+        $fieldlist['label'] = array('content', 'leftlabel');
 
         return $fieldlist;
     }
@@ -180,7 +177,13 @@ class surveyformat_label extends mod_survey_itembase {
     <xs:element name="survey_label">
         <xs:complexType>
             <xs:sequence>
-                <xs:element type="xs:string" name="labelintro"/>
+                <xs:element type="xs:string" name="content"/>
+                <xs:element type="xs:int" name="contentformat"/>
+
+                <xs:element type="xs:string" name="customnumber" minOccurs="0"/>
+                <xs:element type="xs:int" name="indent"/>
+
+                <xs:element type="xs:string" name="leftlabel" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -208,7 +211,7 @@ EOS;
         $message = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $elementnumber.strip_tags($this->labelintro);
+        $elementlabel = $elementnumber.strip_tags($this->leftlabel);
         $mform->addElement('static', $this->itemname, $elementlabel, $message);
     }
 

@@ -4,71 +4,49 @@
     <survey_item>
       <type>format</type>
       <plugin>label</plugin>
-      <content>item_content_01</content>
-      <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
-      <extranote/>
-      <required>0</required>
-      <hideinstructions>0</hideinstructions>
-      <variable/>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>1</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <parentvalue/>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_label>
-      <labelintro>label_intro_01</labelintro>
+      <content>label_content_01</content>
+      <contentformat>1</contentformat>
+      <indent>0</indent>
+      <leftlabel>label_leftlabel_01</leftlabel>
     </survey_label>
   </item>
   <item>
     <survey_item>
       <type>format</type>
       <plugin>fieldset</plugin>
-      <content/>
-      <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
-      <extranote/>
-      <required>0</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>2</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <parentvalue/>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_fieldset>
-      <label>fieldset_label_01</label>
+      <content>fieldset_content_01</content>
     </survey_fieldset>
   </item>
   <item>
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_02</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>3</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_02</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -81,22 +59,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_03</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>4</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_03</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -109,22 +83,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_04</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>5</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_04</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -137,22 +107,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_05</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>6</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_05</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -165,22 +131,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_06</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>7</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_06</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -193,22 +155,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_07</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>8</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_07</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -221,22 +179,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_08</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>9</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_08</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -249,22 +203,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_09</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>10</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_09</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -277,22 +227,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_10</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>11</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_10</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -305,22 +251,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_11</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>12</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_11</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -333,22 +275,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_12</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>13</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_12</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -361,22 +299,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_13</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>14</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_13</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -389,22 +323,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_14</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>15</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_14</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -417,22 +347,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_15</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>16</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_15</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -445,22 +371,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_16</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>17</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_16</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -473,22 +395,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_17</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>18</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_17</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -501,22 +419,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_18</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>19</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_18</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -529,22 +443,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_19</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>20</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_19</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -557,22 +467,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_20</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>21</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_20</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>
@@ -585,22 +491,18 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <content>item_content_21</content>
-      <contentformat>1</contentformat>
-      <extrarow>1</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>22</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <timecreated>1368471049</timecreated>
     </survey_item>
     <survey_radiobutton>
+      <content>radiobutton_content_21</content>
+      <contentformat>1</contentformat>
+      <extrarow>1</extrarow>
+      <required>1</required>
+      <indent>0</indent>
       <options>radiobutton_options_01</options>
       <labelother>radiobutton_labelother_01</labelother>
       <defaultoption>2</defaultoption>

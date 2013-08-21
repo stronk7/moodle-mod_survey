@@ -4,47 +4,36 @@
     <survey_item>
       <type>format</type>
       <plugin>label</plugin>
-      <content>item_content_01</content>
-      <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
-      <extranote/>
-      <required>0</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>1</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <parentvalue/>
-      <timecreated>1368471051</timecreated>
     </survey_item>
     <survey_label>
-      <labelintro>label_intro_01</labelintro>
+      <content>label_content_01</content>
+      <contentformat>1</contentformat>
+      <indent>0</indent>
+      <leftlabel>label_leftlabel_01</leftlabel>
     </survey_label>
   </item>
   <item>
     <survey_item>
       <type>field</type>
       <plugin>textarea</plugin>
-      <content>item_content_02</content>
-      <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>2</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <parentvalue/>
-      <timecreated>1368471051</timecreated>
     </survey_item>
     <survey_textarea>
+      <content>textarea_content_02</content>
+      <contentformat>1</contentformat>
+      <extrarow>0</extrarow>
+      <required>1</required>
+      <hideinstructions>0</hideinstructions>
+      <indent>0</indent>
       <useeditor>0</useeditor>
       <arearows>12</arearows>
       <areacols>60</areacols>
@@ -56,23 +45,19 @@
     <survey_item>
       <type>field</type>
       <plugin>textarea</plugin>
-      <content>item_content_03</content>
-      <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>3</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <parentvalue/>
-      <timecreated>1368471051</timecreated>
     </survey_item>
     <survey_textarea>
+      <content>textarea_content_03</content>
+      <contentformat>1</contentformat>
+      <extrarow>0</extrarow>
+      <required>1</required>
+      <hideinstructions>0</hideinstructions>
+      <indent>0</indent>
       <useeditor>0</useeditor>
       <arearows>12</arearows>
       <areacols>60</areacols>
@@ -84,23 +69,19 @@
     <survey_item>
       <type>field</type>
       <plugin>textarea</plugin>
-      <content>item_content_04</content>
-      <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>4</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <parentvalue/>
-      <timecreated>1368471051</timecreated>
     </survey_item>
     <survey_textarea>
+      <content>textarea_content_04</content>
+      <contentformat>1</contentformat>
+      <extrarow>0</extrarow>
+      <required>1</required>
+      <hideinstructions>0</hideinstructions>
+      <indent>0</indent>
       <useeditor>0</useeditor>
       <arearows>12</arearows>
       <areacols>60</areacols>
@@ -112,23 +93,19 @@
     <survey_item>
       <type>field</type>
       <plugin>textarea</plugin>
-      <content>item_content_05</content>
-      <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>5</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <parentvalue/>
-      <timecreated>1368471051</timecreated>
     </survey_item>
     <survey_textarea>
+      <content>textarea_content_05</content>
+      <contentformat>1</contentformat>
+      <extrarow>0</extrarow>
+      <required>1</required>
+      <hideinstructions>0</hideinstructions>
+      <indent>0</indent>
       <useeditor>0</useeditor>
       <arearows>12</arearows>
       <areacols>60</areacols>
@@ -140,23 +117,19 @@
     <survey_item>
       <type>field</type>
       <plugin>textarea</plugin>
-      <content>item_content_01</content>
-      <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
-      <extranote/>
-      <required>1</required>
-      <hideinstructions>0</hideinstructions>
-      <indent>0</indent>
       <hide>0</hide>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>6</sortindex>
-      <parentid>0</parentid>
       <parentcontent>item_parentcontent_01</parentcontent>
-      <parentvalue/>
-      <timecreated>1368471051</timecreated>
     </survey_item>
     <survey_textarea>
+      <content>textarea_content_06</content>
+      <contentformat>1</contentformat>
+      <extrarow>0</extrarow>
+      <required>1</required>
+      <hideinstructions>0</hideinstructions>
+      <indent>0</indent>
       <useeditor>0</useeditor>
       <arearows>12</arearows>
       <areacols>60</areacols>

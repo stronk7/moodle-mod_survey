@@ -3,34 +3,22 @@
     <rdf:RDF>
       <cc:Work rdf:about="">
         <dc:format>image/svg+xml</dc:format>
-        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-      </cc:Work>
+        </cc:Work>
     </rdf:RDF>
   </metadata>
   <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="566" inkscape:window-height="1006" id="namedview68" showgrid="false" showguides="true" inkscape:guide-bbox="true" inkscape:zoom="5.8500998" inkscape:cx="24.653795" inkscape:cy="-3.6760443" inkscape:window-x="1280" inkscape:window-y="12" inkscape:window-maximized="0" inkscape:current-layer="svg1307"/>
   <defs id="defs1309">
     <linearGradient id="linearGradient7983">
-      <stop id="stop7985" style="stop-color:#729fcf" offset="0"/>
-      <stop id="stop7987" style="stop-color:#3465a4" offset="1"/>
     </linearGradient>
     <linearGradient id="linearGradient7092">
-      <stop id="stop7094" style="stop-color:#eeeeec" offset="0"/>
-      <stop id="stop7096" style="stop-color:#eeeeec;stop-opacity:0" offset="1"/>
     </linearGradient>
     <linearGradient id="linearGradient7046">
-      <stop id="stop7048" style="stop-color:#c00" offset="0"/>
-      <stop id="stop7050" style="stop-color:#ef2929" offset="1"/>
     </linearGradient>
     <radialGradient id="radialGradient6719" xlink:href="#linearGradient5060" gradientUnits="userSpaceOnUse" cy="486.65" cx="605.71" gradientTransform="matrix(-2.7744,0,0,1.9697,112.76,-872.89)" r="117.14"/>
     <linearGradient id="linearGradient5060">
-      <stop id="stop5062" offset="0"/>
-      <stop id="stop5064" style="stop-opacity:0" offset="1"/>
     </linearGradient>
     <radialGradient id="radialGradient6717" xlink:href="#linearGradient5060" gradientUnits="userSpaceOnUse" cy="486.65" cx="605.71" gradientTransform="matrix(2.7744,0,0,1.9697,-1891.6,-872.89)" r="117.14"/>
     <linearGradient id="linearGradient5048">
-      <stop id="stop5050" style="stop-opacity:0" offset="0"/>
-      <stop id="stop5056" offset=".5"/>
-      <stop id="stop5052" style="stop-opacity:0" offset="1"/>
     </linearGradient>
     <linearGradient id="linearGradient6715" y2="609.51" xlink:href="#linearGradient5048" gradientUnits="userSpaceOnUse" x2="302.86" gradientTransform="matrix(3.1405427,0,0,1.5861886,-2088.9394,-279.88486)" y1="366.65" x1="302.86"/>
     <linearGradient id="linearGradient4298" y2="42.021" xlink:href="#linearGradient7092" gradientUnits="userSpaceOnUse" x2="14.025" gradientTransform="translate(11.027,-10.972)" y1="30.854" x1="2.9746"/>
@@ -76,8 +64,6 @@
     <linearGradient inkscape:collect="always" xlink:href="#linearGradient5048" id="linearGradient3148" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.05273718,0,0,0.08397751,-41.73266,-19.478047)" x1="302.86" y1="366.65" x2="302.86" y2="609.51"/>
     <radialGradient inkscape:collect="always" xlink:href="#linearGradient4114" id="radialGradient4120" gradientTransform="scale(1.64399,0.608276)" cx="15.115514" cy="63.965389" fx="15.115514" fy="63.965389" r="12.289036" gradientUnits="userSpaceOnUse"/>
     <linearGradient inkscape:collect="always" id="linearGradient4114">
-      <stop style="stop-color:#000000;stop-opacity:1;" offset="0" id="stop4116"/>
-      <stop style="stop-color:#000000;stop-opacity:0;" offset="1" id="stop4118"/>
     </linearGradient>
     <radialGradient r="12.289036" fy="63.965389" fx="15.115514" cy="63.965389" cx="15.115514" gradientTransform="scale(1.64399,0.608276)" gradientUnits="userSpaceOnUse" id="radialGradient3147" xlink:href="#linearGradient4114" inkscape:collect="always"/>
   </defs>

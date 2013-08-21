@@ -70,7 +70,7 @@ if (true) {
 
     $graph->x_data = $content;
     $graph->y_data['answers1'] = $absolute;
-    $graph->y_format['answers1'] = array('colour' => 'ltblue', 'bar' => 'fill', 'legend' => strip_tags($item->item_get_main_text()), 'bar_size' => 0.4);
+    $graph->y_format['answers1'] = array('colour' => 'ltblue', 'bar' => 'fill', 'legend' => strip_tags($item->get_content()), 'bar_size' => 0.4);
 
 
     $graph->parameter['legend'] = 'outside-left';

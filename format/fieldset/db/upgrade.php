@@ -83,6 +83,22 @@ function xmldb_surveyformat_fieldset_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013073001, 'surveyfield', 'fieldset');
     }
 
+    if ($oldversion < 2013081901) {
+
+        // Define field content to be added to survey_fieldset.
+        $table = new xmldb_table('survey_fieldset');
+        $field = new xmldb_field('content', XMLDB_TYPE_TEXT, null, null, null, null, null, 'itemid');
+
+        // Conditionally launch add field content.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013081901, 'surveyfield', 'fieldset');
+    }
+
     return true;
 }
 

@@ -882,7 +882,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
  * @param stdClass $module
  * @param cm_info $cm
  */
-function survey_extend_navigation(navigation_node $navref, stdclass $course, stdclass $survey, cm_info $cm) {
+function survey_extend_navigation(navigation_node $navref, stdClass $course, stdClass $survey, cm_info $cm) {
     global $CFG, $OUTPUT, $USER, $DB;
 
     //$context = context_system::instance();

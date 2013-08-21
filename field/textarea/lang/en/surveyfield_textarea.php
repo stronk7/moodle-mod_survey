@@ -40,3 +40,5 @@ $string['hasminlength'] = 'Text is supposed to be longer or equal than {$a} char
 $string['hasmaxlength'] = 'Text is supposed to be shorter or equal than {$a} characters';
 $string['texttoolong'] = 'Text is too long';
 $string['texttooshort'] = 'Text is too short';
+$string['maxlengthlowerthanminlength'] = 'Maximum length can not be lowwer-equal than minimum length';
+

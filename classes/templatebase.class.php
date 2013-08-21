@@ -110,6 +110,9 @@ class mod_survey_templatebase {
                 if ($field == 'formpage') {
                     continue;
                 }
+                if ($field == 'timecreated') {
+                    continue;
+                }
                 if ($field == 'timemodified') {
                     continue;
                 }
@@ -127,6 +130,8 @@ class mod_survey_templatebase {
                     continue;
                 }
 
+//       <parentcontent>item_parentcontent_01</parentcontent>
+
                 if ($templatetype == SURVEY_MASTERTEMPLATE) {
                     $val = $this->xml_get_field_content($item, 'item', $field, $multilangfields);
                 } else {
@@ -140,30 +145,28 @@ class mod_survey_templatebase {
                 }
             }
 
-            if ($item->get_useplugintable()) { // only page break does not use the plugin table
-                // child table
-                $xmltable = $xmlitem->addChild('survey_'.$plugin);
+            // child table
+            $xmltable = $xmlitem->addChild('survey_'.$plugin);
 
-                $structure = $this->get_table_structure('survey_'.$plugin);
-                foreach ($structure as $field) {
-                    if ($field == 'surveyid') {
-                        continue;
-                    }
-                    if ($field == 'itemid') {
-                        continue;
-                    }
+            $structure = $this->get_table_structure('survey_'.$plugin);
+            foreach ($structure as $field) {
+                if ($field == 'surveyid') {
+                    continue;
+                }
+                if ($field == 'itemid') {
+                    continue;
+                }
 
-                    if ($templatetype == SURVEY_MASTERTEMPLATE) {
-                        $val = $this->xml_get_field_content($item, $plugin, $field, $multilangfields);
-                    } else {
-                        $val = $item->item_get_generic_field($field);
-                    }
+                if ($templatetype == SURVEY_MASTERTEMPLATE) {
+                    $val = $this->xml_get_field_content($item, $plugin, $field, $multilangfields);
+                } else {
+                    $val = $item->item_get_generic_field($field);
+                }
 
-                    if ($val) {
-                        $xmlfield = $xmltable->addChild($field, $val);
-                    // } else {
-                        // it is empty, do not evaluate: jump
-                    }
+                if ($val) {
+                    $xmlfield = $xmltable->addChild($field, $val);
+                // } else {
+                    // it is empty, do not evaluate: jump
                 }
             }
         }
@@ -199,15 +202,13 @@ class mod_survey_templatebase {
     public function xml_get_field_content($item, $dummyplugin, $field, $multilangfields) {
 
         // 1st: which fields are multilang for the current item?
-        if (isset($multilangfields[$dummyplugin])) { // pagebreak and fieldset have not multilang_fields
-            if (in_array($field, $multilangfields[$dummyplugin])) { // if the field that is going to be assigned belongs to your multilang fields
-                $frankenstinname = $dummyplugin.'_'.$field;
+        if (in_array($field, $multilangfields[$dummyplugin])) { // if the field that is going to be assigned belongs to your multilang fields
+            $frankenstinname = $dummyplugin.'_'.$field;
 
-                if (isset($this->langtree[$frankenstinname])) {
-                    end($this->langtree[$frankenstinname]);
-                    $val = key($this->langtree[$frankenstinname]);
-                    return $val;
-                }
+            if (isset($this->langtree[$frankenstinname])) {
+                end($this->langtree[$frankenstinname]);
+                $val = key($this->langtree[$frankenstinname]);
+                return $val;
             }
         }
 
@@ -424,7 +425,10 @@ class mod_survey_templatebase {
                 // $status = $status && $mdom->schemaValidateSource($xsd);
                 if (!$status) {
                     // Stop here. Continuing is useless
+                    echo '<hr /><textarea rows="10" cols="100">'.$xml_table->asXML().'</textarea>';
+                    echo '<textarea rows="10" cols="100">'.$xsd.'</textarea>';
                     break;
+                    // break 2; // it is the second time I use it! Coooool :-)
                 }
             }
         }

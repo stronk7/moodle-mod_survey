@@ -257,6 +257,8 @@ class mod_survey_itemlist {
 
         // $table->collapsible(true);
         $table->sortable(true, 'sortindex'); // sorted by sortindex by default
+        $table->no_sorting('content');
+        $table->no_sorting('variable');
         $table->no_sorting('availability');
         $table->no_sorting('actions');
 
@@ -381,7 +383,7 @@ class mod_survey_itemlist {
             }
 
             // *************************************** content
-            $itemcontent = $item->item_get_main_text();
+            $itemcontent = $item->get_content();
             $item->set_contentformat(FORMAT_HTML);
             $item->set_contenttrust(1);
 
@@ -515,7 +517,7 @@ class mod_survey_itemlist {
 
                 // *************************************** SURVEY_REQUIRED ON/OFF
                 $current_required = $item->get_required();
-                if (isset($current_required)) { // it may not be set as in page_break, autofill or some more
+                if ($current_required !== false) { // it may not be set as in page_break, autofill or some more
                     $paramurl = $paramurl_base;
 
                     if ($item->get_required()) {
@@ -544,7 +546,7 @@ class mod_survey_itemlist {
 
                 // *************************************** SURVEY_CHANGEINDENT
                 $current_indent = $item->get_indent();
-                if (isset($current_indent)) { // it may not be set as in page_break, autofill and some more
+                if ($current_indent !== false) { // it may not be set as in page_break, autofill and some more
                     $paramurl = $paramurl_base + array('act' => SURVEY_CHANGEINDENT);
 
                     if ($item->get_indent() > 0) {
@@ -1181,8 +1183,10 @@ class mod_survey_itemlist {
 
         // $table->collapsible(true);
         $table->sortable(true, 'sortindex', 'ASC'); // sorted by sortindex by default
-        $table->no_sorting('uavailability');
-        $table->no_sorting('mavailability');
+        $table->no_sorting('content');
+        $table->no_sorting('parentitem');
+        $table->no_sorting('parentconstraints');
+        $table->no_sorting('status');
         $table->no_sorting('actions');
 
         $table->column_class('plugin', 'plugin');

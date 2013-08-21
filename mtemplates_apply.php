@@ -70,7 +70,7 @@ $formurl = new moodle_url('mtemplates_apply.php', $paramurl);
 $formparams = new stdClass();
 $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
-$formparams->utemplate_manager = $mtemplate_manager;
+$formparams->mtemplate_manager = $mtemplate_manager;
 
 $apply_mtemplate = new survey_applymtemplateform($formurl, $formparams);
 // end of: prepare params for the form

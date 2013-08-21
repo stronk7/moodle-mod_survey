@@ -107,7 +107,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $draftnumber = $data['lowerbound'];
         // constrain default between boundaries
         if (strlen($draftnumber)) {
-            $matches = $this->item_atomize_number($draftnumber);
+            $matches = $item->item_atomize_number($draftnumber);
             if (empty($matches)) {
                 $errors['lowerbound'] = get_string('lowerbound_notanumber', 'surveyfield_numeric');
                 return $errors;
@@ -120,7 +120,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $draftnumber = $data['upperbound'];
         // constrain default between boundaries
         if (strlen($draftnumber)) {
-            $matches = $this->item_atomize_number($draftnumber);
+            $matches = $item->item_atomize_number($draftnumber);
             if (empty($matches)) {
                 $errors['upperbound'] = get_string('upperbound_notanumber', 'surveyfield_numeric');
                 return $errors;
@@ -131,7 +131,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         }
 
         if ($lowerbound == $upperbound) {
-            $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_numeric');
+            $errors['lowerbound'] = get_string('lowerequaltoupper', 'surveyfield_numeric');
         }
 
         // $default = unformat_float($data['defaultvalue'], true);
@@ -140,7 +140,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $draftnumber = $data['defaultvalue'];
         // constrain default between boundaries
         if (strlen($draftnumber)) {
-            $matches = $this->item_atomize_number($draftnumber);
+            $matches = $item->item_atomize_number($draftnumber);
             if (empty($matches)) {
                 $errors['defaultvalue'] = get_string('default_notanumber', 'surveyfield_numeric');
             } else {
