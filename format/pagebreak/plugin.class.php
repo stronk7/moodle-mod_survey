@@ -65,7 +65,6 @@ class surveyformat_pagebreak extends mod_survey_itembase {
 
         // list of fields I do not want to have in the item definition form
         $this->item_form_requires['common_fs'] = false;
-        $this->item_form_requires['content'] = false;
         $this->item_form_requires['customnumber'] = false;
         $this->item_form_requires['extrarow'] = false;
         $this->item_form_requires['extranote'] = false;

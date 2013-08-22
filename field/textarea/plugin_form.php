@@ -95,9 +95,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $fieldname = 'maxlength';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_textarea'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_textarea');
-        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, 1024);
 
         $this->add_item_buttons();
     }

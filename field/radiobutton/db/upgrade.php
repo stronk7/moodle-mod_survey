@@ -176,16 +176,6 @@ function xmldb_surveyfield_radiobutton_upgrade($oldversion) {
         }
 
 
-        // Define field hideinstructions to be added to survey_radiobutton.
-        $table = new xmldb_table('survey_radiobutton');
-        $field = new xmldb_field('hideinstructions', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'required');
-
-        // Conditionally launch add field hideinstructions.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-
         // Define field variable to be added to survey_radiobutton.
         $table = new xmldb_table('survey_radiobutton');
         $field = new xmldb_field('variable', XMLDB_TYPE_CHAR, '64', null, null, null, null, 'hideinstructions');

@@ -6,9 +6,9 @@
   <TABLES>
     <TABLE NAME="survey_time" COMMENT="Time type surveyfield">
       <FIELDS>
-        <FIELD NAME="id"               TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"              SEQUENCE="true"                               NEXT="surveyid"/>
-        <FIELD NAME="surveyid"         TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="id"                NEXT="itemid"/>
-        <FIELD NAME="itemid"           TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"          NEXT="content"/>
+        <FIELD NAME="id"               TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"              SEQUENCE="true"                              NEXT="surveyid"/>
+        <FIELD NAME="surveyid"         TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="id"               NEXT="itemid"/>
+        <FIELD NAME="itemid"           TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"         NEXT="content"/>
 
         <!-- begin of fields for itembase_form.php -->
         <FIELD NAME="content"          TYPE="text" LENGTH="small"  NOTNULL="false"                              SEQUENCE="false" PREVIOUS="itemid"           NEXT="contentformat"/>

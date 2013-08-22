@@ -36,7 +36,7 @@ function xmldb_surveyfield_recurrence_upgrade($oldversion) {
 
     if ($oldversion < 2013061702) {
         // Define field rangetype to be dropped from survey_recurrence.
-        $table = new xmldb_table('survey_time');
+        $table = new xmldb_table('survey_recurrence');
         $field = new xmldb_field('rangetype');
 
         // Conditionally launch drop field rangetype.
@@ -144,5 +144,18 @@ function xmldb_surveyfield_recurrence_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013081901, 'surveyfield', 'recurrence');
     }
 
+    if ($oldversion < 2013082203) {
+        // Define field rangetype to be dropped from survey_recurrence.
+        $table = new xmldb_table('survey_recurrence');
+        $field = new xmldb_field('rangetype');
+
+        // Conditionally launch drop field rangetype.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013082203, 'surveyfield', 'recurrence');
+    }
     return true;
 }

@@ -105,7 +105,7 @@ class surveyfield_textarea extends mod_survey_itembase {
     /*
      * $maxlength = the maximum allowed text length
      */
-    public $maxlength = '0';
+    public $maxlength = '';
 
     /*
      * $context = context as it is always required to dial with editors
@@ -201,6 +201,12 @@ class surveyfield_textarea extends mod_survey_itembase {
         $checkboxes = array('useeditor');
         foreach ($checkboxes as $checkbox) {
             $record->{$checkbox} = (isset($record->{$checkbox})) ? 1 : 0;
+        }
+        if (!strlen($record->minlength)) {
+            unset($record->minlength);
+        }
+        if (!strlen($record->maxlength)) {
+            unset($record->maxlength);
         }
         if (empty($record->arearows)) {
             $record->arearows = SURVEYFIELD_TEXTAREA_DEFAULTROWS;
@@ -418,7 +424,7 @@ EOS;
     public function userform_get_filling_instructions() {
 
         if ($this->minlength > 0) {
-            if ($this->maxlength > 0) {
+            if (isset($this->maxlength) && ($this->maxlength > 0)) {
                 $a = new StadClass();
                 $a->minlength = $this->minlength;
                 $a->maxlength = $this->maxlength;
@@ -428,7 +434,7 @@ EOS;
                 $fillinginstruction = get_string('hasminlength', 'surveyfield_textarea', $a);
             }
         } else {
-            if (!empty($this->maxlength)) {
+            if (isset($this->maxlength) && ($this->maxlength > 0)) {
                 $a = $this->maxlength;
                 $fillinginstruction = get_string('hasmaxlength', 'surveyfield_textarea', $a);
             } else {

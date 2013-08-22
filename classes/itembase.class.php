@@ -254,6 +254,7 @@ class mod_survey_itembase {
         // (digit in place 4) == 1 means items inherited limited access because this (as parent) got a limited access
 
         $this->userfeedback = SURVEY_NOFEEDBACK;
+
         // Does this record need to be saved as new record or as un update on a preexisting record?
         if (empty($record->itemid)) {
             // record is new
@@ -269,9 +270,10 @@ class mod_survey_itembase {
             $record->sortindex = 1 + $DB->count_records_sql($sql, $sqlparam);
 
             // itemid
-            if ($record->itemid = $DB->insert_record('survey_item', $record)) {
+            if ($itemid = $DB->insert_record('survey_item', $record)) {
                 // $tablename
-                if ($DB->insert_record($tablename, $record)) {
+                $record->itemid = $itemid;
+                if ($pluginid = $DB->insert_record($tablename, $record)) {
                     $this->userfeedback += 1; // 0*2^1+1*2^0
                 }
             }
@@ -279,33 +281,28 @@ class mod_survey_itembase {
             $logaction = ($this->userfeedback == SURVEY_NOFEEDBACK) ? 'add item failed' : 'add item';
 
             // special care for the "editor" field
-            if ($this->item_form_requires['content']) { // i.e. content
-                if ($this->flag->usescontenteditor) {
-                    $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
-                    $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
-                    $record->contentformat = FORMAT_HTML;
+            if ($this->flag->usescontenteditor) {
+                $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
+                $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
+                $record->contentformat = FORMAT_HTML;
 
-                    // survey_item
-                    // id
-                    $record->id = $record->itemid;
+                // tablename
+                // id
+                $record->id = $pluginid;
 
-                    $DB->update_record('survey_item', $record);
-                // } else {
-                    // record->content follows stnandard flow and has already been saved at record save time
-                }
+                $DB->update_record($tablename, $record);
+            // } else {
+                // record->content follows stnandard flow and has already been saved at record save time
             }
-
         } else {
 
             // special care for the "editor" field
-            if ($this->item_form_requires['content']) { // i.e. content
-                if ($this->flag->usescontenteditor) {
-                    $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
-                    $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
-                    $record->contentformat = FORMAT_HTML;
-                // } else {
-                    // record->content follows stnandard flow and will be evaluated in the standard way
-                }
+            if ($this->flag->usescontenteditor) {
+                $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
+                $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
+                $record->contentformat = FORMAT_HTML;
+            // } else {
+                // record->content follows stnandard flow and will be evaluated in the standard way
             }
 
             // hide/unhide part 1

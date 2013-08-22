@@ -139,6 +139,7 @@ class surveyfield_numeric extends mod_survey_itembase {
         if (!empty($itemid)) {
             $this->item_load($itemid);
         }
+
     }
 
     /*
@@ -207,17 +208,17 @@ class surveyfield_numeric extends mod_survey_itembase {
         if (strlen($record->defaultvalue)) {
             $record->defaultvalue = unformat_float($record->defaultvalue, true);
         } else {
-            $record->defaultvalue = null;
+            unset($record->defaultvalue);
         }
         if (strlen($record->lowerbound)) {
             $record->lowerbound = unformat_float($record->lowerbound, true);
         } else {
-            $record->lowerbound = null;
+            unset($record->lowerbound);
         }
         if (strlen($record->upperbound)) {
             $record->upperbound = unformat_float($record->upperbound, true);
         } else {
-            $record->upperbound = null;
+            unset($record->upperbound);
         }
         // ------- end of fields saved in this plugin table ------- //
 

@@ -130,8 +130,10 @@ class survey_pluginform extends mod_survey_itembaseform {
             }
         }
 
-        if ($lowerbound == $upperbound) {
-            $errors['lowerbound'] = get_string('lowerequaltoupper', 'surveyfield_numeric');
+        if (isset($lowerbound) && isset($upperbound)) {
+            if ($lowerbound == $upperbound) {
+                $errors['lowerbound'] = get_string('lowerequaltoupper', 'surveyfield_numeric');
+            }
         }
 
         // $default = unformat_float($data['defaultvalue'], true);
@@ -157,7 +159,7 @@ class survey_pluginform extends mod_survey_itembaseform {
                     $errors['defaultvalue'] = get_string('default_notinteger', 'surveyfield_numeric');
                 }
 
-                if (($lowerbound) && ($upperbound)) {
+                if (isset($lowerbound) && isset($upperbound)) {
                     if ($lowerbound < $upperbound) {
                         // internal range
                         if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
