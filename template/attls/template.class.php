@@ -26,12 +26,17 @@ defined('MOODLE_INTERNAL') || die();
 
 class surveytemplate_attls {
     /*
-     * apply_survey_settings
+     * apply_template_settings
      *
      * @param $record
      * @return record
      */
-    public function apply_survey_settings($record) {
+    public function apply_template_settings(&$record) {
+        $config = get_config('surveytemplate_attls');
+
+        if ($config->extrarow == 1) {
+            $record['extrarow'] = '1';
+        }
         return $record;
     }
 }

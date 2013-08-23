@@ -34,6 +34,8 @@ class survey_applymtemplateform extends moodleform {
 
     public function definition() {
 
+        $config = get_config('surveytemplate');
+
         $mform = $this->_form;
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
@@ -42,7 +44,9 @@ class survey_applymtemplateform extends moodleform {
             $mtemplates = array();
 
             foreach ($mtemplatepluginlist as $mtemplatename => $mtemplatepath) {
-                $mtemplates[$mtemplatename] = get_string('pluginname', 'surveytemplate_'.$mtemplatename);
+                if (!$config->{$mtemplatename.'_denyinstantiation'}) {
+                    $mtemplates[$mtemplatename] = get_string('pluginname', 'surveytemplate_'.$mtemplatename);
+                }
             }
             asort($mtemplates);
         }
@@ -55,11 +59,15 @@ class survey_applymtemplateform extends moodleform {
             $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $mtemplates);
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+
+            // -------------------------------------------------------------------------------
+            // buttons
+            $this->add_action_buttons(true, get_string('continue'));
+        } else {
+            $mform->addElement('static', 'nomtemplates', get_string('mastertemplate', 'survey'), get_string('nomtemplates_message', 'survey'));
+            $mform->addHelpButton('nomtemplates', 'nomtemplates', 'survey');
         }
 
-        // -------------------------------------------------------------------------------
-        // buttons
-        $this->add_action_buttons(true, get_string('continue'));
     }
 
     public function validation($data, $files) {

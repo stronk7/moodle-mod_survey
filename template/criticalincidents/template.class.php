@@ -26,12 +26,12 @@ defined('MOODLE_INTERNAL') || die();
 
 class surveytemplate_criticalincidents {
     /*
-     * apply_survey_settings
+     * apply_template_settings
      *
      * @param $record
      * @return record
      */
-    public function apply_survey_settings($record) {
+    public function apply_template_settings($record) {
         return $record;
     }
 }

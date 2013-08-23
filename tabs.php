@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // do not prevent direct user input
 // prevention is done in each working page according to actions
+$forcemodifications = get_config('survey', 'forcemodifications');
 
 $hassubmissions = survey_count_submissions($survey->id);
 $context = context_module::instance($cm->id);
@@ -89,7 +90,7 @@ if (!$survey->template) {
 // TAB MASTER TEMPLATES
 // -----------------------------------------------------------------------------
 if (!$survey->template) {
-    if ($cancreatemastertemplate || ((!$hassubmissions || $CFG->survey_forcemodifications) && $canapplymastertemplate)) {
+    if ($cancreatemastertemplate || ((!$hassubmissions || $forcemodifications) && $canapplymastertemplate)) {
         $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $paramurl);
         $row[] = new tabobject(SURVEY_TAB4NAME, $elementurl->out(), SURVEY_TAB4NAME);
     }
@@ -232,7 +233,7 @@ switch ($currenttab) {
 
         if ($canmanageusertemplates) {
             $row = array();
-            if (!$hassubmissions || $CFG->survey_forcemodifications) { // if submissions were done, do not change the list of fields
+            if (!$hassubmissions || $forcemodifications) { // if submissions were done, do not change the list of fields
                 $elementurl = new moodle_url('/mod/survey/utemplates_manage.php', $paramurl); // manage
                 $strlabel = get_string('tabutemplatepage1', 'survey');
                 $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
@@ -250,7 +251,7 @@ switch ($currenttab) {
                 $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
             }
 
-            if ( (!$hassubmissions || $CFG->survey_forcemodifications) && $canapplyusertemplates ) { // if submissions were done, do not change the list of fields
+            if ( (!$hassubmissions || $forcemodifications) && $canapplyusertemplates ) { // if submissions were done, do not change the list of fields
                 $elementurl = new moodle_url('/mod/survey/utemplates_apply.php', $paramurl); // apply
                 $strlabel = get_string('tabutemplatepage4', 'survey');
                 $row[] = new tabobject('idpage4', $elementurl->out(), $strlabel);
@@ -276,7 +277,7 @@ switch ($currenttab) {
             $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
         }
 
-        if ( (!$hassubmissions || $CFG->survey_forcemodifications) && $canapplymastertemplate ) { // if submissions were done, do not change the list of fields
+        if ( (!$hassubmissions || $forcemodifications) && $canapplymastertemplate ) { // if submissions were done, do not change the list of fields
             $elementurl = new moodle_url('/mod/survey/mtemplates_apply.php', $paramurl); // apply
             $strlabel = get_string('tabmtemplatepage2', 'survey');
             $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);

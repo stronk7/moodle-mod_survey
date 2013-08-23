@@ -226,6 +226,8 @@ class mod_survey_itemlist {
 
         require_once($CFG->libdir.'/tablelib.php');
 
+        $forcemodifications = get_config('survey', 'forcemodifications');
+
         $table = new flexible_table('itemslist');
 
         $paramurl = array('id' => $this->cm->id);
@@ -489,7 +491,7 @@ class mod_survey_itemlist {
                 }
 
                 // *************************************** SURVEY_HIDEITEM/SURVEY_SHOWITEM
-                if (!$this->hassubmissions || $CFG->survey_forcemodifications) {
+                if (!$this->hassubmissions || $forcemodifications) {
                     $paramurl = $paramurl_base;
                     if (!empty($current_hide)) {
                         $icopath = 't/show';
@@ -507,7 +509,7 @@ class mod_survey_itemlist {
                 }
 
                 // *************************************** SURVEY_DELETEITEM
-                if (!$this->hassubmissions || $CFG->survey_forcemodifications) {
+                if (!$this->hassubmissions || $forcemodifications) {
                     $paramurl = $paramurl_base + array('act' => SURVEY_DELETEITEM);
                     $basepath = new moodle_url('items_manage.php', $paramurl);
 

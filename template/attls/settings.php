@@ -23,9 +23,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// $settings->add(new admin_setting_heading('surveytemplate_attls_settings', get_string('header_left', 'surveytemplate_attls'),
-//     get_string('header_right', 'surveytemplate_attls')));
-
-// $settings->add(new admin_setting_configcheckbox('surveytemplate_attls/extrarow',
-//     get_string('extrarow', 'surveytemplate_attls'),
-//     get_string('extrarow_desc', 'surveytemplate_attls'), 1));
+$settings->add(new admin_setting_configcheckbox('surveytemplate/attls_extrarow',
+    get_string('extrarow', 'surveytemplate_attls'),
+    get_string('extrarow_desc', 'surveytemplate_attls'), 1));

@@ -1046,6 +1046,8 @@ class mod_survey_itembase {
     public function userform_get_full_info($searchform) {
         global $CFG;
 
+        $config = get_config('survey');
+
         if (!$searchform) {
             if (!$this->get_hideinstructions()) {
                $fillinginstruction = $this->userform_get_filling_instructions();
@@ -1054,12 +1056,12 @@ class mod_survey_itembase {
                 $extranote = strip_tags($this->extranote);
             }
         } else {
-            if ($CFG->survey_fillinginstructioninsearch) {
+            if ($config->fillinginstructioninsearch) {
                 if (!$this->get_hideinstructions()) {
                     $fillinginstruction = $this->userform_get_filling_instructions();
                 }
             }
-            if ($CFG->survey_extranoteinsearch) {
+            if ($config->extranoteinsearch) {
                 $extranote = strip_tags($this->extranote);
             }
         }

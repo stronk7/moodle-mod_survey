@@ -314,6 +314,8 @@ class mod_survey_itembaseform extends moodleform {
     public function add_item_buttons() {
         global $CFG;
 
+        $forcemodifications = get_config('survey', 'forcemodifications');
+
         $mform = $this->_form;
 
         // -------------------------------------------------------------------------------
@@ -328,7 +330,7 @@ class mod_survey_itembaseform extends moodleform {
             $fieldname = 'buttons';
             $elementgroup = array();
             $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));
-            if (!$hassubmissions || $CFG->survey_forcemodifications) {
+            if (!$hassubmissions || $forcemodifications) {
                 $elementgroup[] = $mform->createElement('submit', 'saveasnew', get_string('saveasnew', 'survey'));
             }
             $elementgroup[] = $mform->createElement('cancel');

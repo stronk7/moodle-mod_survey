@@ -23,6 +23,8 @@ class mod_survey_mod_form extends moodleform_mod {
     public function definition() {
         global $COURSE, $DB, $CFG, $cm;
 
+        $useadvancedpermissions = get_config('survey', 'useadvancedpermissions');
+
         $mform = $this->_form;
 
         // -------------------------------------------------------------------------------
@@ -59,7 +61,7 @@ class mod_survey_mod_form extends moodleform_mod {
         } else {
             $groupmode = 0;
         }
-        if ($CFG->survey_useadvancedpermissions) {
+        if ($useadvancedpermissions) {
             // -------------------------------------------------------------------------------
             $fieldname = 'access';
             $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));

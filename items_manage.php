@@ -100,7 +100,9 @@ if ($itemlist_manager->hassubmissions) {
 
 // add item form
 if (!$itemlist_manager->survey->template) {
-    if (!$hassubmissions || $CFG->survey_forcemodifications) {
+    $forcemodifications = get_config('survey', 'forcemodifications');
+
+    if (!$hassubmissions || $forcemodifications) {
         if (has_capability('mod/survey:additems', $context)) {
             $paramurl = array('id' => $cm->id);
             $formurl = new moodle_url('items_setup.php', $paramurl);

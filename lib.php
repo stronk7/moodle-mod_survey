@@ -211,10 +211,12 @@ define('SURVEY_MASTERTEMPLATE', 1);
 function survey_add_instance($survey) {
     global $CFG, $DB, $COURSE;
 
+    $useadvancedpermissions = get_config('survey', 'useadvancedpermissions');
+
     $survey->timecreated = time();
 
     // You may have to add extra stuff in here
-    if ($CFG->survey_useadvancedpermissions) {
+    if ($useadvancedpermissions) {
         list($survey->readaccess, $survey->editaccess, $survey->deleteaccess) = explode('.', $survey->accessrights);
     } else {
         // since $cm->groupmode will be updated once this method is over, I here use $survey->groupmode instead of $cm->groupmode to get $groupmode
@@ -275,10 +277,12 @@ function survey_add_instance($survey) {
 function survey_update_instance($survey) {
     global $CFG, $DB, $COURSE;
 
+    $useadvancedpermissions = get_config('survey', 'useadvancedpermissions');
+
     $survey->timemodified = time();
     $survey->id = $survey->instance;
 
-    if ($CFG->survey_useadvancedpermissions) {
+    if ($useadvancedpermissions) {
         list($survey->readaccess, $survey->editaccess, $survey->deleteaccess) = explode('.', $survey->accessrights);
     } else {
         // since $cm->groupmode will be updated once this method is over, I here use $survey->groupmode instead of $cm->groupmode to get $groupmode
@@ -524,10 +528,11 @@ function survey_cron() {
     //     I delete records now
     // permission == 1:  saveresume is allowed
     //     these records are older than maximum allowed time delay
+    $maxinputdelay = get_config('survey', 'maxinputdelay');
     foreach ($permission as $saveresume) {
         if ($surveys = $DB->get_records('survey', array('saveresume' => $saveresume), null, 'id')) {
             $where = 'surveyid IN ('.implode(',', array_keys($surveys)).') AND status = :status AND timecreated < :sofar';
-            $sofar = ($saveresume == 1) ? ($CFG->survey_maxinputdelay*3600) : (4*3600);
+            $sofar = ($saveresume == 1) ? ($maxinputdelay*3600) : (4*3600);
             $sofar = time() - $sofar;
             $sqlparams = array('status' => SURVEY_STATUSINPROGRESS, 'sofar' => $sofar);
             if ($submissionidlist = $DB->get_fieldset_select('survey_submissions', 'id', $where, $sqlparams)) {
@@ -767,6 +772,7 @@ function survey_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 function survey_extend_settings_navigation(settings_navigation $settings, navigation_node $surveynode) {
     global $CFG, $PAGE, $DB;
 
+    $forcemodifications = get_config('survey', 'forcemodifications');
     $cm = $PAGE->cm;
     if (!$cm = $PAGE->cm) {
         return;
@@ -825,7 +831,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
         $navnode = $surveynode->add(SURVEY_TAB3NAME,  new moodle_url('/mod/survey/utemplates_create.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
         // CHILDREN
-        if (!$hassubmissions || $CFG->survey_forcemodifications) {
+        if (!$hassubmissions || $forcemodifications) {
             $navnode->add(get_string('tabutemplatepage1', 'survey'), new moodle_url('/mod/survey/utemplates_manage.php', $paramurl), navigation_node::TYPE_SETTING);
         }
         if ($cancreateusertemplates) {
@@ -834,7 +840,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
         if ($canuploadusertemplates) {
             $navnode->add(get_string('tabutemplatepage3', 'survey'), new moodle_url('/mod/survey/utemplates_import.php', $paramurl), navigation_node::TYPE_SETTING);
         }
-        if ( (!$hassubmissions || $CFG->survey_forcemodifications) && $canapplyusertemplates ) {
+        if ( (!$hassubmissions || $forcemodifications) && $canapplyusertemplates ) {
             $navnode->add(get_string('tabutemplatepage4', 'survey'), new moodle_url('/mod/survey/utemplates_apply.php', $paramurl), navigation_node::TYPE_SETTING);
         }
     }
@@ -851,7 +857,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
         if ($cancreatemastertemplate) {
             $navnode->add(get_string('tabmtemplatepage1', 'survey'), new moodle_url('/mod/survey/mtemplates_create.php', $paramurl), navigation_node::TYPE_SETTING);
         }
-        if ( (!$hassubmissions || $CFG->survey_forcemodifications) && $canapplymastertemplate ) {
+        if ( (!$hassubmissions || $forcemodifications) && $canapplymastertemplate ) {
             $navnode->add(get_string('tabmtemplatepage2', 'survey'), new moodle_url('/mod/survey/mtemplates_apply.php', $paramurl), navigation_node::TYPE_SETTING);
         }
     }

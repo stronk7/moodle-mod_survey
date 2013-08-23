@@ -29,20 +29,25 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    $settings->add(new admin_setting_configtext('survey_maxinputdelay', get_string('maxinputdelay', 'survey'),
-                       get_string('maxinputdelay_descr', 'survey'), 168, PARAM_INT)); // alias: 7*24 hours == 1 week
+    $name = new lang_string('maxinputdelay', 'mod_survey');
+    $description = new lang_string('maxinputdelay_descr', 'mod_survey');
+    $settings->add(new admin_setting_configtext('survey/maxinputdelay', $name, $description, 168, PARAM_INT)); // alias: 7*24 hours == 1 week
 
-    $settings->add(new admin_setting_configcheckbox('survey_extranoteinsearch', get_string('extranoteinsearch', 'survey'),
-                       get_string('extranoteinsearch_descr', 'survey'), 0));
+    $name = new lang_string('extranoteinsearch', 'mod_survey');
+    $description = new lang_string('extranoteinsearch_descr', 'mod_survey');
+    $settings->add(new admin_setting_configcheckbox('survey/extranoteinsearch', $name, $description, 0));
 
-    $settings->add(new admin_setting_configcheckbox('survey_fillinginstructioninsearch', get_string('fillinginstructioninsearch', 'survey'),
-                       get_string('fillinginstructioninsearch_descr', 'survey'), 1));
+    $name = new lang_string('fillinginstructioninsearch', 'mod_survey');
+    $description = new lang_string('fillinginstructioninsearch_descr', 'mod_survey');
+    $settings->add(new admin_setting_configcheckbox('survey/fillinginstructioninsearch', $name, $description, 0));
 
-    $settings->add(new admin_setting_configcheckbox('survey_useadvancedpermissions', get_string('useadvancedpermissions', 'survey'),
-                       get_string('useadvancedpermissions_descr', 'survey'), 0));
+    $name = new lang_string('useadvancedpermissions', 'mod_survey');
+    $description = new lang_string('useadvancedpermissions_descr', 'mod_survey');
+    $settings->add(new admin_setting_configcheckbox('survey/useadvancedpermissions', $name, $description, 0));
 
-    $settings->add(new admin_setting_configcheckbox('survey_forcemodifications', get_string('forcemodifications', 'survey'),
-                       get_string('forcemodifications_descr', 'survey'), 0));
+    $name = new lang_string('forcemodifications', 'mod_survey');
+    $description = new lang_string('forcemodifications_descr', 'mod_survey');
+    $settings->add(new admin_setting_configcheckbox('survey/forcemodifications', $name, $description, 0));
 
     // include  settings of field subplugins
     $surveyplugin = get_plugin_list('surveyfield');
@@ -57,33 +62,43 @@ if ($ADMIN->fulltree) {
 
     // include settings of format subplugins
     $surveyplugin = get_plugin_list('surveyformat');
-    foreach ($surveyplugin as $survey => $path) {
+    foreach ($surveyplugin as $format => $path) {
         $settingsfile = $path.'/settings.php';
         if (file_exists($settingsfile)) {
-            $settings->add(new admin_setting_heading('surveytemplate_'.$survey,
-                    get_string('formatplugin', 'survey').' - '.get_string('pluginname', 'surveyformat_'.$survey), ''));
+            $settings->add(new admin_setting_heading('surveytemplate_'.$format,
+                    get_string('formatplugin', 'survey').' - '.get_string('pluginname', 'surveyformat_'.$format), ''));
             include($settingsfile);
         }
     }
 
     // include settings of template subplugins
     $surveyplugin = get_plugin_list('surveytemplate');
-    foreach ($surveyplugin as $survey => $path) {
+    foreach ($surveyplugin as $mastertemplate => $path) {
         $settingsfile = $path.'/settings.php';
         if (file_exists($settingsfile)) {
-            $settings->add(new admin_setting_heading('surveytemplate_'.$survey,
-                    get_string('templateplugin', 'survey').' - '.get_string('pluginname', 'surveytemplate_'.$survey), ''));
+            $settings->add(new admin_setting_heading('surveytemplate_'.$mastertemplate,
+                    get_string('templateplugin', 'survey').' - '.get_string('pluginname', 'surveytemplate_'.$mastertemplate), ''));
             include($settingsfile);
         }
     }
 
+    // allow to deny instantiation of old master templates
+    $description = new lang_string('denyinstantiation_descr', 'mod_survey');
+    $settings->add(new admin_setting_heading('surveytemplates',
+                                            get_string('templateplugin', 'survey'), ''));
+    $surveyplugin = get_plugin_list('surveytemplate');
+    foreach ($surveyplugin as $mastertemplate => $path) {
+        $name = new lang_string('pluginname', 'surveytemplate_'.$mastertemplate);
+        $settings->add(new admin_setting_configcheckbox('surveytemplate/'.$mastertemplate.'_denyinstantiation', $name, $description, 0));
+    }
+
     // include settings of report subplugins
     $surveyplugin = get_plugin_list('surveyreport');
-    foreach ($surveyplugin as $survey => $path) {
+    foreach ($surveyplugin as $report => $path) {
         $settingsfile = $path.'/settings.php';
         if (file_exists($settingsfile)) {
-            $settings->add(new admin_setting_heading('surveytemplate_'.$survey,
-                    get_string('reportplugin', 'survey').' - '.get_string('pluginname', 'surveyreport_'.$survey), ''));
+            $settings->add(new admin_setting_heading('surveytemplate_'.$report,
+                    get_string('reportplugin', 'survey').' - '.get_string('pluginname', 'surveyreport_'.$report), ''));
             include($settingsfile);
         }
     }

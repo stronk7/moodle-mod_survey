@@ -339,6 +339,16 @@ class mod_survey_templatebase {
             $templatecontent = $this->get_utemplate_content();
         }
 
+        if ($templatetype == SURVEY_MASTERTEMPLATE) {
+            $config = get_config('surveytemplate_'.$templatename);
+            if (count((array)$config) > 1) { // one is: 'timecreated'
+                $classfile = $CFG->dirroot.'/mod/survey/template/'.$templatename.'/template.class.php';
+                include_once($classfile);
+                $classname = 'surveytemplate_'.$templatename;
+                $mastertemplate = new $classname();
+            }
+        }
+
         $simplexml = new SimpleXMLElement($templatecontent);
         // $simplexml = simplexml_load_string($templatecontent);
         // echo '<h2>Items saved in the file ('.count($simplexml->item).')</h2>';
@@ -359,12 +369,19 @@ class mod_survey_templatebase {
 
                 unset($record['id']);
                 $record['surveyid'] = $this->survey->id;
+
+                // apply template settings
+                if (isset($mastertemplate)) {
+                    $mastertemplate->apply_template_settings($record);
+                }
+
                 if ($tablename == 'survey_item') {
                     $record['sortindex'] += $sortindexoffset;
                     if (!empty($record['parentid'])) {
                         $sqlparams = array('surveyid' => $this->survey->id, 'sortindex' => ($record['parentid'] + $sortindexoffset));
                         $record['parentid'] = $DB->get_field('survey_item', 'id', $sqlparams, MUST_EXIST);
                     }
+
                     $itemid = $DB->insert_record($tablename, $record);
                 } else {
                     $record['itemid'] = $itemid;
