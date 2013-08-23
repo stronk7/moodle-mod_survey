@@ -42,6 +42,21 @@ class mod_survey_templatebase {
      */
     public $formdata = null;
 
+
+    /*
+     * prevent_direct_user_input
+     *
+     * @param
+     * @return
+     */
+    public function prevent_direct_user_input() {
+        $forcemodifications = get_config('survey', 'forcemodifications');
+
+        if (!$forcemodifications) {
+            print_error('incorrectaccessdetected', 'survey');
+        }
+    }
+
     /*
      * get_table_structure
      *

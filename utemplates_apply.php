@@ -63,6 +63,7 @@ require_capability('mod/survey:applyusertemplates', $context);
 // calculations
 // ////////////////////////////////////////////////////////////
 $utemplate_manager = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid, $action, $confirm);
+$utemplate_manager->prevent_direct_user_input();
 
 // ////////////////////////////
 // define $apply_utemplate return url

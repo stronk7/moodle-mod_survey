@@ -57,6 +57,7 @@ require_capability('mod/survey:applymastertemplate', $context);
 // calculations
 // ////////////////////////////////////////////////////////////
 $mtemplate_manager = new mod_survey_mastertemplate($survey);
+$mtemplate_manager->prevent_direct_user_input();
 
 // ////////////////////////////
 // define $apply_mtemplate return url
