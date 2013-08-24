@@ -959,32 +959,48 @@ function survey_get_plugin_list($plugintype=null, $includetype=false, $count=fal
         if ($count) {
             $plugincount += count(get_plugin_list('survey'.SURVEY_TYPEFIELD));
         } else {
-            $field_pluginlist = get_plugin_list('survey'.SURVEY_TYPEFIELD);
+            $field_pluginlist = core_component::get_plugin_list('survey'.SURVEY_TYPEFIELD);
             if (!empty($includetype)) {
                 foreach ($field_pluginlist as $k => $v) {
-                    $field_pluginlist[$k] = SURVEY_TYPEFIELD.'_'.$k;
+                    if (!get_config('surveyfield_'.$k, 'disabled')) {
+                        $field_pluginlist[$k] = SURVEY_TYPEFIELD.'_'.$k;
+                    } else {
+                        unset($field_pluginlist[$k]);
+                    }
                 }
                 $field_pluginlist = array_flip($field_pluginlist);
             } else {
                 foreach ($field_pluginlist as $k => $v) {
-                    $field_pluginlist[$k] = $k;
+                    if (!get_config('surveyfield_'.$k, 'disabled')) {
+                        $field_pluginlist[$k] = $k;
+                    } else {
+                        unset($field_pluginlist[$k]);
+                    }
                 }
             }
         }
     }
     if ($plugintype == SURVEY_TYPEFORMAT || is_null($plugintype)) {
         if ($count) {
-            $plugincount += count(get_plugin_list('survey'.SURVEY_TYPEFORMAT));
+            $plugincount += count(core_component::get_plugin_list('survey'.SURVEY_TYPEFORMAT));
         } else {
             if (!empty($includetype)) {
-                $format_pluginlist = get_plugin_list('survey'.SURVEY_TYPEFORMAT);
+                $format_pluginlist = core_component::get_plugin_list('survey'.SURVEY_TYPEFORMAT);
                 foreach ($format_pluginlist as $k => $v) {
-                    $format_pluginlist[$k] = SURVEY_TYPEFORMAT.'_'.$k;
+                    if (!get_config('surveyformat_'.$k, 'disabled')) {
+                        $format_pluginlist[$k] = SURVEY_TYPEFORMAT.'_'.$k;
+                    } else {
+                        unset($format_pluginlist[$k]);
+                    }
                 }
                 $format_pluginlist = array_flip($format_pluginlist);
             } else {
                 foreach ($format_pluginlist as $k => $v) {
-                    $format_pluginlist[$k] = $k;
+                    if (!get_config('surveyformat_'.$k, 'disabled')) {
+                        $format_pluginlist[$k] = $k;
+                    } else {
+                        unset($format_pluginlist[$k]);
+                    }
                 }
             }
         }

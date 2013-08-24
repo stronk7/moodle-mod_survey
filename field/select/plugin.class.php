@@ -125,7 +125,8 @@ class surveyfield_select extends mod_survey_itembase {
         $this->flag->couldbeparent = true;
         $this->flag->usescontenteditor = true;
 
-        $this->item_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
+        // list of fields I do not want to have in the item definition form
+        $this->itembase_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
 
         if (!empty($itemid)) {
             $this->item_load($itemid);

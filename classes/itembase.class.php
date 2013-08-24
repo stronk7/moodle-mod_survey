@@ -125,11 +125,11 @@ class mod_survey_itembase {
      */
 
     /*
-     * $item_form_requires = list of fields the survey creator will need/see/use in the item definition form
+     * $itembase_form_requires = list of fields the survey creator will need/see/use in the item definition form
      * By default each item is present in the form
      * so, in each child class, I only need to "deactivate" mform element I don't want to have/see/use
      */
-    public $item_form_requires = array(
+    public $itembase_form_requires = array(
         'common_fs' => true,
         'content' => true,
         'customnumber' => true,
@@ -199,7 +199,7 @@ class mod_survey_itembase {
         $timenow = time();
 
         // is this useless?
-        // foreach ($this->item_form_requires as $k => $v) {
+        // foreach ($this->itembase_form_requires as $k => $v) {
         //     if (!$v) {
         //         unset($record->{$k});
         //     }
@@ -961,13 +961,13 @@ class mod_survey_itembase {
     }
 
     /*
-     * get_item_form_requires
+     * get_itembase_form_requires
      *
      * @param $setup_itemform_element
      * @return
      */
-    public function get_item_form_requires($setup_itemform_element) {
-        return $this->item_form_requires[$setup_itemform_element];
+    public function get_itembase_form_requires($setup_itemform_element) {
+        return $this->itembase_form_requires[$setup_itemform_element];
     }
 
     // MARK set

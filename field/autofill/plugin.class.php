@@ -136,8 +136,8 @@ class surveyfield_autofill extends mod_survey_itembase {
         $this->flag->usescontenteditor = true;
 
         // list of fields I do not want to have in the item definition form
-        $this->item_form_requires['required'] = false;         // <-- it will be set to 0 at save time
-        $this->item_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['required'] = false;         // <-- it will be set to 0 at save time
+        $this->itembase_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
 
         if (!empty($itemid)) {
             $this->item_load($itemid);

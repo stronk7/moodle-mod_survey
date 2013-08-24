@@ -140,13 +140,13 @@ class surveyfield_rate extends mod_survey_itembase {
         $this->flag->couldbeparent = false;
         $this->flag->usescontenteditor = true;
 
-        $this->item_form_requires['insearchform'] = false;
-
-        // item_form_requires['extrarow'] = true // show extrarow checkbox
-        // item_form_requires['extrarow'] = false // do not show extrarow checkbox
-        // item_form_requires['extrarow'] = 'disable' //  disable the extrarow checkbox
-        $this->item_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
-        $this->item_form_requires['extrarow'] = 'disable'; // show the checkbox
+        // list of fields I do not want to have in the item definition form
+        $this->itembase_form_requires['insearchform'] = false;
+        $this->itembase_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
+        // itembase_form_requires['extrarow'] = true // show extrarow checkbox
+        // itembase_form_requires['extrarow'] = false // do not show extrarow checkbox
+        // itembase_form_requires['extrarow'] = 'disable' //  disable the extrarow checkbox
+        $this->itembase_form_requires['extrarow'] = 'disable'; // show the checkbox
 
         if (!empty($itemid)) {
             $this->item_load($itemid);

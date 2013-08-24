@@ -64,14 +64,15 @@ class surveyformat_fieldsetend extends mod_survey_itembase {
         $this->flag->usescontenteditor = false;
 
         // list of fields I do not want to have in the item definition form
-        $this->item_form_requires['common_fs'] = false;
-        $this->item_form_requires['customnumber'] = false;
-        $this->item_form_requires['extrarow'] = false;
-        $this->item_form_requires['extranote'] = false;
-        $this->item_form_requires['required'] = false;
-        $this->item_form_requires['variable'] = false;
-        $this->item_form_requires['indent'] = false;
-        $this->item_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['common_fs'] = false;
+        $this->itembase_form_requires['content'] = false;
+        $this->itembase_form_requires['customnumber'] = false;
+        $this->itembase_form_requires['extrarow'] = false;
+        $this->itembase_form_requires['extranote'] = false;
+        $this->itembase_form_requires['required'] = false;
+        $this->itembase_form_requires['variable'] = false;
+        $this->itembase_form_requires['indent'] = false;
+        $this->itembase_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
 
         if (!empty($itemid)) {
             $this->item_load($itemid);

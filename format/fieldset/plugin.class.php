@@ -64,14 +64,13 @@ class surveyformat_fieldset extends mod_survey_itembase {
         $this->flag->usescontenteditor = false;
 
         // list of fields I do not want to have in the item definition form
-        // $this->item_form_requires['common_fs'] = false;
-        $this->item_form_requires['extranote'] = false;        // <-- actually the field has been removed so I do not need it in the item form
-        $this->item_form_requires['customnumber'] = false;     // <-- actually the field has been removed so I do not need it in the item form
-        $this->item_form_requires['extrarow'] = false;         // <-- actually the field has been removed so I do not need it in the item form
-        $this->item_form_requires['required'] = false;         // <-- actually the field has been removed so I do not need it in the item form
-        $this->item_form_requires['variable'] = false;         // <-- actually the field has been removed so I do not need it in the item form
-        $this->item_form_requires['indent'] = false;           // <-- actually the field has been removed so I do not need it in the item form
-        $this->item_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['extranote'] = false;        // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['customnumber'] = false;     // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['extrarow'] = false;         // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['required'] = false;         // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['variable'] = false;         // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['indent'] = false;           // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
 
         if (!empty($itemid)) {
             $this->item_load($itemid);

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Strings for component 'survey_attls', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'surveytemplate_attls', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    surveytemplate
  * @subpackage attls
@@ -24,6 +24,7 @@
  */
 
 $string['pluginname'] = 'ATTLS (20 item version)';
+
 $string['extrarow'] = 'Use extra row for attls built in survey';
 $string['extrarow_desc'] = 'This option let you toggle between having the question on the left or on the top of each set of buttons in ATTLS survey<br />Changes will take effect with new surveys';
 

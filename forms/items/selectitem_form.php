@@ -42,13 +42,12 @@ class survey_itemtypeform extends moodleform {
         $fieldname = 'plugin';
         // TAKE CARE! Here the plugin holds type and plugin both
         $field_plugins = survey_get_plugin_list(SURVEY_TYPEFIELD, true);
-        $format_plugins = survey_get_plugin_list(SURVEY_TYPEFORMAT, true);
-
         foreach ($field_plugins as $k => $v) {
             $field_plugins[$k] = get_string('userfriendlypluginname', 'surveyfield_'.$v);
         }
         asort($field_plugins);
 
+        $format_plugins = survey_get_plugin_list(SURVEY_TYPEFORMAT, true);
         foreach ($format_plugins as $k => $v) {
             $format_plugins[$k] = get_string('userfriendlypluginname', 'surveyformat_'.$v);
         }

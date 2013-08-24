@@ -128,6 +128,9 @@ class surveyfield_integer extends mod_survey_itembase {
         $this->flag->couldbeparent = true;
         $this->flag->usescontenteditor = true;
 
+        // list of fields I do not want to have in the item definition form
+        // EMPTY LIST
+
         if (!empty($itemid)) {
             $this->item_load($itemid);
         }

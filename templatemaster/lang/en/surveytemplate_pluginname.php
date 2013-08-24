@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Strings for component 'survey_surveyTemplate_@@templateNamePlaceholder@@', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'surveytemplate_@@templateNamePlaceholder@@', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    surveytemplate
  * @subpackage surveyTemplate_@@templateNamePlaceholder@@

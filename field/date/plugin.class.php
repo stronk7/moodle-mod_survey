@@ -137,6 +137,9 @@ class surveyfield_date extends mod_survey_itembase {
         $this->upperbound = $this->item_date_to_unix_time($survey->stopyear, 12, 31);
         $this->defaultvalue = $this->lowerbound;
 
+        // list of fields I do not want to have in the item definition form
+        // EMPTY LIST
+
         if (!empty($itemid)) {
             $this->item_load($itemid);
         }

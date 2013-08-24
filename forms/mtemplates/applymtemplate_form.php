@@ -34,8 +34,6 @@ class survey_applymtemplateform extends moodleform {
 
     public function definition() {
 
-        $config = get_config('surveytemplate');
-
         $mform = $this->_form;
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
@@ -44,7 +42,7 @@ class survey_applymtemplateform extends moodleform {
             $mtemplates = array();
 
             foreach ($mtemplatepluginlist as $mtemplatename => $mtemplatepath) {
-                if (!$config->{$mtemplatename.'_denyinstantiation'}) {
+                if (!get_config('surveytemplate_'.$mtemplatename, 'disabled')) {
                     $mtemplates[$mtemplatename] = get_string('pluginname', 'surveytemplate_'.$mtemplatename);
                 }
             }

@@ -197,7 +197,7 @@ class mod_survey_itemlist {
                 break;
             case SURVEY_ADDTOSEARCH:
                 $item = survey_get_item($this->itemid, $this->type, $this->plugin);
-                if ($item->get_item_form_requires('insearchform')) {
+                if ($item->get_itembase_form_requires('insearchform')) {
                     $DB->set_field('survey_item', 'insearchform', 1, array('id' => $this->itemid));
                 }
                 break;
@@ -422,7 +422,7 @@ class mod_survey_itemlist {
             } else {
                 if (!$item->get_advanced()) {
                     $message = get_string('available', 'survey');
-                    if ($item->get_item_form_requires('advanced')) {
+                    if ($item->get_itembase_form_requires('advanced')) {
                         $paramurl = $paramurl_base + array('act' => SURVEY_MAKELIMITED);
                         $basepath = new moodle_url('items_manage.php', $paramurl);
 
@@ -451,7 +451,7 @@ class mod_survey_itemlist {
                     $icons .= '<img src="'.$OUTPUT->pix_url('insearch', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
                 } else {
                     $message = get_string('notinsearchform', 'survey');
-                    if ($item->get_item_form_requires('insearchform')) {
+                    if ($item->get_itembase_form_requires('insearchform')) {
 
                         $paramurl = $paramurl_base + array('act' => SURVEY_ADDTOSEARCH);
                         $basepath = new moodle_url('items_manage.php', $paramurl);

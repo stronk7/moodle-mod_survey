@@ -124,7 +124,8 @@ class surveyfield_fileupload extends mod_survey_itembase {
         $this->flag->couldbeparent = false;
         $this->flag->usescontenteditor = true;
 
-        $this->item_form_requires['insearchform'] = false;
+        // list of fields I do not want to have in the item definition form
+        $this->itembase_form_requires['insearchform'] = false;
 
         $this->context = context_module::instance($cm->id);
 
