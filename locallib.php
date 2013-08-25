@@ -35,16 +35,10 @@ require_once($CFG->dirroot.'/mod/survey/lib.php');
  * @param $itemid, $type, $plugin
  * @return
  */
-function survey_get_item($itemid=0, $type='', $plugin='') {
+function survey_get_item($itemid, $type='', $plugin='') {
     global $CFG, $DB;
 
-    if (empty($itemid)) {
-        if (empty($type) || empty($plugin)) {
-            debugging('Can not get an item without its type, plugin and ID');
-        }
-    }
-
-    if (empty($type) && empty($plugin)) {
+    if (empty($type) || empty($plugin)) {
         $itemseed = $DB->get_record('survey_item', array('id' => $itemid), 'type, plugin', MUST_EXIST);
         $type = $itemseed->type;
         $plugin = $itemseed->plugin;

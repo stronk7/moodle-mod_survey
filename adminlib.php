@@ -486,6 +486,5 @@ class survey_plugin_manager {
 
             $admin->add($subtype.'plugins', $settings);
         }
-
     }
 }
