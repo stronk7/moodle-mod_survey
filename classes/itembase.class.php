@@ -433,15 +433,8 @@ class mod_survey_itembase {
         }
 
         if ($multilangfields = $this->item_get_multilang_fields()) {
-// if ($this->plugin == 'select') {
-//     echo '$multilangfields:';
-//     var_dump($multilangfields);
-// }
             foreach ($multilangfields as $plugin => $fieldnames) {
                 foreach ($fieldnames as $fieldname) {
-// if ($this->plugin == 'select') {
-//     echo '$fieldname = '.$fieldname.'<br />';
-// }
                     $stringkey = $this->{$fieldname};
                     $this->{$fieldname} = get_string($stringkey, 'surveytemplate_'.$template);
                 }

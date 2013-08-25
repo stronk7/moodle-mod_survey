@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 class mod_survey_itembaseform extends moodleform {
 
     public function definition() {
-        global $DB;
+        global $DB, $CFG;
 
         // -------------------------------------------------------------------------------
         // start getting $customdata
@@ -230,15 +230,16 @@ class mod_survey_itembaseform extends moodleform {
             $fieldname = 'parentid';
             // create the list of each item with:
             //     sortindex lower than mine (whether already exists)
-            //     $plugintemplate->flag->couldbeparent == true
+            //     $itemtemplate->flag->canbeparent == true
             //     advanced == my one <-- I jump this verification because the survey creator can, at every time, change the basicform of the current item
             //                            So I move the verification of the holding form at the form verification time.
 
             // build the list only for searchable plugins
             $pluginlist = survey_get_plugin_list(SURVEY_TYPEFIELD);
             foreach ($pluginlist as $plugin) {
-                $plugintemplate = survey_get_item(null, SURVEY_TYPEFIELD, $plugin);
-                if (!$plugintemplate->flag->couldbeparent) {
+                require_once($CFG->dirroot.'/mod/survey/'.SURVEY_TYPEFIELD.'/'.$plugin.'/plugin.class.php');
+                $classname = 'survey'.SURVEY_TYPEFIELD.'_'.$plugin;
+                if (!$classname::$canbeparent) {
                     unset($pluginlist[$plugin]);
                 }
             }

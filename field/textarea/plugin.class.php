@@ -117,6 +117,11 @@ class surveyfield_textarea extends mod_survey_itembase {
      */
     public $flag;
 
+    /*
+     * $canbeparent
+     */
+    public static $canbeparent = false;
+
     /*******************************************************************/
 
     /*
@@ -136,7 +141,6 @@ class surveyfield_textarea extends mod_survey_itembase {
 
         $this->flag = new stdClass();
         $this->flag->issearchable = false;
-        $this->flag->couldbeparent = false;
         $this->flag->usescontenteditor = true;
 
         $this->context = context_module::instance($cm->id);
@@ -508,7 +512,7 @@ EOS;
      * @return
      */
     public function userform_mform_element_is_group() {
-        // $this->flag->couldbeparent = false
+        // $this->flag->canbeparent = false
         // this method is never called
     }
 }

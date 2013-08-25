@@ -107,6 +107,11 @@ class surveyfield_checkbox extends mod_survey_itembase {
      */
     public $flag;
 
+    /*
+     * $canbeparent
+     */
+    public static $canbeparent = true;
+
     /*******************************************************************/
 
     /*
@@ -122,7 +127,6 @@ class surveyfield_checkbox extends mod_survey_itembase {
 
         $this->flag = new stdClass();
         $this->flag->issearchable = true;
-        $this->flag->couldbeparent = true;
         $this->flag->usescontenteditor = true;
 
         // list of fields I do not want to have in the item definition form

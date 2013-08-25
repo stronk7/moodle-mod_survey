@@ -29,23 +29,32 @@
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/mod/survey/adminlib.php');
 
+// folder 'survey plugins'
 $ADMIN->add('modules', new admin_category('surveyplugins',
                 new lang_string('surveyplugins', 'survey'), $module->is_enabled() === false));
 
-$ADMIN->add('surveyplugins', new admin_category('surveyitemplugins',
-                new lang_string('itemplugins', 'survey'), $module->is_enabled() === false));
-$ADMIN->add('surveyitemplugins', new survey_admin_page_manage_survey_plugins('surveyfield'));
-$ADMIN->add('surveyitemplugins', new survey_admin_page_manage_survey_plugins('surveyformat'));
+// folder 'survey field'
+$ADMIN->add('surveyplugins', new admin_category('surveyfieldplugins',
+                new lang_string('fieldplugins', 'survey'), $module->is_enabled() === false));
+$ADMIN->add('surveyfieldplugins', new survey_admin_page_manage_survey_plugins('surveyfield'));
 
+// folder 'survey format'
+$ADMIN->add('surveyplugins', new admin_category('surveyformatplugins',
+                new lang_string('formatplugins', 'survey'), $module->is_enabled() === false));
+$ADMIN->add('surveyformatplugins', new survey_admin_page_manage_survey_plugins('surveyformat'));
+
+// folder 'survey (master) templates'
 $ADMIN->add('surveyplugins', new admin_category('surveytemplateplugins',
                 new lang_string('mastertemplateplugins', 'survey'), $module->is_enabled() === false));
 $ADMIN->add('surveytemplateplugins', new survey_admin_page_manage_survey_plugins('surveytemplate'));
 
+// folder 'survey reports'
 $ADMIN->add('surveyplugins', new admin_category('surveyreportplugins',
                 new lang_string('reportplugins', 'survey'), $module->is_enabled() === false));
 $ADMIN->add('surveyreportplugins', new survey_admin_page_manage_survey_plugins('surveyreport'));
 
-survey_plugin_manager::add_admin_survey_plugin_settings('surveyitem', $ADMIN, $settings, $module);
+survey_plugin_manager::add_admin_survey_plugin_settings('surveyfield', $ADMIN, $settings, $module);
+survey_plugin_manager::add_admin_survey_plugin_settings('surveyformat', $ADMIN, $settings, $module);
 survey_plugin_manager::add_admin_survey_plugin_settings('surveytemplate', $ADMIN, $settings, $module);
 survey_plugin_manager::add_admin_survey_plugin_settings('surveyreport', $ADMIN, $settings, $module);
 

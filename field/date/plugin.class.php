@@ -112,6 +112,11 @@ class surveyfield_date extends mod_survey_itembase {
      */
     public $flag;
 
+    /*
+     * $canbeparent
+     */
+    public static $canbeparent = false;
+
     /*******************************************************************/
 
     /*
@@ -129,7 +134,6 @@ class surveyfield_date extends mod_survey_itembase {
 
         $this->flag = new stdClass();
         $this->flag->issearchable = true;
-        $this->flag->couldbeparent = false;
         $this->flag->usescontenteditor = true;
 
         // override properties depending from $survey settings

@@ -437,7 +437,6 @@ class mod_survey_templatebase {
                         }
                         if (($type) && ($plugin)) {
                             require_once($CFG->dirroot.'/mod/survey/'.$type.'/'.$plugin.'/plugin.class.php');
-                            //$item = survey_get_item(0, $type, $plugin);
                             $classname = 'survey'.$type.'_'.$plugin;
                             $xsd = $classname::item_get_item_schema();
                             break;

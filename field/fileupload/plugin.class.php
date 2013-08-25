@@ -102,6 +102,11 @@ class surveyfield_fileupload extends mod_survey_itembase {
      */
     public $flag;
 
+    /*
+     * $canbeparent
+     */
+    public static $canbeparent = false;
+
     /*******************************************************************/
 
     /*
@@ -121,7 +126,6 @@ class surveyfield_fileupload extends mod_survey_itembase {
 
         $this->flag = new stdClass();
         $this->flag->issearchable = false;
-        $this->flag->couldbeparent = false;
         $this->flag->usescontenteditor = true;
 
         // list of fields I do not want to have in the item definition form
