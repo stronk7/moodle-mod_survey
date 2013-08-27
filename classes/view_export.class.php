@@ -96,7 +96,7 @@ class mod_survey_exportmanager {
             $where['hide'] = 0;
         }
 
-        if (!$itemseeds = $DB->get_records('survey_item', $where, 'sortindex', 'id, variable, plugin')) {
+        if (!$itemseeds = $DB->get_records('survey_item', $where, 'sortindex', 'id, plugin')) {
             return SURVEY_NOFIELDSSELECTED;
             die;
         }
@@ -120,7 +120,7 @@ class mod_survey_exportmanager {
             $richsubmissionssql .= 'u.id as userid, u.firstname,  u.lastname, ';
         }
         $richsubmissionssql .= 'ud.id as id, ud.itemid, ud.content,
-                                si.sortindex, si.variable, si.plugin
+                                si.sortindex, si.plugin
                             FROM {survey_submissions} s
                                 INNER JOIN {user} u ON u.id = s.userid
                                 INNER JOIN {survey_userdata} ud ON ud.submissionid = s.id
@@ -227,14 +227,18 @@ class mod_survey_exportmanager {
      * @return
      */
     public function export_print_header($itemseeds, $worksheet) {
+        global $DB;
+
         // write the names of the fields in the header of the file to export
         $recordtoexport = array();
         if (empty($this->survey->anonymous)) {
             $recordtoexport[] = get_string('firstname');
             $recordtoexport[] = get_string('lastname');
         }
+        // variable
         foreach ($itemseeds as $singlefield) {
-            $recordtoexport[] = empty($singlefield->variable) ? $singlefield->plugin.'_'.$singlefield->id : $singlefield->variable;
+            $variable = $DB->get_field('survey_'.$singlefield->plugin, 'variable', array('itemid' => $singlefield->id));
+            $recordtoexport[] = empty($variable) ? $singlefield->plugin.'_'.$singlefield->id : $variable;
         }
         $recordtoexport[] = get_string('timecreated', 'survey');
         $recordtoexport[] = get_string('timemodified', 'survey');
