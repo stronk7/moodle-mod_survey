@@ -122,7 +122,6 @@ class surveyformat_pagebreak extends mod_survey_itembase {
          * timecreated
          * timemodified
          */
-        $record->insearchform = 0;
         // ------- end of fields saved in survey_items ------- //
 
         // ------ begin of fields saved in this plugin table ------ //

@@ -220,7 +220,11 @@ class mod_survey_itembase {
         // manage other checkboxes content
         $checkboxessettings = array('advanced', 'insearchform', 'hideinstructions', 'required', 'hide');
         foreach ($checkboxessettings as $checkboxessetting) {
-            $record->{$checkboxessetting} = isset($record->{$checkboxessetting}) ? 1 : 0;
+            if ($this->itembase_form_requires[$checkboxessetting]) {
+                $record->{$checkboxessetting} = isset($record->{$checkboxessetting}) ? 1 : 0;
+            } else {
+                $record->{$checkboxessetting} = 0;
+            }
         }
 
         // encode $fromform->parentcontent to $item->parentvalue on the basis of the parentplugin specified in $record->parentid

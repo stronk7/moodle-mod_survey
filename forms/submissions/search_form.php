@@ -48,7 +48,6 @@ class survey_searchform extends moodleform {
         $context = context_module::instance($cmid);
 
         foreach ($itemseeds as $itemseed) {
-            // is the current item matching the parent value?
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
             if ($item->get_extrarow()) {
