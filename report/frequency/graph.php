@@ -28,7 +28,7 @@ if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
 require_login($course, false, $cm);
 
 $groupmode = groups_get_activity_groupmode($cm);   // Groups are being used
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 
 if (!has_capability('mod/survey:accessreports', $context)) {
     print_error('nopermissiontoshow');

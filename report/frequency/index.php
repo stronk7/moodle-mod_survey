@@ -73,7 +73,6 @@ if ($fromform) {
     $paramurl['itemid'] = $fromform->itemid;
     $paramurl['submissionscount'] = $hassubmissions;
     $url = new moodle_url('/mod/survey/report/frequency/graph.php', $paramurl);
-    $a = $url->out();
 
     $report_manager->output_information($url->out());
 }

@@ -51,18 +51,18 @@ class survey_chooseitemform extends moodleform {
         $itemseeds = $DB->get_recordset('survey_item', $where, 'sortindex');
 
         // build options array
-        $maxlength = 150;
+        $maxlength = 57;
+        $ellipsis = '...';
         $options = array(get_string('choosedots'));
         foreach ($itemseeds as $itemseed) {
-            $thiscontent = survey_get_sid_field_content($itemseed);
+            $thiscontent = $DB->get_field('survey_'.$itemseed->plugin, 'content', array('itemid' => $itemseed->id));
             if (!empty($survey->template)) {
-                $thiscontent = get_string($itemseed->content, 'surveytemplate_'.$survey->template);
-            } else {
-                $thiscontent = $itemseed->content;
+                $thiscontent = get_string($thiscontent, 'surveytemplate_'.$survey->template);
             }
+
             $content = get_string('pluginname', 'surveyfield_'.$itemseed->plugin).': '.strip_tags($thiscontent);
             if (strlen($content) > $maxlength) {
-                $content = substr($content, 0, $maxlength);
+                $content = substr($content, 0, $maxlength).$ellipsis;
             }
             $options[$itemseed->id] = $content;
         }

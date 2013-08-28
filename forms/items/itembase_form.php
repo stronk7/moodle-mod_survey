@@ -256,7 +256,8 @@ class mod_survey_itembaseform extends moodleform {
                         ORDER BY sortindex';
             $parentsseeds = $DB->get_recordset_sql($sql, $sqlparams);
 
-            $maxlength = 80;
+            $maxlength = 57;
+            $ellipsis = '...';
             $quickform = new HTML_QuickForm();
             $select = $quickform->createElement('select', $fieldname, get_string($fieldname, 'survey'));
             $select->addOption(get_string('choosedots'), 0);
@@ -267,7 +268,7 @@ class mod_survey_itembaseform extends moodleform {
                 // I do not need to take care of contents of items of master templates because if I am here, $parent is a standard item and not a multilang one
                 $content = $star.get_string('pluginname', 'surveyfield_'.$parentitem->get_plugin()).' ['.$parentitem->get_sortindex().']: '.strip_tags($parentitem->get_content());
                 if (strlen($content) > $maxlength) {
-                    $content = substr($content, 0, $maxlength);
+                    $content = substr($content, 0, $maxlength).$ellipsis;
                 }
                 $disabled = ($parentitem->get_hide() == 1) ? array('disabled' => 'disabled') : null;
                 $select->addOption($content, $parentitem->itemid, $disabled);
