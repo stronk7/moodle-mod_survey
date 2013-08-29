@@ -214,8 +214,8 @@ class mod_survey_userpagemanager {
         global $CFG, $DB;
 
         //$canaccessadvanceditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$formpage
-        list($sql, $params) = survey_fetch_items_seeds($this->survey->id, $this->canaccessadvanceditems, false, SURVEY_TYPEFIELD, $formpage);
-        $itemseeds = $DB->get_records_sql($sql, $params);
+        list($sql, $whereparams) = survey_fetch_items_seeds($this->survey->id, $this->canaccessadvanceditems, false, SURVEY_TYPEFIELD, $formpage);
+        $itemseeds = $DB->get_records_sql($sql, $whereparams);
 
         // start looking ONLY at empty($item->parentid) because it doesn't involve extra queries
         foreach ($itemseeds as $itemseed) {
@@ -756,16 +756,16 @@ class mod_survey_userpagemanager {
     public function user_closed_submissions($status=SURVEY_STATUSALL) {
         global $USER, $DB;
 
-        $params = array('surveyid' => $this->survey->id, 'userid' => $USER->id);
+        $whereparams = array('surveyid' => $this->survey->id, 'userid' => $USER->id);
         if ($status != SURVEY_STATUSALL) {
             $statuslist = array(SURVEY_STATUSCLOSED, SURVEY_STATUSINPROGRESS);
             if (!in_array($status, $statuslist)) {
                 print_error('invalid $status passed to user_closed_submissions in '.__LINE__.' of file '.__FILE__);
             }
-            $params['status'] = $status;
+            $whereparams['status'] = $status;
         }
 
-        return $DB->count_records('survey_submissions', $params);
+        return $DB->count_records('survey_submissions', $whereparams);
     }
 
     /*
@@ -780,8 +780,8 @@ class mod_survey_userpagemanager {
         $message = get_string('nomorerecordsallowed', 'survey', $this->survey->maxentries);
         echo $OUTPUT->notification($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
 
-        $params = array('id' => $this->cm->id);
-        $continueurl = new moodle_url('view_manage.php', $params);
+        $whereparams = array('id' => $this->cm->id);
+        $continueurl = new moodle_url('view_manage.php', $whereparams);
 
         echo $OUTPUT->continue_button($continueurl);
         echo $OUTPUT->footer();
@@ -888,8 +888,8 @@ class mod_survey_userpagemanager {
 
         $prefill = array();
         // $canaccessadvanceditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$this->formpage
-        list($sql, $params) = survey_fetch_items_seeds($this->survey->id, $this->canaccessadvanceditems, false, SURVEY_TYPEFIELD, $this->formpage);
-        if ($itemseeds = $DB->get_recordset_sql($sql, $params)) {
+        list($sql, $whereparams) = survey_fetch_items_seeds($this->survey->id, $this->canaccessadvanceditems, false, SURVEY_TYPEFIELD, $this->formpage);
+        if ($itemseeds = $DB->get_recordset_sql($sql, $whereparams)) {
             foreach ($itemseeds as $itemseed) {
                 $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 

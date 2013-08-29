@@ -463,10 +463,28 @@ class mod_survey_itemlist {
                     }
                 }
             }
+
+            // *************************************** SURVEY_HIDEITEM/SURVEY_SHOWITEM
+            $current_hide = $item->get_hide();
+            if (!$this->hassubmissions || $forcemodifications) {
+                $paramurl = $paramurl_base;
+                if (!empty($current_hide)) {
+                    $icopath = 't/show';
+                    $paramurl = $paramurl + array('act' => SURVEY_SHOWITEM);
+                    $message = $showtitle;
+                } else {
+                    $icopath = 't/hide';
+                    $paramurl = $paramurl + array('act' => SURVEY_HIDEITEM);
+                    $message = $hidetitle;
+                }
+                $basepath = new moodle_url('items_manage.php', $paramurl);
+
+                $icons .= '<a class="editing_update" title="'.$message.'" href="'.$basepath.'">';
+                $icons .= '<img src="'.$OUTPUT->pix_url($icopath).'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
+            }
             $tablerow[] = $icons;
 
             // *************************************** actions
-            $current_hide = $item->get_hide();
             if ($this->action != SURVEY_CHANGEORDERASK) {
 
                 $icons = '';
@@ -488,24 +506,6 @@ class mod_survey_itemlist {
 
                     $icons .= '<a class="editing_update" title="'.$changetitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url('t/move').'" class="iconsmall" alt="'.$changetitle.'" title="'.$changetitle.'" /></a>&nbsp;';
-                }
-
-                // *************************************** SURVEY_HIDEITEM/SURVEY_SHOWITEM
-                if (!$this->hassubmissions || $forcemodifications) {
-                    $paramurl = $paramurl_base;
-                    if (!empty($current_hide)) {
-                        $icopath = 't/show';
-                        $paramurl = $paramurl + array('act' => SURVEY_SHOWITEM);
-                        $message = $showtitle;
-                    } else {
-                        $icopath = 't/hide';
-                        $paramurl = $paramurl + array('act' => SURVEY_HIDEITEM);
-                        $message = $hidetitle;
-                    }
-                    $basepath = new moodle_url('items_manage.php', $paramurl);
-
-                    $icons .= '<a class="editing_update" title="'.$message.'" href="'.$basepath.'">';
-                    $icons .= '<img src="'.$OUTPUT->pix_url($icopath).'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
                 }
 
                 // *************************************** SURVEY_DELETEITEM

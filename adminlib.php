@@ -159,7 +159,7 @@ class survey_plugin_manager {
      * @return None
      */
     private function view_plugins_table() {
-        global $OUTPUT, $CFG;
+        global $OUTPUT, $CFG, $DB;
 
         require_once($CFG->libdir.'/tablelib.php');
 
@@ -167,11 +167,25 @@ class survey_plugin_manager {
         $this->view_header();
         $table = new flexible_table($this->subtype.'pluginsadminttable');
         $table->define_baseurl($this->pageurl);
-        $table->define_columns(array('pluginname', 'version', 'hideshow', 'order',
-                'delete', 'settings'));
-        $table->define_headers(array(get_string($this->subtype.'pluginname', 'survey'),
-                get_string('version'), get_string('hideshow', 'survey'),
-                get_string('order'), get_string('delete'), get_string('settings')));
+
+        $tablecolumns = array();
+        $tablecolumns[] = 'pluginname';
+        $tablecolumns[] = 'version';
+        $tablecolumns[] = 'numinstances';
+        $tablecolumns[] = 'hideshow';
+        $tablecolumns[] = 'delete';
+        $tablecolumns[] = 'settings';
+        $table->define_columns($tablecolumns);
+
+        $tableheaders = array();
+        $tableheaders[] = get_string($this->subtype.'pluginname', 'survey');
+        $tableheaders[] = get_string('version');
+        $tableheaders[] = get_string('numinstances', 'survey');
+        $tableheaders[] = get_string('hideshow', 'survey');
+        $tableheaders[] = get_string('delete');
+        $tableheaders[] = get_string('settings');
+        $table->define_headers($tableheaders);
+
         $table->set_attribute('id', $this->subtype.'plugins');
         $table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
         $table->setup();
@@ -179,32 +193,43 @@ class survey_plugin_manager {
         $plugins = $this->get_sorted_plugins_list();
         $shortsubtype = substr($this->subtype, strlen('survey'));
 
+        if ($this->subtype == 'surveyfield') {
+            $type = SURVEY_TYPEFIELD;
+        }
+        if ($this->subtype == 'surveyformat') {
+            $type = SURVEY_TYPEFORMAT;
+        }
+        $countsql = 'SELECT plugin, COUNT(1) as numinstances
+            FROM {survey_item}
+            WHERE type = :type
+            GROUP BY plugin';
+        $whereparams = array('type' => $type);
+        $counts = $DB->get_records_sql($countsql, $whereparams);
+
         foreach ($plugins as $idx => $plugin) {
             $row = array();
 
-            $row[] = get_string('pluginname', $this->subtype.'_'.$plugin);
+            // pluginname
+            $plugintitle = get_string('userfriendlypluginname', $this->subtype.'_'.$plugin);
+            $content = '<img src="'.$OUTPUT->pix_url('icon', $this->subtype.'_'.$plugin).'" class="icon" alt="'.$plugintitle.'" title="'.$plugintitle.'" />&nbsp;';
+            $row[] = $content.get_string('pluginname', $this->subtype.'_'.$plugin);
+
+            // version
             $row[] = get_config($this->subtype.'_'.$plugin, 'version');
 
-            $visible = !get_config($this->subtype.'_'.$plugin, 'disabled');
+            // number of instances
+            $row[] = $counts[$plugin]->numinstances;
 
+            // enable/disable
+            $visible = !get_config($this->subtype.'_'.$plugin, 'disabled');
             if ($visible) {
                 $row[] = $this->format_icon_link('hide', $plugin, 't/hide', get_string('disable'));
             } else {
                 $row[] = $this->format_icon_link('show', $plugin, 't/show', get_string('enable'));
             }
 
-            $movelinks = '';
-            if (!$idx == 0) {
-                $movelinks .= $this->format_icon_link('moveup', $plugin, 't/up', get_string('up'));
-            } else {
-                $movelinks .= $OUTPUT->spacer(array('width' => 16));
-            }
-            if ($idx != count($plugins) - 1) {
-                $movelinks .= $this->format_icon_link('movedown', $plugin, 't/down', get_string('down'));
-            }
-            $row[] = $movelinks;
-
-            if ($row[1] != '') {
+            // delete
+            if (!$counts[$plugin]->numinstances) {
                 $row[] = $this->format_icon_link('delete', $plugin, 't/delete', get_string('delete'));
             } else {
                 $row[] = '&nbsp;';
@@ -216,6 +241,7 @@ class survey_plugin_manager {
             } else {
                 $row[] = '&nbsp;';
             }
+
             $table->add_data($row);
         }
 
@@ -355,53 +381,6 @@ class survey_plugin_manager {
     }
 
     /**
-     * Change the order of this plugin.
-     *
-     * @param string $plugintomove - The plugin to move
-     * @param string $dir - up or down
-     * @return string The next page to display
-     */
-    public function move_plugin($plugintomove, $dir) {
-        // Get a list of the current plugins.
-        $plugins = $this->get_sorted_plugins_list();
-
-        $currentindex = 0;
-
-        // Throw away the keys.
-        $plugins = array_values($plugins);
-
-        // Find this plugin in the list.
-        foreach ($plugins as $key => $plugin) {
-            if ($plugin == $plugintomove) {
-                $currentindex = $key;
-                break;
-            }
-        }
-
-        // Make the switch.
-        if ($dir == 'up') {
-            if ($currentindex > 0) {
-                $tempplugin = $plugins[$currentindex - 1];
-                $plugins[$currentindex - 1] = $plugins[$currentindex];
-                $plugins[$currentindex] = $tempplugin;
-            }
-        } else if ($dir == 'down') {
-            if ($currentindex < (count($plugins) - 1)) {
-                $tempplugin = $plugins[$currentindex + 1];
-                $plugins[$currentindex + 1] = $plugins[$currentindex];
-                $plugins[$currentindex] = $tempplugin;
-            }
-        }
-
-        // Save the new normal order.
-        foreach ($plugins as $key => $plugin) {
-            set_config('sortorder', $key, $this->subtype.'_'.$plugin);
-        }
-        return 'view';
-    }
-
-
-    /**
      * Show this plugin.
      *
      * @param string $plugin - The plugin to show
@@ -434,10 +413,6 @@ class survey_plugin_manager {
             $action = $this->hide_plugin($plugin);
         } else if ($action == 'show' && $plugin != null) {
             $action = $this->show_plugin($plugin);
-        } else if ($action == 'moveup' && $plugin != null) {
-            $action = $this->move_plugin($plugin, 'up');
-        } else if ($action == 'movedown' && $plugin != null) {
-            $action = $this->move_plugin($plugin, 'down');
         }
 
         // View.

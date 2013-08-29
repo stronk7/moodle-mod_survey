@@ -77,8 +77,7 @@ class mod_survey_exportmanager {
     public function survey_export() {
         global $CFG, $DB;
 
-        $params = array();
-        $params['surveyid'] = $this->survey->id;
+        $whereparams = array('surveyid' => $this->survey->id);
 
         // do I need to filter groups?
         $filtergroups = survey_need_group_filtering($this->cm, $this->context);
@@ -135,7 +134,7 @@ class mod_survey_exportmanager {
         }
         if ($this->formdata->status != SURVEY_STATUSALL) {
             $richsubmissionssql .= ' AND s.status = :status';
-            $params['status'] = $this->formdata->status;
+            $whereparams['status'] = $this->formdata->status;
         }
         if ($filtergroups) {
             $richsubmissionssql .= $andgroup;
@@ -145,7 +144,7 @@ class mod_survey_exportmanager {
         // end of: write the query
         // ////////////////////////////
 
-        $richsubmissions = $DB->get_recordset_sql($richsubmissionssql, $params);
+        $richsubmissions = $DB->get_recordset_sql($richsubmissionssql, $whereparams);
         if ($richsubmissions->valid()) {
             if ($this->formdata->downloadtype == SURVEY_DOWNLOADXLS) {
                 require_once($CFG->libdir.'/excellib.class.php');

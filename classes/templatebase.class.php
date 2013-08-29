@@ -134,9 +134,9 @@ class mod_survey_templatebase {
                 if ($field == 'parentid') {
                     $parentid = $item->get_parentid();
                     if ($parentid) {
-                        $sqlparams = array('id' => $parentid);
+                        $whereparams = array('id' => $parentid);
                         // I store sortindex instead of parentid, because at restore time parent id will change
-                        $val = $DB->get_field('survey_item', 'sortindex', $sqlparams);
+                        $val = $DB->get_field('survey_item', 'sortindex', $whereparams);
                         $xmlfield = $xmltable->addChild($field, $val);
                     // } else {
                         // it is empty, do not evaluate: jump
@@ -393,8 +393,8 @@ class mod_survey_templatebase {
                 if ($tablename == 'survey_item') {
                     $record['sortindex'] += $sortindexoffset;
                     if (!empty($record['parentid'])) {
-                        $sqlparams = array('surveyid' => $this->survey->id, 'sortindex' => ($record['parentid'] + $sortindexoffset));
-                        $record['parentid'] = $DB->get_field('survey_item', 'id', $sqlparams, MUST_EXIST);
+                        $whereparams = array('surveyid' => $this->survey->id, 'sortindex' => ($record['parentid'] + $sortindexoffset));
+                        $record['parentid'] = $DB->get_field('survey_item', 'id', $whereparams, MUST_EXIST);
                     }
 
                     $itemid = $DB->insert_record($tablename, $record);

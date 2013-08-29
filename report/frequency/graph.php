@@ -45,9 +45,9 @@ $sql = 'SELECT content, count(id) as absolute
         WHERE itemid = :itemid
         GROUP BY content';
 
-$params['itemid'] = $itemid;
+$whereparams = array('itemid' => $itemid);
 
-$answers = $DB->get_recordset_sql($sql, $params, 'ud.content');
+$answers = $DB->get_recordset_sql($sql, $whereparams, 'ud.content');
 
 $counted = 0;
 $content = array();

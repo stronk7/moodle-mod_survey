@@ -130,8 +130,8 @@ class report_count {
         } else {
             $sql .= ' ORDER BY s.lastname';
         }
-        $sqlparams = array('surveyid' => $this->survey->id);
-        $usersubmissions = $DB->get_recordset_sql($sql, $sqlparams);
+        $whereparams = array('surveyid' => $this->survey->id);
+        $usersubmissions = $DB->get_recordset_sql($sql, $whereparams);
 
         foreach ($usersubmissions as $usersubmission) {
             $tablerow = array();

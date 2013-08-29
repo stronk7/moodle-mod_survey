@@ -245,8 +245,8 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
                 FROM {survey_item} si
                 WHERE si.surveyid = :surveyid
                 GROUP BY si.plugin';
-        $params = array('surveyid' => $this->survey->id);
-        $templateplugins = $DB->get_records_sql($sql, $params);
+        $whereparams = array('surveyid' => $this->survey->id);
+        $templateplugins = $DB->get_records_sql($sql, $whereparams);
 
         // STEP 02: add, at top of $templateplugins, the fictitious 'item' plugin
         $base = new stdClass();

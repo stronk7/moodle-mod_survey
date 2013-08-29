@@ -534,8 +534,8 @@ function survey_cron() {
             $where = 'surveyid IN ('.implode(',', array_keys($surveys)).') AND status = :status AND timecreated < :sofar';
             $sofar = ($saveresume == 1) ? ($maxinputdelay*3600) : (4*3600);
             $sofar = time() - $sofar;
-            $sqlparams = array('status' => SURVEY_STATUSINPROGRESS, 'sofar' => $sofar);
-            if ($submissionidlist = $DB->get_fieldset_select('survey_submissions', 'id', $where, $sqlparams)) {
+            $whereparams = array('status' => SURVEY_STATUSINPROGRESS, 'sofar' => $sofar);
+            if ($submissionidlist = $DB->get_fieldset_select('survey_submissions', 'id', $where, $whereparams)) {
                 $DB->delete_records_list('survey_userdata', 'submissionid', $submissionidlist);
                 $DB->delete_records_list('survey_submissions', 'id', $submissionidlist);
             }

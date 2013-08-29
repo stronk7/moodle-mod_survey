@@ -246,7 +246,7 @@ class mod_survey_submissionmanager {
         $sql = 'SELECT s.*, s.id as submissionid, '.user_picture::fields('u').'
                 FROM {survey_submissions} s ';
 
-        list($where, $params) = $table->get_sql_where();
+        list($where, $whereparams) = $table->get_sql_where();
 
         // write $userdata_transposed whether necessary
         if ($this->searchfields_get) {
@@ -278,12 +278,12 @@ class mod_survey_submissionmanager {
 
         $sql .= '    JOIN {user} u ON (s.userid = u.id)
                 WHERE s.surveyid = :surveyid';
-        $params['surveyid'] = $this->survey->id;
+        $whereparams['surveyid'] = $this->survey->id;
 
         if (!$this->canmanageallsubmissions) {
             if ($this->survey->readaccess == SURVEY_OWNER) {
                 $sql .= ' AND s.userid = :userid';
-                $params['userid'] = $USER->id;
+                $whereparams['userid'] = $USER->id;
             }
         }
 
@@ -291,7 +291,7 @@ class mod_survey_submissionmanager {
         if ($this->searchfields_get) {
             foreach ($search_restrictions as $itemid => $search_restriction) {
                 $sql .= ' AND udt.c_'.$itemid.' = :c_'.$itemid;
-                $params['c_'.$itemid] = $search_restriction;
+                $whereparams['c_'.$itemid] = $search_restriction;
             }
         }
 
@@ -323,7 +323,7 @@ class mod_survey_submissionmanager {
         }
 
 // echo '$sql = '.$sql.'<br />';
-        return array($sql, $params, $mygroups);
+        return array($sql, $whereparams, $mygroups);
     }
 
     /*
@@ -413,9 +413,9 @@ class mod_survey_submissionmanager {
         $paramurl['id'] = $this->cm->id;
         $basepath = new moodle_url('view.php', $paramurl);
 
-        list($sql, $params, $mygroups) = $this->get_manage_sql($table);
+        list($sql, $whereparams, $mygroups) = $this->get_manage_sql($table);
 
-        $submissions = $DB->get_recordset_sql($sql, $params, $table->get_sql_sort());
+        $submissions = $DB->get_recordset_sql($sql, $whereparams, $table->get_sql_sort());
 
         if ($submissions->valid()) {
             if ($this->canmanageallsubmissions) {
@@ -590,7 +590,7 @@ class mod_survey_submissionmanager {
 
         $accessedadvancedform = has_capability('mod/survey:accessadvanceditems', $this->context, $user->id, true);
         // $canaccessadvanceditems, $searchform = false; $type = false; $formpage = false;
-        list($sql, $params) = survey_fetch_items_seeds($this->survey->id, $accessedadvancedform, false);
+        list($sql, $whereparams) = survey_fetch_items_seeds($this->survey->id, $accessedadvancedform, false);
 
         // I am not allowed to get ONLY answers from survey_userdata
         // because I also need to gather info about fieldset and label
@@ -598,7 +598,7 @@ class mod_survey_submissionmanager {
         //         FROM {survey_submissions} s
         //             JOIN {survey_userdata} ud ON ud.submissionid = s.id
         //         WHERE s.id = :submissionid';
-        $itemseeds = $DB->get_recordset_sql($sql, $params);
+        $itemseeds = $DB->get_recordset_sql($sql, $whereparams);
 
         $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
 

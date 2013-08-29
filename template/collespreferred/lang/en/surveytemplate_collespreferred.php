@@ -29,7 +29,7 @@ $string['label_content_01'] = '<p>The purpose of this survey is to help us under
 
 $string['fieldset_content_01'] = 'Relevance';
 
-$string['label_content_02'] = '<p>In this online unit...</p>';
+$string['label_content_02'] = '<p>In this online unit, I prefer that...</p>';
 
 $string['radiobutton_content_03'] = '<p>my learning focuses on issues that interest me.</p>';
 $string['radiobutton_content_04'] = '<p>what I learn is important for my professional practice.</p>';

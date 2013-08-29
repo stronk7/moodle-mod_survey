@@ -78,8 +78,8 @@ class survey_submissionform extends moodleform {
 
         if ($formpage > 0) {
             //$canaccessadvanceditems, $searchform=false, $type=false, $formpage
-            list($sql, $params) = survey_fetch_items_seeds($survey->id, $canaccessadvanceditems, false, false, $formpage);
-            $itemseeds = $DB->get_recordset_sql($sql, $params);
+            list($sql, $whereparams) = survey_fetch_items_seeds($survey->id, $canaccessadvanceditems, false, false, $formpage);
+            $itemseeds = $DB->get_recordset_sql($sql, $whereparams);
             // I do not need to be sure items are found because I already know this
             // In attempt.php if items are not found I display a message and execution is stopped
 

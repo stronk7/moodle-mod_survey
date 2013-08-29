@@ -220,8 +220,8 @@ EOS;
             $sql .= ' ORDER BY sortindex
                 LIMIT 1';
 
-            $sqlparams = array('surveyid' => $cm->instance, 'sortindex' => $this->sortindex);
-            $itemseed = $DB->get_record_sql($sql, $sqlparams, IGNORE_MISSING);
+            $whereparams = array('surveyid' => $cm->instance, 'sortindex' => $this->sortindex);
+            $itemseed = $DB->get_record_sql($sql, $whereparams, IGNORE_MISSING);
             if ($itemseed) { // The element really exists
                 $nextitem = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
                 if ($nextitem->extrarow) {

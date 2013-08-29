@@ -95,7 +95,7 @@ class report_frequency {
     public function fetch_information($itemid, $submissionscount) {
         global $DB;
 
-        list($where, $params) = $this->outputtable->get_sql_where();
+        list($where, $whereparams) = $this->outputtable->get_sql_where();
 
         $sql = 'SELECT *, count(ud.id) as absolute
                 FROM {survey_userdata} ud
@@ -108,9 +108,9 @@ class report_frequency {
             $sql .= ' ORDER BY ud.content';
         }
 
-        $params['itemid'] = $itemid;
+        $whereparams['itemid'] = $itemid;
 
-        $this->answers = $DB->get_recordset_sql($sql, $params, $this->outputtable->get_sql_sort());
+        $this->answers = $DB->get_recordset_sql($sql, $whereparams, $this->outputtable->get_sql_sort());
 
         $dummyitem = survey_get_item($itemid);
 

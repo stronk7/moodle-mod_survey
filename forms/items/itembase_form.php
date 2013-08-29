@@ -247,14 +247,14 @@ class mod_survey_itembaseform extends moodleform {
             $sql = 'SELECT *
                     FROM {survey_item}
                     WHERE surveyid = :surveyid';
-            $sqlparams = array('surveyid' => $survey->id);
+            $whereparams = array('surveyid' => $survey->id);
             if ($item->get_sortindex()) {
                 $sql .= ' AND sortindex < :sortindex';
-                $sqlparams['sortindex'] = $item->get_sortindex();
+                $whereparams['sortindex'] = $item->get_sortindex();
             }
             $sql .= ' AND plugin IN '.$where.'
                         ORDER BY sortindex';
-            $parentsseeds = $DB->get_recordset_sql($sql, $sqlparams);
+            $parentsseeds = $DB->get_recordset_sql($sql, $whereparams);
 
             $maxlength = 57;
             $ellipsis = '...';
