@@ -345,8 +345,9 @@ class survey_plugin_manager {
         $pluginname = get_string('pluginname', $this->subtype.'_'.$plugin);
         echo $OUTPUT->heading(get_string('deletingplugin', 'survey', $pluginname));
         echo $this->error;
+        $shortsubtype = substr($this->subtype, strlen('survey'));
         $messageparams = array('name' => $pluginname,
-                               'directory' => ('/mod/survey/'.$this->subtype.'/'.$plugin));
+                               'directory' => ('/mod/survey/'.$shortsubtype.'/'.$plugin));
         echo $OUTPUT->notification(get_string('plugindeletefiles', 'moodle', $messageparams));
         echo $OUTPUT->continue_button($this->pageurl);
         $this->view_footer();
