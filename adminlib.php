@@ -218,7 +218,11 @@ class survey_plugin_manager {
             $row[] = get_config($this->subtype.'_'.$plugin, 'version');
 
             // number of instances
-            $row[] = $counts[$plugin]->numinstances;
+            if (isset($counts[$plugin])) {
+                $row[] = $counts[$plugin]->numinstances;
+            } else {
+                $row[] = 0;
+            }
 
             // enable/disable
             $visible = !get_config($this->subtype.'_'.$plugin, 'disabled');
@@ -229,10 +233,10 @@ class survey_plugin_manager {
             }
 
             // delete
-            if (!$counts[$plugin]->numinstances) {
-                $row[] = $this->format_icon_link('delete', $plugin, 't/delete', get_string('delete'));
-            } else {
+            if (isset($counts[$plugin])) {
                 $row[] = '&nbsp;';
+            } else {
+                $row[] = $this->format_icon_link('delete', $plugin, 't/delete', get_string('delete'));
             }
             $exists = file_exists($CFG->dirroot.'/mod/survey/'.$shortsubtype.'/'.$plugin.'/settings.php');
             if ($row[1] != '' && $exists) {
@@ -308,7 +312,7 @@ class survey_plugin_manager {
             unset_config('sortorder', $this->subtype.'_'.$plugin);
 
             // Delete the plugin specific config settings.
-            $DB->delete_records('survey_plugin_config', array('plugin' => $plugin, 'subtype' => $this->subtype));
+            // $DB->delete_records('survey_item', array('plugin' => $plugin, 'subtype' => $this->subtype));
 
             // Then the tables themselves.
             $shortsubtype = substr($this->subtype, strlen('survey'));
@@ -358,10 +362,10 @@ class survey_plugin_manager {
         global $OUTPUT;
         $this->view_header();
         $pluginname = get_string('pluginname', $this->subtype.'_'.$plugin);
-        echo $OUTPUT->heading(get_string('deletepluginareyousure', 'survey', $pluginname));
+        echo $OUTPUT->heading(get_string('deletingplugin', 'survey', $pluginname));
         $urlparams = array('action' => 'delete', 'plugin' => $plugin, 'confirm' => 1);
         $confirmurl = new moodle_url($this->pageurl, $urlparams);
-        echo $OUTPUT->confirm(get_string('deletepluginareyousuremessage', 'survey', $pluginname),
+        echo $OUTPUT->confirm(get_string('deletepluginmessage', 'survey', $pluginname),
                 $confirmurl,
                 $this->pageurl);
         $this->view_footer();

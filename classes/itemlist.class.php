@@ -413,7 +413,8 @@ class mod_survey_itemlist {
             $tablerow[] = $content;
 
             // *************************************** availability
-            if ($item->get_hide()) {
+            $current_hide = $item->get_hide();
+            if ($current_hide) {
                 $message = get_string('hidden', 'survey');
                 $icons = '<img src="'.$OUTPUT->pix_url('absent', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
 
@@ -465,7 +466,6 @@ class mod_survey_itemlist {
             }
 
             // *************************************** SURVEY_HIDEITEM/SURVEY_SHOWITEM
-            $current_hide = $item->get_hide();
             if (!$this->hassubmissions || $forcemodifications) {
                 $paramurl = $paramurl_base;
                 if (!empty($current_hide)) {
