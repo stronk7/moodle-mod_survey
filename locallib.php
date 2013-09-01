@@ -148,3 +148,19 @@ function survey_need_group_filtering($cm, $context) {
 
     return $filtergroups;
 }
+
+/*
+ * survey_fixlength
+ * @param
+ * @return
+ */
+function survey_fixlength($plainstring, $maxlength=60) {
+    $ellipsis = '...';
+    $cutlength = $maxlength - strlen($ellipsis);
+    if (strlen($plainstring) > $maxlength) {
+        $plainstring = substr($plainstring, 0, $cutlength).$ellipsis;
+        $return = $plainstring;
+    }
+
+    return $plainstring;
+}
