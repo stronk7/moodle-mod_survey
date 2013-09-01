@@ -52,7 +52,11 @@ class mod_survey_templatebase {
     public function prevent_direct_user_input() {
         $forcemodifications = get_config('survey', 'forcemodifications');
 
-        if (!$forcemodifications) {
+        $hassubmissions = survey_count_submissions($this->survey->id);
+        if ($hassubmissions && (!$forcemodifications)) {
+            print_error('incorrectaccessdetected', 'survey');
+        }
+        if ($this->survey->template && (!$forcemodifications)) {
             print_error('incorrectaccessdetected', 'survey');
         }
     }

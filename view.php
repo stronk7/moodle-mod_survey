@@ -28,7 +28,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
-require_once($CFG->dirroot.'/mod/survey/classes/view_userpage.class.php');
+require_once($CFG->dirroot.'/mod/survey/classes/view_userform.class.php');
 require_once($CFG->dirroot.'/mod/survey/forms/submissions/userpage_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
@@ -57,7 +57,7 @@ $submissionid = optional_param('submissionid', 0, PARAM_INT);
 // ////////////////////////////////////////////////////////////
 // calculations
 // ////////////////////////////////////////////////////////////
-$userpage_manager = new mod_survey_userpagemanager($cm, $survey, $submissionid, $formpage, $action);
+$userpage_manager = new mod_survey_userformmanager($cm, $survey, $submissionid, $formpage, $action);
 $userpage_manager->prevent_direct_user_input();
 $userpage_manager->survey_add_custom_css();
 
