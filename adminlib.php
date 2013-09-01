@@ -193,25 +193,26 @@ class survey_plugin_manager {
         $plugins = $this->get_sorted_plugins_list();
         $shortsubtype = substr($this->subtype, strlen('survey'));
 
-        if ($this->subtype == 'surveyfield') {
-            $type = SURVEY_TYPEFIELD;
+        if (($this->subtype == 'surveyfield') || ($this->subtype == 'surveyformat')) {
+            if ($this->subtype == 'surveyfield') {
+                $type = SURVEY_TYPEFIELD;
+            }
+            if ($this->subtype == 'surveyformat') {
+                $type = SURVEY_TYPEFORMAT;
+            }
+            $countsql = 'SELECT plugin, COUNT(1) as numinstances
+                FROM {survey_item}
+                WHERE type = :type
+                GROUP BY plugin';
+            $whereparams = array('type' => $type);
+            $counts = $DB->get_records_sql($countsql, $whereparams);
         }
-        if ($this->subtype == 'surveyformat') {
-            $type = SURVEY_TYPEFORMAT;
-        }
-        $countsql = 'SELECT plugin, COUNT(1) as numinstances
-            FROM {survey_item}
-            WHERE type = :type
-            GROUP BY plugin';
-        $whereparams = array('type' => $type);
-        $counts = $DB->get_records_sql($countsql, $whereparams);
 
         foreach ($plugins as $idx => $plugin) {
             $row = array();
 
             // pluginname
-            $plugintitle = get_string('userfriendlypluginname', $this->subtype.'_'.$plugin);
-            $content = '<img src="'.$OUTPUT->pix_url('icon', $this->subtype.'_'.$plugin).'" class="icon" alt="'.$plugintitle.'" title="'.$plugintitle.'" />&nbsp;';
+            $content = '<img src="'.$OUTPUT->pix_url('icon', $this->subtype.'_'.$plugin).'" class="icon" alt="'.$plugin.'" title="'.$plugin.'" />&nbsp;';
             $row[] = $content.get_string('pluginname', $this->subtype.'_'.$plugin);
 
             // version
