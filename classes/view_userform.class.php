@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 /*
  * The base class representing a field
  */
-class mod_survey_userpagemanager {
+class mod_survey_userformmanager {
     /*
      * $cm
      */

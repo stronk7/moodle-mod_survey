@@ -377,5 +377,20 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013082001, 'survey');
     }
 
+    if ($oldversion < 2013083102) {
+
+        // Define field forceedit to be added to survey.
+        $table = new xmldb_table('survey');
+        $field = new xmldb_field('forceediting', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'thankshtmlformat');
+
+        // Conditionally launch add field forceedit.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013083102, 'survey');
+    }
+
     return true;
 }

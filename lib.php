@@ -232,7 +232,7 @@ function survey_add_instance($survey) {
         }
     }
 
-    $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers');
+    $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers', 'forceediting');
     foreach ($checkboxes as $checkbox) {
         if (!isset($survey->{$checkbox})) {
             $survey->{$checkbox} = 0;
@@ -298,7 +298,7 @@ function survey_update_instance($survey) {
         }
     }
 
-    $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers');
+    $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers', 'forceediting');
     foreach ($checkboxes as $checkbox) {
         if (!isset($survey->{$checkbox})) {
             $survey->{$checkbox} = 0;
@@ -772,7 +772,6 @@ function survey_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 function survey_extend_settings_navigation(settings_navigation $settings, navigation_node $surveynode) {
     global $CFG, $PAGE, $DB;
 
-    $forcemodifications = get_config('survey', 'forcemodifications');
     $cm = $PAGE->cm;
     if (!$cm = $PAGE->cm) {
         return;
@@ -780,6 +779,8 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
     $survey = $DB->get_record('survey', array('id' => $cm->instance), '*', MUST_EXIST);
 
     $context = context_module::instance($cm->id);
+
+    $forceediting = $survey->forceediting;
 
     $canpreview = has_capability('mod/survey:preview', $context, null, true);
     $canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
@@ -831,7 +832,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
         $navnode = $surveynode->add(SURVEY_TAB3NAME,  new moodle_url('/mod/survey/utemplates_create.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
         // CHILDREN
-        if (!$hassubmissions || $forcemodifications) {
+        if (!$hassubmissions || $forceediting) {
             $navnode->add(get_string('tabutemplatepage1', 'survey'), new moodle_url('/mod/survey/utemplates_manage.php', $paramurl), navigation_node::TYPE_SETTING);
         }
         if ($cancreateusertemplates) {
@@ -840,7 +841,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
         if ($canuploadusertemplates) {
             $navnode->add(get_string('tabutemplatepage3', 'survey'), new moodle_url('/mod/survey/utemplates_import.php', $paramurl), navigation_node::TYPE_SETTING);
         }
-        if ( (!$hassubmissions || $forcemodifications) && $canapplyusertemplates ) {
+        if ( (!$hassubmissions || $forceediting) && $canapplyusertemplates ) {
             $navnode->add(get_string('tabutemplatepage4', 'survey'), new moodle_url('/mod/survey/utemplates_apply.php', $paramurl), navigation_node::TYPE_SETTING);
         }
     }
@@ -857,7 +858,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
         if ($cancreatemastertemplate) {
             $navnode->add(get_string('tabmtemplatepage1', 'survey'), new moodle_url('/mod/survey/mtemplates_create.php', $paramurl), navigation_node::TYPE_SETTING);
         }
-        if ( (!$hassubmissions || $forcemodifications) && $canapplymastertemplate ) {
+        if ( (!$hassubmissions || $forceediting) && $canapplymastertemplate ) {
             $navnode->add(get_string('tabmtemplatepage2', 'survey'), new moodle_url('/mod/survey/mtemplates_apply.php', $paramurl), navigation_node::TYPE_SETTING);
         }
     }

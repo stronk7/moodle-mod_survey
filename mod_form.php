@@ -128,8 +128,7 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-        // captcha
-            // recaptcha
+        // recaptcha
         if (survey_site_recaptcha_enabled()) {
             $fieldname = 'captcha';
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
@@ -191,6 +190,14 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->addElement('editor', $fieldname.'_editor', get_string($fieldname, 'survey'), null, $editoroptions);
         $mform->addHelpButton($fieldname.'_editor', $fieldname, 'survey');
         $mform->setType($fieldname.'_editor', PARAM_RAW); // no XSS prevention here, users must be trusted
+
+        $allowalwaysediting = get_config('survey', 'allowalwaysediting');
+        if ($allowalwaysediting) {
+            // forceediting
+            $fieldname = 'forceediting';
+            $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
+            $mform->addHelpButton($fieldname, $fieldname, 'survey');
+        }
 
         // -------------------------------------------------------------------------------
         // add standard elements, common to all modules
