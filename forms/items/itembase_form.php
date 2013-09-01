@@ -320,7 +320,8 @@ class mod_survey_itembaseform extends moodleform {
         $survey = $this->_customdata->survey;
         $hassubmissions = $this->_customdata->hassubmissions;
 
-        $forceediting = $survey->forceediting;
+        $allowalwaysediting = get_config('survey', 'allowalwaysediting');
+        $forceediting = $allowalwaysediting && $survey->forceediting;
 
         // -------------------------------------------------------------------------------
         // buttons

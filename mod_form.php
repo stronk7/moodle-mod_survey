@@ -202,6 +202,7 @@ class mod_survey_mod_form extends moodleform_mod {
         // -------------------------------------------------------------------------------
         // add standard elements, common to all modules
         $this->standard_coursemodule_elements();
+
         // -------------------------------------------------------------------------------
         // add standard buttons, common to all modules
         $this->add_action_buttons();

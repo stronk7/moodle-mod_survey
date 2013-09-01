@@ -12,8 +12,5 @@ button is needed. (thanks to JR)
 -> in the search form one more option should be added to each item to search for "no answer"
 -> unit test (they are a must)
 -> *** Crucial known issue that is not fixable in my opinion. I apply a master template. I make a survey with it. Tomorrow I update the master template with a newer version. This new version has one more item in the middle. Surveys build with the old release of the plugin will stop working fine as they will find in the right position string of a different template.
-
--> verificare che gli xml di installazione siano corretti
--> verificare che il db sia concorde con quello definito dagli xml di installazione
--> why do number can not be parent?
--> how to use the order of plugins? Is it better its deletion?
+-> possible better solution: use the first 32 chars of the question escaped
+-> porta la definizione di survey delle classi m e u template a livello del padre

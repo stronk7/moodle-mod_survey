@@ -50,7 +50,8 @@ class mod_survey_templatebase {
      * @return
      */
     public function prevent_direct_user_input() {
-        $forceediting = $this->survey->forceediting;
+        $allowalwaysediting = get_config('survey', 'allowalwaysediting');
+        $forceediting = $allowalwaysediting && $this->survey->forceediting;
 
         $hassubmissions = survey_count_submissions($this->survey->id);
         if ($hassubmissions && (!$forceediting)) {

@@ -780,7 +780,8 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
 
     $context = context_module::instance($cm->id);
 
-    $forceediting = $survey->forceediting;
+    $allowalwaysediting = get_config('survey', 'allowalwaysediting');
+    $forceediting = $allowalwaysediting && $survey->forceediting;
 
     $canpreview = has_capability('mod/survey:preview', $context, null, true);
     $canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);

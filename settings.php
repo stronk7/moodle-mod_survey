@@ -112,18 +112,6 @@ if ($ADMIN->fulltree) {
         }
     }
 
-    // allow to deny instantiation of old master templates
-    // $description = new lang_string('denyinstantiation_descr', 'mod_survey');
-    // $settings->add(new admin_setting_heading('surveytemplates',
-    //                                         get_string('enabletemplateplugin', 'survey'), ''));
-    // $surveyplugin = get_plugin_list('surveytemplate');
-    // foreach ($surveyplugin as $mastertemplate => $path) {
-    //     $a = new lang_string('pluginname', 'surveytemplate_'.$mastertemplate);
-    //     $name = new lang_string('enabletemplate', 'survey', $a);
-    //
-    //     $settings->add(new admin_setting_configcheckbox('surveytemplate/'.$mastertemplate.'_enable', $name, $description, '1'));
-    // }
-
     // include settings of report subplugins
     $surveyplugin = get_plugin_list('surveyreport');
     foreach ($surveyplugin as $report => $path) {

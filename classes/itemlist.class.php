@@ -226,7 +226,8 @@ class mod_survey_itemlist {
 
         require_once($CFG->libdir.'/tablelib.php');
 
-        $forceediting = $this->survey->forceediting;
+        $allowalwaysediting = get_config('survey', 'allowalwaysediting');
+        $forceediting = $allowalwaysediting && $this->survey->forceediting;
 
         $table = new flexible_table('itemslist');
 
