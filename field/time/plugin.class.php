@@ -312,6 +312,7 @@ class surveyfield_time extends mod_survey_itembase {
 
         $option['strftime1'] = userdate($timenow, get_string('strftime1', 'surveyfield_time')); // 05:15
         $option['strftime2'] = userdate($timenow, get_string('strftime2', 'surveyfield_time')); // 5:15 am
+        $option['unixtime'] = get_string('unixtime', 'survey');
 
         return $option;
     }

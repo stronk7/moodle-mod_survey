@@ -300,10 +300,10 @@ class surveyfield_recurrence extends mod_survey_itembase {
         $option = array();
         $timenow = time();
 
-        $option['unixtime'] = get_string('unixtime', 'survey');
         $option['strftime1'] = userdate($timenow, get_string('strftime1', 'surveyfield_recurrence')); // 21 Giugno
         $option['strftime2'] = userdate($timenow, get_string('strftime2', 'surveyfield_recurrence')); // 21 Giu
         $option['strftime3'] = userdate($timenow, get_string('strftime3', 'surveyfield_recurrence')); // 21/06
+        $option['unixtime'] = get_string('unixtime', 'survey');
 
         return $option;
     }

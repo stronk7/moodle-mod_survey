@@ -299,19 +299,19 @@ class surveyfield_shortdate extends mod_survey_itembase {
         $option = array();
         $timenow = time();
 
-        $option['unixtime'] = get_string('unixtime', 'survey');
         for ( $i = 1; $i < 7; $i++ ) {
             $strname = 'strftime'.str_pad($i, 2, '0', STR_PAD_LEFT);
-            $option[$strname] = userdate($timenow, get_string($strname, 'surveyfield_shortdate')); // Lunedì 17 Giugno, 05.15
+            $option[$strname] = userdate($timenow, get_string($strname, 'surveyfield_shortdate'));
         }
+        $option['unixtime'] = get_string('unixtime', 'survey');
         /*
-	     * unix time
 	     * Giugno 2013
          * Giugno '13
          * Giu 2013
          * Giu '13
          * 06/2013
          * 06/13
+	     * unix time
         */
         return $option;
     }
