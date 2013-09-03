@@ -143,7 +143,9 @@ class surveyfield_textarea extends mod_survey_itembase {
         $this->flag->issearchable = false;
         $this->flag->usescontenteditor = true;
 
-        $this->context = context_module::instance($cm->id);
+        if (isset($cm)) { // it is not set during upgrade whther this item is loaded
+            $this->context = context_module::instance($cm->id);
+        }
 
         // list of fields I do not want to have in the item definition form
         $this->itembase_form_requires['insearchform'] = false;

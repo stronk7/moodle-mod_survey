@@ -137,9 +137,11 @@ class surveyfield_date extends mod_survey_itembase {
         $this->flag->usescontenteditor = true;
 
         // override properties depending from $survey settings
-        $this->lowerbound = $this->item_date_to_unix_time($survey->startyear, 1, 1);
-        $this->upperbound = $this->item_date_to_unix_time($survey->stopyear, 12, 31);
-        $this->defaultvalue = $this->lowerbound;
+        if (isset($survey)) { // it is not set during upgrade whther this item is loaded
+            $this->lowerbound = $this->item_date_to_unix_time($survey->startyear, 1, 1);
+            $this->upperbound = $this->item_date_to_unix_time($survey->stopyear, 12, 31);
+            $this->defaultvalue = $this->lowerbound;
+        }
 
         // list of fields I do not want to have in the item definition form
         // EMPTY LIST

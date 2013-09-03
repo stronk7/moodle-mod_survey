@@ -422,6 +422,7 @@ class mod_survey_itemlist {
                 // $message = get_string('hidden', 'survey');
                 $icons .= '<img src="'.$OUTPUT->pix_url('absent', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
             } else {
+                // first icon: advanced vs generally available
                 if (!$item->get_advanced()) {
                     $message = get_string('available', 'survey');
                     if ($item->get_itembase_form_requires('advanced')) {
@@ -443,6 +444,7 @@ class mod_survey_itemlist {
                     $icons .= '<img src="'.$OUTPUT->pix_url('limited', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
                 }
 
+                // second icon: insearchform vs not insearchform
                 if ($item->get_insearchform()) {
                     $message = get_string('belongtosearchform', 'survey');
 
@@ -466,7 +468,7 @@ class mod_survey_itemlist {
                 }
             }
 
-            // *************************************** SURVEY_HIDEITEM/SURVEY_SHOWITEM
+            // third icon: hide vs show
             if (!$this->hassubmissions || $forceediting) {
                 $paramurl = $paramurl_base;
                 if (!empty($current_hide)) {

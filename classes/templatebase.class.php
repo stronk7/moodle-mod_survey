@@ -106,11 +106,7 @@ class mod_survey_templatebase {
         $counter = array();
         $xmltemplate = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><items></items>');
         foreach ($itemseeds as $itemseed) {
-
-            $id = $itemseed->id;
-            $type = $itemseed->type;
-            $plugin = $itemseed->plugin;
-            $item = survey_get_item($id, $type, $plugin);
+            $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
             $xmlitem = $xmltemplate->addChild('item');
 
             // survey_item
@@ -150,8 +146,6 @@ class mod_survey_templatebase {
                     continue;
                 }
 
-//       <parentcontent>item_parentcontent_01</parentcontent>
-
                 if ($templatetype == SURVEY_MASTERTEMPLATE) {
                     $val = $this->xml_get_field_content($item, 'item', $field, $multilangfields);
                 } else {
@@ -166,9 +160,9 @@ class mod_survey_templatebase {
             }
 
             // child table
-            $xmltable = $xmlitem->addChild('survey_'.$plugin);
+            $xmltable = $xmlitem->addChild('survey_'.$itemseed->plugin);
 
-            $structure = $this->get_table_structure('survey_'.$plugin);
+            $structure = $this->get_table_structure('survey_'.$itemseed->plugin);
             foreach ($structure as $field) {
                 if ($field == 'surveyid') {
                     continue;
@@ -178,12 +172,12 @@ class mod_survey_templatebase {
                 }
 
                 if ($templatetype == SURVEY_MASTERTEMPLATE) {
-                    $val = $this->xml_get_field_content($item, $plugin, $field, $multilangfields);
+                    $val = $this->xml_get_field_content($item, $itemseed->plugin, $field, $multilangfields);
                 } else {
                     $val = $item->item_get_generic_field($field);
                 }
 
-                if ($val) {
+                if (strlen($val)) {
                     $xmlfield = $xmltable->addChild($field, $val);
                 // } else {
                     // it is empty, do not evaluate: jump
@@ -359,14 +353,12 @@ class mod_survey_templatebase {
             $templatecontent = $this->get_utemplate_content();
         }
 
+        // create the class to apply mastertemplate settings
         if ($templatetype == SURVEY_MASTERTEMPLATE) {
-            $config = get_config('surveytemplate_'.$templatename);
-            if (count((array)$config) > 1) { // one is: 'timecreated'
-                $classfile = $CFG->dirroot.'/mod/survey/template/'.$templatename.'/template.class.php';
-                include_once($classfile);
-                $classname = 'surveytemplate_'.$templatename;
-                $mastertemplate = new $classname();
-            }
+            $classfile = $CFG->dirroot.'/mod/survey/template/'.$templatename.'/template.class.php';
+            include_once($classfile);
+            $classname = 'surveytemplate_'.$templatename;
+            $mastertemplate = new $classname();
         }
 
         $simplexml = new SimpleXMLElement($templatecontent);
@@ -391,7 +383,7 @@ class mod_survey_templatebase {
                 $record['surveyid'] = $this->survey->id;
 
                 // apply template settings
-                if (isset($mastertemplate)) {
+                if ($templatetype == SURVEY_MASTERTEMPLATE) {
                     $mastertemplate->apply_template_settings($record);
                 }
 
@@ -420,13 +412,18 @@ class mod_survey_templatebase {
     function validate_xml($xml) {
         global $CFG;
 
+        // $debug = true; if you want to stop anyway to see where the xml template is buggy
+        $debug = false;
+
         $simplexml = new SimpleXMLElement($xml);
         foreach ($simplexml->children() as $xml_item) {
             foreach ($xml_item->children() as $xml_table) {
-                // <survey_item>
-                // <survey_radiobutton>
+                // for instance:
+                //     <survey_item>
+                //     <survey_radiobutton>
                 $tablename = $xml_table->getName();
 
+                // I am assuming that survey_item table is ALWAYS before the survey_<<plugin>> table
                 if ($tablename == 'survey_item') {
                     $type = null;
                     $plugin = null;
@@ -441,14 +438,20 @@ class mod_survey_templatebase {
                             $plugin = $fieldvalue;
                         }
                         if (($type) && ($plugin)) {
+                            // I could use a random class here because they all share the same parent item_get_item_schema
+                            // but, I need the right class name for the next table, so I start loading the correct class now
                             require_once($CFG->dirroot.'/mod/survey/'.$type.'/'.$plugin.'/plugin.class.php');
                             $classname = 'survey'.$type.'_'.$plugin;
-                            $xsd = $classname::item_get_item_schema();
+                            $xsd = $classname::item_get_item_schema(); // <- itembase schema
                             break;
                         }
                     }
+                    if ((!$type) || (!$plugin)) {
+                        return false;
+                    }
                 } else {
-                    $xsd = $classname::item_get_plugin_schema();
+                    // $classname is already onboard because of the previous loop over survey_item fields
+                    $xsd = $classname::item_get_plugin_schema(); // <- plugin schema
                 }
 
                 if (empty($xsd)) {
@@ -457,14 +460,18 @@ class mod_survey_templatebase {
 
                 $mdom = new DOMDocument();
                 $status = $mdom->loadXML($xml_table->asXML());
-                $status = $status && @$mdom->schemaValidateSource($xsd);
-                // $status = $status && $mdom->schemaValidateSource($xsd);
+                if (!$debug) {
+                    $status = $status && @$mdom->schemaValidateSource($xsd);
+                } else {
+                    $status = $status && $mdom->schemaValidateSource($xsd);
+                }
                 if (!$status) {
                     // Stop here. Continuing is useless
-                    echo '<hr /><textarea rows="10" cols="100">'.$xml_table->asXML().'</textarea>';
-                    echo '<textarea rows="10" cols="100">'.$xsd.'</textarea>';
-                    break;
-                    // break 2; // it is the second time I use it! Coooool :-)
+                    if ($debug) {
+                        echo '<hr /><textarea rows="10" cols="100">'.$xml_table->asXML().'</textarea>';
+                        echo '<textarea rows="10" cols="100">'.$xsd.'</textarea>';
+                    }
+                    break 2; // it is the second time I use it! Coooool :-)
                 }
             }
         }

@@ -93,10 +93,11 @@ class surveyformat_label extends mod_survey_itembase {
         $this->itembase_form_requires['extranote'] = false;
         $this->itembase_form_requires['required'] = false;
         $this->itembase_form_requires['variable'] = false;
-        $this->itembase_form_requires['indent'] = false;
         $this->itembase_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
 
-        $this->context = context_module::instance($cm->id);
+        if (isset($cm)) { // it is not set during upgrade whther this item is loaded
+            $this->context = context_module::instance($cm->id);
+        }
 
         if (!empty($itemid)) {
             $this->item_load($itemid);

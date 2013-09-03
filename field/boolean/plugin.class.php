@@ -268,14 +268,16 @@ class surveyfield_boolean extends mod_survey_itembase {
      */
     public function item_get_downloadformats() {
         $option = array();
-        $option['strfbool1'] = get_string('strfbool1', 'surveyfield_boolean'); // yes/no
-        $option['strfbool2'] = get_string('strfbool2', 'surveyfield_boolean'); // y/n
-        $option['strfbool3'] = get_string('strfbool3', 'surveyfield_boolean'); // Y/N
-        $option['strfbool4'] = get_string('strfbool4', 'surveyfield_boolean'); // up/down
-        $option['strfbool5'] = get_string('strfbool5', 'surveyfield_boolean'); // true/false
-        $option['strfbool6'] = get_string('strfbool6', 'surveyfield_boolean'); // T/F
-        $option['strfbool7'] = get_string('strfbool7', 'surveyfield_boolean'); // 1/0
-        $option['strfbool8'] = get_string('strfbool8', 'surveyfield_boolean'); // +/-
+        $option['strfbool01'] = get_string('strfbool01', 'surveyfield_boolean'); // yes/no
+        $option['strfbool02'] = get_string('strfbool02', 'surveyfield_boolean'); // Yes/No
+        $option['strfbool03'] = get_string('strfbool03', 'surveyfield_boolean'); // y/n
+        $option['strfbool04'] = get_string('strfbool04', 'surveyfield_boolean'); // Y/N
+        $option['strfbool05'] = get_string('strfbool05', 'surveyfield_boolean'); // up/down
+        $option['strfbool06'] = get_string('strfbool06', 'surveyfield_boolean'); // true/false
+        $option['strfbool07'] = get_string('strfbool07', 'surveyfield_boolean'); // True/False
+        $option['strfbool08'] = get_string('strfbool08', 'surveyfield_boolean'); // T/F
+        $option['strfbool09'] = get_string('strfbool09', 'surveyfield_boolean'); // 1/0
+        $option['strfbool10'] = get_string('strfbool10', 'surveyfield_boolean'); // +/-
 
         return $option;
     }
@@ -288,7 +290,7 @@ class surveyfield_boolean extends mod_survey_itembase {
      * @return
      */
     public function item_get_friendlyformat() {
-        return 'strfbool1';
+        return 'strfbool01';
     }
 
     /*

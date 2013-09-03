@@ -253,7 +253,10 @@ function xmldb_survey_upgrade($oldversion) {
                 if ($currentitem->plugin == 'fieldsetend') {
                     $record->content = '<div style="text-align:right;">__|</div>';
                 }
-                $DB->insert_record('survey_'.$currentitem->plugin, $record);
+                $id = $DB->get_record('survey_'.$currentitem->plugin, array('itemid' => $currentitem->id), '*', IGNORE_MISSING);
+                if (!$id) {
+                    $DB->insert_record('survey_'.$currentitem->plugin, $record);
+                }
             } else {
                 $record = $DB->get_record('survey_'.$currentitem->plugin, array('itemid' => $currentitem->id));
                 $record->content = $currentitem->content;

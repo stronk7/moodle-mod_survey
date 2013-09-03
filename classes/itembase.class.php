@@ -948,6 +948,20 @@ class mod_survey_itembase {
     }
 
     /*
+     * get_extrarow
+     *
+     * @param
+     * @return
+     */
+    public function get_extranote() {
+        if (isset($this->extranote)) {
+            return $this->extranote;
+        } else {
+            return false;
+        }
+    }
+
+    /*
      * get_issearchable
      *
      * @param

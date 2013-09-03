@@ -108,6 +108,13 @@ class survey_importutemplateform extends moodleform {
             }
         }
 
+        // $debug = true; if you want to always stop to see where the xml template is buggy
+        $debug = false;
+        if ($debug) {
+            $errors['importfile_filemanager'] = 'All is fine here!';
+            return $errors;
+        }
+
         // get all template files in the specified context
         $contextid = $utemplate_manager->get_contextid_from_sharinglevel($data['sharinglevel']);
         $componentfiles = $utemplate_manager->get_available_templates($contextid);
