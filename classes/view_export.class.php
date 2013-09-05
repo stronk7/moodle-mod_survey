@@ -284,14 +284,16 @@ class mod_survey_exportmanager {
      * @return
      */
     public function decode_content($richsubmission) {
-        global $CFG;
-
-        $plugin = $richsubmission->plugin;
-        $itemid = $richsubmission->itemid;
         $content = $richsubmission->content;
-        $item = survey_get_item($itemid, SURVEY_TYPEFIELD, $plugin);
+        if (isset($content)) {
+            $plugin = $richsubmission->plugin;
+            $itemid = $richsubmission->itemid;
+            $item = survey_get_item($itemid, SURVEY_TYPEFIELD, $plugin);
 
-        $return = isset($content) ? $item->userform_db_to_export($richsubmission) : '';
+            $return = $item->userform_db_to_export($richsubmission);
+        } else {
+            $return = '';
+        }
 
         return $return;
     }

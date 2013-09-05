@@ -42,6 +42,12 @@ class mod_survey_templatebase {
      */
     public $formdata = null;
 
+    /*
+     * Class constructor
+     */
+    public function __construct($survey) {
+        $this->survey = $survey;
+    }
 
     /*
      * prevent_direct_user_input

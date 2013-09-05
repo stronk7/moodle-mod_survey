@@ -65,9 +65,10 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
      * Class constructor
      */
     public function __construct($cm, $survey, $context, $utemplateid, $action, $confirm) {
+        parent::__construct($survey);
+
         $this->cm = $cm;
         $this->context = $context;
-        $this->survey = $survey;
         $this->confirm = $confirm;
         $this->utemplateid = $utemplateid;
         $this->action = $action;

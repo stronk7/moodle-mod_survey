@@ -300,7 +300,8 @@ class survey_plugin_manager {
      * @return string the name of the next page to display
      */
     public function delete_plugin($plugin) {
-        global $CFG, $DB, $OUTPUT;
+        global $CFG, $OUTPUT;
+
         $confirm = optional_param('confirm', null, PARAM_BOOL);
 
         if ($confirm) {
@@ -343,6 +344,7 @@ class survey_plugin_manager {
      */
     private function view_plugin_deleted($plugin) {
         global $OUTPUT;
+
         $this->view_header();
         $pluginname = get_string('pluginname', $this->subtype.'_'.$plugin);
         echo $OUTPUT->heading(get_string('deletingplugin', 'survey', $pluginname));
@@ -363,6 +365,7 @@ class survey_plugin_manager {
      */
     private function view_confirm_delete($plugin) {
         global $OUTPUT;
+
         $this->view_header();
         $pluginname = get_string('pluginname', $this->subtype.'_'.$plugin);
         echo $OUTPUT->heading(get_string('deletingplugin', 'survey', $pluginname));

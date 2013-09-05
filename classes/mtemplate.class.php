@@ -52,7 +52,7 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
      * Class constructor
      */
     public function __construct($survey) {
-        $this->survey = $survey;
+        parent::__construct($survey);
     }
 
     /*

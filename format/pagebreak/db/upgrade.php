@@ -30,37 +30,5 @@
  * @return bool true
  */
 function xmldb_surveyformat_pagebreak_upgrade($oldversion) {
-    global $DB;
-
-    $dbman = $DB->get_manager();
-
-    if ($oldversion < 2013081902) {
-
-        // Define table survey_pagebreak to be created.
-        $table = new xmldb_table('survey_pagebreak');
-
-        // Adding fields to table survey_pagebreak.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('surveyid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('content', XMLDB_TYPE_TEXT, null, null, null, null, null);
-
-        // Adding keys to table survey_pagebreak.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-        // Adding indexes to table survey_pagebreak.
-        $table->add_index('surveyid', XMLDB_INDEX_NOTUNIQUE, array('surveyid'));
-        $table->add_index('itemid', XMLDB_INDEX_UNIQUE, array('itemid'));
-
-        // Conditionally launch create table for survey_pagebreak.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Survey savepoint reached.
-        upgrade_plugin_savepoint(true, 2013081902, 'surveyfield', 'pagebreak');
-    }
-
     return true;
 }
-
