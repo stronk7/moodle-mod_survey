@@ -63,9 +63,10 @@ class survey_admin_page_manage_survey_plugins extends admin_externalpage {
         }
 
         $found = false;
+        $textlib = new textlib();
 
         foreach (core_component::get_plugin_list($this->subtype) as $name => $notused) {
-            if (strpos(core_text::strtolower(get_string('pluginname', $this->subtype.'_'.$name)),
+            if (strpos($textlib::strtolower(get_string('pluginname', $this->subtype.'_'.$name)),
                     $query) !== false) {
                 $found = true;
                 break;
@@ -212,8 +213,8 @@ class survey_plugin_manager {
             $row = array();
 
             // pluginname
-            $content = '<img src="'.$OUTPUT->pix_url('icon', $this->subtype.'_'.$plugin).'" class="icon" alt="'.$plugin.'" title="'.$plugin.'" />&nbsp;';
-            $row[] = $content.get_string('pluginname', $this->subtype.'_'.$plugin);
+            $icon = '<img src="'.$OUTPUT->pix_url('icon', $this->subtype.'_'.$plugin).'" class="icon" alt="'.$plugin.'" title="'.$plugin.'" />&nbsp;';
+            $row[] = $icon.get_string('pluginname', $this->subtype.'_'.$plugin);
 
             // version
             $row[] = get_config($this->subtype.'_'.$plugin, 'version');
@@ -447,7 +448,8 @@ class survey_plugin_manager {
                                                             $module) {
         global $CFG;
 
-        $plugins = core_component::get_plugin_list_with_file($subtype, 'settings.php', false);
+        // $plugins = core_component::get_plugin_list_with_file($subtype, 'settings.php', false);
+        $plugins = get_plugin_list_with_file($subtype, 'settings.php', false);
         $pluginsbyname = array();
         foreach ($plugins as $plugin => $plugindir) {
             $pluginname = get_string('pluginname', $subtype.'_'.$plugin);

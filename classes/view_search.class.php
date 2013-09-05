@@ -77,7 +77,7 @@ class mod_survey_searchmanager {
             // echo '$content = '.$content.'<br />';
 
             // I am interested only in the fields in the search form that contain something but do not contain SURVEY_NOANSWERVALUE
-            if (isset($content) && ($content != SURVEY_NOANSWERVALUE)) {
+            if (isset($content) && strlen($content) && ($content != SURVEY_NOANSWERVALUE)) {
                 if (preg_match($regexp, $elementname, $matches)) {
                     $itemid = $matches[3]; // itemid of the search_form element (or of the search_form family element)
                     if (!isset($infoperitem[$itemid])) {

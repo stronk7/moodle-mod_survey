@@ -366,7 +366,7 @@ EOS;
             $class = ($this->adjustment == SURVEY_VERTICAL) ? array('class' => 'indent-'.$this->indent) : '';
             $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_other', '', $otherlabel, $class);
             $elementgroup[] = $mform->createElement('text', $this->itemname.'_text', '');
-            $mform->setType($this->itemname.'_text', PARAM_ALPHANUMEXT);
+            $mform->setType($this->itemname.'_text', PARAM_RAW);
 
             if (!$searchform) {
                 $index = in_array($otherlabel, $defaults);

@@ -386,9 +386,8 @@ EOS;
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
-        $labels = explode('/', get_string($this->downloadformat, 'surveyfield_boolean'));
-        $yes_label = $labels[0];
-        $no_label = $labels[1];
+        $yes_label = get_string('yes');
+        $no_label = get_string('no');
 
         if ($this->style == SURVEYFIELD_BOOLEAN_USESELECT) {
             $options = array();

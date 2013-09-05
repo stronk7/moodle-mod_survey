@@ -439,7 +439,7 @@ EOS;
             $elementgroup = array();
             $elementgroup[] = $mform->createElement('select', $this->itemname, '', $labels, array('class' => 'indent-'.$this->indent));
             $elementgroup[] = $mform->createElement('text', $this->itemname.'_text', '');
-            $mform->setType($this->itemname.'_text', PARAM_ALPHANUMEXT);
+            $mform->setType($this->itemname.'_text', PARAM_RAW);
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
 
             if (!$searchform) {
