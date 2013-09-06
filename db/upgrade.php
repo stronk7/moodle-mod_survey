@@ -39,5 +39,30 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool
  */
 function xmldb_survey_upgrade($oldversion) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2013090501) {
+
+        // Rename field forceediting on table survey to riskyeditdeadline.
+        $table = new xmldb_table('survey');
+        $field = new xmldb_field('forceediting', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'thankshtmlformat');
+
+        // Launch rename field forceediting.
+        $dbman->rename_field($table, $field, 'riskyeditdeadline');
+
+
+        // Changing precision of field riskyeditdeadline on table survey to (10).
+        $table = new xmldb_table('survey');
+        $field = new xmldb_field('riskyeditdeadline', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'thankshtmlformat');
+
+        // Launch change of precision for field riskyeditdeadline.
+        $dbman->change_field_precision($table, $field);
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013090501, 'survey');
+    }
+
     return true;
 }

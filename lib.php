@@ -232,7 +232,7 @@ function survey_add_instance($survey) {
         }
     }
 
-    $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers', 'forceediting');
+    $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers');
     foreach ($checkboxes as $checkbox) {
         if (!isset($survey->{$checkbox})) {
             $survey->{$checkbox} = 0;
@@ -298,7 +298,7 @@ function survey_update_instance($survey) {
         }
     }
 
-    $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers', 'forceediting');
+    $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers');
     foreach ($checkboxes as $checkbox) {
         if (!isset($survey->{$checkbox})) {
             $survey->{$checkbox} = 0;
@@ -520,11 +520,12 @@ function survey_print_recent_mod_activity($activity, $courseid, $detail, $modnam
 function survey_cron() {
     global $CFG, $DB;
 
-    $status = SURVEY_STATUSINPROGRESS;
+    // delete too old submissions from survey_userdata and survey_submissions
+
     $permission = array(0, 1);
     // permission == 0:  saveresume is not allowed
     //     users leaved records in progress more than four hours ago...
-    //     I can not trust they are still working on them so
+    //     I can not believe they are still working on them so
     //     I delete records now
     // permission == 1:  saveresume is allowed
     //     these records are older than maximum allowed time delay
@@ -780,8 +781,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
 
     $context = context_module::instance($cm->id);
 
-    $allowalwaysediting = get_config('survey', 'allowalwaysediting');
-    $forceediting = $allowalwaysediting && $survey->forceediting;
+    $forceediting = ($survey->riskyeditdeadline > time());
 
     $canpreview = has_capability('mod/survey:preview', $context, null, true);
     $canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);

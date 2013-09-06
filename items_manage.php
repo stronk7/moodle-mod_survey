@@ -100,8 +100,7 @@ if ($itemlist_manager->hassubmissions) {
 
 // add item form
 if (!$itemlist_manager->survey->template) {
-    $allowalwaysediting = get_config('survey', 'allowalwaysediting');
-    $forceediting = $allowalwaysediting && $survey->forceediting;
+    $forceediting = ($survey->riskyeditdeadline > time());
 
     if (!$hassubmissions || $forceediting) {
         if (has_capability('mod/survey:additems', $context)) {

@@ -75,10 +75,6 @@ if ($ADMIN->fulltree) {
     $description = new lang_string('useadvancedpermissions_descr', 'mod_survey');
     $settings->add(new admin_setting_configcheckbox('survey/useadvancedpermissions', $name, $description, 0));
 
-    $name = new lang_string('allowalwaysediting', 'mod_survey');
-    $description = new lang_string('allowalwaysediting_descr', 'mod_survey');
-    $settings->add(new admin_setting_configcheckbox('survey/allowalwaysediting', $name, $description, 0));
-
     // include  settings of field subplugins
     $surveyplugin = get_plugin_list('surveyfield');
     foreach ($surveyplugin as $field => $path) {

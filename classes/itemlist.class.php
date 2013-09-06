@@ -226,8 +226,7 @@ class mod_survey_itemlist {
 
         require_once($CFG->libdir.'/tablelib.php');
 
-        $allowalwaysediting = get_config('survey', 'allowalwaysediting');
-        $forceediting = $allowalwaysediting && $this->survey->forceediting;
+        $forceediting = ($this->survey->riskyeditdeadline > time());
 
         $table = new flexible_table('itemslist');
 

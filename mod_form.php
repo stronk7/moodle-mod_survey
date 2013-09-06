@@ -191,13 +191,10 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->addHelpButton($fieldname.'_editor', $fieldname, 'survey');
         $mform->setType($fieldname.'_editor', PARAM_RAW); // no XSS prevention here, users must be trusted
 
-        $allowalwaysediting = get_config('survey', 'allowalwaysediting');
-        if ($allowalwaysediting) {
-            // forceediting
-            $fieldname = 'forceediting';
-            $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
-            $mform->addHelpButton($fieldname, $fieldname, 'survey');
-        }
+        // riskyeditdeadline
+        $fieldname = 'riskyeditdeadline';
+        $mform->addElement('date_time_selector', $fieldname, get_string($fieldname, 'survey'));
+        $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
         // -------------------------------------------------------------------------------
         // add standard elements, common to all modules

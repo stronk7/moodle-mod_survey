@@ -320,8 +320,7 @@ class mod_survey_itembaseform extends moodleform {
         $survey = $this->_customdata->survey;
         $hassubmissions = $this->_customdata->hassubmissions;
 
-        $allowalwaysediting = get_config('survey', 'allowalwaysediting');
-        $forceediting = $allowalwaysediting && $survey->forceediting;
+        $forceediting = ($survey->riskyeditdeadline > time());
 
         // -------------------------------------------------------------------------------
         // buttons

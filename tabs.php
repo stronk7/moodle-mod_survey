@@ -30,8 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // do not prevent direct user input
 // prevention is done in each working page according to actions
-$allowalwaysediting = get_config('survey', 'allowalwaysediting');
-$forceediting = $allowalwaysediting && $survey->forceediting;
+$forceediting = ($survey->riskyeditdeadline > time());
 
 $hassubmissions = survey_count_submissions($survey->id);
 $context = context_module::instance($cm->id);
