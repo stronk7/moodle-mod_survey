@@ -451,8 +451,8 @@ class survey_plugin_manager {
                                                             $module) {
         global $CFG;
 
-        // $plugins = core_component::get_plugin_list_with_file($subtype, 'settings.php', false);
-        $plugins = get_plugin_list_with_file($subtype, 'settings.php', false);
+        $plugins = core_component::get_plugin_list_with_file($subtype, 'settings.php', false);
+        // $plugins = get_plugin_list_with_file($subtype, 'settings.php', false);
         $pluginsbyname = array();
         foreach ($plugins as $plugin => $plugindir) {
             $pluginname = get_string('pluginname', $subtype.'_'.$plugin);

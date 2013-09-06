@@ -187,13 +187,13 @@ class mod_survey_itemlist {
                 $this->reorder_items();
                 break;
             case SURVEY_REQUIREDON:
-                $DB->set_field('survey_item', 'required', 1, array('id' => $this->itemid));
+                $DB->set_field('survey_'.$this->plugin, 'required', 1, array('itemid' => $this->itemid));
                 break;
             case SURVEY_REQUIREDOFF:
-                $DB->set_field('survey_item', 'required', 0, array('id' => $this->itemid));
+                $DB->set_field('survey_'.$this->plugin, 'required', 0, array('itemid' => $this->itemid));
                 break;
             case SURVEY_CHANGEINDENT:
-                $DB->set_field('survey_item', 'indent', $this->nextindent, array('id' => $this->itemid));
+                $DB->set_field('survey_'.$this->plugin, 'indent', $this->nextindent, array('itemid' => $this->itemid));
                 break;
             case SURVEY_ADDTOSEARCH:
                 $item = survey_get_item($this->itemid, $this->type, $this->plugin);
