@@ -176,7 +176,9 @@ class mod_survey_itembaseform extends moodleform {
         // for SURVEY_TYPEFIELD only
         $fieldname = 'variable';
         if ($item->get_itembase_form_requires($fieldname)) {
-            $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'), array('class' => 'longfield'));
+            $options = array('maxlength' => 64, 'size' => 12, 'class' => 'longfield');
+
+            $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'), $options);
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_TEXT);
         }

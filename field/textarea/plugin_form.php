@@ -103,8 +103,10 @@ class survey_pluginform extends mod_survey_itembaseform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if ($data['maxlength'] <= $data['minlength']) {
-            $errors['maxlength'] = get_string('maxlengthlowerthanminlength', 'surveyfield_textarea');
+        if (isset($data['maxlength'])) {
+            if ($data['maxlength'] <= $data['minlength']) {
+                $errors['maxlength'] = get_string('maxlengthlowerthanminlength', 'surveyfield_textarea');
+            }
         }
 
         return $errors;

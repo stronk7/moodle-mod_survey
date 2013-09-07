@@ -115,7 +115,7 @@ class surveyfield_rate extends mod_survey_itembase {
     /*
      * $allowsamerate = is the user allowed to provide two equal rates for two different options?
      */
-    public $forcedifferentrates = false;
+    public $differentrates = false;
 
     /*
      * $flag = features describing the object
@@ -214,7 +214,7 @@ class surveyfield_rate extends mod_survey_itembase {
         // remember: extrarow is mandatory and equal to 1 by design
         $record->extrarow = 1;
         $record->hideinstructions = 1;
-        $record->forcedifferentrates = isset($record->forcedifferentrates) ? 1 : 0;
+        $record->differentrates = isset($record->differentrates) ? 1 : 0;
         // ------- end of fields saved in this plugin table ------- //
 
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
@@ -265,7 +265,7 @@ class surveyfield_rate extends mod_survey_itembase {
      * @param $record
      * @return
      */
-    public function item_generate_standard_default($options=null, $rates=null, $forcedifferentrates=null) {
+    public function item_generate_standard_default($options=null, $rates=null, $differentrates=null) {
 
         if (is_null($options)) {
             $options = $this->options;
@@ -273,13 +273,13 @@ class surveyfield_rate extends mod_survey_itembase {
         if (is_null($rates)) {
             $rates = $this->rates;
         }
-        if (is_null($forcedifferentrates)) {
-            $forcedifferentrates = $this->forcedifferentrates;
+        if (is_null($differentrates)) {
+            $differentrates = $this->differentrates;
         }
 
         if ($optionscount = count(survey_textarea_to_array($options))) {
             $ratesarray = survey_textarea_to_array($rates);
-            if ($forcedifferentrates) {
+            if ($differentrates) {
                 $default = array();
                 foreach ($ratesarray as $k => $singlerate) {
                     if (strpos($singlerate, SURVEY_VALUELABELSEPARATOR) === false) {
@@ -364,7 +364,7 @@ class surveyfield_rate extends mod_survey_itembase {
                 <xs:element type="xs:string" name="defaultvalue" minOccurs="0"/>
                 <xs:element type="xs:int" name="downloadformat"/>
                 <xs:element type="xs:int" name="style"/>
-                <xs:element type="xs:int" name="forcedifferentrates"/>
+                <xs:element type="xs:int" name="differentrates"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -525,7 +525,7 @@ EOS;
             return;
         }
 
-        if (!empty($this->forcedifferentrates)) {
+        if (!empty($this->differentrates)) {
             $optionscount = count($this->item_get_labels_array('options'));
             $rates = array();
             for ( $i = 0; $i < $optionscount; $i++) {
@@ -554,7 +554,7 @@ EOS;
      */
     public function userform_get_filling_instructions() {
 
-        if (!empty($this->forcedifferentrates)) {
+        if (!empty($this->differentrates)) {
             $fillinginstruction = get_string('diffratesrequired', 'surveyfield_rate');
         } else {
             $fillinginstruction = '';

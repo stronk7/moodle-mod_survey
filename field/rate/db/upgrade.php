@@ -30,5 +30,22 @@
  * @return bool true
  */
 function xmldb_surveyfield_rate_upgrade($oldversion) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2013090701) {
+
+        // Rename field forcedifferentrates on table survey_rate to differentrates.
+        $table = new xmldb_table('survey_rate');
+        $field = new xmldb_field('forcedifferentrates', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'style');
+
+        // Launch rename field forcedifferentrates.
+        $dbman->rename_field($table, $field, 'differentrates');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013090701, 'surveyfield', 'rate');
+    }
+
     return true;
 }

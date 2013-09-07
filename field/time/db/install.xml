@@ -10,7 +10,7 @@
         <FIELD NAME="surveyid"         TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="id"               NEXT="itemid"/>
         <FIELD NAME="itemid"           TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"         NEXT="content"/>
 
-        <!-- begin of fields for itembase_form.php -->
+        <!-- begin of fields belonging to itembase_form.php -->
         <FIELD NAME="content"          TYPE="text" LENGTH="small"  NOTNULL="false"                              SEQUENCE="false" PREVIOUS="itemid"           NEXT="contentformat"/>
         <FIELD NAME="contentformat"    TYPE="int"  LENGTH="4"      NOTNULL="false"                              SEQUENCE="false" PREVIOUS="content"          NEXT="customnumber"/>
 
@@ -21,13 +21,9 @@
         <FIELD NAME="hideinstructions" TYPE="int"  LENGTH="4"      NOTNULL="false"                              SEQUENCE="false" PREVIOUS="required"         NEXT="variable"/>
         <FIELD NAME="variable"         TYPE="char" LENGTH="64"     NOTNULL="false"                              SEQUENCE="false" PREVIOUS="hideinstructions" NEXT="indent"/>
         <FIELD NAME="indent"           TYPE="int"  LENGTH="4"      NOTNULL="false"                              SEQUENCE="false" PREVIOUS="variable"         NEXT="step"/>
+        <!-- end of fields belonging to itembase_form.php -->
 
-        <!-- <FIELD NAME="parentid"         TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="true"             SEQUENCE="false" PREVIOUS="indent"           NEXT="parentcontent"/> -->
-        <!-- <FIELD NAME="parentcontent"    TYPE="char" LENGTH="255"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="parentid"         NEXT="parentvalue"/> -->
-        <!-- <FIELD NAME="parentvalue"      TYPE="char" LENGTH="255"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="parentcontent"/> -->
-        <!-- end of fields for itembase_form.php -->
-
-        <!-- begin of fields for this specific plugin -->
+        <!-- begin of fields belonging to plugin_form.php of this specific plugin -->
         <FIELD NAME="step"             TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true"  DEFAULT="1" SEQUENCE="false" PREVIOUS="indent"            NEXT="defaultoption"/>
         <FIELD NAME="defaultoption"    TYPE="int"  LENGTH="2"      NOTNULL="true"  UNSIGNED="true"  DEFAULT="2" SEQUENCE="false" PREVIOUS="step"              NEXT="defaultvalue"/>
         <FIELD NAME="defaultvalue"     TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="defaultoption"     NEXT="downloadformat"/>
@@ -35,7 +31,7 @@
 
         <FIELD NAME="lowerbound"       TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="downloadformat"    NEXT="upperbound"/>
         <FIELD NAME="upperbound"       TYPE="int"  LENGTH="10"     NOTNULL="false" UNSIGNED="false"             SEQUENCE="false" PREVIOUS="lowerbound"/>
-        <!-- end of fields for this specific plugin -->
+        <!-- end of fields belonging to plugin_form.php of this specific plugin -->
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

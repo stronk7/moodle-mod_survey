@@ -112,9 +112,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
         // ----------------------------------------
-        // newitem::forcedifferentrates
+        // newitem::differentrates
         // ----------------------------------------
-        $fieldname = 'forcedifferentrates';
+        $fieldname = 'differentrates';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'surveyfield_rate'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_rate');
         $mform->setType($fieldname, PARAM_TEXT);
@@ -172,9 +172,9 @@ class survey_pluginform extends mod_survey_itembaseform {
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);
         }
 
-        // if forcedifferentrates was requested
-        // il numero dei numero delle opzioni DEVE essere >= al numero degli elementi da valutare
-        if (isset($data['forcedifferentrates'])) {
+        // if differentrates was requested
+        // count($clean_rates) HAS TO be >= count($clean_rates)
+        if (isset($data['differentrates'])) {
             // if I claim for different rates, I must provide a sufficient number of rates
             if (count($clean_options) > count($clean_rates)) {
                 $errors['rates'] = get_string('notenoughrares', 'surveyfield_rate');

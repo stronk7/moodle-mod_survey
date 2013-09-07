@@ -101,7 +101,7 @@ class surveyfield_character extends mod_survey_itembase {
     /*
      * $maxlength = the maximum allowed length
      */
-    public $maxlength = '255';
+    public $maxlength = null;
 
     /*
      * $flag = features describing the object
@@ -190,8 +190,9 @@ class surveyfield_character extends mod_survey_itembase {
         if (!isset($record->minlength)) {
             $record->minlength = 0;
         }
-        if (!isset($record->maxlength)) {
-            $record->maxlength = 255;
+        // maxlength is a PARAM_INT. If the user leaves it empty in the form, maxlength becomes = 0
+        if (empty($record->maxlength)) {
+            $record->maxlength = null;
         }
         // ------- end of fields saved in this plugin table ------- //
 
@@ -238,8 +239,10 @@ class surveyfield_character extends mod_survey_itembase {
         // 2. special management for composite fields
         if ($record->pattern == SURVEYFIELD_CHARACTER_CUSTOMPATTERN) {
             $record->pattern = $record->pattern_text;
-        }
 
+            $record->minlength = strlen($record->pattern_text);
+            $record->maxlength = $record->minlength;
+        }
         // 3. special management for defaultvalue
         // nothing to do: defaultvalue doesn't need any further care
     }
@@ -346,11 +349,15 @@ EOS;
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
-        $options = array('class' => 'indent-'.$this->indent);
-        $options['maxlength'] = $this->maxlength;
         $thresholdsize = 48;
-        if ($this->maxlength < $thresholdsize) {
-            $options['size'] = $this->maxlength;
+        $options = array('class' => 'indent-'.$this->indent);
+        if ($this->maxlength > 0) {
+            $options['maxlength'] = $this->maxlength;
+            if ($this->maxlength < $thresholdsize) {
+                $options['size'] = $this->maxlength;
+            } else {
+                $options['size'] = $thresholdsize;
+            }
         } else {
             $options['size'] = $thresholdsize;
         }
@@ -399,9 +406,7 @@ EOS;
 
         if (!empty($data[$this->itemname])) {
             $fieldlength = strlen($data[$this->itemname]);
-            if ($fieldlength > $this->maxlength) {
-                $errors[$errorkey] = get_string('uerr_texttoolong', 'surveyfield_character');
-            }
+
             if ($fieldlength < $this->minlength) {
                 $errors[$errorkey] = get_string('uerr_texttooshort', 'surveyfield_character');
             }

@@ -77,7 +77,6 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_character');
         $mform->setType($fieldname, PARAM_RAW);
         $mform->setType($fieldname.'_text', PARAM_ALPHANUMEXT);
-        $mform->setDefault($fieldname.'_check', 'checked');
 
         // ----------------------------------------
         // newitem::minlength
@@ -85,7 +84,6 @@ class survey_pluginform extends mod_survey_itembaseform {
         $fieldname = 'minlength';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_character'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_character');
-        $mform->disabledIf($fieldname, 'pattern_check', 'notchecked');
         $mform->setDefault($fieldname, '0');
         $mform->setType($fieldname, PARAM_INT);
 
@@ -95,8 +93,6 @@ class survey_pluginform extends mod_survey_itembaseform {
         $fieldname = 'maxlength';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_character'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_character');
-        $mform->disabledIf($fieldname, 'pattern_check', 'notchecked');
-        $mform->setDefault($fieldname, '255');
         $mform->setType($fieldname, PARAM_INT);
 
         $this->add_item_buttons();
@@ -106,26 +102,28 @@ class survey_pluginform extends mod_survey_itembaseform {
         $errors = parent::validation($data, $files);
 
         // Minimum characters <= Maximum characters
-        if ($data['minlength'] > $data['maxlength']) {
-            $errors['minlength'] = get_string('ierr_mingtmax', 'surveyfield_character');
-            $errors['maxlength'] = get_string('ierr_maxltmin', 'surveyfield_character');
+        if (!empty($data['minlength'])) {
+            if (!empty($data['maxlength'])) {
+                if ($data['minlength'] > $data['maxlength']) {
+                    $errors['minlength'] = get_string('ierr_mingtmax', 'surveyfield_character');
+                    $errors['maxlength'] = get_string('ierr_maxltmin', 'surveyfield_character');
+                }
+            } else {
+                // Minimum characters > 0
+                if ($data['minlength'] < 0) {
+                    $errors['minlength'] = get_string('ierr_minexceeds', 'surveyfield_character');
+                }
+            }
         }
 
-        // Minimum characters > 0
-        if ($data['minlength'] < 0) {
-            $errors['minlength'] = get_string('ierr_minexceeds', 'surveyfield_character');
-        }
-
-        // Maximum characters < 256
-        if ($data['maxlength'] > 255) {
-            $errors['maxlength'] = get_string('ierr_maxexceeds', 'surveyfield_character');
-        }
 
         if (!empty($data['defaultvalue'])) {
             // Maximum characters > length of default
             $defaultvalue_length = strlen($data['defaultvalue']);
-            if ($defaultvalue_length > $data['maxlength']) {
-                $errors['defaultvalue'] = get_string('ierr_toolongdefault', 'surveyfield_character');
+            if (!empty($data['maxlength'])) {
+                if ($defaultvalue_length > $data['maxlength']) {
+                    $errors['defaultvalue'] = get_string('ierr_toolongdefault', 'surveyfield_character');
+                }
             }
 
             // Minimum characters < length of default
@@ -134,36 +132,34 @@ class survey_pluginform extends mod_survey_itembaseform {
             }
 
             // default has to match the text pattern
-            if (!isset($data['pattern_check'])) {
-                switch ($data['pattern']) {
-                    case SURVEYFIELD_CHARACTER_FREEPATTERN:
-                        break;
-                    case SURVEYFIELD_CHARACTER_EMAILPATTERN:
-                        if (!validate_email($data['defaultvalue'])) {
-                            $errors['defaultvalue'] = get_string('ierr_defaultisnotemail', 'surveyfield_character');
-                        }
-                        break;
-                    case SURVEYFIELD_CHARACTER_URLPATTERN:
-                        if (!survey_character_is_valid_url($data['defaultvalue'])) {
-                            $errors['defaultvalue'] = get_string('ierr_defaultisnoturl', 'surveyfield_character');
-                        }
-                        break;
-                    case SURVEYFIELD_CHARACTER_CUSTOMPATTERN:
-                        $patternlength = strlen($data['pattern_text']);
-                        if ($defaultvalue_length != $patternlength) {
-                            $errors['defaultvalue'] = get_string('ierr_defaultbadlength', 'surveyfield_character', $patternlength);
-                        } else if (!survey_character_text_match_pattern($data['defaultvalue'], $data['pattern_text'])) {
-                            $errors['defaultvalue'] = get_string('ierr_nopatternmatch', 'surveyfield_character');
-                        }
-                        break;
-                    default:
-                        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $data[\'pattern\'] = '.$data['pattern']);
-                }
+            switch ($data['pattern']) {
+                case SURVEYFIELD_CHARACTER_FREEPATTERN:
+                    break;
+                case SURVEYFIELD_CHARACTER_EMAILPATTERN:
+                    if (!validate_email($data['defaultvalue'])) {
+                        $errors['defaultvalue'] = get_string('ierr_defaultisnotemail', 'surveyfield_character');
+                    }
+                    break;
+                case SURVEYFIELD_CHARACTER_URLPATTERN:
+                    if (!survey_character_is_valid_url($data['defaultvalue'])) {
+                        $errors['defaultvalue'] = get_string('ierr_defaultisnoturl', 'surveyfield_character');
+                    }
+                    break;
+                case SURVEYFIELD_CHARACTER_CUSTOMPATTERN:
+                    $patternlength = strlen($data['pattern_text']);
+                    if ($defaultvalue_length != $patternlength) {
+                        $errors['defaultvalue'] = get_string('ierr_defaultbadlength', 'surveyfield_character', $patternlength);
+                    } else if (!survey_character_text_match_pattern($data['defaultvalue'], $data['pattern_text'])) {
+                        $errors['defaultvalue'] = get_string('ierr_nopatternmatch', 'surveyfield_character');
+                    }
+                    break;
+                default:
+                    debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $data[\'pattern\'] = '.$data['pattern']);
             }
         }
 
         // if pattern == SURVEYFIELD_CHARACTER_CUSTOMPATTERN, its length has to fall between minlength and maxlength
-        if ( (!isset($data['pattern_check'])) && ($data['pattern'] == SURVEYFIELD_CHARACTER_CUSTOMPATTERN) ) {
+        if ($data['pattern'] == SURVEYFIELD_CHARACTER_CUSTOMPATTERN) {
             $patternlength = strlen($data['pattern_text']);
             // pattern can not be empty
             if (!$patternlength) {
