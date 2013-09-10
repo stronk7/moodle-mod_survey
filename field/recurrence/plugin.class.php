@@ -206,7 +206,6 @@ class surveyfield_recurrence extends mod_survey_itembase {
     /*
      * item_recurrence_to_unix_time
      *
-     * @param $year
      * @param $month
      * @param $day
      * @return
@@ -217,7 +216,7 @@ class surveyfield_recurrence extends mod_survey_itembase {
 
     /*
      * item_custom_fields_to_form
-     * translates the recurrence class property $fieldlist in $field.'_year' and $field.'_month'
+     * translates the recurrence class property $fieldlist in $field.'_month' and $field.'_day'
      *
      * @param
      * @return
@@ -414,11 +413,9 @@ EOS;
 
         $days = array();
         $months = array();
-        $years = array();
         if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
             $days[SURVEY_INVITATIONVALUE] = get_string('invitationday', 'surveyfield_recurrence');
             $months[SURVEY_INVITATIONVALUE] = get_string('invitationmonth', 'surveyfield_recurrence');
-            $years[SURVEY_INVITATIONVALUE] = get_string('invitationyear', 'surveyfield_recurrence');
         }
         $days += array_combine(range(1, 31), range(1, 31));
         for ($i=1; $i<=12; $i++) {
@@ -536,20 +533,9 @@ EOS;
 
         $format = get_string('strftimedateshort', 'langconfig');
         if ($haslowerbound && $hasupperbound) {
-            if ($this->lowerbound < $this->upperbound) {
-                // internal range
-                if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
-                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_recurrence');
-                }
-            }
-
-            if ($this->lowerbound > $this->upperbound) {
-                // external range
-                if (($userinput > $this->lowerbound) && ($userinput < $this->upperbound)) {
-                    $a->lowerbound = userdate($this->lowerbound, get_string($format, 'surveyfield_recurrence'), 0);
-                    $a->upperbound = userdate($this->upperbound, get_string($format, 'surveyfield_recurrence'), 0);
-                    $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_recurrence', $a);
-                }
+            // internal range
+            if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
+                $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_recurrence');
             }
         } else {
             if ($haslowerbound && ($userinput < $this->lowerbound)) {
@@ -579,15 +565,8 @@ EOS;
             $a->lowerbound = userdate($this->lowerbound, $format, 0);
             $a->upperbound = userdate($this->upperbound, $format, 0);
 
-            if ($this->lowerbound < $this->upperbound) {
-                // internal range
-                $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_recurrence', $a);
-            }
-
-            if ($this->lowerbound > $this->upperbound) {
-                // external range
-                $fillinginstruction = get_string('restriction_upperlower', 'surveyfield_recurrence', $a);
-            }
+            // internal range
+            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_recurrence', $a);
         } else {
             $fillinginstruction = '';
             if ($haslowerbound) {

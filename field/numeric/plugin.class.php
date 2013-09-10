@@ -273,6 +273,23 @@ class surveyfield_numeric extends mod_survey_itembase {
     }
 
     /*
+     * item_get_generic_field
+     *
+     * @param
+     * @return
+     */
+    public function item_get_generic_field($field) {
+        $fields = array('lowerbound', 'upperbound');
+        if (in_array($field, $fields)) {
+            $value = parent::item_get_generic_field($field);
+            $value = number_format((double)$value, $this->decimals, $this->decimalseparator, '');
+            return unformat_float($value, true);
+        } else {
+            return parent::item_get_generic_field($field);
+        }
+    }
+
+    /*
      * item_atomize_number
      * starting from parentcontent, this function returns it splitted into an array
      *

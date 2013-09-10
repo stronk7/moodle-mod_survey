@@ -52,9 +52,10 @@ class survey_pluginform extends mod_survey_itembaseform {
         $stopyear = $this->_customdata->survey->stopyear;
 
         // ----------------------------------------
-        // newitem::defaultvalue
+        // newitem::defaultoption
         // ----------------------------------------
-        $fieldname = 'defaultvalue';
+        $fieldname = 'defaultoption';
+        $separator = array(' ', ' ', ', ', ':');
         $days = array_combine(range(1, 31), range(1, 31));
         // $months = array_combine(range(0, 11), range(0, 11));
         $months = array();
@@ -71,25 +72,22 @@ class survey_pluginform extends mod_survey_itembaseform {
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('invitationdefault', 'survey'), SURVEY_INVITATIONDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('likelast', 'survey'), SURVEY_LIKELASTDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('noanswer', 'survey'), SURVEY_NOANSWERDEFAULT);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_datetime'), $separator, false);
+        $mform->setDefault($fieldname, SURVEY_TIMENOWDEFAULT);
+        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_datetime');
+
+        // ----------------------------------------
+        // newitem::defaultvalue
+        // ----------------------------------------
+        $fieldname = 'defaultvalue';
+        $elementgroup = array();
         $elementgroup[] = $mform->createElement('select', $fieldname.'_day', '', $days);
         $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
         $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
         $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hours);
         $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $minutes);
-        $separator = array(' ', ' ', ' ', ' ', '<br />', ' ', ' ', ' ');
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_datetime'), $separator, false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_datetime');
+        $mform->addGroup($elementgroup, $fieldname.'_group', null, $separator, false);
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
-
-        $mform->setDefault('defaultoption', SURVEY_TIMENOWDEFAULT);
-        if ($item->defaultoption == SURVEY_CUSTOMDEFAULT) {
-            $justadefault = $item->item_split_unix_time($item->lowerbound);
-            $mform->setDefault($fieldname.'_day', $justadefault['mday']);
-            $mform->setDefault($fieldname.'_month', $justadefault['mon']);
-            $mform->setDefault($fieldname.'_year', $justadefault['year']);
-            $mform->setDefault($fieldname.'_hour', $justadefault['hours']);
-            $mform->setDefault($fieldname.'_minute', $justadefault['minutes']);
-        }
 
         // ----------------------------------------
         // newitem::downloadformat
@@ -115,7 +113,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
         $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hours);
         $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $minutes);
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_datetime'), ' ', false);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_datetime'), $separator, false);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_datetime');
         $mform->setDefault($fieldname.'_year', $startyear);
         $mform->setDefault($fieldname.'_month', '1');
@@ -133,7 +131,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
         $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hours);
         $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $minutes);
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_datetime'), ' ', false);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_datetime'), $separator, false);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_datetime');
         $mform->setDefault($fieldname.'_year', $stopyear);
         $mform->setDefault($fieldname.'_month', '12');
@@ -157,23 +155,17 @@ class survey_pluginform extends mod_survey_itembaseform {
         if ($lowerbound == $upperbound) {
             $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_datetime');
         }
+        if ($lowerbound > $upperbound) {
+            $errors['lowerbound_group'] = get_string('lowergreaterthanupper', 'surveyfield_integer');
+        }
 
         // constrain default between boundaries
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
             $defaultvalue = $item->item_datetime_to_unix_time($data['defaultvalue_year'], $data['defaultvalue_month'], $data['defaultvalue_day'], $data['defaultvalue_hour'], $data['defaultvalue_minute']);
-            if ($lowerbound < $upperbound) {
-                // internal range
-                if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
-                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_datetime');
-                }
-            }
 
-            if ($lowerbound > $upperbound) {
-                // external range
-                if (($defaultvalue > $upperbound) && ($defaultvalue < $lowerbound)) {
-                    $a = get_string('upperbound', 'surveyfield_datetime');
-                    $errors['defaultvalue_group'] = get_string('outofexternalrangedefault', 'surveyfield_datetime', $a);
-                }
+            // internal range
+            if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
+                $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_datetime');
             }
         }
 

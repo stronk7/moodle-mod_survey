@@ -54,30 +54,29 @@ class survey_pluginform extends mod_survey_itembaseform {
                          SURVEYFIELD_BOOLEAN_USESELECT => get_string('usemenu', 'surveyfield_boolean')
                    );
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_boolean'), $options);
+        $mform->setDefault($fieldname, SURVEYFIELD_BOOLEAN_USERADIOH);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_boolean');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, SURVEYFIELD_BOOLEAN_USERADIOH);
+
+        // ----------------------------------------
+        // newitem::defaultoption
+        // ----------------------------------------
+        $fieldname = 'defaultoption';
+        $elementgroup = array();
+        $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_boolean'), SURVEY_CUSTOMDEFAULT);
+        $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('invitationdefault', 'survey'), SURVEY_INVITATIONDEFAULT);
+        $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('noanswer', 'survey'), SURVEY_NOANSWERDEFAULT);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_boolean'), ' ', false);
+        $mform->setDefault($fieldname, SURVEY_INVITATIONDEFAULT);
+        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_boolean');
 
         // ----------------------------------------
         // newitem::defaultvalue
         // ----------------------------------------
         $fieldname = 'defaultvalue';
-        // I am not allowed to use '', '1', '2' because the database field defaultvalue is a number so '' == '0'
-        // so I will correct this input at save time in item_save($record)
         $options = array('1' => get_string('yes'), '0' => get_string('no'));
-        $elementgroup = array();
-        $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_boolean'), SURVEY_CUSTOMDEFAULT);
-        $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('invitationdefault', 'survey'), SURVEY_INVITATIONDEFAULT);
-        $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('noanswer', 'survey'), SURVEY_NOANSWERDEFAULT);
-        $elementgroup[] = $mform->createElement('select', $fieldname, '', $options);
-        $separator = array(' ', ' ', '<br />');
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_boolean'), $separator, false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_boolean');
-        $mform->setDefault('defaultoption', SURVEY_INVITATIONDEFAULT);
-        $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
-        if (is_null($item->defaultvalue) || ($item->defaultvalue == SURVEY_INVITATIONDEFAULT)) {
-            $mform->setDefault($fieldname, '1');
-        }
+        $mform->addElement('select', $fieldname, null, $options);
+        $mform->disabledIf($fieldname, 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
 
         // ----------------------------------------
         // newitem::downloadformat
@@ -91,10 +90,12 @@ class survey_pluginform extends mod_survey_itembaseform {
     }
 
     public function validation($data, $files) {
+        // -------------------------------------------------------------------------------
+        // $item = $this->_customdata->item;
+
         $errors = parent::validation($data, $files);
 
         // "noanswer" default option is not allowed when the item is mandatory
-
         if ( ($data['defaultoption'] == SURVEY_NOANSWERDEFAULT) && isset($data['required']) ) {
             $a = get_string('noanswer', 'survey');
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);

@@ -36,7 +36,7 @@ class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
         // -------------------------------------------------------------------------------
-        $item = $this->_customdata->item;
+        // $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
         // I start with the common "section" form
@@ -58,10 +58,10 @@ class survey_pluginform extends mod_survey_itembaseform {
         // ----------------------------------------
         $fieldname = 'arearows';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_textarea'));
+        $mform->setDefault($fieldname, SURVEYFIELD_TEXTAREA_DEFAULTROWS);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_textarea');
         $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, SURVEYFIELD_TEXTAREA_DEFAULTROWS);
 
         // ----------------------------------------
         // newitem::areacols
@@ -101,6 +101,9 @@ class survey_pluginform extends mod_survey_itembaseform {
     }
 
     public function validation($data, $files) {
+        // -------------------------------------------------------------------------------
+        // $item = $this->_customdata->item;
+
         $errors = parent::validation($data, $files);
 
         if (isset($data['maxlength'])) {

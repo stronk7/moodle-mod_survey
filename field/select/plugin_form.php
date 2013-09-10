@@ -36,7 +36,7 @@ class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
         // -------------------------------------------------------------------------------
-        $item = $this->_customdata->item;
+        // $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
         // I start with the common "section" form
@@ -63,23 +63,25 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->setType($fieldname, PARAM_TEXT);
 
         // ----------------------------------------
-        // newitem::defaultvalue
+        // newitem::defaultoption
         // ----------------------------------------
-        $fieldname = 'defaultvalue';
+        $fieldname = 'defaultoption';
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_select'), SURVEY_CUSTOMDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('invitationdefault', 'survey'), SURVEY_INVITATIONDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('noanswer', 'survey'), SURVEY_NOANSWERDEFAULT);
-        $elementgroup[] = $mform->createElement('text', $fieldname, '');
-        $separator = array(' ', ' ', '<br />');
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_select'), $separator, false);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_select'), ' ', false);
+        $mform->setDefault($fieldname, SURVEY_INVITATIONDEFAULT);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_select');
-        $mform->setDefault('defaultoption', SURVEY_INVITATIONDEFAULT);
+
+        // ----------------------------------------
+        // newitem::defaultvalue
+        // ----------------------------------------
+        $fieldname = 'defaultvalue';
+        $elementgroup = array();
+        $mform->addElement('text', $fieldname, null);
         $mform->setType($fieldname, PARAM_RAW);
-        $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
-        if (is_null($item->defaultvalue)) {
-            $mform->setDefault($fieldname, $item->item_generate_standard_default());
-        }
+        $mform->disabledIf($fieldname, 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
 
         // ----------------------------------------
         // newitem::downloadformat
@@ -89,14 +91,17 @@ class survey_pluginform extends mod_survey_itembaseform {
                          SURVEYFIELD_SELECT_RETURNLABELS => get_string('returnlabels', 'surveyfield_select'),
                          SURVEYFIELD_SELECT_RETURNPOSITION => get_string('returnposition', 'surveyfield_select'));
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_radiobutton'), $options);
+        $mform->setDefault($fieldname, SURVEYFIELD_CHECKBOX_RETURNVALUES);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_radiobutton');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, SURVEYFIELD_CHECKBOX_RETURNVALUES);
 
         $this->add_item_buttons();
     }
 
     public function validation($data, $files) {
+        // -------------------------------------------------------------------------------
+        // $item = $this->_customdata->item;
+
         $errors = parent::validation($data, $files);
 
         // clean inputs

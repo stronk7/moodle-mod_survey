@@ -62,10 +62,4 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $this->add_item_buttons();
     }
-
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        return $errors;
-    }
 }

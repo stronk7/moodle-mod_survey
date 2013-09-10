@@ -36,7 +36,7 @@ class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
         // -------------------------------------------------------------------------------
-        $item = $this->_customdata->item;
+        // $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
         // I start with the common "section" form
@@ -76,9 +76,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $fieldname = 'adjustment';
         $options = array(SURVEY_HORIZONTAL => get_string('horizontal', 'surveyfield_checkbox'), SURVEY_VERTICAL => get_string('vertical', 'surveyfield_checkbox'));
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_checkbox'), $options);
+        $mform->setDefault($fieldname, SURVEY_VERTICAL);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_checkbox');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, SURVEY_VERTICAL);
 
         // ----------------------------------------
         // newitem::downloadformat
@@ -88,18 +88,18 @@ class survey_pluginform extends mod_survey_itembaseform {
                          SURVEYFIELD_CHECKBOX_RETURNLABELS => get_string('returnlabels', 'surveyfield_checkbox'),
                          SURVEYFIELD_CHECKBOX_RETURNPOSITION => get_string('returnposition', 'surveyfield_checkbox'));
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_checkbox'), $options);
+        $mform->setDefault($fieldname, SURVEYFIELD_CHECKBOX_RETURNVALUES);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_checkbox');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, SURVEYFIELD_CHECKBOX_RETURNVALUES);
 
         $this->add_item_buttons();
     }
 
     public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
         // -------------------------------------------------------------------------------
-        $item = $this->_customdata->item;
+        // $item = $this->_customdata->item;
+
+        $errors = parent::validation($data, $files);
 
         // clean inputs
         $clean_options = survey_textarea_to_array($data['options']);

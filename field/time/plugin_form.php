@@ -73,28 +73,28 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------
-        // newitem::defaultvalue
+        // newitem::defaultoption
         // ----------------------------------------
-        $fieldname = 'defaultvalue';
+        $fieldname = 'defaultoption';
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_time'), SURVEY_CUSTOMDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('currenttimedefault', 'surveyfield_time'), SURVEY_TIMENOWDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('invitationdefault', 'survey'), SURVEY_INVITATIONDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('likelast', 'survey'), SURVEY_LIKELASTDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('noanswer', 'survey'), SURVEY_NOANSWERDEFAULT);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_time'), ' ', false);
+        $mform->setDefault($fieldname, SURVEY_TIMENOWDEFAULT);
+        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_time');
+
+        // ----------------------------------------
+        // newitem::defaultvalue
+        // ----------------------------------------
+        $fieldname = 'defaultvalue';
+        $elementgroup = array();
         $elementgroup[] = $mform->createElement('select', $fieldname.'_hour', '', $hoptions);
         $elementgroup[] = $mform->createElement('select', $fieldname.'_minute', '', $moptions);
-        $separator = array(' ', ' ', ' ', ' ', '<br />', ' ');
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_time'), $separator, false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_time');
+        $mform->addGroup($elementgroup, $fieldname.'_group', null, ' ', false);
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
-
-        $mform->setDefault('defaultoption', SURVEY_TIMENOWDEFAULT);
-        if ($item->defaultoption == SURVEY_CUSTOMDEFAULT) {
-            $justadefault = $item->item_split_unix_time($item->lowerbound);
-            $mform->setDefault($fieldname.'_hour', $justadefault['hours']);
-            $mform->setDefault($fieldname.'_minute', $justadefault['minutes']);
-        }
 
         // ----------------------------------------
         // newitem::downloadformat

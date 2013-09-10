@@ -320,11 +320,11 @@ class surveyfield_autofill extends mod_survey_itembase {
                 <xs:element type="xs:int" name="indent"/>
 
                 <xs:element type="xs:int" name="hiddenfield"/>
-                <xs:element type="xs:string" name="element_1"/>
-                <xs:element type="xs:string" name="element_2"/>
-                <xs:element type="xs:string" name="element_3"/>
-                <xs:element type="xs:string" name="element_4"/>
-                <xs:element type="xs:string" name="element_5"/>
+                <xs:element type="xs:string" name="element_1" minOccurs="0"/>
+                <xs:element type="xs:string" name="element_2" minOccurs="0"/>
+                <xs:element type="xs:string" name="element_3" minOccurs="0"/>
+                <xs:element type="xs:string" name="element_4" minOccurs="0"/>
+                <xs:element type="xs:string" name="element_5" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

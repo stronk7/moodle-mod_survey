@@ -38,7 +38,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $maximumage = get_config('surveyfield_age', 'maximumage');
 
         // -------------------------------------------------------------------------------
-        $item = $this->_customdata->item;
+        // $item = $this->_customdata->item;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;
 
@@ -56,24 +56,26 @@ class survey_pluginform extends mod_survey_itembaseform {
         $months = array_combine(range(0, 11), range(0, 11));
 
         // ----------------------------------------
-        // newitem::defaultvalue
+        // newitem::defaultoption
         // ----------------------------------------
-        $fieldname = 'defaultvalue';
+        $fieldname = 'defaultoption';
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_age'), SURVEY_CUSTOMDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('invitationdefault', 'survey'), SURVEY_INVITATIONDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('noanswer', 'survey'), SURVEY_NOANSWERDEFAULT);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_age'), ' ', false);
+        $mform->setDefault($fieldname, SURVEY_INVITATIONDEFAULT);
+        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_age');
+
+        // ----------------------------------------
+        // newitem::defaultvalue
+        // ----------------------------------------
+        $fieldname = 'defaultvalue';
+        $elementgroup = array();
         $elementgroup[] = $mform->createElement('select', $fieldname.'_year', '', $years);
         $elementgroup[] = $mform->createElement('select', $fieldname.'_month', '', $months);
-        $separator = array(' ', ' ', '<br />', ' ');
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_age'), $separator, false);
-        $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_age');
-        $mform->setDefault('defaultoption', SURVEY_INVITATIONDEFAULT);
+        $mform->addGroup($elementgroup, $fieldname.'_group', null, ' ', false);
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
-        if (is_null($item->defaultvalue) || ($item->defaultvalue == SURVEY_INVITATIONDBVALUE)) {
-            $mform->setDefault($fieldname.'_year', $item->lowerbound_year);
-            $mform->setDefault($fieldname.'_month', $item->lowerbound_month);
-        }
 
         // /////////////////////////////////////////////////////////////////////////////////////////////////
         // here I open a new fieldset
@@ -128,24 +130,17 @@ class survey_pluginform extends mod_survey_itembaseform {
         if ($lowerbound == $upperbound) {
             $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_age');
         }
+        if ($lowerbound > $upperbound) {
+            $errors['lowerbound_group'] = get_string('lowergreaterthanupper', 'surveyfield_age');
+        }
 
         // constrain default between boundaries
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
             $defaultvalue = $item->item_age_to_unix_time($data['defaultvalue_year'], $data['defaultvalue_month']);
 
-            if ($lowerbound < $upperbound) {
-                // internal range
-                if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
-                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_age');
-                }
-            }
-
-            if ($lowerbound > $upperbound) {
-                // external range
-                if (($defaultvalue > $upperbound) && ($defaultvalue < $lowerbound)) {
-                    $a = get_string('upperbound', 'surveyfield_age');
-                    $errors['defaultvalue_group'] = get_string('outofexternalrangedefault', 'surveyfield_age', $a);
-                }
+            // internal range
+            if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
+                $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_age');
             }
         }
 

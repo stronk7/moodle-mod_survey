@@ -445,22 +445,9 @@ EOS;
             return;
         }
         if ($haslowerbound && $hasupperbound) {
-            if ($this->lowerbound < $this->upperbound) {
-                // internal range
-                if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
-                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_integer');
-                }
-            }
-
-            if ($this->lowerbound > $this->upperbound) {
-                // external range
-                if (($userinput > $this->lowerbound) && ($userinput < $this->upperbound)) {
-                    $format = get_string($this->item_get_friendlyformat(), 'surveyfield_integer');
-                    $a = new stdClass();
-                    $a->lowerbound = $this->lowerbound;
-                    $a->upperbound = $this->upperbound;
-                    $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_integer', $a);
-                }
+            // internal range
+            if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
+                $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_integer');
             }
         } else {
             if ($haslowerbound && ($userinput < $this->lowerbound)) {
@@ -494,13 +481,7 @@ EOS;
             $a->lowerbound = $lowerbound;
             $a->upperbound = $upperbound;
 
-            if ($lowerbound < $upperbound) {
-                $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_integer', $a);
-            }
-
-            if ($lowerbound > $upperbound) {
-                $fillinginstruction = get_string('restriction_upperlower', 'surveyfield_integer', $a);
-            }
+            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_integer', $a);
         } else {
             if ($haslowerbound) {
                 $a = $lowerbound;

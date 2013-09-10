@@ -38,7 +38,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
 
         // -------------------------------------------------------------------------------
-        $item = $this->_customdata->item;
+        // $item = $this->_customdata->item;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;
 
@@ -53,22 +53,24 @@ class survey_pluginform extends mod_survey_itembaseform {
         $integers = array_combine(range(0, $maximuminteger), range(0, $maximuminteger));
 
         // ----------------------------------------
-        // newitem::defaultvalue
+        // newitem::defaultoption
         // ----------------------------------------
-        $fieldname = 'defaultvalue';
+        $fieldname = 'defaultoption';
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_integer'), SURVEY_CUSTOMDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('invitationdefault', 'survey'), SURVEY_INVITATIONDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('noanswer', 'survey'), SURVEY_NOANSWERDEFAULT);
-        $elementgroup[] = $mform->createElement('select', $fieldname, '', $integers);
-        $separator = array(' ', ' ', '<br />');
+        $separator = array(' ', ' ');
         $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_integer'), $separator, false);
+        $mform->setDefault($fieldname, SURVEY_INVITATIONDEFAULT);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_integer');
-        $mform->setDefault('defaultoption', SURVEY_INVITATIONDEFAULT);
-        $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
-        if (is_null($item->defaultvalue) || ($item->defaultvalue == SURVEY_INVITATIONDEFAULT)) {
-            $mform->setDefault($fieldname, "$item->lowerbound");
-        }
+
+        // ----------------------------------------
+        // newitem::defaultvalue
+        // ----------------------------------------
+        $fieldname = 'defaultvalue';
+        $mform->addElement('select', $fieldname, null, $integers);
+        $mform->disabledIf($fieldname, 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
 
         // /////////////////////////////////////////////////////////////////////////////////////////////////
         // here I open a new fieldset
@@ -81,23 +83,23 @@ class survey_pluginform extends mod_survey_itembaseform {
         // ----------------------------------------
         $fieldname = 'lowerbound';
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_integer'), $integers);
-        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_integer');
         $mform->setDefault($fieldname, '0');
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_integer');
 
         // ----------------------------------------
         // newitem::upperbound
         // ----------------------------------------
         $fieldname = 'upperbound';
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_integer'), $integers);
-        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_integer');
         $mform->setDefault($fieldname, "$maximuminteger");
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_integer');
 
         $this->add_item_buttons();
     }
 
     public function validation($data, $files) {
         // -------------------------------------------------------------------------------
-        $item = $this->_customdata->item;
+        // $item = $this->_customdata->item;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;
 
@@ -106,26 +108,19 @@ class survey_pluginform extends mod_survey_itembaseform {
         $lowerbound = $data['lowerbound'];
         $upperbound = $data['upperbound'];
         if ($lowerbound == $upperbound) {
-            $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_integer');
+            $errors['lowerbound'] = get_string('lowerequaltoupper', 'surveyfield_integer');
+        }
+        if ($lowerbound > $upperbound) {
+            $errors['lowerbound'] = get_string('lowergreaterthanupper', 'surveyfield_integer');
         }
 
         // constrain default between boundaries
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
             $defaultvalue = $data['defaultvalue'];
 
-            if ($lowerbound < $upperbound) {
-                // internal range
-                if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
-                    $errors['defaultvalue_group'] = get_string('outofrangedefault', 'surveyfield_integer');
-                }
-            }
-
-            if ($lowerbound > $upperbound) {
-                // external range
-                if (($defaultvalue > $upperbound) && ($defaultvalue < $lowerbound)) {
-                    $a = get_string('upperbound', 'surveyfield_integer');
-                    $errors['defaultvalue_group'] = get_string('outofexternalrangedefault', 'surveyfield_integer', $a);
-                }
+            // only internal range is allowed for integers
+            if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {
+                $errors['defaultvalue'] = get_string('outofrangedefault', 'surveyfield_integer');
             }
         }
 

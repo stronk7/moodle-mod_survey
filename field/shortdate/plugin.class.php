@@ -521,22 +521,9 @@ EOS;
         $userinput = $this->item_shortdate_to_unix_time($data[$this->itemname.'_month'], $data[$this->itemname.'_year']);
 
         if ($haslowerbound && $hasupperbound) {
-            if ($this->lowerbound < $this->upperbound) {
-                // internal range
-                if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
-                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_shortdate');
-                }
-            }
-
-            if ($this->lowerbound > $this->upperbound) {
-                // external range
-                if (($userinput > $this->lowerbound) && ($userinput < $this->upperbound)) {
-                    $format = get_string('strftimemonthyear', 'langconfig');
-                    $a = new stdClass();
-                    $a->lowerbound = userdate($this->lowerbound, $format, 0);
-                    $a->upperbound = userdate($this->upperbound, $format, 0);
-                    $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_shortdate', $a);
-                }
+            // internal range
+            if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
+                $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_shortdate');
             }
         } else {
             if ($haslowerbound && ($userinput < $this->lowerbound)) {
@@ -566,15 +553,8 @@ EOS;
             $a->lowerbound = userdate($this->lowerbound, $format, 0);
             $a->upperbound = userdate($this->upperbound, $format, 0);
 
-            if ($this->lowerbound < $this->upperbound) {
-                // internal range
-                $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_shortdate', $a);
-            }
-
-            if ($this->lowerbound > $this->upperbound) {
-                // external range
-                $fillinginstruction = get_string('restriction_upperlower', 'surveyfield_shortdate', $a);
-            }
+            // internal range
+            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_shortdate', $a);
         } else {
             $fillinginstruction = '';
             if ($haslowerbound) {

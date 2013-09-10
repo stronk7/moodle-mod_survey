@@ -36,7 +36,7 @@ class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
         // -------------------------------------------------------------------------------
-        $item = $this->_customdata->item;
+        // $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
         // start with the common section of the form
@@ -50,8 +50,8 @@ class survey_pluginform extends mod_survey_itembaseform {
         // ----------------------------------------
         $fieldname = 'defaultvalue';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_character'));
-        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_character');
         $mform->setDefault($fieldname, '');
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_character');
         $mform->setType($fieldname, PARAM_RAW);
 
         // /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,6 +99,9 @@ class survey_pluginform extends mod_survey_itembaseform {
     }
 
     public function validation($data, $files) {
+        // -------------------------------------------------------------------------------
+        // $item = $this->_customdata->item;
+
         $errors = parent::validation($data, $files);
 
         // Minimum characters <= Maximum characters

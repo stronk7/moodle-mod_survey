@@ -36,7 +36,7 @@ class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
         // -------------------------------------------------------------------------------
-        $item = $this->_customdata->item;
+        // $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
         // I start with the common "section" form
@@ -69,6 +69,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $options = array_combine(range(3, 12), range(3, 12));
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_multiselect'), $options);
         $mform->setDefault($fieldname, '4');
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_multiselect');
         $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------
@@ -79,18 +80,18 @@ class survey_pluginform extends mod_survey_itembaseform {
                          SURVEYFIELD_MULTISELECT_RETURNLABELS => get_string('returnlabels', 'surveyfield_multiselect'),
                          SURVEYFIELD_MULTISELECT_RETURNPOSITION => get_string('returnposition', 'surveyfield_multiselect'));
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_multiselect'), $options);
+        $mform->setDefault($fieldname, SURVEYFIELD_MULTISELECT_RETURNVALUES);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_multiselect');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, SURVEYFIELD_MULTISELECT_RETURNVALUES);
 
         $this->add_item_buttons();
     }
 
     public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
         // -------------------------------------------------------------------------------
-        $item = $this->_customdata->item;
+        // $item = $this->_customdata->item;
+
+        $errors = parent::validation($data, $files);
 
         // clean inputs
         $clean_options = survey_textarea_to_array($data['options']);

@@ -373,7 +373,8 @@ class surveyfield_age extends mod_survey_itembase {
     </xs:element>
     <xs:simpleType name="unixtime">
         <xs:restriction base="xs:string">
-              </xs:restriction>
+            <xs:pattern value="-?\d{0,10}"/>
+        </xs:restriction>
     </xs:simpleType>
 </xs:schema>
 EOS;
@@ -498,22 +499,9 @@ EOS;
         $userinput = $this->item_age_to_unix_time($data[$this->itemname.'_year'], $data[$this->itemname.'_month']);
 
         if ($haslowerbound && $hasupperbound) {
-            if ($this->lowerbound < $this->upperbound) {
-                // internal range
-                if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
-                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_age');
-                }
-            }
-
-            if ($this->lowerbound > $this->upperbound) {
-                // external range
-                if (($userinput > $this->lowerbound) && ($userinput < $this->upperbound)) {
-                    $format = get_string('strftimedate', 'langconfig');
-                    $a = new stdClass();
-                    $a->lowerbound = $this->item_age_to_text($this->item_split_unix_time($this->lowerbound));
-                    $a->upperbound = $this->item_age_to_text($this->item_split_unix_time($this->upperbound));
-                    $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_age', $a);
-                }
+            // internal range
+            if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
+                $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_age');
             }
         } else {
             if ($haslowerbound && ($userinput < $this->lowerbound)) {
@@ -547,13 +535,7 @@ EOS;
             $a->lowerbound = $this->item_age_to_text($lowerbound);
             $a->upperbound = $this->item_age_to_text($upperbound);
 
-            if ($this->lowerbound < $this->upperbound) {
-                $fillinginstruction .= get_string('restriction_lowerupper', 'surveyfield_age', $a);
-            }
-
-            if ($this->lowerbound > $this->upperbound) {
-                $fillinginstruction .= get_string('restriction_upperlower', 'surveyfield_age', $a);
-            }
+            $fillinginstruction .= get_string('restriction_lowerupper', 'surveyfield_age', $a);
         } else {
             if ($haslowerbound) {
                 $a = $this->item_age_to_text($lowerbound);

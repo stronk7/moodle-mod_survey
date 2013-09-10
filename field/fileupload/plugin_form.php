@@ -36,7 +36,7 @@ class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
         // -------------------------------------------------------------------------------
-        $item = $this->_customdata->item;
+        // $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
         // I start with the common "section" form
@@ -52,9 +52,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $options = array_combine(range(1, 5), range(1, 5));
         $options[EDITOR_UNLIMITED_FILES] = get_string('unlimited', 'survey');
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_fileupload'), $options);
+        $mform->setDefault($fieldname, '1048576');
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_fileupload');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, '1048576');
 
         // ----------------------------------------
         // newitem::maxbytes
@@ -62,23 +62,26 @@ class survey_pluginform extends mod_survey_itembaseform {
         $fieldname = 'maxbytes';
         $options = get_max_upload_sizes();
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_fileupload'), $options);
+        $mform->setDefault($fieldname, '1048576');
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_fileupload');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, '1048576');
 
         // ----------------------------------------
         // newitem::filetypes
         // ----------------------------------------
         $fieldname = 'filetypes';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_fileupload'));
-        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_fileupload');
         $mform->setDefault($fieldname, '*');
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_fileupload');
         $mform->setType($fieldname, PARAM_TEXT);
 
         $this->add_item_buttons();
     }
 
     public function validation($data, $files) {
+        // -------------------------------------------------------------------------------
+        // $item = $this->_customdata->item;
+
         $errors = parent::validation($data, $files);
 
         return $errors;

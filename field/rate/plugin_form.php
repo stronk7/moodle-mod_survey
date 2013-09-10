@@ -36,7 +36,7 @@ class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
         // -------------------------------------------------------------------------------
-        $item = $this->_customdata->item;
+        // $item = $this->_customdata->item;
 
         // -------------------------------------------------------------------------------
         // I start with the common "section" form
@@ -53,9 +53,9 @@ class survey_pluginform extends mod_survey_itembaseform {
                          SURVEYFIELD_RATE_USESELECT => get_string('usemenu', 'surveyfield_rate')
                    );
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_rate'), $options);
+        $mform->setDefault($fieldname, '0');
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_rate');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, '0');
 
         // ----------------------------------------
         // newitem::options
@@ -76,22 +76,24 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->setType($fieldname, PARAM_TEXT);
 
         // ----------------------------------------
-        // newitem::defaultvalue
+        // newitem::defaultoption
         // ----------------------------------------
-        $fieldname = 'defaultvalue';
+        $fieldname = 'defaultoption';
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('customdefault', 'surveyfield_rate'), SURVEY_CUSTOMDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('invitationdefault', 'survey'), SURVEY_INVITATIONDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('noanswer', 'survey'), SURVEY_NOANSWERDEFAULT);
-        $elementgroup[] = $mform->createElement('textarea', $fieldname, '', array('wrap' => 'virtual', 'rows' => '10', 'cols' => '65'));
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_rate'), array(' ', ' ', '<br />'), false);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_rate'), ' ', false);
+        $mform->setDefault($fieldname, SURVEY_INVITATIONDEFAULT);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_rate');
-        $mform->setDefault('defaultoption', SURVEY_INVITATIONDEFAULT);
+
+        // ----------------------------------------
+        // newitem::defaultvalue
+        // ----------------------------------------
+        $fieldname = 'defaultvalue';
+        $mform->addElement('textarea', $fieldname, '', array('wrap' => 'virtual', 'rows' => '10', 'cols' => '65'));
         $mform->setType($fieldname, PARAM_RAW);
-        $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
-        if (is_null($item->defaultvalue)) {
-            $mform->setDefault($fieldname, $item->item_generate_standard_default());
-        }
+        $mform->disabledIf($fieldname, 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
 
         // ----------------------------------------
         // newitem::downloadformat
@@ -101,9 +103,9 @@ class survey_pluginform extends mod_survey_itembaseform {
                          SURVEYFIELD_RATE_RETURNLABELS => get_string('returnlabels', 'surveyfield_rate'),
                          SURVEYFIELD_RATE_RETURNPOSITION => get_string('returnposition', 'surveyfield_rate'));
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_rate'), $options);
+        $mform->setDefault($fieldname, SURVEYFIELD_RATE_RETURNVALUES);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_rate');
         $mform->setType($fieldname, PARAM_INT);
-        $mform->setDefault($fieldname, SURVEYFIELD_RATE_RETURNVALUES);
 
         // /////////////////////////////////////////////////////////////////////////////////////////////////
         // here I open a new fieldset
@@ -116,14 +118,17 @@ class survey_pluginform extends mod_survey_itembaseform {
         // ----------------------------------------
         $fieldname = 'differentrates';
         $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'surveyfield_rate'));
+        $mform->setDefault($fieldname, '0');
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_rate');
         $mform->setType($fieldname, PARAM_TEXT);
-        $mform->setDefault($fieldname, '0');
 
         $this->add_item_buttons();
     }
 
     public function validation($data, $files) {
+        // -------------------------------------------------------------------------------
+        // $item = $this->_customdata->item;
+
         $errors = parent::validation($data, $files);
 
         // clean inputs

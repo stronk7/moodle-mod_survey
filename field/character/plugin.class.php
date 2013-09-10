@@ -243,6 +243,7 @@ class surveyfield_character extends mod_survey_itembase {
             $record->minlength = strlen($record->pattern_text);
             $record->maxlength = $record->minlength;
         }
+
         // 3. special management for defaultvalue
         // nothing to do: defaultvalue doesn't need any further care
     }
@@ -351,7 +352,7 @@ EOS;
 
         $thresholdsize = 48;
         $options = array('class' => 'indent-'.$this->indent);
-        if ($this->maxlength > 0) {
+        if (!empty($this->maxlength)) {
             $options['maxlength'] = $this->maxlength;
             if ($this->maxlength < $thresholdsize) {
                 $options['size'] = $this->maxlength;
@@ -406,7 +407,11 @@ EOS;
 
         if (!empty($data[$this->itemname])) {
             $fieldlength = strlen($data[$this->itemname]);
-
+            if (!empty($this->maxlength)) {
+                if ($fieldlength > $this->maxlength) {
+                    $errors[$errorkey] = get_string('uerr_texttoolong', 'surveyfield_character');
+                }
+            }
             if ($fieldlength < $this->minlength) {
                 $errors[$errorkey] = get_string('uerr_texttooshort', 'surveyfield_character');
             }

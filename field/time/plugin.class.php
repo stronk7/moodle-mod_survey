@@ -367,18 +367,13 @@ class surveyfield_time extends mod_survey_itembase {
 
                 <xs:element type="xs:int" name="step"/>
                 <xs:element type="xs:int" name="defaultoption"/>
-                <xs:element type="xs:unixtime" name="defaultvalue" minOccurs="0"/>
+                <xs:element type="xs:int" name="defaultvalue" minOccurs="0"/>
                 <xs:element type="xs:string" name="downloadformat"/>
                 <xs:element type="xs:int" name="lowerbound"/>
                 <xs:element type="xs:int" name="upperbound"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:simpleType name="unixtime">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="-?\d{0,10}"/>
-        </xs:restriction>
-    </xs:simpleType>
 </xs:schema>
 EOS;
 
@@ -410,8 +405,17 @@ EOS;
             $minutes[SURVEY_INVITATIONVALUE] = get_string('invitationminute', 'surveyfield_time');
         }
 
-        for ($i = (int)$this->lowerbound_hour; $i <= $this->upperbound_hour; $i++) {
-            $hours[$i] = sprintf("%02d", $i);
+        if ($this->lowerbound_hour <= $this->upperbound_hour) {
+            for ($i = (int)$this->lowerbound_hour; $i <= $this->upperbound_hour; $i++) {
+                $hours[$i] = sprintf("%02d", $i);
+            }
+        } else {
+            for ($i = (int)$this->lowerbound_hour; $i <= 24; $i++) {
+                $hours[$i] = sprintf("%02d", $i);
+            }
+            for ($i = (int)1; $i <= $this->upperbound_hour; $i++) {
+                $hours[$i] = sprintf("%02d", $i);
+            }
         }
         for ($i = 0; $i <= 59; $i += $this->step) {
             $minutes[$i] = sprintf("%02d", $i);
@@ -530,24 +534,26 @@ EOS;
             if ($this->lowerbound < $this->upperbound) {
                 // internal range
                 if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
-                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_age');
+                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_time');
                 }
             }
 
             if ($this->lowerbound > $this->upperbound) {
                 // external range
-                $format = get_string('strftimedate', 'langconfig');
-                $a = new stdClass();
-                $a->lowerbound = userdate($this->lowerbound, get_string($format, 'surveyfield_age'), 0);
-                $a->upperbound = userdate($this->upperbound, get_string($format, 'surveyfield_age'), 0);
-                $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_age', $a);
+                if ( ($userinput > $this->lowerbound) && ($userinput < $this->upperbound) ) {
+                    $format = $this->item_get_friendlyformat();
+                    $a = new stdClass();
+                    $a->lowerbound = userdate($this->lowerbound, get_string($format, 'surveyfield_time'), 0);
+                    $a->upperbound = userdate($this->upperbound, get_string($format, 'surveyfield_time'), 0);
+                    $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_time', $a);
+                }
             }
         } else {
             if ($haslowerbound && ($userinput < $this->lowerbound)) {
-                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_age');
+                $errors[$errorkey] = get_string('uerr_lowerthanminimum', 'surveyfield_time');
             }
             if ($hasupperbound && ($userinput > $this->upperbound)) {
-                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_age');
+                $errors[$errorkey] = get_string('uerr_greaterthanmaximum', 'surveyfield_time');
             }
         }
     }

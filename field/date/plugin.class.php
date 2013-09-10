@@ -536,22 +536,9 @@ EOS;
         $userinput = $this->item_date_to_unix_time($data[$this->itemname.'_year'], $data[$this->itemname.'_month'], $data[$this->itemname.'_day']);
 
         if ($haslowerbound && $hasupperbound) {
-            if ($this->lowerbound < $this->upperbound) {
-                // internal range
-                if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
-                    $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_date');
-                }
-            }
-
-            if ($this->lowerbound > $this->upperbound) {
-                // external range
-                if (($userinput > $this->lowerbound) && ($userinput < $this->upperbound)) {
-                    $format = get_string('strftimedate', 'langconfig');
-                    $a = new stdClass();
-                    $a->lowerbound = userdate($this->lowerbound, $format, 0);
-                    $a->upperbound = userdate($this->upperbound, $format, 0);
-                    $errors[$errorkey] = get_string('uerr_outofexternalrange', 'surveyfield_date', $a);
-                }
+            // internal range
+            if ( ($userinput < $this->lowerbound) || ($userinput > $this->upperbound) ) {
+                $errors[$errorkey] = get_string('uerr_outofinternalrange', 'surveyfield_date');
             }
         } else {
             if ($haslowerbound && ($userinput < $this->lowerbound)) {
@@ -581,13 +568,7 @@ EOS;
             $a->lowerbound = userdate($this->lowerbound, $format, 0);
             $a->upperbound = userdate($this->upperbound, $format, 0);
 
-            if ($this->lowerbound < $this->upperbound) {
-                $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_date', $a);
-            }
-
-            if ($this->lowerbound > $this->upperbound) {
-                $fillinginstruction = get_string('restriction_upperlower', 'surveyfield_date', $a);
-            }
+            $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_date', $a);
         } else {
             $fillinginstruction = '';
             if ($haslowerbound) {
