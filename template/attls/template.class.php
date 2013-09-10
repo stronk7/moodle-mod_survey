@@ -37,6 +37,5 @@ class surveytemplate_attls {
         if ($config->extrarow == 1) {
             $record['extrarow'] = '1';
         }
-        return $record;
     }
 }

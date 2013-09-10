@@ -23,6 +23,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$settings->add(new admin_setting_configcheckbox('surveytemplate/attls_extrarow',
+$settings->add(new admin_setting_configcheckbox('surveytemplate_attls/extrarow',
     get_string('extrarow', 'surveytemplate_attls'),
     get_string('extrarow_desc', 'surveytemplate_attls'), 1));
