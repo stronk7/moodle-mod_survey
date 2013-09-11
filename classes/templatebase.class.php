@@ -88,7 +88,7 @@ class mod_survey_templatebase {
             }
 
             if ($dropid) {
-                array_shift($dbstructure); // drop the first item: ID
+                array_shift($dbstructure); // ID is always the first item
             }
             return $dbstructure;
         } else {
