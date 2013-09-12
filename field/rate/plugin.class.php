@@ -391,10 +391,9 @@ EOS;
 
         $options = survey_textarea_to_array($this->options);
         $rates = $this->item_get_labels_array('rates');
-
         $defaultvalues = survey_textarea_to_array($this->defaultvalue);
 
-        if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
+        if (($this->defaultoption == SURVEY_INVITATIONDEFAULT)) {
             if ($this->style == SURVEYFIELD_RATE_USERADIO) {
                 $rates += array(SURVEY_INVITATIONVALUE => get_string('choosedots'));
             } else {
@@ -403,86 +402,75 @@ EOS;
         }
 
         if ($this->style == SURVEYFIELD_RATE_USERADIO) {
+            $separator_block = array_fill(0, count($rates) - 1, ' ');
+
+            $separator = array();
+            $elementgroup = array();
             foreach ($options as $k => $option) {
-                $uniquename = $this->itemname.'_'.$k;
-                $elementgroup = array();
+                $class = array('class' => 'indent-'.$this->indent);
                 foreach ($rates as $j => $rate) {
-                    $elementgroup[] = $mform->createElement('radio', $uniquename, '', $rate, $j);
+                    $uniquename = $this->itemname.'_'.$k;
+                    $elementgroup[] = $mform->createElement('radio', $uniquename, '', $rate, $j, $class);
+                    $class = '';
                 }
-                $mform->addGroup($elementgroup, $uniquename.'_group', $option, ' ', false);
-
-                if (!$searchform) {
-                    switch ($this->defaultoption) {
-                        case SURVEY_CUSTOMDEFAULT:
-                            $defaultindex = array_search($defaultvalues[$k], $rates);
-                            $mform->setDefault($uniquename, "$defaultindex");
-                            break;
-                        case SURVEY_INVITATIONDEFAULT:
-                            $mform->setDefault($uniquename, SURVEY_INVITATIONVALUE);
-                            break;
-                        case SURVEY_NOANSWERDEFAULT:
-                            $mform->setDefault($uniquename, SURVEY_NOANSWERVALUE);
-                            break;
-                        default:
-                            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
-                    }
-                } else {
-                    $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE); // free
-                }
+                $separator += array_merge($separator, $separator_block);
+                $separator[] = '<br />';
             }
+
+            if (!$this->required) {
+                $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
+                // no need to add one more $separator, the elements stops here
+            }
+
+            $label = implode('<br />', $options);
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $label, $separator, false);
         } else { // SURVEYFIELD_RATE_USESELECT
+            $elementgroup = array();
             foreach ($options as $k => $option) {
                 $uniquename = $this->itemname.'_'.$k;
-                $mform->addElement('select', $uniquename, $option, $rates, array('class' => 'indent-'.$this->indent));
-
-                if (!$searchform) {
-                    switch ($this->defaultoption) {
-                        case SURVEY_CUSTOMDEFAULT:
-                            $defaultindex = array_search($defaultvalues[$k], $rates);
-                            $mform->setDefault($uniquename, "$defaultindex");
-                            break;
-                        case SURVEY_INVITATIONDEFAULT:
-                            $mform->setDefault($uniquename, SURVEY_INVITATIONVALUE);
-                            break;
-                        case SURVEY_NOANSWERDEFAULT:
-                            $mform->setDefault($uniquename, SURVEY_NOANSWERVALUE);
-                            break;
-                        default:
-                            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
-                    }
-                } else {
-                    $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE); // free
-                }
+                $elementgroup[] = $mform->createElement('select', $uniquename, $option, $rates, array('class' => 'indent-'.$this->indent));
             }
+
+            if (!$this->required) {
+                $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
+                // no need to add one more $separator, the elements stops here
+            }
+
+            $label = implode('<br />', $options);
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $label, '<br />', false);
         }
 
-        if (!$searchform) {
-            if ($this->required) {
-                // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                // -> I do not want JS form validation if the page is submitted through the "previous" button
-                // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
-                // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                $mform->_required[] = $this->itemname.'_extrarow';
-                // Extra row has been forced by the plugin
-            }
+        if ($this->required) {
+            // even if the item is required I CAN NOT ADD ANY RULE HERE because:
+            // -> I do not want JS form validation if the page is submitted through the "previous" button
+            // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
+            // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+            // $mform->_required[] = $this->itemname.'_group';
+            $mform->_required[] = $this->itemname.'_extrarow';
+        } else {
+            $mform->disabledIf($uniquename.'_group', $this->itemname.'_noanswer', 'checked');
         }
 
-        if (!$this->required) {
-            $mform->addElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
-            $optionindex = 0;
-            foreach ($options as $option) {
-                if ($this->style == SURVEYFIELD_RATE_USERADIO) {
-                    $uniquename = $this->itemname.'_'.$optionindex.'_group';
-                } else {
-                    $uniquename = $this->itemname.'_'.$optionindex;
+        switch ($this->defaultoption) {
+            case SURVEY_CUSTOMDEFAULT:
+                foreach ($options as $k => $option) {
+                    $uniquename = $this->itemname.'_'.$k;
+                    $defaultindex = array_search($defaultvalues[$k], $rates);
+                    $mform->setDefault($uniquename, "$defaultindex");
                 }
-
-                $mform->disabledIf($uniquename, $this->itemname.'_noanswer', 'checked');
-                $optionindex++;
-            }
-            if ($this->defaultoption == SURVEY_NOANSWERDEFAULT) {
-                $mform->setDefault($this->itemname.'_noanswer', '1');
-            }
+                break;
+            case SURVEY_INVITATIONDEFAULT:
+                foreach ($options as $k => $option) {
+                    $uniquename = $this->itemname.'_'.$k;
+                    $mform->setDefault($uniquename, SURVEY_INVITATIONVALUE);
+                }
+                break;
+            case SURVEY_NOANSWERDEFAULT:
+                $uniquename = $this->itemname.'_noanswer';
+                $mform->setDefault($uniquename, SURVEY_NOANSWERVALUE);
+                break;
+            default:
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
         }
     }
 

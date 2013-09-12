@@ -4,26 +4,13 @@
 }
 
 #page-mod-survey-view .mform .fitem {
-    margin-top:.6em;
+    margin-top:.3em;
 }
 
-/* background-color:#EDEDED; for each div with "_rate_" into the attribute "id" */
-#page-mod-survey-view .mform div[id*="_rate_"] {
-    margin-top:0;
+/* background-color:#EDEDED; for each odd div */
+#page-mod-survey-view .mform fieldset div.fitem:nth-child(odd) {
     background-color:#EDEDED;
 }
-
-/* background-color:#C2E2C2; for each odd div */
-#page-mod-survey-view .mform fieldset div.fitem:nth-child(odd) {
-    background-color:#E0E0E0;
-}
-
-/*
- * this does not work I do not know why
- * #page-mod-survey-view fieldset.hidden div div[id*="_rate_"]:nth-child(1) {
- *  margin-top:.6em;
- * }
- */
 
 /* surveyfields */
 #page-mod-survey-view table#manageitems,
