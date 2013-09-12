@@ -79,22 +79,26 @@ if ($canmanageitems) {
 // -----------------------------------------------------------------------------
 // TAB USER TEMPLATES
 // -----------------------------------------------------------------------------
-// if (!$survey->template) {
-//     if ($canmanageusertemplates) {
-//         $elementurl = new moodle_url('/mod/survey/utemplates_create.php', $paramurl);
-//         $row[] = new tabobject(SURVEY_TAB3NAME, $elementurl->out(), SURVEY_TAB3NAME);
-//     }
-// }
+if (!$survey->template) {
+    if ($currenttab == SURVEY_TABUTEMPLATES) {
+        if ($canmanageusertemplates) {
+            $elementurl = new moodle_url('/mod/survey/utemplates_create.php', $paramurl);
+            $row[] = new tabobject(SURVEY_TAB3NAME, $elementurl->out(), SURVEY_TAB3NAME);
+        }
+    }
+}
 
 // -----------------------------------------------------------------------------
 // TAB MASTER TEMPLATES
 // -----------------------------------------------------------------------------
-// if (!$survey->template) {
-//     if ($cancreatemastertemplate || ((!$hassubmissions || $forceediting) && $canapplymastertemplate)) {
-//         $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $paramurl);
-//         $row[] = new tabobject(SURVEY_TAB4NAME, $elementurl->out(), SURVEY_TAB4NAME);
-//     }
-// }
+if (!$survey->template) {
+    if ($currenttab == SURVEY_TABMTEMPLATES){
+        if ($cancreatemastertemplate || ((!$hassubmissions || $forceediting) && $canapplymastertemplate)) {
+            $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $paramurl);
+            $row[] = new tabobject(SURVEY_TAB4NAME, $elementurl->out(), SURVEY_TAB4NAME);
+        }
+    }
+}
 
 // -----------------------------------------------------------------------------
 // ==> tab row definition
@@ -217,74 +221,74 @@ switch ($currenttab) {
         $tabs[] = $row;
 
         break;
-    // case SURVEY_TABUTEMPLATES:
-    //     // permissions
-    //     $cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
-    //     $canuploadusertemplates = has_capability('mod/survey:uploadusertemplates', $context, null, true);
-    //     $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
-    //
-    //     if ($survey->template) {
-    //         break;
-    //     }
-    //
-    //     $tabname = get_string('tabutemplatename', 'survey');
-    //     $inactive = array($tabname);
-    //     $activetwo = array($tabname);
-    //
-    //     if ($canmanageusertemplates) {
-    //         $row = array();
-    //         if (!$hassubmissions || $forceediting) { // if submissions were done, do not change the list of fields
-    //             $elementurl = new moodle_url('/mod/survey/utemplates_manage.php', $paramurl); // manage
-    //             $strlabel = get_string('tabutemplatepage1', 'survey');
-    //             $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
-    //         }
-    //
-    //         if ($cancreateusertemplates) { // create
-    //             $elementurl = new moodle_url('/mod/survey/utemplates_create.php', $paramurl);
-    //             $strlabel = get_string('tabutemplatepage2', 'survey');
-    //             $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
-    //         }
-    //
-    //         if ($canuploadusertemplates) { // upload
-    //             $elementurl = new moodle_url('/mod/survey/utemplates_import.php', $paramurl);
-    //             $strlabel = get_string('tabutemplatepage3', 'survey');
-    //             $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
-    //         }
-    //
-    //         if ( (!$hassubmissions || $forceediting) && $canapplyusertemplates ) { // if submissions were done, do not change the list of fields
-    //             $elementurl = new moodle_url('/mod/survey/utemplates_apply.php', $paramurl); // apply
-    //             $strlabel = get_string('tabutemplatepage4', 'survey');
-    //             $row[] = new tabobject('idpage4', $elementurl->out(), $strlabel);
-    //         }
-    //     }
-    //
-    //     $tabs[] = $row;
-    //
-    //     break;
-    // case SURVEY_TABMTEMPLATES:
-    //     if ($survey->template) {
-    //         break;
-    //     }
-    //
-    //     $tabname = get_string('tabmtemplatename', 'survey');
-    //     $inactive = array($tabname);
-    //     $activetwo = array($tabname);
-    //
-    //     $row = array();
-    //     if ($cancreatemastertemplate) { // create
-    //         $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $paramurl);
-    //         $strlabel = get_string('tabmtemplatepage1', 'survey');
-    //         $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
-    //     }
-    //
-    //     if ( (!$hassubmissions || $forceediting) && $canapplymastertemplate ) { // if submissions were done, do not change the list of fields
-    //         $elementurl = new moodle_url('/mod/survey/mtemplates_apply.php', $paramurl); // apply
-    //         $strlabel = get_string('tabmtemplatepage2', 'survey');
-    //         $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
-    //     }
-    //     $tabs[] = $row;
-    //
-    //     break;
+    case SURVEY_TABUTEMPLATES:
+        // permissions
+        $cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
+        $canuploadusertemplates = has_capability('mod/survey:uploadusertemplates', $context, null, true);
+        $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
+
+        if ($survey->template) {
+            break;
+        }
+
+        $tabname = get_string('tabutemplatename', 'survey');
+        $inactive = array($tabname);
+        $activetwo = array($tabname);
+
+        if ($canmanageusertemplates) {
+            $row = array();
+            if (!$hassubmissions || $forceediting) { // if submissions were done, do not change the list of fields
+                $elementurl = new moodle_url('/mod/survey/utemplates_manage.php', $paramurl); // manage
+                $strlabel = get_string('tabutemplatepage1', 'survey');
+                $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
+            }
+
+            if ($cancreateusertemplates) { // create
+                $elementurl = new moodle_url('/mod/survey/utemplates_create.php', $paramurl);
+                $strlabel = get_string('tabutemplatepage2', 'survey');
+                $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
+            }
+
+            if ($canuploadusertemplates) { // upload
+                $elementurl = new moodle_url('/mod/survey/utemplates_import.php', $paramurl);
+                $strlabel = get_string('tabutemplatepage3', 'survey');
+                $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
+            }
+
+            if ( (!$hassubmissions || $forceediting) && $canapplyusertemplates ) { // if submissions were done, do not change the list of fields
+                $elementurl = new moodle_url('/mod/survey/utemplates_apply.php', $paramurl); // apply
+                $strlabel = get_string('tabutemplatepage4', 'survey');
+                $row[] = new tabobject('idpage4', $elementurl->out(), $strlabel);
+            }
+        }
+
+        $tabs[] = $row;
+
+        break;
+    case SURVEY_TABMTEMPLATES:
+        if ($survey->template) {
+            break;
+        }
+
+        $tabname = get_string('tabmtemplatename', 'survey');
+        $inactive = array($tabname);
+        $activetwo = array($tabname);
+
+        $row = array();
+        if ($cancreatemastertemplate) { // create
+            $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $paramurl);
+            $strlabel = get_string('tabmtemplatepage1', 'survey');
+            $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
+        }
+
+        if ( (!$hassubmissions || $forceediting) && $canapplymastertemplate ) { // if submissions were done, do not change the list of fields
+            $elementurl = new moodle_url('/mod/survey/mtemplates_apply.php', $paramurl); // apply
+            $strlabel = get_string('tabmtemplatepage2', 'survey');
+            $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
+        }
+        $tabs[] = $row;
+
+        break;
     default:
         print_error('incorrectaccessdetected', 'survey');
 }

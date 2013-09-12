@@ -7,8 +7,8 @@
     margin-top:.3em;
 }
 
-/* background-color:#EDEDED; for each odd div */
-#page-mod-survey-view .mform fieldset div.fitem:nth-child(odd) {
+/* background-color:#EDEDED; for each odd div ONLY IN remoteuserentry */
+#page-mod-survey-view #remoteuserentry fieldset div.fitem:nth-child(odd) {
     background-color:#EDEDED;
 }
 

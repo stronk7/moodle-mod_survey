@@ -29,7 +29,7 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 require_once($CFG->dirroot.'/mod/survey/classes/view_search.class.php');
-require_once($CFG->dirroot.'/mod/survey/forms/submissions/search_form.php');
+require_once($CFG->dirroot.'/mod/survey/forms/remoteuser/search_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $s = optional_param('s', 0, PARAM_INT);  // survey instance ID

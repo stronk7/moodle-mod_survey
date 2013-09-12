@@ -29,7 +29,7 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 require_once($CFG->dirroot.'/mod/survey/classes/view_userform.class.php');
-require_once($CFG->dirroot.'/mod/survey/forms/submissions/userpage_form.php');
+require_once($CFG->dirroot.'/mod/survey/forms/remoteuser/userpage_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $s = optional_param('s', 0, PARAM_INT);  // survey instance ID
@@ -96,9 +96,9 @@ $formparams->cansubmit = $userpage_manager->cansubmit;
 // ////////////////////////////
 
 if ($action == SURVEY_READONLYRESPONSE) {
-    $userpage_form = new survey_submissionform($formurl, $formparams, 'post', '', null, false);
+    $userpage_form = new survey_submissionform($formurl, $formparams, 'post', '', array('id' => 'remoteuserentry'), false);
 } else {
-    $userpage_form = new survey_submissionform($formurl, $formparams);
+    $userpage_form = new survey_submissionform($formurl, $formparams, 'post', '', array('id' => 'remoteuserentry'));
 }
 
 // ////////////////////////////
