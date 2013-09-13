@@ -146,11 +146,11 @@ class surveyfield_autofill extends mod_survey_itembase {
         $this->flag = new stdClass();
         $this->flag->issearchable = true;
         $this->flag->usescontenteditor = true;
-        $this->flag->editorslist = array('content');
+        $this->flag->editorslist = array('content' => SURVEY_ITEMCONTENTFILEAREA);
 
         // list of fields I do not want to have in the item definition form
         $this->itembase_form_requires['required'] = false;         // <-- it will be set to 0 at save time
-        $this->itembase_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['hideinstructions'] = false;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);

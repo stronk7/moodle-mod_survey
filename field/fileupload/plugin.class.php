@@ -126,7 +126,7 @@ class surveyfield_fileupload extends mod_survey_itembase {
         $this->flag = new stdClass();
         $this->flag->issearchable = false;
         $this->flag->usescontenteditor = true;
-        $this->flag->editorslist = array('content');
+        $this->flag->editorslist = array('content' => SURVEY_ITEMCONTENTFILEAREA);
 
         // list of fields I do not want to have in the item definition form
         $this->itembase_form_requires['insearchform'] = false;
@@ -328,7 +328,7 @@ EOS;
             $fieldname = $this->itemname.'_filemanager';
 
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-            file_save_draft_area_files($answer['filemanager'], $this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id, $attachmentoptions);
+            file_save_draft_area_files($answer['filemanager'], $this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOADFILEAREA, $olduserdata->id, $attachmentoptions);
 
             $olduserdata->content = ''; // nothing is expected here
         }
@@ -352,7 +352,7 @@ EOS;
             // $prefill->id = $fromdb->submissionid;
             $draftitemid = 0;
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-            file_prepare_draft_area($draftitemid, $this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $fromdb->id, $attachmentoptions);
+            file_prepare_draft_area($draftitemid, $this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOADFILEAREA, $fromdb->id, $attachmentoptions);
 
             $prefill[$fieldname] = $draftitemid;
         }
@@ -371,7 +371,7 @@ EOS;
     public function userform_db_to_export($answer, $format='') {
         // SURVEY_NOANSWERVALUE does not exist here
         $fs = get_file_storage();
-        $files = $fs->get_area_files($this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $answer->id);
+        $files = $fs->get_area_files($this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOADFILEAREA, $answer->id);
         $filename = array();
         foreach ($files as $file) {
             if ($file->is_directory()) {

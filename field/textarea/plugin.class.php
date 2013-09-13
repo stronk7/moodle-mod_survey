@@ -141,7 +141,7 @@ class surveyfield_textarea extends mod_survey_itembase {
         $this->flag = new stdClass();
         $this->flag->issearchable = false;
         $this->flag->usescontenteditor = true;
-        $this->flag->editorslist = array('content');
+        $this->flag->editorslist = array('content' => SURVEY_ITEMCONTENTFILEAREA);
 
         // list of fields I do not want to have in the item definition form
         $this->itembase_form_requires['insearchform'] = false;
@@ -463,7 +463,7 @@ EOS;
             $olduserdata->{$this->itemname.'_editor'} = $answer['editor'];
 
             $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $this->context);
-            $olduserdata = file_postupdate_standard_editor($olduserdata, $this->itemname, $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id);
+            $olduserdata = file_postupdate_standard_editor($olduserdata, $this->itemname, $editoroptions, $this->context, 'mod_survey', SURVEYFIELD_TEXTAREAFILEAREA, $olduserdata->id);
             $olduserdata->content = $olduserdata->{$this->itemname};
         } else {
             $olduserdata->content = $answer['mainelement'];
@@ -487,7 +487,7 @@ EOS;
                 if (!empty($this->useeditor)) {
                     $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'context' => $this->context);
                     $fromdb->contentformat = FORMAT_HTML;
-                    $fromdb = file_prepare_standard_editor($fromdb, 'content', $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $fromdb->id);
+                    $fromdb = file_prepare_standard_editor($fromdb, 'content', $editoroptions, $this->context, 'mod_survey', SURVEYFIELD_TEXTAREAFILEAREA, $fromdb->id);
 
                     $prefill[$this->itemname.'_editor'] = $fromdb->content_editor;
                 } else {

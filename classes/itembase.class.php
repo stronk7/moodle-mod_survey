@@ -291,8 +291,8 @@ class mod_survey_itembase {
             // special care for "editors"
             if ($this->flag->editorslist) {
                 $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $this->context);
-                foreach ($this->flag->editorslist as $fieldname) {
-                    $record = file_postupdate_standard_editor($record, $fieldname, $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
+                foreach ($this->flag->editorslist as $fieldname => $filearea) {
+                    $record = file_postupdate_standard_editor($record, $fieldname, $editoroptions, $this->context, 'mod_survey', $filearea, $record->itemid);
                     $record->{$fieldname.'format'} = FORMAT_HTML;
                 }
 
@@ -309,8 +309,8 @@ class mod_survey_itembase {
             // special care for "editors"
             if ($this->flag->editorslist) {
                 $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $this->context);
-                foreach ($this->flag->editorslist as $fieldname) {
-                    $record = file_postupdate_standard_editor($record, $fieldname, $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
+                foreach ($this->flag->editorslist as $fieldname => $filearea) {
+                    $record = file_postupdate_standard_editor($record, $fieldname, $editoroptions, $this->context, 'mod_survey', $filearea, $record->itemid);
                     $record->{$fieldname.'format'} = FORMAT_HTML;
                 }
             // } else {
@@ -551,17 +551,17 @@ class mod_survey_itembase {
         // fieldset              has: $this->itembase_form_requires['content'] == true  and $this->flag->editorslist == null
         // pagebreak             has: $this->itembase_form_requires['content'] == false and $this->flag->editorslist == null
         $fieldnames = array();
-        foreach ($this->flag->editorslist as $fieldname) {
-            $fieldnames[] = $fieldname;
+        foreach ($this->flag->editorslist as $fieldname => $filearea) {
+            $fieldnames[$fieldname] = $filearea;
         }
 
-        foreach ($fieldnames as $fieldname) {
+        foreach ($fieldnames as $fieldname => $filearea) {
             $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => -1, 'context' => $this->context);
 
             $saveditem->{$fieldname.'format'} = FORMAT_HTML;
             $saveditem->{$fieldname.'trust'} = 1;
 
-            $saveditem = file_prepare_standard_editor($saveditem, $fieldname, $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $saveditem->itemid);
+            $saveditem = file_prepare_standard_editor($saveditem, $fieldname, $editoroptions, $this->context, 'mod_survey', $filearea, $saveditem->itemid);
         }
     }
 

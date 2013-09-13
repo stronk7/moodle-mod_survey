@@ -142,7 +142,7 @@ class surveyfield_date extends mod_survey_itembase {
         $this->flag = new stdClass();
         $this->flag->issearchable = true;
         $this->flag->usescontenteditor = true;
-        $this->flag->editorslist = array('content');
+        $this->flag->editorslist = array('content' => SURVEY_ITEMCONTENTFILEAREA);
 
         // override properties depending from $survey settings
         if (isset($survey)) { // it is not set during upgrade whther this item is loaded

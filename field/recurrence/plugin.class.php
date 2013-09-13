@@ -142,7 +142,7 @@ class surveyfield_recurrence extends mod_survey_itembase {
         $this->flag = new stdClass();
         $this->flag->issearchable = true;
         $this->flag->usescontenteditor = true;
-        $this->flag->editorslist = array('content');
+        $this->flag->editorslist = array('content' => SURVEY_ITEMCONTENTFILEAREA);
 
         // override properties depending from $survey settings
         $this->lowerbound = $this->item_recurrence_to_unix_time(1, 1);

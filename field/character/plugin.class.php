@@ -137,7 +137,7 @@ class surveyfield_character extends mod_survey_itembase {
         $this->flag = new stdClass();
         $this->flag->issearchable = true;
         $this->flag->usescontenteditor = true;
-        $this->flag->editorslist = array('content');
+        $this->flag->editorslist = array('content' => SURVEY_ITEMCONTENTFILEAREA);
 
         // list of fields I do not want to have in the item definition form
         // EMPTY LIST

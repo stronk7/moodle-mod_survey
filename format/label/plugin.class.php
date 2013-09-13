@@ -95,19 +95,19 @@ class surveyformat_label extends mod_survey_itembase {
         $this->flag = new stdClass();
         $this->flag->issearchable = false;
         $this->flag->usescontenteditor = true;
-        $this->flag->editorslist = array('content', 'leftlabel');
+        $this->flag->editorslist = array('content' => SURVEY_ITEMCONTENTFILEAREA, 'leftlabel' => SURVEY_ITEMSECONDFILEAREA);
 
         // list of fields I do not want to have in the item definition form
         $this->itembase_form_requires['extrarow'] = false;
         $this->itembase_form_requires['extranote'] = false;
         $this->itembase_form_requires['required'] = false;
         $this->itembase_form_requires['variable'] = false;
-        $this->itembase_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['hideinstructions'] = false;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
             $this->content = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
-            $this->leftlabel = file_rewrite_pluginfile_urls($this->leftlabel, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+            $this->leftlabel = file_rewrite_pluginfile_urls($this->leftlabel, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMSECONDFILEAREA, $this->itemid);
         }
     }
 

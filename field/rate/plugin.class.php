@@ -151,11 +151,11 @@ class surveyfield_rate extends mod_survey_itembase {
         $this->flag = new stdClass();
         $this->flag->issearchable = false;
         $this->flag->usescontenteditor = true;
-        $this->flag->editorslist = array('content');
+        $this->flag->editorslist = array('content' => SURVEY_ITEMCONTENTFILEAREA);
 
         // list of fields I do not want to have in the item definition form
         $this->itembase_form_requires['insearchform'] = false;
-        $this->itembase_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['hideinstructions'] = false;
         // itembase_form_requires['extrarow'] = true // show extrarow checkbox
         // itembase_form_requires['extrarow'] = false // do not show extrarow checkbox
         // itembase_form_requires['extrarow'] = 'disable' //  disable the extrarow checkbox

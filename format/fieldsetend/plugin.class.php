@@ -85,7 +85,7 @@ class surveyformat_fieldsetend extends mod_survey_itembase {
         $this->itembase_form_requires['required'] = false;
         $this->itembase_form_requires['variable'] = false;
         $this->itembase_form_requires['indent'] = false;
-        $this->itembase_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
+        $this->itembase_form_requires['hideinstructions'] = false;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);

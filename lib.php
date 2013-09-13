@@ -176,6 +176,7 @@ define('SURVEY_OPTIONALITEM', 0);
 define('SURVEY_STYLEFILEAREA'      , 'userstyle');
 define('SURVEY_TEMPLATEFILEAREA'   , 'templatefilearea');
 define('SURVEY_ITEMCONTENTFILEAREA', 'itemcontent');
+define('SURVEY_ITEMSECONDFILEAREA' , 'itemsecondcontent');
 define('SURVEY_THANKSHTMLFILEAREA' , 'thankshtml');
 
 // otheritems
@@ -401,7 +402,11 @@ function survey_delete_instance($id) {
     //     SURVEY_STYLEFILEAREA
     //     SURVEY_TEMPLATEFILEAREA
     //     SURVEY_ITEMCONTENTFILEAREA
+    //     SURVEY_ITEMSECONDFILEAREA
     //     SURVEY_THANKSHTMLFILEAREA
+
+    //     SURVEYFIELD_FILEUPLOADFILEAREA
+    //     SURVEYFIELD_TEXTAREAFILEAREA
     // never delete mod_survey files in each AREA in $context = context_user::instance($userid);
 
     // always delete mod_survey files in each AREA in $context = context_module::instance($contextid);
