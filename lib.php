@@ -405,8 +405,8 @@ function survey_delete_instance($id) {
     //     SURVEY_ITEMSECONDFILEAREA
     //     SURVEY_THANKSHTMLFILEAREA
 
-    //     SURVEYFIELD_FILEUPLOADFILEAREA
-    //     SURVEYFIELD_TEXTAREAFILEAREA
+    //     SURVEYFIELD_FILEUPLOAD_FILEAREA <-- does this is supposed to go to its delete_instance plugin?
+    //     SURVEYFIELD_TEXTAREAFILEAREA <-- does this is supposed to go to its delete_instance plugin?
     // never delete mod_survey files in each AREA in $context = context_user::instance($userid);
 
     // always delete mod_survey files in each AREA in $context = context_module::instance($contextid);

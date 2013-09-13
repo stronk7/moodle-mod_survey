@@ -28,4 +28,4 @@ require_once($CFG->dirroot.'/mod/survey/locallib.php');
 define('SURVEYFIELD_TEXTAREA_DEFAULTCOLS', 60);
 define('SURVEYFIELD_TEXTAREA_DEFAULTROWS', 10);
 
-define('SURVEYFIELD_TEXTAREAFILEAREA', 'textareacontent');
+define('SURVEYFIELD_TEXTAREA_FILEAREA', 'textareacontent');

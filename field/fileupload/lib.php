@@ -25,4 +25,4 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 
-define('SURVEYFIELD_FILEUPLOADFILEAREA', 'fileuploadfiles');
+define('SURVEYFIELD_FILEUPLOAD_FILEAREA', 'fileuploadfiles');

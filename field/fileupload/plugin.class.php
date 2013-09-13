@@ -328,7 +328,7 @@ EOS;
             $fieldname = $this->itemname.'_filemanager';
 
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-            file_save_draft_area_files($answer['filemanager'], $this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOADFILEAREA, $olduserdata->id, $attachmentoptions);
+            file_save_draft_area_files($answer['filemanager'], $this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOAD_FILEAREA, $olduserdata->id, $attachmentoptions);
 
             $olduserdata->content = ''; // nothing is expected here
         }
@@ -352,7 +352,7 @@ EOS;
             // $prefill->id = $fromdb->submissionid;
             $draftitemid = 0;
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-            file_prepare_draft_area($draftitemid, $this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOADFILEAREA, $fromdb->id, $attachmentoptions);
+            file_prepare_draft_area($draftitemid, $this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOAD_FILEAREA, $fromdb->id, $attachmentoptions);
 
             $prefill[$fieldname] = $draftitemid;
         }
@@ -371,7 +371,7 @@ EOS;
     public function userform_db_to_export($answer, $format='') {
         // SURVEY_NOANSWERVALUE does not exist here
         $fs = get_file_storage();
-        $files = $fs->get_area_files($this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOADFILEAREA, $answer->id);
+        $files = $fs->get_area_files($this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOAD_FILEAREA, $answer->id);
         $filename = array();
         foreach ($files as $file) {
             if ($file->is_directory()) {
