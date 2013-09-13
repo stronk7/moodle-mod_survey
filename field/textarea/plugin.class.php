@@ -463,7 +463,7 @@ EOS;
             $olduserdata->{$this->itemname.'_editor'} = $answer['editor'];
 
             $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $this->context);
-            $olduserdata = file_postupdate_standard_editor($olduserdata, $this->itemname, $editoroptions, $this->context, 'mod_survey', SURVEYFIELD_TEXTAREAFILEAREA, $olduserdata->id);
+            $olduserdata = file_postupdate_standard_editor($olduserdata, $this->itemname, $editoroptions, $this->context, 'mod_survey', SURVEYFIELD_TEXTAREA_FILEAREA, $olduserdata->id);
             $olduserdata->content = $olduserdata->{$this->itemname};
         } else {
             $olduserdata->content = $answer['mainelement'];
@@ -487,7 +487,7 @@ EOS;
                 if (!empty($this->useeditor)) {
                     $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'context' => $this->context);
                     $fromdb->contentformat = FORMAT_HTML;
-                    $fromdb = file_prepare_standard_editor($fromdb, 'content', $editoroptions, $this->context, 'mod_survey', SURVEYFIELD_TEXTAREAFILEAREA, $fromdb->id);
+                    $fromdb = file_prepare_standard_editor($fromdb, 'content', $editoroptions, $this->context, 'mod_survey', SURVEYFIELD_TEXTAREA_FILEAREA, $fromdb->id);
 
                     $prefill[$this->itemname.'_editor'] = $fromdb->content_editor;
                 } else {
