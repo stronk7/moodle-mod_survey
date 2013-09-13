@@ -80,9 +80,7 @@ require_once($CFG->dirroot.'/mod/survey/'.$itemlist_manager->type.'/'.$itemlist_
 // get item
 $itemclass = 'survey'.$itemlist_manager->type.'_'.$itemlist_manager->plugin;
 $item = new $itemclass($itemlist_manager->itemid);
-if (method_exists($item, 'item_set_editor')) {
-    $item->item_set_editor($cm->id, $item);
-}
+$item->item_set_editor($cm->id, $item);
 // end of: get item
 // ////////////////////////////
 

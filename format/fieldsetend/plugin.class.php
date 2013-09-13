@@ -60,12 +60,21 @@ class surveyformat_fieldsetend extends mod_survey_itembase {
      * @param int $itemid. Optional survey_item ID
      */
     public function __construct($itemid=0) {
+        global $PAGE;
+
+        $cm = $PAGE->cm;
+
+        if (isset($cm)) { // it is not set during upgrade whther this item is loaded
+            $this->context = context_module::instance($cm->id);
+        }
+
         $this->type = SURVEY_TYPEFORMAT;
         $this->plugin = 'fieldsetend';
 
         $this->flag = new stdClass();
         $this->flag->issearchable = false;
         $this->flag->usescontenteditor = false;
+        $this->flag->editorslist = null;
 
         // list of fields I do not want to have in the item definition form
         $this->itembase_form_requires['common_fs'] = false;
@@ -80,6 +89,8 @@ class surveyformat_fieldsetend extends mod_survey_itembase {
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
+            // for this plugin, $context is ALWAYS a plain text
+            // $this->content = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
         }
     }
 

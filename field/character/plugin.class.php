@@ -123,18 +123,28 @@ class surveyfield_character extends mod_survey_itembase {
      * @param int $itemid. Optional survey_item ID
      */
     public function __construct($itemid=0) {
+        global $PAGE;
+
+        $cm = $PAGE->cm;
+
+        if (isset($cm)) { // it is not set during upgrade whther this item is loaded
+            $this->context = context_module::instance($cm->id);
+        }
+
         $this->type = SURVEY_TYPEFIELD;
         $this->plugin = 'character';
 
         $this->flag = new stdClass();
         $this->flag->issearchable = true;
         $this->flag->usescontenteditor = true;
+        $this->flag->editorslist = array('content');
 
         // list of fields I do not want to have in the item definition form
         // EMPTY LIST
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
+            $this->content = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
         }
     }
 
@@ -348,7 +358,7 @@ EOS;
      */
     public function userform_mform_element($mform, $searchform) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
+        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.$this->content;
 
         $thresholdsize = 48;
         $options = array('class' => 'indent-'.$this->indent);

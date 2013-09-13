@@ -53,7 +53,7 @@ class survey_searchform extends moodleform {
             if ($item->get_extrarow()) {
                 $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
 
-                $output = file_rewrite_pluginfile_urls($item->get_content(), 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->get_itemid());
+                $output = $item->get_content();
                 $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->get_indent())); // here I  do not strip tags to content
             }
 

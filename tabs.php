@@ -92,7 +92,7 @@ if (!$survey->template) {
 // TAB MASTER TEMPLATES
 // -----------------------------------------------------------------------------
 if (!$survey->template) {
-    if ($currenttab == SURVEY_TABMTEMPLATES){
+    if ($currenttab == SURVEY_TABMTEMPLATES) {
         if ($cancreatemastertemplate || ((!$hassubmissions || $forceediting) && $canapplymastertemplate)) {
             $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $paramurl);
             $row[] = new tabobject(SURVEY_TAB4NAME, $elementurl->out(), SURVEY_TAB4NAME);

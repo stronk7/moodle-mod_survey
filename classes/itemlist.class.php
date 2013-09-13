@@ -385,11 +385,10 @@ class mod_survey_itemlist {
             }
 
             // *************************************** content
-            $itemcontent = $item->get_content();
             $item->set_contentformat(FORMAT_HTML);
             $item->set_contenttrust(1);
 
-            $output = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->get_itemid());
+            $output = $item->get_content();
             $tablerow[] = $output;
 
             // *************************************** variable
@@ -692,10 +691,9 @@ class mod_survey_itemlist {
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             if ($itemstoprocess > 1) { // ask for confirmation
                 $item = survey_get_item($this->itemid, $this->type, $this->plugin);
-                $itemcontent = $item->get_content();
 
                 $a = new stdClass();
-                $a->parentid = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+                $a->parentid = $item->get_content();
                 $a->dependencies = implode(', ', $sortindextohidelist);
                 $message = get_string('askitemstohide', 'survey', $a);
 
@@ -753,10 +751,9 @@ class mod_survey_itemlist {
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             if ($itemstoprocess > 1) { // ask for confirmation
                 $item = survey_get_item($this->itemid, $this->type, $this->plugin);
-                $itemcontent = $item->get_content();
 
                 $a = new stdClass();
-                $a->lastitem = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+                $a->lastitem = $item->get_content();
                 $a->ancestors = implode(', ', $sortindextoshowlist);
                 $message = get_string('askitemstoshow', 'survey', $a);
 
@@ -820,10 +817,9 @@ class mod_survey_itemlist {
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             if (count($toadvancedlist) > 1) { // ask for confirmation
                 $item = survey_get_item($this->itemid, $this->type, $this->plugin);
-                $itemcontent = $item->get_content();
 
                 $a = new stdClass();
-                $a->parentid = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+                $a->parentid = $item->get_content();
                 $a->dependencies = implode(', ', $sortindextoadvancedlist);
                 $message = get_string('askitemstoadvanced', 'survey', $a);
 
@@ -881,10 +877,9 @@ class mod_survey_itemlist {
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             if ($itemstoprocess > 1) { // ask for confirmation
                 $item = survey_get_item($this->itemid, $this->type, $this->plugin);
-                $itemcontent = $item->get_content();
 
                 $a = new stdClass();
-                $a->lastitem = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+                $a->lastitem = $item->get_content();
                 $a->ancestors = implode(', ', $sortindextostandardlist);
                 $message = get_string('askitemstostandard', 'survey', $a);
 
@@ -939,10 +934,8 @@ class mod_survey_itemlist {
             // ask for confirmation
             // in the frame of the confirmation I need to declare whether some child will break the link
             $item = survey_get_item($this->itemid, $this->type, $this->plugin);
-            $itemcontent = $item->get_content();
 
-            $a = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
-            $message = get_string('askdeleteoneitem', 'survey', $a);
+            $message = get_string('askdeleteoneitem', 'survey', $item->get_content());
 
             // is there any child item link to break
             if ($childitems = $DB->get_records('survey_item', array('parentid' => $this->itemid), 'sortindex', 'sortindex')) { // sortindex is suposed to be a valid key
@@ -985,9 +978,8 @@ class mod_survey_itemlist {
 
                     // get the content of the item for the closing message
                     $item = survey_get_item($this->itemid, $this->type, $this->plugin);
-                    $itemcontent = $item->get_content();
 
-                    $a = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+                    $a = $item->get_content();
                     $killedsortindex = $item->get_sortindex();
                     $item->item_delete_item($this->itemid);
 
@@ -1246,11 +1238,10 @@ class mod_survey_itemlist {
             $tablerow[] = $content;
 
             // *************************************** content
-            $itemcontent = $item->get_content();
             $item->set_contentformat(FORMAT_HTML);
             $item->set_contenttrust(1);
 
-            $output = file_rewrite_pluginfile_urls($itemcontent, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->get_itemid());
+            $output = $item->get_content();
             $tablerow[] = $output;
 
             // *************************************** sortindex

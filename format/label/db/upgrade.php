@@ -30,6 +30,45 @@
  * @return bool true
  */
 function xmldb_surveyformat_label_upgrade($oldversion) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2013091201) {
+
+        // Define field label to be dropped from survey_label.
+        $table = new xmldb_table('survey_label');
+        $field = new xmldb_field('leftlabel');
+
+        // Conditionally launch drop field label.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+
+        // Define field label to be added to survey_label.
+        $table = new xmldb_table('survey_label');
+        $field = new xmldb_field('leftlabel', XMLDB_TYPE_TEXT, null, null, null, null, null, 'indent');
+
+        // Conditionally launch add field label.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Define field labelformat to be added to survey_label.
+        $table = new xmldb_table('survey_label');
+        $field = new xmldb_field('leftlabelformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'leftlabel');
+
+        // Conditionally launch add field labelformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013091201, 'surveyformat', 'label');
+    }
+
     return true;
 }
 

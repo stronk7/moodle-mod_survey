@@ -121,10 +121,9 @@ class survey_submissionform extends moodleform {
                     if ($item->get_extrarow()) {
                         $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
 
-                        $output = file_rewrite_pluginfile_urls($item->get_content(), 'pluginfile.php', $context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->get_itemid());
+                        $output = $item->get_content();
                         //echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
                         //die;
-                        //$this->itemname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
                         $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->get_indent())); // here I  do not strip tags to content
                     }
 

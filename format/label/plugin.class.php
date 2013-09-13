@@ -40,7 +40,6 @@ class surveyformat_label extends mod_survey_itembase {
 
     /*
      * $contentformat = the text format of the item.
-     * public $contentformat = '';
      */
     public $contentformat = '';
 
@@ -55,7 +54,12 @@ class surveyformat_label extends mod_survey_itembase {
     /*
      * $leftlabel = label on the left of the label content
      */
-    public $leftlabel;
+    public $leftlabel = '';
+
+    /*
+     * $labelformat = the text format of the item.
+     */
+    public $leftlabelformat = '';
 
     /*
      * $flag = features describing the object
@@ -81,12 +85,17 @@ class surveyformat_label extends mod_survey_itembase {
 
         $cm = $PAGE->cm;
 
+        if (isset($cm)) { // it is not set during upgrade whther this item is loaded
+            $this->context = context_module::instance($cm->id);
+        }
+
         $this->type = SURVEY_TYPEFORMAT;
         $this->plugin = 'label';
 
         $this->flag = new stdClass();
         $this->flag->issearchable = false;
         $this->flag->usescontenteditor = true;
+        $this->flag->editorslist = array('content', 'leftlabel');
 
         // list of fields I do not want to have in the item definition form
         $this->itembase_form_requires['extrarow'] = false;
@@ -95,12 +104,10 @@ class surveyformat_label extends mod_survey_itembase {
         $this->itembase_form_requires['variable'] = false;
         $this->itembase_form_requires['hideinstructions'] = false; // <-- actually the field has been removed so I do not need it in the item form
 
-        if (isset($cm)) { // it is not set during upgrade whther this item is loaded
-            $this->context = context_module::instance($cm->id);
-        }
-
         if (!empty($itemid)) {
             $this->item_load($itemid);
+            $this->content = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
+            $this->leftlabel = file_rewrite_pluginfile_urls($this->leftlabel, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
         }
     }
 
@@ -126,6 +133,8 @@ class surveyformat_label extends mod_survey_itembase {
      * @return
      */
     public function item_save($record) {
+        global $DB;
+
         // //////////////////////////////////
         // Now execute very specific plugin level actions
         // //////////////////////////////////
@@ -212,11 +221,9 @@ EOS;
     public function userform_mform_element($mform, $searchform) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        $message = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
-
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $elementnumber.strip_tags($this->leftlabel);
-        $mform->addElement('static', $this->itemname, $elementlabel, $message);
+        $elementlabel = $elementnumber.$this->leftlabel;
+        $mform->addElement('static', $this->itemname, $elementlabel, $this->content);
     }
 
     /*

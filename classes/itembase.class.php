@@ -48,6 +48,11 @@ class mod_survey_itembase {
     public $surveyid = 0;
 
     /*
+     * $context
+     */
+    public $context = '';
+
+    /*
      * $type = the type of the item. It can only be: SURVEY_TYPEFIELD or SURVEY_TYPEFORMAT
      */
     public $type = '';
@@ -190,7 +195,6 @@ class mod_survey_itembase {
         global $CFG, $DB, $PAGE;
 
         $cm = $PAGE->cm;
-        $context = context_module::instance($cm->id);
 
         // you are going to change item content (maybe sortindex, maybe the parentitem)
         // so, do not forget to reset items per page
@@ -274,37 +278,41 @@ class mod_survey_itembase {
             $record->sortindex = 1 + $DB->count_records_sql($sql, $sqlparam);
 
             // itemid
-            if ($itemid = $DB->insert_record('survey_item', $record)) {
+            if ($itemid = $DB->insert_record('survey_item', $record)) { // <-- first save
                 // $tablename
                 $record->itemid = $itemid;
-                if ($pluginid = $DB->insert_record($tablename, $record)) {
+                if ($pluginid = $DB->insert_record($tablename, $record)) { // <-- first save
                     $this->userfeedback += 1; // 0*2^1+1*2^0
                 }
             }
 
             $logaction = ($this->userfeedback == SURVEY_NOFEEDBACK) ? 'add item failed' : 'add item';
 
-            // special care for the "editor" field
-            if ($this->flag->usescontenteditor) {
-                $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
-                $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
-                $record->contentformat = FORMAT_HTML;
+            // special care for "editors"
+            if ($this->flag->editorslist) {
+                $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $this->context);
+                foreach ($this->flag->editorslist as $fieldname) {
+                    $record = file_postupdate_standard_editor($record, $fieldname, $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
+                    $record->{$fieldname.'format'} = FORMAT_HTML;
+                }
 
                 // tablename
                 // id
                 $record->id = $pluginid;
 
-                $DB->update_record($tablename, $record);
+                $DB->update_record($tablename, $record); // <-- update
             // } else {
                 // record->content follows stnandard flow and has already been saved at record save time
             }
         } else {
 
-            // special care for the "editor" field
-            if ($this->flag->usescontenteditor) {
-                $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $context);
-                $record = file_postupdate_standard_editor($record, 'content', $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
-                $record->contentformat = FORMAT_HTML;
+            // special care for "editors"
+            if ($this->flag->editorslist) {
+                $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $this->context);
+                foreach ($this->flag->editorslist as $fieldname) {
+                    $record = file_postupdate_standard_editor($record, $fieldname, $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $record->itemid);
+                    $record->{$fieldname.'format'} = FORMAT_HTML;
+                }
             // } else {
                 // record->content follows stnandard flow and will be evaluated in the standard way
             }
@@ -317,12 +325,12 @@ class mod_survey_itembase {
             $oldadvanced = $DB->get_field('survey_item', 'advanced', array('id' => $record->itemid)); // used later
             // end of: limit/unlimit access part 1
 
+            // sortindex
+            // doesn't change at item editing time
+
             // survey_item
             // id
             $record->id = $record->itemid;
-
-            // sortindex
-            // doesn't change at item editing time
 
             if ($DB->update_record('survey_item', $record)) {
                 // $tablename
@@ -534,16 +542,27 @@ class mod_survey_itembase {
      * @return
      */
     public function item_set_editor($cmid, &$saveditem) {
-        $fieldname = 'content';
+        if (!$this->flag->editorslist) {
+            return;
+        }
 
-        $context = context_module::instance($cmid);
+        // some examples
+        // each SURVEY_ITEMFIELD has: $this->itembase_form_requires['content'] == true  and $this->flag->editorslist == array('content')
+        // fieldset              has: $this->itembase_form_requires['content'] == true  and $this->flag->editorslist == null
+        // pagebreak             has: $this->itembase_form_requires['content'] == false and $this->flag->editorslist == null
+        $fieldnames = array();
+        foreach ($this->flag->editorslist as $fieldname) {
+            $fieldnames[] = $fieldname;
+        }
 
-        $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => -1, 'context' => $context);
+        foreach ($fieldnames as $fieldname) {
+            $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => -1, 'context' => $this->context);
 
-        $saveditem->{$fieldname.'format'} = FORMAT_HTML;
-        $saveditem->{$fieldname.'trust'} = 1;
+            $saveditem->{$fieldname.'format'} = FORMAT_HTML;
+            $saveditem->{$fieldname.'trust'} = 1;
 
-        $saveditem = file_prepare_standard_editor($saveditem, $fieldname, $editoroptions, $context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $saveditem->itemid);
+            $saveditem = file_prepare_standard_editor($saveditem, $fieldname, $editoroptions, $this->context, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $saveditem->itemid);
+        }
     }
 
     /*

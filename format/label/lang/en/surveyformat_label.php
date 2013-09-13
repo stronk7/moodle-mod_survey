@@ -25,5 +25,5 @@
 
 $string['pluginname'] = 'Label';
 $string['userfriendlypluginname'] = 'Label';
-$string['leftlabel'] = 'Label of the label element';
-$string['leftlabel_help'] = 'The text that will be shown on the left of the label in the form';
+$string['leftlabel_editor'] = 'Label';
+$string['leftlabel_editor_help'] = 'The text that will be shown on the left of the label in the form';

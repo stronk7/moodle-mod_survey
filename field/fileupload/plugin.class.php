@@ -93,11 +93,6 @@ class surveyfield_fileupload extends mod_survey_itembase {
     public $filetypes = '*';
 
     /*
-     * $context = context as it is always required to dial with editors
-     */
-    private $context;
-
-    /*
      * $flag = features describing the object
      */
     public $flag;
@@ -121,22 +116,24 @@ class surveyfield_fileupload extends mod_survey_itembase {
 
         $cm = $PAGE->cm;
 
+        if (isset($cm)) { // it is not set during upgrade whther this item is loaded
+            $this->context = context_module::instance($cm->id);
+        }
+
         $this->type = SURVEY_TYPEFIELD;
         $this->plugin = 'fileupload';
 
         $this->flag = new stdClass();
         $this->flag->issearchable = false;
         $this->flag->usescontenteditor = true;
+        $this->flag->editorslist = array('content');
 
         // list of fields I do not want to have in the item definition form
         $this->itembase_form_requires['insearchform'] = false;
 
-        if (isset($cm)) { // it is not set during upgrade whther this item is loaded
-            $this->context = context_module::instance($cm->id);
-        }
-
         if (!empty($itemid)) {
             $this->item_load($itemid);
+            $this->content = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
         }
     }
 
@@ -257,20 +254,18 @@ EOS;
         $fieldname = $this->itemname.'_filemanager';
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
+        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.$this->content;
 
         $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
         $mform->addElement('filemanager', $fieldname, $elementlabel, null, $attachmentoptions);
 
-        if (!$searchform) {
-            if ($this->required) {
-                // even if the item is required I CAN NOT ADD ANY RULE HERE because:
-                // -> I do not want JS form validation if the page is submitted through the "previous" button
-                // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
-                // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                $starplace = ($this->extrarow) ? $this->itemname.'_extrarow' : $this->itemname;
-                $mform->_required[] = $starplace;
-            }
+        if ($this->required) {
+            // even if the item is required I CAN NOT ADD ANY RULE HERE because:
+            // -> I do not want JS form validation if the page is submitted through the "previous" button
+            // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
+            // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+            $starplace = ($this->extrarow) ? $this->itemname.'_extrarow' : $this->itemname;
+            $mform->_required[] = $starplace;
         }
     }
 
@@ -333,9 +328,6 @@ EOS;
             $fieldname = $this->itemname.'_filemanager';
 
             $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-            // last
-            // file_save_draft_area_files($answer['filemanager'], $this->context->id, 'mod_survey', $fieldname, $olduserdata->submissionid, $attachmentoptions);
-            // next
             file_save_draft_area_files($answer['filemanager'], $this->context->id, 'surveyfield_fileupload', SURVEY_ITEMCONTENTFILEAREA, $olduserdata->id, $attachmentoptions);
 
             $olduserdata->content = ''; // nothing is expected here

@@ -108,11 +108,6 @@ class surveyfield_textarea extends mod_survey_itembase {
     public $maxlength = '';
 
     /*
-     * $context = context as it is always required to dial with editors
-     */
-    private $context;
-
-    /*
      * $flag = features describing the object
      */
     public $flag;
@@ -136,22 +131,24 @@ class surveyfield_textarea extends mod_survey_itembase {
 
         $cm = $PAGE->cm;
 
+        if (isset($cm)) { // it is not set during upgrade whther this item is loaded
+            $this->context = context_module::instance($cm->id);
+        }
+
         $this->type = SURVEY_TYPEFIELD;
         $this->plugin = 'textarea';
 
         $this->flag = new stdClass();
         $this->flag->issearchable = false;
         $this->flag->usescontenteditor = true;
-
-        if (isset($cm)) { // it is not set during upgrade whther this item is loaded
-            $this->context = context_module::instance($cm->id);
-        }
+        $this->flag->editorslist = array('content');
 
         // list of fields I do not want to have in the item definition form
         $this->itembase_form_requires['insearchform'] = false;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
+            $this->content = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
         }
     }
 
@@ -350,7 +347,7 @@ EOS;
         // TODO: make issearchable true
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
+        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.$this->content;
 
         if (!empty($this->useeditor)) {
             $fieldname = $this->itemname.'_editor';
