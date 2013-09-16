@@ -41,6 +41,10 @@ class survey_pluginform extends mod_survey_itembaseform {
         // -------------------------------------------------------------------------------
         $mform = $this->_form;
 
+        // -------------------------------------------------------------------------------
+        // I close with the common section of the form
+        parent::definition();
+
         // /////////////////////////////////////////////////////////////////////////////////////////////////
         // here I open a new fieldset
         // /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,10 +60,6 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addElement('editor', $fieldname, get_string($fieldname, 'surveyformat_label'), null, $editoroptions);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyformat_label');
         $mform->setType($fieldname, PARAM_CLEANHTML);
-
-        // -------------------------------------------------------------------------------
-        // I close with the common section of the form
-        parent::definition();
 
         $this->add_item_buttons();
     }

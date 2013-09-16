@@ -74,48 +74,4 @@ if ($ADMIN->fulltree) {
     $name = new lang_string('useadvancedpermissions', 'mod_survey');
     $description = new lang_string('useadvancedpermissions_descr', 'mod_survey');
     $settings->add(new admin_setting_configcheckbox('survey/useadvancedpermissions', $name, $description, 0));
-
-    // include  settings of field subplugins
-    $surveyplugin = get_plugin_list('surveyfield');
-    foreach ($surveyplugin as $field => $path) {
-        $settingsfile = $path.'/settings.php';
-        if (file_exists($settingsfile)) {
-            $settings->add(new admin_setting_heading('surveytemplate_'.$field,
-                    get_string('fieldplugin', 'survey').' - '.get_string('pluginname', 'surveyfield_'.$field), ''));
-            include($settingsfile);
-        }
-    }
-
-    // include settings of format subplugins
-    $surveyplugin = get_plugin_list('surveyformat');
-    foreach ($surveyplugin as $format => $path) {
-        $settingsfile = $path.'/settings.php';
-        if (file_exists($settingsfile)) {
-            $settings->add(new admin_setting_heading('surveytemplate_'.$format,
-                    get_string('formatplugin', 'survey').' - '.get_string('pluginname', 'surveyformat_'.$format), ''));
-            include($settingsfile);
-        }
-    }
-
-    // include settings of template subplugins
-    $surveyplugin = get_plugin_list('surveytemplate');
-    foreach ($surveyplugin as $mastertemplate => $path) {
-        $settingsfile = $path.'/settings.php';
-        if (file_exists($settingsfile)) {
-            $settings->add(new admin_setting_heading('surveytemplate_'.$mastertemplate,
-                    get_string('templateplugin', 'survey').' - '.get_string('pluginname', 'surveytemplate_'.$mastertemplate), ''));
-            include($settingsfile);
-        }
-    }
-
-    // include settings of report subplugins
-    $surveyplugin = get_plugin_list('surveyreport');
-    foreach ($surveyplugin as $report => $path) {
-        $settingsfile = $path.'/settings.php';
-        if (file_exists($settingsfile)) {
-            $settings->add(new admin_setting_heading('surveytemplate_'.$report,
-                    get_string('reportplugin', 'survey').' - '.get_string('pluginname', 'surveyreport_'.$report), ''));
-            include($settingsfile);
-        }
-    }
 }
