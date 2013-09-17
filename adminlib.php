@@ -239,6 +239,9 @@ class survey_plugin_manager {
                 $row[] = '&nbsp;';
             } else {
                 $row[] = $this->format_icon_link('delete', $plugin, 't/delete', get_string('delete'));
+                // $paramurl = array('subtype' => $this->subtype, 'action' => 'delete', 'plugin' => $plugin, 'sesskey' => sesskey());
+                // $row[] = html_writer::link(new moodle_url('/mod/survey/adminmanageplugins.php', $paramurl), new lang_string('delete'));
+
             }
             $exists = file_exists($CFG->dirroot.'/mod/survey/'.$shortsubtype.'/'.$plugin.'/settings.php');
             if ($row[1] != '' && $exists) {

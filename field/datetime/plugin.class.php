@@ -83,6 +83,11 @@ class surveyfield_datetime extends mod_survey_itembase {
     /*******************************************************************/
 
     /*
+     * $step = the step for minutes drop down menu
+     */
+    public $step = 1;
+
+    /*
      * $defaultoption = the value of the field when the form is initially displayed.
      */
     public $defaultoption = SURVEY_INVITATIONDEFAULT;
@@ -449,7 +454,7 @@ EOS;
         for ($i = 0; $i < 24; $i++) {
             $hours[$i] = sprintf("%02d", $i);
         }
-        for ($i = 0; $i < 60; $i++) {
+        for ($i = 0; $i <= 59; $i += $this->step) {
             $minutes[$i] = sprintf("%02d", $i);
         }
 

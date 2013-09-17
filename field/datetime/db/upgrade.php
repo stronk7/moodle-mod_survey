@@ -30,5 +30,24 @@
  * @return bool true
  */
 function xmldb_surveyfield_datetime_upgrade($oldversion) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2013091701) {
+
+        // Define field step to be added to survey_datetime.
+        $table = new xmldb_table('survey_datetime');
+        $field = new xmldb_field('step', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1', 'indent');
+
+        // Conditionally launch add field step.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013091701, 'surveyfield', 'datetime');
+    }
+
     return true;
 }
