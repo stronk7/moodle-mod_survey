@@ -396,6 +396,7 @@ class surveyfield_datetime extends mod_survey_itembase {
                 <xs:element type="xs:string" name="variable" minOccurs="0"/>
                 <xs:element type="xs:int" name="indent"/>
 
+                <xs:element type="xs:int" name="step"/>
                 <xs:element type="xs:int" name="defaultoption"/>
                 <xs:element type="unixtime" name="defaultvalue" minOccurs="0"/>
                 <xs:element type="xs:string" name="downloadformat"/>

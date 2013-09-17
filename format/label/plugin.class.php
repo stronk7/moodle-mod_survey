@@ -197,6 +197,7 @@ class surveyformat_label extends mod_survey_itembase {
                 <xs:element type="xs:int" name="indent"/>
 
                 <xs:element type="xs:string" name="leftlabel" minOccurs="0"/>
+                <xs:element type="xs:int" name="leftlabelformat" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
