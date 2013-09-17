@@ -432,7 +432,7 @@ EOS;
             }
         }
 
-        if (!isset($draftuserinput)) {
+        if (empty($draftuserinput)) {
             return;
         }
 

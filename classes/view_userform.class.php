@@ -471,13 +471,11 @@ class mod_survey_userformmanager {
                 $infoperitem[$itemid]->type = $matches[1];
                 $infoperitem[$itemid]->plugin = $matches[2];
                 $infoperitem[$itemid]->itemid = $itemid;
-                if (!isset($matches[4])) {
-                    $infoperitem[$itemid]->extra['mainelement'] = $content;
-                } else {
-                    $infoperitem[$itemid]->extra[$matches[4]] = $content;
-                }
-            } else {
+            }
+            if (isset($matches[4])) {
                 $infoperitem[$itemid]->extra[$matches[4]] = $content;
+            } else {
+                $infoperitem[$itemid]->extra['mainelement'] = $content;
             }
         }
 
