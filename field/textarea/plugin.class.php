@@ -493,9 +493,6 @@ EOS;
                 } else {
                     $prefill[$this->itemname] = $fromdb->content;
                 }
-            // } else {
-                // nothing was set
-                // do not accept defaults but overwrite them
             }
         } // else use item defaults
 

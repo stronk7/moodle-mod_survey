@@ -52,6 +52,21 @@ class survey_pluginform extends mod_survey_itembaseform {
         $stopyear = $this->_customdata->survey->stopyear;
 
         // ----------------------------------------
+        // newitem::step
+        // ----------------------------------------
+        $fieldname = 'step';
+        $options = array();
+        $options[1] = get_string('oneminute', 'surveyfield_datetime');
+        $options[5] = get_string('fiveminutes', 'surveyfield_datetime');
+        $options[10] = get_string('tenminutes', 'surveyfield_datetime');
+        $options[15] = get_string('fifteenminutes', 'surveyfield_datetime');
+        $options[20] = get_string('twentyminutes', 'surveyfield_datetime');
+        $options[30] = get_string('thirtyminutes', 'surveyfield_datetime');
+        $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_datetime'), $options);
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_datetime');
+        $mform->setType($fieldname, PARAM_INT);
+
+        // ----------------------------------------
         // newitem::defaultoption
         // ----------------------------------------
         $fieldname = 'defaultoption';
@@ -72,7 +87,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('invitationdefault', 'survey'), SURVEY_INVITATIONDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('likelast', 'survey'), SURVEY_LIKELASTDEFAULT);
         $elementgroup[] = $mform->createElement('radio', 'defaultoption', '', get_string('noanswer', 'survey'), SURVEY_NOANSWERDEFAULT);
-        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_datetime'), $separator, false);
+        $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'surveyfield_datetime'), ' ', false);
         $mform->setDefault($fieldname, SURVEY_TIMENOWDEFAULT);
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_datetime');
 

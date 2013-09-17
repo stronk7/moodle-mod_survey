@@ -632,14 +632,6 @@ EOS;
                     $prefill[$this->itemname.'_month'] = $datearray['mon'];
                     $prefill[$this->itemname.'_year'] = $datearray['year'];
                 }
-            // } else {
-                // nothing was set
-                // do not accept defaults but overwrite them
-            }
-
-            // _noanswer
-            if (!$this->required) { // if this item foresaw the $this->itemname.'_noanswer'
-                $prefill[$this->itemname.'_noanswer'] = is_null($fromdb->content) ? 1 : 0;
             }
         } // else use item defaults
 

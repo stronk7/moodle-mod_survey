@@ -83,14 +83,14 @@ class surveyfield_time extends mod_survey_itembase {
     /*******************************************************************/
 
     /*
-     * $defaultoption = the value of the field when the form is initially displayed.
-     */
-    public $defaultoption = SURVEY_INVITATIONDEFAULT;
-
-    /*
      * $step = the step for minutes drop down menu
      */
     public $step = 1;
+
+    /*
+     * $defaultoption = the value of the field when the form is initially displayed.
+     */
+    public $defaultoption = SURVEY_INVITATIONDEFAULT;
 
     /*
      * $defaultvalue = the value of the field when the form is initially displayed.
@@ -647,14 +647,6 @@ EOS;
                     $prefill[$this->itemname.'_hour'] = $datearray['hours'];
                     $prefill[$this->itemname.'_minute'] = $datearray['minutes'];
                 }
-            // } else {
-                // nothing was set
-                // do not accept defaults but overwrite them
-            }
-
-            // _noanswer
-            if (!$this->required) { // if this item foresaw the $this->itemname.'_noanswer'
-                $prefill[$this->itemname.'_noanswer'] = is_null($fromdb->content) ? 1 : 0;
             }
         } // else use item defaults
 

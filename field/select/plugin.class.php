@@ -678,7 +678,8 @@ EOS;
             } else {
                 // nothing was set
                 // do not accept defaults but overwrite them
-                // but... if this is a select, how can it be empty($fromdb->content)? Because user selected "Not answering" or question was disabled
+                // but... if this is a select, how can it be empty($fromdb->content)?
+                // Because user selected "Not answering" or question was disabled
                 $prefill[$this->itemname] = '';
             }
         } // else use item defaults

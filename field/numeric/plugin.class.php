@@ -606,9 +606,6 @@ EOS;
         if ($fromdb) { // $fromdb may be boolean false for not existing data
             if (isset($fromdb->content)) {
                 $prefill[$this->itemname] = number_format((double)$fromdb->content, $this->decimals, $this->decimalseparator, '');
-            // } else {
-                // nothing was set
-                // do not accept defaults but overwrite them
             }
         } // else use item defaults
 
