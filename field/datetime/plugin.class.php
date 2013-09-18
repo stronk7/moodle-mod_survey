@@ -432,7 +432,7 @@ EOS;
         global $DB, $USER;
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.$this->content;
+        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
         $days = array();
         $months = array();

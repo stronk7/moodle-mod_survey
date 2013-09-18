@@ -358,7 +358,7 @@ EOS;
      */
     public function userform_mform_element($mform, $searchform) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.$this->content;
+        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
         if (!$searchform) {
             $referencearray = array(''); // <-- take care, the first element is already on board

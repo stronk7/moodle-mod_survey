@@ -20,12 +20,12 @@
         <!-- <FIELD NAME="required"         TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="extranote"        NEXT="hideinstructions"/> -->
         <!-- <FIELD NAME="hideinstructions" TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="required"         NEXT="variable"/> -->
         <!-- <FIELD NAME="variable"         TYPE="char" LENGTH="64"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="hideinstructions" NEXT="indent"/> -->
-        <FIELD NAME="indent"           TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="customnumber"     NEXT="leftlabel"/>
+        <FIELD NAME="indent"           TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="customnumber"     NEXT="fullwidth"/>
         <!-- end of fields belonging to itembase_form.php -->
 
         <!-- begin of fields belonging to plugin_form.php of this specific plugin -->
-        <FIELD NAME="leftlabel"        TYPE="text" LENGTH="small"  NOTNULL="false"                             SEQUENCE="false" PREVIOUS="indent"           NEXT="leftlabelformat"/>
-        <FIELD NAME="leftlabelformat"  TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="indent"/>
+        <FIELD NAME="fullwidth"        TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="indent"           NEXT="leftlabel"/>
+        <FIELD NAME="leftlabel"        TYPE="text" LENGTH="small"  NOTNULL="false"                             SEQUENCE="false" PREVIOUS="fullwidth"/>
         <!-- end of fields belonging to plugin_form.php of this specific plugin -->
       </FIELDS>
       <KEYS>

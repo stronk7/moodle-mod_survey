@@ -203,12 +203,19 @@
 /* END OF: move horizontal checkbox and radio label closer to corresponding checkboes */
 
 
+#page-mod-survey-view .mform .fitem .felement div p,
+#page-mod-survey-view .mform .fitem .fullwidth p {
+}
+
 #page-mod-survey-view .mform .fitem .felement .longfield {
     width:25em;
 }
 
 #page-mod-survey-view .mform .fitem .felement.fgroup {
     /*padding-bottom:1em;*/
+}
+
+#page-mod-survey-view .mform .fitem .fullwidth {
 }
 
 #page-mod-survey-view .mform .fitem .felement .indent-1 {

@@ -50,16 +50,34 @@ class survey_searchform extends moodleform {
         foreach ($itemseeds as $itemseed) {
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
+            /*************** extrarow ***************/
             if ($item->get_extrarow()) {
                 $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
 
-                $output = $item->get_content();
-                $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $output, array('class' => 'indent-'.$item->get_indent())); // here I  do not strip tags to content
+                // non working hack to simutate the missing style for static mform element
+                // $content = '';
+                // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$item->get_indent()));
+                // $content .= $item->get_content();
+                // $content .= html_writer::end_tag('div');
+                // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
+
+                // $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $content, array('class' => 'indent-'.$item->get_indent()));
+                $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content()); // here I  do not strip tags to content
             }
 
+            /*************** element ***************/
             $item->userform_mform_element($mform, true);
 
+            /***************  note  ****************/
             if ($fullinfo = $item->userform_get_full_info(true)) {
+                // non working hack to simutate the missing style for static mform element
+                // $content = '';
+                // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$item->get_indent()));
+                // $content .= $fullinfo;
+                // $content .= html_writer::end_tag('div');
+                // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
+
+                // $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo, array('class' => 'indent-'.$item->get_indent()));
                 $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo);
             }
         }

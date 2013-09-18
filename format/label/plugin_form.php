@@ -53,13 +53,20 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey', $typename));
 
         // ----------------------------------------
-        // newitem::label_editor
+        // newitem::fullwidth
         // ----------------------------------------
-        $fieldname = 'leftlabel_editor';
-        $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES);
-        $mform->addElement('editor', $fieldname, get_string($fieldname, 'surveyformat_label'), null, $editoroptions);
+        $fieldname = 'fullwidth';
+        $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'surveyformat_label'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyformat_label');
-        $mform->setType($fieldname, PARAM_CLEANHTML);
+        $mform->setType($fieldname, PARAM_INT);
+
+        // ----------------------------------------
+        // newitem::leftlabel
+        // ----------------------------------------
+        $fieldname = 'leftlabel';
+        $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyformat_label'));
+        $mform->addHelpButton($fieldname, $fieldname, 'surveyformat_label');
+        $mform->setType($fieldname, PARAM_TEXT);
 
         $this->add_item_buttons();
     }

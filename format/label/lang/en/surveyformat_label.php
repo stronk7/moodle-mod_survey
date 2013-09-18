@@ -25,5 +25,7 @@
 
 $string['pluginname'] = 'Label';
 $string['userfriendlypluginname'] = 'Label';
-$string['leftlabel_editor'] = 'Label';
-$string['leftlabel_editor_help'] = 'The text that will be shown on the left of the label in the form';
+$string['leftlabel'] = 'Label';
+$string['leftlabel_help'] = 'The text that will be shown on the left of the label in the form';
+$string['fullwidth'] = 'Full width';
+$string['fullwidth_help'] = 'Use full screen width to display the label using as much space as possible starting from the left of the screen. When this option is used the element label and the element number will not be displayed.<br />As opposite alternative, the element will be drawn on the right side of the row leaving to its label the room on the left.';

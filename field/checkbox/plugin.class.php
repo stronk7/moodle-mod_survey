@@ -349,7 +349,7 @@ EOS;
      */
     public function userform_mform_element($mform, $searchform) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.$this->content;
+        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
         $labels = $this->item_get_labels_array('options');
         $defaults = survey_textarea_to_array($this->defaultvalue);

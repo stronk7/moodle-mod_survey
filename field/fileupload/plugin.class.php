@@ -254,7 +254,7 @@ EOS;
         $fieldname = $this->itemname.'_filemanager';
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.$this->content;
+        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
         $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
         $mform->addElement('filemanager', $fieldname, $elementlabel, null, $attachmentoptions);

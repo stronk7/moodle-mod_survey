@@ -52,6 +52,11 @@ class surveyformat_label extends mod_survey_itembase {
     /*******************************************************************/
 
     /*
+     * $fullwidth
+     */
+    public $fullwidth = '';
+
+    /*
      * $leftlabel = label on the left of the label content
      */
     public $leftlabel = '';
@@ -95,7 +100,7 @@ class surveyformat_label extends mod_survey_itembase {
         $this->flag = new stdClass();
         $this->flag->issearchable = false;
         $this->flag->usescontenteditor = true;
-        $this->flag->editorslist = array('content' => SURVEY_ITEMCONTENTFILEAREA, 'leftlabel' => SURVEY_ITEMSECONDFILEAREA);
+        $this->flag->editorslist = array('content' => SURVEY_ITEMCONTENTFILEAREA);
 
         // list of fields I do not want to have in the item definition form
         $this->itembase_form_requires['extrarow'] = false;
@@ -107,7 +112,6 @@ class surveyformat_label extends mod_survey_itembase {
         if (!empty($itemid)) {
             $this->item_load($itemid);
             $this->content = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
-            $this->leftlabel = file_rewrite_pluginfile_urls($this->leftlabel, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMSECONDFILEAREA, $this->itemid);
         }
     }
 
@@ -157,6 +161,11 @@ class surveyformat_label extends mod_survey_itembase {
         // ------- end of fields saved in survey_items ------- //
 
         // ------ begin of fields saved in this plugin table ------ //
+        // do preliminary actions on $record values corresponding to fields type checkbox
+        $checkboxes = array('fullwidth');
+        foreach ($checkboxes as $checkbox) {
+            $record->{$checkbox} = (isset($record->{$checkbox})) ? 1 : 0;
+        }
         // ------- end of fields saved in this plugin table ------- //
 
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
@@ -196,8 +205,8 @@ class surveyformat_label extends mod_survey_itembase {
                 <xs:element type="xs:string" name="customnumber" minOccurs="0"/>
                 <xs:element type="xs:int" name="indent"/>
 
+                <xs:element type="xs:int" name="fullwidth"/>
                 <xs:element type="xs:string" name="leftlabel" minOccurs="0"/>
-                <xs:element type="xs:int" name="leftlabelformat" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -222,9 +231,32 @@ EOS;
     public function userform_mform_element($mform, $searchform) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $elementnumber.$this->leftlabel;
-        $mform->addElement('static', $this->itemname, $elementlabel, $this->content);
+        if ($this->fullwidth) {
+            $content = '';
+            $content .= html_writer::start_tag('fieldset', array('class' => 'hidden'));
+            $content .= html_writer::start_tag('div', array('class' => 'centerpara'));
+            $content .= html_writer::start_tag('div', array('class' => 'myfitem')); // it will never get grayed
+            $content .= html_writer::start_tag('div', array('class' => 'fstatic fullwidth'));
+            //$content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
+            $content .= $this->content;
+            //$content .= html_writer::end_tag('div');
+            $content .= html_writer::end_tag('div');
+            $content .= html_writer::end_tag('div');
+            $content .= html_writer::end_tag('div');
+            $content .= html_writer::end_tag('fieldset');
+            $mform->addElement('html', $content);
+        } else {
+            $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
+            $elementlabel = $elementnumber.$this->leftlabel;
+
+            $content = '';
+            $content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
+            $content .= $this->content;
+            $content .= html_writer::end_tag('div');
+            // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
+
+            $mform->addElement('static', $this->itemname, $elementlabel, $content);
+        }
     }
 
     /*
