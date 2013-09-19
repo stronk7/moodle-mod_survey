@@ -9,7 +9,11 @@
 
 /* background-color:#EDEDED; for each odd div ONLY IN remoteuserentry */
 #page-mod-survey-view #remoteuserentry fieldset div.fitem:nth-child(odd) {
-    background-color:#EDEDED;
+    /*
+     * background is not reliable because it does not distinguish between items, label and notes.
+     * I have to wait for MDL-28194
+     */
+    /* background-color:#EDEDED; */
 }
 
 /* surveyfields */
@@ -219,7 +223,6 @@
 
 #page-mod-survey-view .mform .itemlabel .fullwidth {
     overflow: hidden;
-    width: 90%;
 }
 
 #page-mod-survey-view .mform .fitem .felement .indent-1 {
