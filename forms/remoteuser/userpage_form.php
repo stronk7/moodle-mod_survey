@@ -256,13 +256,13 @@ class survey_submissionform extends moodleform {
                     $itemisenabled = true; // if it is displayed, it is enabled
                     $parentitem = null;
                 } else {
-                    $item_parentid = $item->get_parentid();
-                    if (!$item_parentid) {
+                    $parentitemid = $item->get_parentid();
+                    if (!$parentitemid) {
                         $itemisenabled = true;
                         $parentitem = null;
                     } else {
                         // call its parent
-                        $parentitem = survey_get_item($item_parentid);
+                        $parentitem = survey_get_item($parentitemid);
                         // tell parent that his child has parentcontent = 12/4/1968
                         if ($parentitem->get_formpage() == $item->get_formpage()) {
                             $itemisenabled = $parentitem->userform_child_item_allowed_dynamic($item->get_parentcontent(), $data);

@@ -115,24 +115,24 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
      * survey_get_template_options
      *
      * @param
-     * @return $filemanager_options
+     * @return $filemanageroptions ?????
      */
     public function get_filemanager_options() {
-        $template_options = array();
-        $template_options['accepted_types'] = '.xml';
-        $template_options['maxbytes'] = 0;
-        $template_options['maxfiles'] = -1;
-        $template_options['mainfile'] = true;
-        $template_options['subdirs'] = false;
+        $templateoptions = array();
+        $templateoptions['accepted_types'] = '.xml';
+        $templateoptions['maxbytes'] = 0;
+        $templateoptions['maxfiles'] = -1;
+        $templateoptions['mainfile'] = true;
+        $templateoptions['subdirs'] = false;
 
-        return $template_options;
+        return $templateoptions;
     }
 
     /*
      * get_contextid_from_sharinglevel
      *
      * @param sharinglevel
-     * @return $filemanager_options
+     * @return $filemanageroptions ??????
      */
     public function get_contextid_from_sharinglevel($sharinglevel='') {
         if (empty($sharinglevel)) {
@@ -218,7 +218,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
      */
     public function upload_utemplate() {
 
-        $template_options = $this->get_filemanager_options();
+        $templateoptions = $this->get_filemanager_options();
         $contextid = $this->get_contextid_from_sharinglevel();
         $fs = get_file_storage();
 
@@ -237,14 +237,14 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
          */
         $fieldname = 'importfile';
         if ($draftitemid = $this->formdata->{$fieldname.'_filemanager'}) {
-            if (isset($template_options['return_types']) && !($template_options['return_types'] & FILE_REFERENCE)) {
+            if (isset($templateoptions['return_types']) && !($templateoptions['return_types'] & FILE_REFERENCE)) {
                 // we assume that if $options['return_types'] is NOT specified, we DO allow references.
                 // this is not exactly right. BUT there are many places in code where filemanager options
                 // are not passed to file_save_draft_area_files()
                 $allowreferences = false;
             }
 
-            file_save_draft_area_files($draftitemid, $contextid, 'mod_survey', 'temporaryarea', 0, $template_options);
+            file_save_draft_area_files($draftitemid, $contextid, 'mod_survey', 'temporaryarea', 0, $templateoptions);
             $files = $fs->get_area_files($contextid, 'mod_survey', 'temporaryarea');
             $filecount = 0;
             foreach ($files as $file) {
@@ -252,17 +252,17 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
                     continue;
                 }
 
-                $file_record = array('contextid' => $contextid, 'component' => 'mod_survey', 'filearea' => SURVEY_TEMPLATEFILEAREA, 'itemid' => 0, 'timemodified' => time());
-                if (!$template_options['subdirs']) {
+                $filerecord = array('contextid' => $contextid, 'component' => 'mod_survey', 'filearea' => SURVEY_TEMPLATEFILEAREA, 'itemid' => 0, 'timemodified' => time());
+                if (!$templateoptions['subdirs']) {
                     if ($file->get_filepath() !== '/' or $file->is_directory()) {
                         continue;
                     }
                 }
-                if ($template_options['maxbytes'] and $template_options['maxbytes'] < $file->get_filesize()) {
+                if ($templateoptions['maxbytes'] and $templateoptions['maxbytes'] < $file->get_filesize()) {
                     // oversized file - should not get here at all
                     continue;
                 }
-                if ($template_options['maxfiles'] != -1 and $template_options['maxfiles'] <= $filecount) {
+                if ($templateoptions['maxfiles'] != -1 and $templateoptions['maxfiles'] <= $filecount) {
                     // more files - should not get here at all
                     break;
                 }
@@ -276,12 +276,12 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
                     }
                     $repoid = $file->get_repository_id();
                     if (!empty($repoid)) {
-                        $file_record['repositoryid'] = $repoid;
-                        $file_record['reference'] = $file->get_reference();
+                        $filerecord['repositoryid'] = $repoid;
+                        $filerecord['reference'] = $file->get_reference();
                     }
                 }
 
-                $fs->create_file_from_storedfile($file_record, $file);
+                $fs->create_file_from_storedfile($filerecord, $file);
             }
         }
 
@@ -561,7 +561,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
         global $DB, $COURSE, $USER, $SITE;
 
         $context = context_coursecat::instance($COURSE->category);
-        $can_manage_category = has_capability('moodle/category:manage', $context);
+        $canmanagecat = has_capability('moodle/category:manage', $context);
 
         $options = array();
         $options[CONTEXT_USER.'_'.$USER->id] = get_string('user').': '.fullname($USER);
@@ -571,7 +571,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
         if ($COURSE->id != $SITE->id) { // I am not in homepage
             $options[CONTEXT_COURSE.'_'.$COURSE->id] = get_string('course').': '.$COURSE->shortname;
 
-            if ($can_manage_category) { // is more than a teacher, is an admin
+            if ($canmanagecat) { // is more than a teacher, is an admin
                 $categorystr = get_string('category').': ';
                 $category = $DB->get_record('course_categories', array('id' => $COURSE->category), 'id, name');
                 $options[CONTEXT_COURSECAT.'_'.$COURSE->category] = $categorystr.$category->name;
@@ -583,7 +583,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
             }
         }
 
-        if ($can_manage_category) { // TODO: how to verify if the user is a site admin?
+        if ($canmanagecat) { // TODO: how to verify if the user is a site admin?
             $options[CONTEXT_SYSTEM.'_0'] = get_string('site');
         }
 

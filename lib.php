@@ -100,25 +100,25 @@ define('SURVEY_TYPEFORMAT', 'format');
     define('SURVEY_DROPMULTILANG'     , '7');
     define('SURVEY_REQUIREDOFF'       , '8');
     define('SURVEY_REQUIREDON'        , '9');
-    define('SURVEY_CHANGEINDENT'      ,'10');
-    define('SURVEY_ADDTOSEARCH'       ,'11');
-    define('SURVEY_OUTOFSEARCH'       ,'12');
-    define('SURVEY_MAKEFORALL'        ,'13');
-    define('SURVEY_MAKELIMITED'       ,'14');
+    define('SURVEY_CHANGEINDENT'      , '10');
+    define('SURVEY_ADDTOSEARCH'       , '11');
+    define('SURVEY_OUTOFSEARCH'       , '12');
+    define('SURVEY_MAKEFORALL'        , '13');
+    define('SURVEY_MAKELIMITED'       , '14');
 
     // RESPONSES section
-    define('SURVEY_EDITRESPONSE'      ,'15');
-    define('SURVEY_READONLYRESPONSE'  ,'16');
-    define('SURVEY_DELETERESPONSE'    ,'17');
-    define('SURVEY_DELETEALLRESPONSES','18');
-    define('SURVEY_RESPONSETOPDF'     ,'19');
+    define('SURVEY_EDITRESPONSE'      , '15');
+    define('SURVEY_READONLYRESPONSE'  , '16');
+    define('SURVEY_DELETERESPONSE'    , '17');
+    define('SURVEY_DELETEALLRESPONSES', '18');
+    define('SURVEY_RESPONSETOPDF'     , '19');
 
     // SURVEY section
-    define('SURVEY_PREVIEWSURVEY'     ,'20');
+    define('SURVEY_PREVIEWSURVEY'     , '20');
 
     // UTEMPLATE section
-    define('SURVEY_DELETEUTEMPLATE'   ,'21');
-    define('SURVEY_EXPORTUTEMPLATE'   ,'22');
+    define('SURVEY_DELETEUTEMPLATE'   , '21');
+    define('SURVEY_EXPORTUTEMPLATE'   , '22');
 
 // OVERFLOW
 define('SURVEY_LEFT_OVERFLOW' , -10);
@@ -245,7 +245,7 @@ function survey_add_instance($survey) {
     // manage userstyle filemanager
     // we need to use context now, so we need to make sure all needed info is already in db
     $cmid = $survey->coursemodule;
-    $DB->set_field('course_modules', 'instance', $survey->id, array('id'=>$cmid));
+    $DB->set_field('course_modules', 'instance', $survey->id, array('id' => $cmid));
     $context = context_module::instance($cmid);
     survey_save_user_style($survey, $context);
 
@@ -256,7 +256,8 @@ function survey_add_instance($survey) {
     // }
     $editoroptions = survey_get_editor_options();
     if ($draftitemid = $survey->thankshtml_editor['itemid']) {
-        $survey->thankshtml = file_save_draft_area_files($draftitemid, $context->id, 'mod_survey', SURVEY_THANKSHTMLFILEAREA, $survey->id, $editoroptions, $survey->thankshtml_editor['text']);
+        $survey->thankshtml = file_save_draft_area_files($draftitemid, $context->id, 'mod_survey', SURVEY_THANKSHTMLFILEAREA,
+                $survey->id, $editoroptions, $survey->thankshtml_editor['text']);
         $survey->thankshtmlformat = $survey->thankshtml_editor['format'];
     }
     $DB->update_record('survey', $survey);
@@ -336,11 +337,11 @@ function survey_update_instance($survey) {
 function survey_save_user_style($survey, $context) {
     global $CFG;
 
-    $filemanager_options = survey_get_user_style_options();
+    $filemanageroptions = survey_get_user_style_options();
 
     $fieldname = 'userstyle';
     if ($draftitemid = $survey->{$fieldname.'_filemanager'}) {
-        file_save_draft_area_files($draftitemid, $context->id, 'mod_survey', SURVEY_STYLEFILEAREA, 0, $filemanager_options);
+        file_save_draft_area_files($draftitemid, $context->id, 'mod_survey', SURVEY_STYLEFILEAREA, 0, $filemanageroptions);
     }
 
     $fs = get_file_storage();
@@ -879,7 +880,8 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
             $paramurl = array('s' => $PAGE->cm->instance);
             foreach ($surveyreportlist as $pluginname => $pluginpath) {
                 $paramurl['rname'] = $pluginname;
-                $reportnode->add(get_string('pluginname', 'surveyreport_'.$pluginname), new moodle_url('view_report.php', $paramurl), navigation_node::TYPE_SETTING, null, null, $icon);
+                $reportnode->add(get_string('pluginname', 'surveyreport_'.$pluginname),
+                        new moodle_url('view_report.php', $paramurl), navigation_node::TYPE_SETTING, null, null, $icon);
             }
         }
     }
@@ -959,29 +961,29 @@ function survey_site_recaptcha_enabled() {
  */
 function survey_get_plugin_list($plugintype=null, $includetype=false, $count=false) {
     $plugincount = 0;
-    $field_pluginlist = array();
-    $format_pluginlist = array();
+    $fieldplugins = array();
+    $formatplugins = array();
 
     if ($plugintype == SURVEY_TYPEFIELD || is_null($plugintype)) {
         if ($count) {
             $plugincount += count(get_plugin_list('survey'.SURVEY_TYPEFIELD));
         } else {
-            $field_pluginlist = core_component::get_plugin_list('survey'.SURVEY_TYPEFIELD);
+            $fieldplugins = core_component::get_plugin_list('survey'.SURVEY_TYPEFIELD);
             if (!empty($includetype)) {
-                foreach ($field_pluginlist as $k => $v) {
+                foreach ($fieldplugins as $k => $v) {
                     if (!get_config('surveyfield_'.$k, 'disabled')) {
-                        $field_pluginlist[$k] = SURVEY_TYPEFIELD.'_'.$k;
+                        $fieldplugins[$k] = SURVEY_TYPEFIELD.'_'.$k;
                     } else {
-                        unset($field_pluginlist[$k]);
+                        unset($fieldplugins[$k]);
                     }
                 }
-                $field_pluginlist = array_flip($field_pluginlist);
+                $fieldplugins = array_flip($fieldplugins);
             } else {
-                foreach ($field_pluginlist as $k => $v) {
+                foreach ($fieldplugins as $k => $v) {
                     if (!get_config('surveyfield_'.$k, 'disabled')) {
-                        $field_pluginlist[$k] = $k;
+                        $fieldplugins[$k] = $k;
                     } else {
-                        unset($field_pluginlist[$k]);
+                        unset($fieldplugins[$k]);
                     }
                 }
             }
@@ -992,21 +994,21 @@ function survey_get_plugin_list($plugintype=null, $includetype=false, $count=fal
             $plugincount += count(core_component::get_plugin_list('survey'.SURVEY_TYPEFORMAT));
         } else {
             if (!empty($includetype)) {
-                $format_pluginlist = core_component::get_plugin_list('survey'.SURVEY_TYPEFORMAT);
-                foreach ($format_pluginlist as $k => $v) {
+                $formatplugins = core_component::get_plugin_list('survey'.SURVEY_TYPEFORMAT);
+                foreach ($formatplugins as $k => $v) {
                     if (!get_config('surveyformat_'.$k, 'disabled')) {
-                        $format_pluginlist[$k] = SURVEY_TYPEFORMAT.'_'.$k;
+                        $formatplugins[$k] = SURVEY_TYPEFORMAT.'_'.$k;
                     } else {
-                        unset($format_pluginlist[$k]);
+                        unset($formatplugins[$k]);
                     }
                 }
-                $format_pluginlist = array_flip($format_pluginlist);
+                $formatplugins = array_flip($formatplugins);
             } else {
-                foreach ($format_pluginlist as $k => $v) {
+                foreach ($formatplugins as $k => $v) {
                     if (!get_config('surveyformat_'.$k, 'disabled')) {
-                        $format_pluginlist[$k] = $k;
+                        $formatplugins[$k] = $k;
                     } else {
-                        unset($format_pluginlist[$k]);
+                        unset($formatplugins[$k]);
                     }
                 }
             }
@@ -1016,7 +1018,7 @@ function survey_get_plugin_list($plugintype=null, $includetype=false, $count=fal
     if ($count) {
         return $plugincount;
     } else {
-        $pluginlist = $field_pluginlist + $format_pluginlist;
+        $pluginlist = $fieldplugins + $formatplugins;
         asort($pluginlist);
         return $pluginlist;
     }
@@ -1116,17 +1118,17 @@ function survey_count_submissions($surveyid, $status=SURVEY_STATUSALL) {
 /*
  * survey_get_user_style_options
  * @param none
- * @return $filemanager_options
+ * @return $filemanageroptions
  */
 function survey_get_user_style_options() {
-    $filemanager_options = array();
-    $filemanager_options['accepted_types'] = '.css';
-    $filemanager_options['maxbytes'] = 0;
-    $filemanager_options['maxfiles'] = -1;
-    $filemanager_options['mainfile'] = true;
-    $filemanager_options['subdirs'] = false;
+    $filemanageroptions = array();
+    $filemanageroptions['accepted_types'] = '.css';
+    $filemanageroptions['maxbytes'] = 0;
+    $filemanageroptions['maxfiles'] = -1;
+    $filemanageroptions['mainfile'] = true;
+    $filemanageroptions['subdirs'] = false;
 
-    return $filemanager_options;
+    return $filemanageroptions;
 }
 
 /**

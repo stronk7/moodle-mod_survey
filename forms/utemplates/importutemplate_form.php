@@ -38,13 +38,13 @@ class survey_importutemplateform extends moodleform {
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
         $utemplate_manager = $this->_customdata->utemplate_manager;
-        $filemanager_options = $this->_customdata->filemanager_options;
+        $filemanageroptions = $this->_customdata->filemanager_options;
 
         // ----------------------------------------
         // templateimport::importfile
         // ----------------------------------------
         $fieldname = 'importfile';
-        $mform->addElement('filemanager', $fieldname.'_filemanager', get_string($fieldname, 'survey'), null, $filemanager_options);
+        $mform->addElement('filemanager', $fieldname.'_filemanager', get_string($fieldname, 'survey'), null, $filemanagerptions);
 
         // ----------------------------------------
         // templateimport::overwrite

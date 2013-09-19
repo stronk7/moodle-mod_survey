@@ -619,7 +619,7 @@ class mod_survey_submissionmanager {
             $textheader .= userdate($submission->timemodified);
         }
 
-        $pdf->SetHeaderData('', 0, $this->survey->name, $textheader, array(0,64,255), array(0,64,128));
+        $pdf->SetHeaderData('', 0, $this->survey->name, $textheader, array(0, 64, 255), array(0, 64, 128));
         $pdf->setFooterData(array(0, 64, 0), array(0, 64, 128));
 
         // set header and footer fonts

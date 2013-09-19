@@ -321,8 +321,8 @@ class mod_survey_userformmanager {
                     $lastwaspagebreak = false;
                 }
                 if ($this->survey->newpageforchild) {
-                    $item_parentid = $item->parentid;
-                    if (!empty($item_parentid)) {
+                    $parentitemid = $item->parentid;
+                    if (!empty($parentitemid)) {
                         $parentpage = $DB->get_field('survey_item', 'formpage', array('id' => $item->parentid), MUST_EXIST);
                         if ($parentpage == $pagenumber) {
                             $pagenumber++;
@@ -492,29 +492,29 @@ class mod_survey_userformmanager {
         //    I Pass to the parent class the $iteminfo->extra
 
         foreach ($infoperitem as $iteminfo) {
-            if (!$userdata_record = $DB->get_record('survey_userdata', array('submissionid' => $iteminfo->submissionid, 'itemid' => $iteminfo->itemid))) {
+            if (!$userdatarec = $DB->get_record('survey_userdata', array('submissionid' => $iteminfo->submissionid, 'itemid' => $iteminfo->itemid))) {
                 // Quickly make one new!
-                $userdata_record = new stdClass();
-                $userdata_record->surveyid = $iteminfo->surveyid;
-                $userdata_record->submissionid = $iteminfo->submissionid;
-                $userdata_record->itemid = $iteminfo->itemid;
-                $userdata_record->content = 'dummy_content';
+                $userdatarec = new stdClass();
+                $userdatarec->surveyid = $iteminfo->surveyid;
+                $userdatarec->submissionid = $iteminfo->submissionid;
+                $userdatarec->itemid = $iteminfo->itemid;
+                $userdatarec->content = 'dummy_content';
 
-                $id = $DB->insert_record('survey_userdata', $userdata_record);
-                $userdata_record = $DB->get_record('survey_userdata', array('id' => $id));
+                $id = $DB->insert_record('survey_userdata', $userdatarec);
+                $userdatarec = $DB->get_record('survey_userdata', array('id' => $id));
             }
-            $userdata_record->timecreated = time();
+            $userdatarec->timecreated = time();
 
             $item = survey_get_item($iteminfo->itemid, $iteminfo->type, $iteminfo->plugin);
 
-            // in this method I update $userdata_record->content
+            // in this method I update $userdatarec->content
             // I do not really save to database
-            $item->userform_save_preprocessing($iteminfo->extra, $userdata_record);
+            $item->userform_save_preprocessing($iteminfo->extra, $userdatarec);
 
-            if ($userdata_record->content != 'dummy_content') {
-                $DB->update_record('survey_userdata', $userdata_record);
+            if ($userdatarec->content != 'dummy_content') {
+                $DB->update_record('survey_userdata', $userdatarec);
             } else {
-                print_error('Wrong $userdata_record! \'dummy_content\' has not been replaced.');
+                print_error('Wrong $userdatarec! \'dummy_content\' has not been replaced.');
             }
         }
     }
@@ -540,44 +540,44 @@ class mod_survey_userformmanager {
             $this->formdata->submissionid = 0;
         }
 
-        $survey_submissions = new stdClass();
+        $submissions = new stdClass();
         if (empty($this->formdata->submissionid)) {
             // add a new record to survey_submissions
-            $survey_submissions->surveyid = $this->survey->id;
-            $survey_submissions->userid = $USER->id;
-            $survey_submissions->timecreated = $timenow;
+            $submissions->surveyid = $this->survey->id;
+            $submissions->userid = $USER->id;
+            $submissions->timecreated = $timenow;
 
             // submit buttons are 3 and only 3
             if ($nextbutton) {
-                $survey_submissions->status = SURVEY_STATUSINPROGRESS;
+                $submissions->status = SURVEY_STATUSINPROGRESS;
             }
             if ($savebutton || $saveasnewbutton) {
-                $survey_submissions->status = SURVEY_STATUSCLOSED;
+                $submissions->status = SURVEY_STATUSCLOSED;
             }
 
-            $survey_submissions->id = $DB->insert_record('survey_submissions', $survey_submissions);
+            $submissions->id = $DB->insert_record('survey_submissions', $submissions);
 
         } else {
             // survey_submissions already exists
             // but I asked to save
             if ($savebutton) {
-                $survey_submissions->id = $this->formdata->submissionid;
-                $survey_submissions->status = SURVEY_STATUSCLOSED;
-                $survey_submissions->timemodified = $timenow;
-                $DB->update_record('survey_submissions', $survey_submissions);
+                $submissions->id = $this->formdata->submissionid;
+                $submissions->status = SURVEY_STATUSCLOSED;
+                $submissions->timemodified = $timenow;
+                $DB->update_record('survey_submissions', $submissions);
             } else {
                 // I have $this->formdata->submissionid
                 // case: "save" was requested, I am not here
                 // case: "save as" was requested, I am not here
                 // case: "next" was requested, so status = SURVEY_STATUSINPROGRESS
                 $status = $DB->get_field('survey_submissions', 'status', array('id' => $this->formdata->submissionid), MUST_EXIST);
-                $survey_submissions->id = $this->formdata->submissionid;
-                $survey_submissions->status = $status;
+                $submissions->id = $this->formdata->submissionid;
+                $submissions->status = $status;
             }
         }
 
-        $this->submissionid = $survey_submissions->id;
-        $this->status = $survey_submissions->status;
+        $this->submissionid = $submissions->id;
+        $this->status = $submissions->status;
     }
 
     /*
@@ -1037,17 +1037,17 @@ class mod_survey_userformmanager {
     public function duplicate_submission() {
         global $DB;
 
-        $survey_submissions = $DB->get_record('survey_submissions', array('id' => $this->submissionid));
-        $survey_submissions->timecreated = time();
-        $survey_submissions->status = SURVEY_STATUSINPROGRESS;
-        unset($survey_submissions->timemodified);
-        $submissionid = $DB->insert_record('survey_submissions', $survey_submissions);
+        $submissions = $DB->get_record('survey_submissions', array('id' => $this->submissionid));
+        $submissions->timecreated = time();
+        $submissions->status = SURVEY_STATUSINPROGRESS;
+        unset($submissions->timemodified);
+        $submissionid = $DB->insert_record('survey_submissions', $submissions);
 
         $survey_userdata = $DB->get_recordset('survey_userdata', array('submissionid' => $this->submissionid));
-        foreach ($survey_userdata as $survey_userdatum) {
-            unset($survey_userdatum->id);
-            $survey_userdatum->submissionid = $submissionid;
-            $DB->insert_record('survey_userdata', $survey_userdatum);
+        foreach ($survey_userdata as $userdatum) {
+            unset($userdatum->id);
+            $userdatum->submissionid = $submissionid;
+            $DB->insert_record('survey_userdata', $userdatum);
         }
         $survey_userdata->close();
         $this->submissionid = $submissionid;

@@ -85,10 +85,10 @@ $item->item_set_editor($cm->id, $item);
 // ////////////////////////////
 
 // ////////////////////////////
-// define $item_form return url
+// define $itemform return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('items_setup.php', $paramurl);
-// end of: define $item_form return url
+// end of: define $itemform return url
 // ////////////////////////////
 
 // ////////////////////////////
@@ -97,18 +97,18 @@ $formparams = new stdClass();
 $formparams->survey = $survey;                               // needed to setup date boundaries in date fields
 $formparams->item = $item;                                   // needed in many situations
 $formparams->hassubmissions = $itemlist_manager->hassubmissions; // are editing features restricted?
-$item_form = new survey_pluginform($formurl, $formparams);
+$itemform = new survey_pluginform($formurl, $formparams);
 // end of: prepare params for the form
 // ////////////////////////////
 
 // ////////////////////////////
 // manage form submission
-if ($item_form->is_cancelled()) {
+if ($itemform->is_cancelled()) {
     $returnurl = new moodle_url('items_manage.php', $paramurl);
     redirect($returnurl);
 }
 
-if ($fromform = $item_form->get_data()) {
+if ($fromform = $itemform->get_data()) {
     // was this item forced to be new?
     if (!empty($fromform->saveasnew)) {
         $fromform->itemid = 0;
@@ -144,8 +144,8 @@ if ($itemlist_manager->hassubmissions) {
     echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
 }
 $itemlist_manager->item_welcome();
-$item_form->set_data($item);
-$item_form->display();
+$itemform->set_data($item);
+$itemform->display();
 
 // Finish the page
 echo $OUTPUT->footer();

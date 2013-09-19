@@ -77,15 +77,15 @@ class surveyformat_fieldsetend extends mod_survey_itembase {
         $this->flag->editorslist = null;
 
         // list of fields I do not want to have in the item definition form
-        $this->itembase_form_requires['common_fs'] = false;
-        $this->itembase_form_requires['content'] = false;
-        $this->itembase_form_requires['customnumber'] = false;
-        $this->itembase_form_requires['extrarow'] = false;
-        $this->itembase_form_requires['extranote'] = false;
-        $this->itembase_form_requires['required'] = false;
-        $this->itembase_form_requires['variable'] = false;
-        $this->itembase_form_requires['indent'] = false;
-        $this->itembase_form_requires['hideinstructions'] = false;
+        $this->formrequires['common_fs'] = false;
+        $this->formrequires['content'] = false;
+        $this->formrequires['customnumber'] = false;
+        $this->formrequires['extrarow'] = false;
+        $this->formrequires['extranote'] = false;
+        $this->formrequires['required'] = false;
+        $this->formrequires['variable'] = false;
+        $this->formrequires['indent'] = false;
+        $this->formrequires['hideinstructions'] = false;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
@@ -160,7 +160,7 @@ class surveyformat_fieldsetend extends mod_survey_itembase {
      * @return string
      *
      */
-    static function item_get_plugin_schema() {
+    public static function item_get_plugin_schema() {
         $schema = <<<EOS
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">

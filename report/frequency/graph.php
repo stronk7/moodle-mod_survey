@@ -99,12 +99,12 @@ if (true) {
     $graph = new graph(SURVEY_GWIDTH, SURVEY_GHEIGHT);
     $graph->parameter['title']   = 'Raperonzolo';
 
-    $graph->x_data               = array('io','tu','egli','noi','voi','essi');
+    $graph->x_data               = array('io', 'tu', 'egli', 'noi', 'voi', 'essi');
 
-    $graph->y_data['answers1']   = array(1,6,2,5,3,4);
+    $graph->y_data['answers1']   = array(1, 6, 2, 5, 3, 4);
     $graph->y_format['answers1'] = array('colour' => 'ltblue', 'bar' => 'fill', 'legend' => 'legenda2', 'bar_size' => 0.4);
 
-    $graph->y_data['answers2']   = array(1,2,3,4,5,6);
+    $graph->y_data['answers2']   = array(1, 2, 3, 4, 5, 6);
     $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square',
                                             'shadow_offset' => 4, 'legend' => 'legenda1');
 

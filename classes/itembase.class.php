@@ -130,11 +130,11 @@ class mod_survey_itembase {
      */
 
     /*
-     * $itembase_form_requires = list of fields the survey creator will need/see/use in the item definition form
+     * $formrequires = list of fields the survey creator will need/see/use in the item definition form
      * By default each item is present in the form
      * so, in each child class, I only need to "deactivate" mform element I don't want to have/see/use
      */
-    public $itembase_form_requires = array(
+    public $formrequires = array(
         'common_fs' => true,
         'content' => true,
         'customnumber' => true,
@@ -203,7 +203,7 @@ class mod_survey_itembase {
         $timenow = time();
 
         // is this useless?
-        // foreach ($this->itembase_form_requires as $k => $v) {
+        // foreach ($this->formrequires as $k => $v) {
         //     if (!$v) {
         //         unset($record->{$k});
         //     }
@@ -224,7 +224,7 @@ class mod_survey_itembase {
         // manage other checkboxes content
         $checkboxessettings = array('advanced', 'insearchform', 'hideinstructions', 'required', 'hide');
         foreach ($checkboxessettings as $checkboxessetting) {
-            if ($this->itembase_form_requires[$checkboxessetting]) {
+            if ($this->formrequires[$checkboxessetting]) {
                 $record->{$checkboxessetting} = isset($record->{$checkboxessetting}) ? 1 : 0;
             } else {
                 $record->{$checkboxessetting} = 0;
@@ -547,9 +547,9 @@ class mod_survey_itembase {
         }
 
         // some examples
-        // each SURVEY_ITEMFIELD has: $this->itembase_form_requires['content'] == true  and $this->flag->editorslist == array('content')
-        // fieldset              has: $this->itembase_form_requires['content'] == true  and $this->flag->editorslist == null
-        // pagebreak             has: $this->itembase_form_requires['content'] == false and $this->flag->editorslist == null
+        // each SURVEY_ITEMFIELD has: $this->formrequires['content'] == true  and $this->flag->editorslist == array('content')
+        // fieldset              has: $this->formrequires['content'] == true  and $this->flag->editorslist == null
+        // pagebreak             has: $this->formrequires['content'] == false and $this->flag->editorslist == null
         $fieldnames = array();
         foreach ($this->flag->editorslist as $fieldname => $filearea) {
             $fieldnames[$fieldname] = $filearea;
@@ -693,7 +693,7 @@ class mod_survey_itembase {
      * @return string
      *
      */
-    static function item_get_item_schema() {
+    public static function item_get_item_schema() {
         $schema = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $schema .= '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">'."\n";
         $schema .= '    <xs:element name="survey_item">'."\n";
@@ -991,13 +991,13 @@ class mod_survey_itembase {
     }
 
     /*
-     * get_itembase_form_requires
+     * get_form_requires
      *
      * @param $setup_itemform_element
      * @return
      */
-    public function get_itembase_form_requires($setup_itemform_element) {
-        return $this->itembase_form_requires[$setup_itemform_element];
+    public function get_form_requires($setup_itemform_element) {
+        return $this->formrequires[$setup_itemform_element];
     }
 
     // MARK set
@@ -1236,9 +1236,11 @@ class mod_survey_itembase {
                         $contentdisplayed = '\''.$parentinfo->content.'\'';
                     }
                     if (isset($parentinfo->operator)) {
-                        echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', \''.$parentinfo->operator.'\', '.$contentdisplayed.');</span><br />';
+                        echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.
+                                $paretinfo->parentname.'\', \''.$parentinfo->operator.'\', '.$contentdisplayed.');</span><br />';
                     } else {
-                        echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.$parentinfo->parentname.'\', '.$contentdisplayed.');</span><br />';
+                        echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.
+                                $parentinfo->parentname.'\', '.$contentdisplayed.');</span><br />';
                     }
                 }
             }

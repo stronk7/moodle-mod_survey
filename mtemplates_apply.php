@@ -60,10 +60,10 @@ $mtemplate_manager = new mod_survey_mastertemplate($survey);
 $mtemplate_manager->prevent_direct_user_input();
 
 // ////////////////////////////
-// define $apply_mtemplate return url
+// define $applymtemplate return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('mtemplates_apply.php', $paramurl);
-// end of: define $apply_mtemplate return url
+// end of: define $applymtemplate return url
 // ////////////////////////////
 
 // ////////////////////////////
@@ -73,18 +73,18 @@ $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
 $formparams->mtemplate_manager = $mtemplate_manager;
 
-$apply_mtemplate = new survey_applymtemplateform($formurl, $formparams);
+$applymtemplate = new survey_applymtemplateform($formurl, $formparams);
 // end of: prepare params for the form
 // ////////////////////////////
 
 // ////////////////////////////
 // manage form submission
-if ($apply_mtemplate->is_cancelled()) {
+if ($applymtemplate->is_cancelled()) {
     $returnurl = new moodle_url('utemplates_add.php', $paramurl);
     redirect($returnurl);
 }
 
-if ($mtemplate_manager->formdata = $apply_mtemplate->get_data()) {
+if ($mtemplate_manager->formdata = $applymtemplate->get_data()) {
     $mtemplate_manager->apply_template(SURVEY_MASTERTEMPLATE);
 
     $redirecturl = new moodle_url('view.php', array('id' => $cm->id, 'act' => SURVEY_PREVIEWSURVEY));
@@ -117,7 +117,7 @@ if (survey_count_submissions($survey->id, SURVEY_STATUSALL)) {
 $message = get_string('applymtemplateinfo', 'survey');
 echo $OUTPUT->box($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
 
-$apply_mtemplate->display();
+$applymtemplate->display();
 
 // Finish the page
 echo $OUTPUT->footer();

@@ -81,7 +81,7 @@ if (!empty($canaccessreports)) {
     if ($hassubmissions) {
         include_once($CFG->dirroot.'/mod/survey/report/'.$reportname.'/index.php');
     } else {
-        $message = get_string('nosubmissionfound','survey');
+        $message = get_string('nosubmissionfound', 'survey');
         echo $OUTPUT->box($message, 'notice centerpara');
     }
 } else {
