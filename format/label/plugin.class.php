@@ -235,7 +235,7 @@ EOS;
             $content = '';
             $content .= html_writer::start_tag('fieldset', array('class' => 'hidden'));
             $content .= html_writer::start_tag('div', array('class' => 'centerpara'));
-            $content .= html_writer::start_tag('div', array('class' => 'myfitem')); // it will never get grayed
+            $content .= html_writer::start_tag('div', array('class' => 'itemlabel')); // it will never get grayed because class != fitem
             $content .= html_writer::start_tag('div', array('class' => 'fstatic fullwidth'));
             //$content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
             $content .= $this->content;

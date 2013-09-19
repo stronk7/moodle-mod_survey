@@ -37,9 +37,9 @@ They all have a long list of features to verify the content provided by the user
 Survey foreseen conditional branching, sort of fields during export, item indentation, custom number, feature to hide, groups of users with with "extended" permissions, mandatory/optional items, fields limited to people with a specific permission
 
 Pending tracker issues:
-MDL-30940: multiselect mform doesn't work! Fixed by Frédéric Massart on April 19, 2013
+√ MDL-30940: multiselect mform doesn't work! Fixed by Frédéric Massart on April 19, 2013
+√ MDL-34760, MDL-38975: How disable fields upon checkboxes sets? Fixed by Eloy Lafuente on April 8, 2013
+√ MDL-39280: $mform->disabledIf doesn't work for 'multiselect' mform elements. Fixed by Frédéric Massart on May 10, 2013
 MDL-28194: I am in trouble assigning syles to some mform element.
-MDL-34760, MDL-38975: How disable fields upon checkboxes sets? Fixed by Eloy Lafuente on April 8, 2013
 MDL-31796: $mform->disabledIf doesn't work for 'filemanager' mform elements.
-MDL-39280: $mform->disabledIf doesn't work for 'multiselect' mform elements. Fixed by Frédéric Massart on May 10, 2013
 MDL-34815: Disabled mform items need to be skipped during validation (and more).
