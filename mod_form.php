@@ -151,8 +151,8 @@ class mod_survey_mod_form extends moodleform_mod {
 
         // userstyle
         $fieldname = 'userstyle';
-        $filemanager_options = survey_get_user_style_options();
-        $mform->addElement('filemanager', $fieldname.'_filemanager', get_string($fieldname, 'survey'), null, $filemanager_options);
+        $filemanageroptions = survey_get_user_style_options();
+        $mform->addElement('filemanager', $fieldname.'_filemanager', get_string($fieldname, 'survey'), null, $filemanageroptions);
         $mform->addHelpButton($fieldname.'_filemanager', $fieldname, 'survey');
 
         // maxentries
@@ -236,50 +236,50 @@ class mod_survey_mod_form extends moodleform_mod {
 
     // questa funzione viene eseguita prima di mostrare la mod_form
     // e serve per definire eventuali preset
-    public function data_preprocessing(&$default_values) {
+    public function data_preprocessing(&$defaults) {
         global $DB;
 
-        parent::data_preprocessing($default_values);
+        parent::data_preprocessing($defaults);
 
-        if (isset($default_values['readaccess'])) { // if one has been set, then all of them have been set
-            $default_values['accessrights'] = $default_values['readaccess'].'.'.$default_values['editaccess'].'.'.$default_values['deleteaccess'];
+        if (isset($defaults['readaccess'])) { // if one has been set, then all of them have been set
+            $defaults['accessrights'] = $defaults['readaccess'].'.'.$defaults['editaccess'].'.'.$defaults['deleteaccess'];
         }
 
         if ($this->current->instance) {
             // manage userstyle filemanager
             $filename = 'userstyle';
-            $filemanager_options = survey_get_user_style_options();
+            $filemanageroptions = survey_get_user_style_options();
             $draftitemid = file_get_submitted_draft_itemid($filename.'_filemanager');
 
-            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_survey', SURVEY_STYLEFILEAREA, 0, $filemanager_options);
-            $default_values[$filename.'_filemanager'] = $draftitemid;
+            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_survey', SURVEY_STYLEFILEAREA, 0, $filemanageroptions);
+            $defaults[$filename.'_filemanager'] = $draftitemid;
 
             // manage thankshtml editor
             $filename = 'thankshtml';
             $editoroptions = survey_get_editor_options();
             // editing an existing feedback - let us prepare the added editor elements (intro done automatically)
             $draftitemid = file_get_submitted_draft_itemid($filename);
-            $default_values[$filename.'_editor']['text'] =
+            $defaults[$filename.'_editor']['text'] =
                                     file_prepare_draft_area($draftitemid, $this->context->id,
                                     'mod_survey', SURVEY_THANKSHTMLFILEAREA, false,
                                     $editoroptions,
-                                    $default_values[$filename]);
+                                    $defaults[$filename]);
 
-            $default_values[$filename.'_editor']['format'] = $default_values['thankshtmlformat'];
-            $default_values[$filename.'_editor']['itemid'] = $draftitemid;
+            $defaults[$filename.'_editor']['format'] = $defaults['thankshtmlformat'];
+            $defaults[$filename.'_editor']['itemid'] = $draftitemid;
 
             // notifyrole
-            $presetroles = explode(',', $default_values['notifyrole']);
+            $presetroles = explode(',', $defaults['notifyrole']);
             foreach ($presetroles as $roleid) {
                 $values[] = $roleid;
             }
-            $default_values['notifyrole'] = $values;
+            $defaults['notifyrole'] = $values;
         }
 
         $fieldname = 'completionsubmit';
-        $default_values[$fieldname.'_check'] = !empty($default_values[$fieldname]) ? 1 : 0;
-        if (empty($default_values[$fieldname])) {
-            $default_values[$fieldname] = 1;
+        $defaults[$fieldname.'_check'] = !empty($defaults[$fieldname]) ? 1 : 0;
+        if (empty($defaults[$fieldname])) {
+            $defaults[$fieldname] = 1;
         }
     }
 

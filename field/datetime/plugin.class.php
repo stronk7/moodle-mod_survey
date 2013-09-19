@@ -289,7 +289,8 @@ class surveyfield_datetime extends mod_survey_itembase {
         foreach ($fieldlist as $field) {
             if (isset($record->{$field.'_year'}) && isset($record->{$field.'_month'}) && isset($record->{$field.'_day'}) &&
                 isset($record->{$field.'_hour'}) && isset($record->{$field.'_minute'})) {
-                $record->{$field} = $this->item_datetime_to_unix_time($record->{$field.'_year'}, $record->{$field.'_month'}, $record->{$field.'_day'}, $record->{$field.'_hour'}, $record->{$field.'_minute'});
+                $record->{$field} = $this->item_datetime_to_unix_time($record->{$field.'_year'}, $record->{$field.'_month'},
+                        $record->{$field.'_day'}, $record->{$field.'_hour'}, $record->{$field.'_minute'});
                 unset($record->{$field.'_year'});
                 unset($record->{$field.'_month'});
                 unset($record->{$field.'_day'});
@@ -378,7 +379,7 @@ class surveyfield_datetime extends mod_survey_itembase {
      * @return string
      *
      */
-    static function item_get_plugin_schema() {
+    public static function item_get_plugin_schema() {
         $schema = <<<EOS
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
@@ -580,7 +581,8 @@ EOS;
         $haslowerbound = ($this->lowerbound != $this->item_datetime_to_unix_time($survey->startyear, 1, 1, 0, 0));
         $hasupperbound = ($this->upperbound != $this->item_datetime_to_unix_time($survey->stopyear, 12, 31, 23, 59));
 
-        $userinput = $this->item_datetime_to_unix_time($data[$this->itemname.'_year'], $data[$this->itemname.'_month'], $data[$this->itemname.'_day'], $data[$this->itemname.'_hour'], $data[$this->itemname.'_minute']);
+        $userinput = $this->item_datetime_to_unix_time($data[$this->itemname.'_year'], $data[$this->itemname.'_month'],
+                $data[$this->itemname.'_day'], $data[$this->itemname.'_hour'], $data[$this->itemname.'_minute']);
 
         if ($haslowerbound && $hasupperbound) {
             // internal range

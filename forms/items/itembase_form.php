@@ -75,14 +75,14 @@ class mod_survey_itembaseform extends moodleform {
         // here I open a new fieldset
         // /////////////////////////////////////////////////////////////////////////////////////////////////
         $fieldname = 'common_fs';
-        if ($item->get_itembase_form_requires($fieldname)) {
+        if ($item->get_form_requires($fieldname)) {
             $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
         }
 
         // ----------------------------------------
         // newitem::content & contentformat
         // ----------------------------------------
-        if ($item->get_itembase_form_requires('content')) {
+        if ($item->get_form_requires('content')) {
             if ($item->flag->usescontenteditor) {
                 $fieldname = 'content_editor';
                 $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES);
@@ -103,7 +103,7 @@ class mod_survey_itembaseform extends moodleform {
         // newitem::extrarow
         // ----------------------------------------
         $fieldname = 'extrarow';
-        if ($forceextrarow = $item->get_itembase_form_requires($fieldname)) {
+        if ($forceextrarow = $item->get_form_requires($fieldname)) {
             if ($forceextrarow === 'disable') {
                 $helplabel = get_string('extrarowisforced', 'survey');
                 $options = array('group' => '1', 'disabled' => 'disabled');
@@ -123,7 +123,7 @@ class mod_survey_itembaseform extends moodleform {
         // newitem::extranote
         // ----------------------------------------
         $fieldname = 'extranote';
-        if ($item->get_itembase_form_requires($fieldname)) {
+        if ($item->get_form_requires($fieldname)) {
             $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'), array('class' => 'longfield'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_TEXT);
@@ -133,7 +133,7 @@ class mod_survey_itembaseform extends moodleform {
         // newitem::hideinstructions
         // ----------------------------------------
         $fieldname = 'hideinstructions';
-        if ($item->get_itembase_form_requires($fieldname)) {
+        if ($item->get_form_requires($fieldname)) {
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_INT);
@@ -143,7 +143,7 @@ class mod_survey_itembaseform extends moodleform {
         // newitem::customnumber
         // ----------------------------------------
         $fieldname = 'customnumber';
-        if ($item->get_itembase_form_requires($fieldname)) {
+        if ($item->get_form_requires($fieldname)) {
             $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_TEXT);
@@ -153,7 +153,7 @@ class mod_survey_itembaseform extends moodleform {
         // newitem::indent
         // ----------------------------------------
         $fieldname = 'indent';
-        if ($item->get_itembase_form_requires($fieldname)) {
+        if ($item->get_form_requires($fieldname)) {
             $options = array_combine(range(0, 9), range(0, 9));
             $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
@@ -164,7 +164,7 @@ class mod_survey_itembaseform extends moodleform {
         // newitem::required
         // ----------------------------------------
         $fieldname = 'required';
-        if ($item->get_itembase_form_requires($fieldname)) {
+        if ($item->get_form_requires($fieldname)) {
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_INT);
@@ -175,7 +175,7 @@ class mod_survey_itembaseform extends moodleform {
         // ----------------------------------------
         // for SURVEY_TYPEFIELD only
         $fieldname = 'variable';
-        if ($item->get_itembase_form_requires($fieldname)) {
+        if ($item->get_form_requires($fieldname)) {
             $options = array('maxlength' => 64, 'size' => 12, 'class' => 'longfield');
 
             $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'), $options);
@@ -193,7 +193,7 @@ class mod_survey_itembaseform extends moodleform {
         // newitem::hide
         // ----------------------------------------
         $fieldname = 'hide';
-        if ($item->get_itembase_form_requires($fieldname)) {
+        if ($item->get_form_requires($fieldname)) {
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_INT);
@@ -203,7 +203,7 @@ class mod_survey_itembaseform extends moodleform {
         // newitem::insearchform
         // ----------------------------------------
         $fieldname = 'insearchform';
-        if ($item->get_itembase_form_requires($fieldname)) {
+        if ($item->get_form_requires($fieldname)) {
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_INT);
@@ -213,13 +213,13 @@ class mod_survey_itembaseform extends moodleform {
         // newitem::advanced
         // ----------------------------------------
         $fieldname = 'advanced';
-        if ($item->get_itembase_form_requires($fieldname)) {
+        if ($item->get_form_requires($fieldname)) {
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_INT);
         }
 
-        if ($item->get_itembase_form_requires('parentid')) {
+        if ($item->get_form_requires('parentid')) {
             // /////////////////////////////////////////////////////////////////////////////////////////////////
             // here I open a new fieldset
             // /////////////////////////////////////////////////////////////////////////////////////////////////

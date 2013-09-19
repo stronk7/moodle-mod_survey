@@ -74,7 +74,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $days = array_combine(range(1, 31), range(1, 31));
         // $months = array_combine(range(0, 11), range(0, 11));
         $months = array();
-        for ($i=1; $i<=12; $i++) {
+        for ($i = 1; $i <= 12; $i++) {
             $months[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), "%B", 0); // january, february, march...
         }
         $years = array_combine(range($startyear, $stopyear), range($startyear, $stopyear));
@@ -165,8 +165,10 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $errors = parent::validation($data, $files);
 
-        $lowerbound = $item->item_datetime_to_unix_time($data['lowerbound_year'], $data['lowerbound_month'], $data['lowerbound_day'], $data['lowerbound_hour'], $data['lowerbound_minute']);
-        $upperbound = $item->item_datetime_to_unix_time($data['upperbound_year'], $data['upperbound_month'], $data['upperbound_day'], $data['upperbound_hour'], $data['upperbound_minute']);
+        $lowerbound = $item->item_datetime_to_unix_time($data['lowerbound_year'], $data['lowerbound_month'],
+                $data['lowerbound_day'], $data['lowerbound_hour'], $data['lowerbound_minute']);
+        $upperbound = $item->item_datetime_to_unix_time($data['upperbound_year'], $data['upperbound_month'],
+                $data['upperbound_day'], $data['upperbound_hour'], $data['upperbound_minute']);
         if ($lowerbound == $upperbound) {
             $errors['lowerbound_group'] = get_string('lowerequaltoupper', 'surveyfield_datetime');
         }
@@ -174,9 +176,10 @@ class survey_pluginform extends mod_survey_itembaseform {
             $errors['lowerbound_group'] = get_string('lowergreaterthanupper', 'surveyfield_integer');
         }
 
-        // constrain default between boundaries
+        // Constraint default between boundaries.
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
-            $defaultvalue = $item->item_datetime_to_unix_time($data['defaultvalue_year'], $data['defaultvalue_month'], $data['defaultvalue_day'], $data['defaultvalue_hour'], $data['defaultvalue_minute']);
+            $defaultvalue = $item->item_datetime_to_unix_time($data['defaultvalue_year'], $data['defaultvalue_month'],
+                    $data['defaultvalue_day'], $data['defaultvalue_hour'], $data['defaultvalue_minute']);
 
             // internal range
             if ( ($defaultvalue < $lowerbound) || ($defaultvalue > $upperbound) ) {

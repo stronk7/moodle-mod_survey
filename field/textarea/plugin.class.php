@@ -144,7 +144,7 @@ class surveyfield_textarea extends mod_survey_itembase {
         $this->flag->editorslist = array('content' => SURVEY_ITEMCONTENTFILEAREA);
 
         // list of fields I do not want to have in the item definition form
-        $this->itembase_form_requires['insearchform'] = false;
+        $this->formrequires['insearchform'] = false;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
@@ -219,7 +219,6 @@ class surveyfield_textarea extends mod_survey_itembase {
             $record->areacols = SURVEYFIELD_TEXTAREA_DEFAULTCOLS;
         }
         // ------- end of fields saved in this plugin table ------- //
-
 
         // Do parent item saving stuff here (mod_survey_itembase::item_save($record)))
         return parent::item_save($record);
@@ -298,7 +297,7 @@ class surveyfield_textarea extends mod_survey_itembase {
      * @return string
      *
      */
-    static function item_get_plugin_schema() {
+    public static function item_get_plugin_schema() {
         $schema = <<<EOS
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
@@ -463,7 +462,8 @@ EOS;
             $olduserdata->{$this->itemname.'_editor'} = $answer['editor'];
 
             $editoroptions = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1, 'context' => $this->context);
-            $olduserdata = file_postupdate_standard_editor($olduserdata, $this->itemname, $editoroptions, $this->context, 'mod_survey', SURVEYFIELD_TEXTAREA_FILEAREA, $olduserdata->id);
+            $olduserdata = file_postupdate_standard_editor($olduserdata, $this->itemname, $editoroptions, $this->context,
+                    'mod_survey', SURVEYFIELD_TEXTAREA_FILEAREA, $olduserdata->id);
             $olduserdata->content = $olduserdata->{$this->itemname};
         } else {
             $olduserdata->content = $answer['mainelement'];

@@ -120,13 +120,13 @@ class survey_plugin_manager {
 
         $result = array();
 
-        foreach ($names as $name => $path) {
+        foreach ($names as $name => $notused) {
             $idx = get_config($this->subtype.'_'.$name, 'sortorder');
             if (!$idx) {
                 $idx = 0;
             }
             while (array_key_exists($idx, $result)) {
-                $idx +=1;
+                $idx += 1;
             }
             $result[$idx] = $name;
         }
@@ -149,7 +149,7 @@ class survey_plugin_manager {
         global $OUTPUT;
 
         return $OUTPUT->action_icon(new moodle_url($this->pageurl,
-                array('action' => $action, 'plugin'=> $plugintype, 'sesskey' => sesskey())),
+                array('action' => $action, 'plugin' => $plugintype, 'sesskey' => sesskey())),
                 new pix_icon($icon, $alt, 'moodle', array('title' => $alt)),
                 null, array('title' => $alt)).' ';
     }
@@ -209,24 +209,25 @@ class survey_plugin_manager {
             $counts = $DB->get_records_sql($countsql, $whereparams);
         }
 
-        foreach ($plugins as $idx => $plugin) {
+        foreach ($plugins as $plugin) {
             $row = array();
 
-            // pluginname
-            $icon = '<img src="'.$OUTPUT->pix_url('icon', $this->subtype.'_'.$plugin).'" class="icon" alt="'.$plugin.'" title="'.$plugin.'" />&nbsp;';
+            // Pluginname.
+            $icon = '<img src="'.$OUTPUT->pix_url('icon', $this->subtype.'_'.$plugin).
+                    '" class="icon" alt="'.$plugin.'" title="'.$plugin.'" />&nbsp;';
             $row[] = $icon.get_string('pluginname', $this->subtype.'_'.$plugin);
 
-            // version
+            // Version.
             $row[] = get_config($this->subtype.'_'.$plugin, 'version');
 
-            // number of instances
+            // Number of instances.
             if (isset($counts[$plugin])) {
                 $row[] = $counts[$plugin]->numinstances;
             } else {
                 $row[] = 0;
             }
 
-            // enable/disable
+            // Enable/disable.
             $visible = !get_config($this->subtype.'_'.$plugin, 'disabled');
             if ($visible) {
                 $row[] = $this->format_icon_link('hide', $plugin, 't/hide', get_string('disable'));
@@ -234,7 +235,7 @@ class survey_plugin_manager {
                 $row[] = $this->format_icon_link('show', $plugin, 't/show', get_string('enable'));
             }
 
-            // delete
+            // Delete.
             if (isset($counts[$plugin])) {
                 $row[] = '&nbsp;';
             } else {
@@ -457,7 +458,7 @@ class survey_plugin_manager {
         $plugins = core_component::get_plugin_list_with_file($subtype, 'settings.php', false);
         // $plugins = get_plugin_list_with_file($subtype, 'settings.php', false);
         $pluginsbyname = array();
-        foreach ($plugins as $plugin => $plugindir) {
+        foreach ($plugins as $plugin => $notused) {
             $pluginname = get_string('pluginname', $subtype.'_'.$plugin);
             $pluginsbyname[$pluginname] = $plugin;
         }

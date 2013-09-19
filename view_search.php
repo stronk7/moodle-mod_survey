@@ -61,10 +61,10 @@ require_capability('mod/survey:searchsubmissions', $context);
 $search_manager = new mod_survey_searchmanager($cm, $survey, $context);
 
 // ////////////////////////////
-// define $search_form return url
+// define $searchform return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('view_search.php', $paramurl);
-// end of: define $search_form return url
+// end of: define $searchform return url
 // ////////////////////////////
 
 // ////////////////////////////
@@ -74,20 +74,20 @@ $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
 $formparams->canaccessadvanceditems = $search_manager->canaccessadvanceditems; // Help selecting the fields to show
 $formparams->formpage = $formpage;
-$search_form = new survey_searchform($formurl, $formparams);
+$searchform = new survey_searchform($formurl, $formparams);
 // end of: prepare params for the form
 // ////////////////////////////
 
 // ////////////////////////////
 // manage form submission
-if ($search_form->is_cancelled()) {
+if ($searchform->is_cancelled()) {
     $paramurl = array('id' => $cm->id);
     // TODO: remember to select submissions by groupsmates ONLY
     $returnurl = new moodle_url('view_manage.php', $paramurl);
     redirect($returnurl);
 }
 
-if ($search_manager->formdata = $search_form->get_data()) { // $search_form, here, is the search form
+if ($search_manager->formdata = $searchform->get_data()) { // $searchform, here, is the search form
     // in this routine I do not execute a real search
     // I only define the param searchquery for the url of SURVEY_SUBMISSION_MANAGE
     $paramurl = array('id' => $cm->id);
@@ -119,7 +119,7 @@ include_once($CFG->dirroot.'/mod/survey/tabs.php');
 if (!$search_manager->count_search_items()) {
     $search_manager->noitem_stopexecution();
 } else {
-    $search_form->display();
+    $searchform->display();
 }
 
 // Finish the page
