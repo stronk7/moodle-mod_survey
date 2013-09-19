@@ -56,17 +56,17 @@ $confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:manageusertemplates', $context);
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // calculations
-// ////////////////////////////////////////////////////////////
-$utemplate_manager = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid, $action, $confirm);
+// -----------------------------
+$utemplateman = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid, $action, $confirm);
 
 switch ($action) {
     case SURVEY_NOACTION:
         break;
     case SURVEY_EXPORTUTEMPLATE:
         require_capability('mod/survey:downloadusertemplates', $context);
-        $utemplate_manager->export_utemplate();
+        $utemplateman->export_utemplate();
         break;
     case SURVEY_DELETEUTEMPLATE:
         require_capability('mod/survey:deleteusertemplates', $context);
@@ -75,9 +75,9 @@ switch ($action) {
         debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
 }
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // output starts here
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 $PAGE->set_url('/mod/survey/utemplates.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
@@ -92,9 +92,9 @@ $currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_UTEMPLATES_MANAGE; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-$utemplate_manager->delete_utemplate();
+$utemplateman->delete_utemplate();
 
-$utemplate_manager->manage_utemplates();
+$utemplateman->manage_utemplates();
 
 // Finish the page
 echo $OUTPUT->footer();

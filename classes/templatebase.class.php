@@ -144,7 +144,7 @@ class mod_survey_templatebase {
                         // I store sortindex instead of parentid, because at restore time parent id will change
                         $val = $DB->get_field('survey_item', 'sortindex', $whereparams);
                         $xmlfield = $xmltable->addChild($field, $val);
-                    // } else {
+                        // } else {
                         // it is empty, do not evaluate: jump
                     }
 
@@ -159,7 +159,7 @@ class mod_survey_templatebase {
 
                 if (strlen($val)) {
                     $xmlfield = $xmltable->addChild($field, $val);
-                // } else {
+                    // } else {
                     // it is empty, do not evaluate: jump
                 }
             }
@@ -184,7 +184,7 @@ class mod_survey_templatebase {
 
                 if (strlen($val)) {
                     $xmlfield = $xmltable->addChild($field, $val);
-                // } else {
+                    // } else {
                     // it is empty, do not evaluate: jump
                 }
             }
@@ -310,7 +310,7 @@ class mod_survey_templatebase {
                     if ($dbman->table_exists($tablename)) {
                         $pluginonly['plugin'] = $pluginseed->plugin;
                         $deletelist = $DB->get_recordset('survey_item', $pluginonly, 'id', 'id');
-                        foreach($deletelist as $todelete) {
+                        foreach ($deletelist as $todelete) {
                             $DB->delete_records($tablename, array('itemid' => $todelete->id));
                         }
                     }
@@ -351,8 +351,8 @@ class mod_survey_templatebase {
 
         if ($templatetype == SURVEY_MASTERTEMPLATE) { // it is multilang
             $templatename = $this->mtemplatename;
-            $template_path = $CFG->dirroot.'/mod/survey/template/'.$templatename.'/template.xml';
-            $templatecontent = file_get_contents($template_path);
+            $templatepath = $CFG->dirroot.'/mod/survey/template/'.$templatename.'/template.xml';
+            $templatecontent = file_get_contents($templatepath);
         } else {
             $templatename = $this->get_utemplate_name();
             $templatecontent = $this->get_utemplate_content();
@@ -371,15 +371,15 @@ class mod_survey_templatebase {
         // echo '<h2>Items saved in the file ('.count($simplexml->item).')</h2>';
 
         $sortindexoffset = $DB->get_field('survey_item', 'MAX(sortindex)', array('surveyid' => $this->survey->id));
-        foreach ($simplexml->children() as $xml_item) {
-            // echo '<h3>Count of tables for the current item: '.count($xml_item->children()).'</h3>';
-            foreach ($xml_item->children() as $xml_table) {
-                $tablename = $xml_table->getName();
-                // echo '<h4>Count of fields of the table '.$xml_tablename.': '.count($xml_table->children()).'</h4>';
+        foreach ($simplexml->children() as $xmlitem) {
+            // echo '<h3>Count of tables for the current item: '.count($xmlitem->children()).'</h3>';
+            foreach ($xmlitem->children() as $xmltable) {
+                $tablename = $xmltable->getName();
+                // echo '<h4>Count of fields of the table '.$xmltablename.': '.count($xmltable->children()).'</h4>';
                 $record = array();
-                foreach ($xml_table->children() as $xml_field) {
-                    $fieldname = $xml_field->getName();
-                    $fieldvalue = (string)$xml_field;
+                foreach ($xmltable->children() as $xmlfield) {
+                    $fieldname = $xmlfield->getName();
+                    $fieldvalue = (string)$xmlfield;
 
                     $record[$fieldname] = $fieldvalue;
                 }
@@ -414,27 +414,27 @@ class mod_survey_templatebase {
      * @param $templateid
      * @return
      */
-    function validate_xml($xml) {
+    public function validate_xml($xml) {
         global $CFG;
 
         // $debug = true; if you want to stop anyway to see where the xml template is buggy
         $debug = false;
 
         $simplexml = new SimpleXMLElement($xml);
-        foreach ($simplexml->children() as $xml_item) {
-            foreach ($xml_item->children() as $xml_table) {
+        foreach ($simplexml->children() as $xmlitem) {
+            foreach ($xmlitem->children() as $xmltable) {
                 // for instance:
                 //     <survey_item>
                 //     <survey_radiobutton>
-                $tablename = $xml_table->getName();
+                $tablename = $xmltable->getName();
 
                 // I am assuming that survey_item table is ALWAYS before the survey_<<plugin>> table
                 if ($tablename == 'survey_item') {
                     $type = null;
                     $plugin = null;
-                    foreach ($xml_table->children() as $xml_field) {
-                        $fieldname = $xml_field->getName();
-                        $fieldvalue = (string)$xml_field;
+                    foreach ($xmltable->children() as $xmlfield) {
+                        $fieldname = $xmlfield->getName();
+                        $fieldvalue = (string)$xmlfield;
 
                         if ($fieldname == 'type') {
                             $type = $fieldvalue;
@@ -464,7 +464,7 @@ class mod_survey_templatebase {
                 }
 
                 $mdom = new DOMDocument();
-                $status = $mdom->loadXML($xml_table->asXML());
+                $status = $mdom->loadXML($xmltable->asXML());
                 if (!$debug) {
                     $status = $status && @$mdom->schemaValidateSource($xsd);
                 } else {
@@ -473,7 +473,7 @@ class mod_survey_templatebase {
                 if (!$status) {
                     // Stop here. Continuing is useless
                     if ($debug) {
-                        echo '<hr /><textarea rows="10" cols="100">'.$xml_table->asXML().'</textarea>';
+                        echo '<hr /><textarea rows="10" cols="100">'.$xmltable->asXML().'</textarea>';
                         echo '<textarea rows="10" cols="100">'.$xsd.'</textarea>';
                     }
                     break 2; // it is the second time I use it! Coooool :-)

@@ -164,9 +164,9 @@ class surveyfield_multiselect extends mod_survey_itembase {
      * @return
      */
     public function item_save($record) {
-        // //////////////////////////////////
+        // -----------------------------
         // Now execute very specific plugin level actions
-        // //////////////////////////////////
+        // -----------------------------
 
         // ------ begin of fields saved in survey_items ------ //
         /* surveyid
@@ -341,7 +341,7 @@ EOS;
         if (!$searchform) {
             if ($defaults = survey_textarea_to_array($this->defaultvalue)) {
                 $default_keys = array();
-                foreach($defaults as $default) {
+                foreach ($defaults as $default) {
                     $default_keys[] = array_search($default, $labels);
                 }
                 $mform->setDefault($this->itemname, $default_keys);

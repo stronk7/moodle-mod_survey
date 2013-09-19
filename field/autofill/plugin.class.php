@@ -88,29 +88,29 @@ class surveyfield_autofill extends mod_survey_itembase {
     public $hiddenfield = false;
 
     /*
-     * $element_1 = element for $content
+     * $element01 = element for $content
      */
-    public $element_1 = '';
+    public $element01 = '';
 
     /*
-     * $element_2 = element for $content
+     * $element02 = element for $content
      */
-    public $element_2 = '';
+    public $element02 = '';
 
     /*
-     * $element_3 = element for $content
+     * $element03 = element for $content
      */
-    public $element_3 = '';
+    public $element03 = '';
 
     /*
-     * $element_4 = element for $content
+     * $element04 = element for $content
      */
-    public $element_4 = '';
+    public $element04 = '';
 
     /*
-     * $element_5 = element for $content
+     * $element05 = element for $content
      */
-    public $element_5 = '';
+    public $element05 = '';
 
     /*
      * $flag = features describing the object
@@ -182,9 +182,9 @@ class surveyfield_autofill extends mod_survey_itembase {
      * @return
      */
     public function item_save($record) {
-        // //////////////////////////////////
+        // -----------------------------
         // Now execute very specific plugin level actions
-        // //////////////////////////////////
+        // -----------------------------
 
         // ------ begin of fields saved in survey_items ------ //
         /* surveyid
@@ -214,7 +214,6 @@ class surveyfield_autofill extends mod_survey_itembase {
             $record->{$checkbox} = (isset($record->{$checkbox})) ? 1 : 0;
         }
         // ------- end of fields saved in this plugin table ------- //
-
 
         // Do parent item saving stuff here (mod_survey_itembase::save($record)))
         return parent::item_save($record);
@@ -330,11 +329,11 @@ class surveyfield_autofill extends mod_survey_itembase {
                 <xs:element type="xs:int" name="indent"/>
 
                 <xs:element type="xs:int" name="hiddenfield"/>
-                <xs:element type="xs:string" name="element_1" minOccurs="0"/>
-                <xs:element type="xs:string" name="element_2" minOccurs="0"/>
-                <xs:element type="xs:string" name="element_3" minOccurs="0"/>
-                <xs:element type="xs:string" name="element_4" minOccurs="0"/>
-                <xs:element type="xs:string" name="element_5" minOccurs="0"/>
+                <xs:element type="xs:string" name="element01" minOccurs="0"/>
+                <xs:element type="xs:string" name="element02" minOccurs="0"/>
+                <xs:element type="xs:string" name="element03" minOccurs="0"/>
+                <xs:element type="xs:string" name="element04" minOccurs="0"/>
+                <xs:element type="xs:string" name="element05" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -414,16 +413,16 @@ EOS;
                         $olduserdata->content .= $olduserdata->id;
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT02:
-                        $format_time = get_string('strftimedaytime');
-                        $olduserdata->content .= userdate($olduserdata->time, $format_time, 0);
+                        $formattime = get_string('strftimedaytime');
+                        $olduserdata->content .= userdate($olduserdata->time, $formattime, 0);
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT03:
-                        $format_date = get_string('strftimedate');
-                        $olduserdata->content .= userdate($olduserdata->time, $format_date, 0);
+                        $formatdate = get_string('strftimedate');
+                        $olduserdata->content .= userdate($olduserdata->time, $formatdate, 0);
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT04:
-                        $format_datetime = get_string('strftimedatetime');
-                        $olduserdata->content .= userdate($olduserdata->time, $format_datetime, 0);
+                        $formatdatetime = get_string('strftimedatetime');
+                        $olduserdata->content .= userdate($olduserdata->time, $formatdatetime, 0);
                         break;
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT05:
                         $olduserdata->content .= $USER->id;

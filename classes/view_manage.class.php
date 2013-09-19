@@ -73,27 +73,26 @@ class mod_survey_submissionmanager {
     public $canmanageallsubmissions = false;
 
     /*
-     * $searchfields_get
+     * $searchfieldsget
      */
-    public $searchfields_get = '';
+    public $searchfieldsget = '';
 
     /*
      * $userfeedback
      */
     public $userfeedback = '';
 
-
     /*
      * Class constructor
      */
-    public function __construct($cm, $survey, $submissionid, $action, $confirm, $searchfields_get) {
+    public function __construct($cm, $survey, $submissionid, $action, $confirm, $searchfieldsget) {
         $this->cm = $cm;
         $this->context = context_module::instance($cm->id);
         $this->survey = $survey;
         $this->submissionid = $submissionid;
         $this->action = $action;
         $this->confirm = $confirm;
-        $this->searchfields_get = $searchfields_get;
+        $this->searchfields_get = $searchfieldsget;
         $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
         $this->canmanagesubmissions = has_capability('mod/survey:managesubmissions', $this->context, null, true);
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
@@ -106,7 +105,7 @@ class mod_survey_submissionmanager {
      * @return
      */
     public function manage_actions() {
-       switch ($this->action) {
+        switch ($this->action) {
             case SURVEY_NOACTION:
             case SURVEY_EDITRESPONSE:
             case SURVEY_READONLYRESPONSE:
@@ -248,24 +247,24 @@ class mod_survey_submissionmanager {
 
         list($where, $whereparams) = $table->get_sql_where();
 
-        // write $userdata_transposed whether necessary
+        // write $userdatatransposed whether necessary
         if ($this->searchfields_get) {
             // this will be re-send to URL for next page reload, whether requested with a sort, for instance
             $paramurl['searchquery'] = $this->searchfields_get;
 
-            $search_restrictions = unserialize($this->searchfields_get);
+            $searchrestrictions = unserialize($this->searchfields_get);
 
             // written following http://buysql.com/mysql/14-how-to-automate-pivot-tables.html
-            $userdata_transposed = 'SELECT submissionid, ';
+            $userdatatransposed = 'SELECT submissionid, ';
             $sqlrow = array();
-            foreach ($search_restrictions as $itemid => $search_restriction) {
+            foreach ($searchrestrictions as $itemid => $searchrestriction) {
                 $sqlrow[] = 'MAX(IF(itemid = \''.$itemid.'\', content, NULL)) AS \'c_'.$itemid.'\'';
             }
-            $userdata_transposed .= implode(', ', $sqlrow);
-            $userdata_transposed .= ' FROM {survey_userdata}';
-            $userdata_transposed .= ' GROUP BY submissionid';
+            $userdatatransposed .= implode(', ', $sqlrow);
+            $userdatatransposed .= ' FROM {survey_userdata}';
+            $userdatatransposed .= ' GROUP BY submissionid';
 
-            $sql .= '    JOIN ('.$userdata_transposed.') udt ON udt.submissionid = s.id '; // udt == user data transposed
+            $sql .= '    JOIN ('.$userdatatransposed.') udt ON udt.submissionid = s.id '; // udt == user data transposed
         }
 
         // if $survey->readaccess == SURVEY_GROUP I am sure that course or instance is divided by group too
@@ -289,9 +288,9 @@ class mod_survey_submissionmanager {
 
         // specific restrictions over {survey_userdata}
         if ($this->searchfields_get) {
-            foreach ($search_restrictions as $itemid => $search_restriction) {
+            foreach ($searchrestrictions as $itemid => $searchrestriction) {
                 $sql .= ' AND udt.c_'.$itemid.' = :c_'.$itemid;
-                $whereparams['c_'.$itemid] = $search_restriction;
+                $whereparams['c_'.$itemid] = $searchrestriction;
             }
         }
 
@@ -322,7 +321,7 @@ class mod_survey_submissionmanager {
             $sql .= ' ORDER BY s.timecreated';
         }
 
-// echo '$sql = '.$sql.'<br />';
+        // echo '$sql = '.$sql.'<br />';
         return array($sql, $whereparams, $mygroups);
     }
 
@@ -662,7 +661,7 @@ class mod_survey_submissionmanager {
         $htmlstandardtemplate .= '<td style="width:'.$thirdcolwidth.'%;text-align:left;">@@col3@@</td></tr></table>';
 
         $border = array('T' => array('width' => 0.2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 1, 'color' => array(179, 219, 181)));
-        foreach($itemseeds as $itemseed) {
+        foreach ($itemseeds as $itemseed) {
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
             // ($itemseed->plugin == 'pagebreak') is not selected by survey_fetch_items_seeds
             if (($itemseed->plugin == 'fieldset') || ($itemseed->plugin == 'fieldsetend')) {
@@ -683,7 +682,6 @@ class mod_survey_submissionmanager {
                 $pdf->writeHTMLCell(0, 0, '', '', $html, $border, 1, 0, true, '', true); // this is like span 2
                 continue;
             }
-
 
             // first column
             $html = $htmlstandardtemplate;

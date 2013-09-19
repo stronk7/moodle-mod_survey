@@ -72,7 +72,6 @@ if (true) {
     $graph->y_data['answers1'] = $absolute;
     $graph->y_format['answers1'] = array('colour' => 'ltblue', 'bar' => 'fill', 'legend' => strip_tags($item->get_content()), 'bar_size' => 0.4);
 
-
     $graph->parameter['legend'] = 'outside-left';
     $graph->parameter['inner_padding'] = 20;
     $graph->parameter['legend_size'] = 9;
@@ -90,7 +89,7 @@ if (true) {
     $graph->parameter['x_axis_angle'] = 0;
     $graph->parameter['shadow'] = 'none';
 
-    //$graph->y_tick_labels = $absolute;
+    // $graph->y_tick_labels = $absolute;
     $graph->y_tick_labels = null;
     $graph->offset_relation = null;
 

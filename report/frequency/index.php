@@ -38,34 +38,34 @@ $context = context_module::instance($cm->id);
 require_course_login($course, true, $cm);
 require_capability('mod/survey:accessreports', $context);
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // calculations
-// ////////////////////////////////////////////////////////////
-$report_manager = new report_frequency($cm, $survey);
+// -----------------------------
+$reportman = new report_frequency($cm, $survey);
 
-// ////////////////////////////
+// -----------------------------
 // define $mform return url
 $paramurl = array('id' => $cm->id, 'rname' => 'frequency');
 $formurl = new moodle_url('view_report.php', $paramurl);
 // end of: define $mform return url
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // prepare params for the form
 $formparams = new stdClass();
 $formparams->survey = $survey;
 $formparams->answercount = $hassubmissions;
 $mform = new survey_chooseitemform($formurl, $formparams);
 // end of: prepare params for the form
-// ////////////////////////////
+// -----------------------------
 
 $fromform = $mform->get_data(); // get_data is needed to execute $mform->validation($data, $files);
 $mform->display();
 
-// ////////////////////////////
+// -----------------------------
 // manage form submission
 if ($fromform) {
-    $report_manager->fetch_information($fromform->itemid, $hassubmissions);
+    $reportman->fetch_information($fromform->itemid, $hassubmissions);
 
     $paramurl = array();
     $paramurl['id'] = $cm->id;
@@ -74,7 +74,7 @@ if ($fromform) {
     $paramurl['submissionscount'] = $hassubmissions;
     $url = new moodle_url('/mod/survey/report/frequency/graph.php', $paramurl);
 
-    $report_manager->output_information($url->out());
+    $reportman->output_information($url->out());
 }
 // end of: manage form submission
-// ////////////////////////////
+// -----------------------------

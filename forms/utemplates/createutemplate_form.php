@@ -37,7 +37,7 @@ class survey_utemplatecreateform extends moodleform {
 
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
-        $utemplate_manager = $this->_customdata->utemplate_manager;
+        $utemplateman = $this->_customdata->utemplateman;
 
         // ----------------------------------------
         // utemplatecreate::surveyid
@@ -68,7 +68,7 @@ class survey_utemplatecreateform extends moodleform {
         $fieldname = 'sharinglevel';
         $options = array();
 
-        $options = $utemplate_manager->get_sharinglevel_options($cmid, $survey);
+        $options = $utemplateman->get_sharinglevel_options($cmid, $survey);
 
         $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
@@ -84,13 +84,13 @@ class survey_utemplatecreateform extends moodleform {
 
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
-        $utemplate_manager = $this->_customdata->utemplate_manager;
+        $utemplateman = $this->_customdata->utemplateman;
 
         $errors = parent::validation($data, $files);
 
         // get all template files
-        $contextid = $utemplate_manager->get_contextid_from_sharinglevel($data['sharinglevel']);
-        $componentfiles = $utemplate_manager->get_available_templates($contextid);
+        $contextid = $utemplateman->get_contextid_from_sharinglevel($data['sharinglevel']);
+        $componentfiles = $utemplateman->get_available_templates($contextid);
 
         $comparename = str_replace(' ', '_', $data['templatename']).'.xml';
         foreach ($componentfiles as $xmlfile) {

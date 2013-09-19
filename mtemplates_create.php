@@ -53,23 +53,23 @@ add_to_log($course->id, 'survey', 'view', "mtemplates.php?id=$cm->id", $survey->
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:createmastertemplate', $context);
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // calculations
-// ////////////////////////////////////////////////////////////
-$mtemplate_manager = new mod_survey_mastertemplate($survey);
+// -----------------------------
+$mtemplateman = new mod_survey_mastertemplate($survey);
 
-// ////////////////////////////
+// -----------------------------
 // define $create_utemplate return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('mtemplates_create.php', $paramurl);
 $create_utemplate = new survey_mtemplatecreateform($formurl);
 // define $create_utemplate return url
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // manage form submission
-if ($mtemplate_manager->formdata = $create_utemplate->get_data()) {
-    $exportfile = $mtemplate_manager->create_mtemplate();
+if ($mtemplateman->formdata = $create_utemplate->get_data()) {
+    $exportfile = $mtemplateman->create_mtemplate();
     $exportfilename = basename($exportfile);
     header("Content-Type: application/download\n");
     header("Content-Disposition: attachment; filename=\"$exportfilename\"");
@@ -83,11 +83,11 @@ if ($mtemplate_manager->formdata = $create_utemplate->get_data()) {
     exit(0);
 }
 // manage form submission
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // output starts here
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 $PAGE->set_url('/mod/survey/mtemplates.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);

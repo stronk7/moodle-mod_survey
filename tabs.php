@@ -107,7 +107,6 @@ $tabs = array();
 $tabs[] = $row; // Array of tabs. Closes the tab row element definition
                 // next tabs element is going to define the pages row
 
-
 // echo '$currentpage = '.$currentpage.'<br />';
 $pageid = 'idpage'.$currentpage;
 // $pageid is here because I leave open the door to override it during next switch

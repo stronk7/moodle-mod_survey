@@ -107,9 +107,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_rate');
         $mform->setType($fieldname, PARAM_INT);
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         $fieldname = 'validation';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 

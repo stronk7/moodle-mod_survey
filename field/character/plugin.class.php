@@ -172,9 +172,9 @@ class surveyfield_character extends mod_survey_itembase {
      * @return
      */
     public function item_save($record) {
-        // //////////////////////////////////
+        // -----------------------------
         // Now execute very specific plugin level actions
-        // //////////////////////////////////
+        // -----------------------------
 
         // ------ begin of fields saved in survey_items ------ //
         /* surveyid

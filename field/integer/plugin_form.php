@@ -72,9 +72,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addElement('select', $fieldname, null, $integers);
         $mform->disabledIf($fieldname, 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         $fieldname = 'validation';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 

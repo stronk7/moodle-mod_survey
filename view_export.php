@@ -55,31 +55,31 @@ add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, 
 
 require_capability('mod/survey:exportdata', $context);
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // calculations
-// ////////////////////////////////////////////////////////////
-$export_manager = new mod_survey_exportmanager($cm, $survey);
+// -----------------------------
+$exportman = new mod_survey_exportmanager($cm, $survey);
 
-// ////////////////////////////
+// -----------------------------
 // define $mform return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('view_export.php', $paramurl);
 // end of: define $mform return url
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // prepare params for the form
 $formparams = new stdClass();
 $formparams->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $context, null, true);
 $formparams->saveresume = $survey->saveresume;
 $export_form = new survey_exportform($formurl, $formparams);
 // end of: prepare params for the form
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // manage form submission
-if ($export_manager->formdata = $export_form->get_data()) {
-    $exportoutcome = $export_manager->survey_export();
+if ($exportman->formdata = $export_form->get_data()) {
+    $exportoutcome = $exportman->survey_export();
     if (empty($exportoutcome)) {
         die;
     }
@@ -87,11 +87,11 @@ if ($export_manager->formdata = $export_form->get_data()) {
     $exportoutcome = null;
 }
 // end of: manage form submission
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // output starts here
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 $PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);

@@ -59,35 +59,35 @@ $confirm = SURVEY_UNCONFIRMED;
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:uploadusertemplates', $context);
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // calculations
-// ////////////////////////////////////////////////////////////
-$utemplate_manager = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid, $action, $confirm);
-$utemplate_manager->prevent_direct_user_input();
+// -----------------------------
+$utemplateman = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid, $action, $confirm);
+$utemplateman->prevent_direct_user_input();
 
-// ////////////////////////////
+// -----------------------------
 // define $import_utemplate return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('utemplates_import.php', $paramurl);
 // end of: define $import_utemplate return url
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // prepare params for the form
 $formparams = new stdClass();
 $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
-$formparams->utemplate_manager = $utemplate_manager;
-$formparams->filemanager_options = $utemplate_manager->get_filemanager_options();
+$formparams->utemplateman = $utemplateman;
+$formparams->filemanager_options = $utemplateman->get_filemanager_options();
 $import_utemplate = new survey_importutemplateform($formurl, $formparams);
 // end of: prepare params for the form
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // manage form submission
 
-if ($utemplate_manager->formdata = $import_utemplate->get_data()) {
-    $utemplate_manager->upload_utemplate();
+if ($utemplateman->formdata = $import_utemplate->get_data()) {
+    $utemplateman->upload_utemplate();
 
     $paramurl = array();
     $paramurl['s'] = $survey->id;
@@ -95,11 +95,11 @@ if ($utemplate_manager->formdata = $import_utemplate->get_data()) {
     redirect($redirecturl);
 }
 // end of: manage form submission
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // output starts here
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 $PAGE->set_url('/mod/survey/utemplates.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);

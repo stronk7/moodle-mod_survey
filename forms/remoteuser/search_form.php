@@ -41,7 +41,7 @@ class survey_searchform extends moodleform {
         $survey = $this->_customdata->survey;
         $canaccessadvanceditems = $this->_customdata->canaccessadvanceditems;
 
-        //$canaccessadvanceditems, $searchform=true, $type=false, $formpage=false
+        // $canaccessadvanceditems, $searchform=true, $type=false, $formpage=false
         list($sql, $whereparams) = survey_fetch_items_seeds($survey->id, $canaccessadvanceditems, true);
         $itemseeds = $DB->get_recordset_sql($sql, $whereparams);
 

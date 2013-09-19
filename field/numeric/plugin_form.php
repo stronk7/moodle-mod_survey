@@ -55,9 +55,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_numeric');
         $mform->setType($fieldname, PARAM_TEXT); // maybe I use ',' as decimal separator so it is not a INT and not a FLOAT
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         $fieldname = 'validation';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 

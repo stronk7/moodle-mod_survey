@@ -142,25 +142,25 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
             if (empty($data['defaultvalue'])) {
-                // //////////////////////////////////////////////////////////////////////////////////////
+                // -----------------------------
                 // first check
                 // user asks for SURVEY_CUSTOMDEFAULT but doesn't provide it
-                // //////////////////////////////////////////////////////////////////////////////////////
+                // -----------------------------
                 $a = get_string('standarddefault', 'surveyfield_select');
                 $errors['defaultvalue_group'] = get_string('default_missing', 'surveyfield_select', $a);
             } else {
-                // //////////////////////////////////////////////////////////////////////////////////////
+                // -----------------------------
                 // second check
                 // each item of default has to be among options item OR has to be == to otherlabel value
-                // //////////////////////////////////////////////////////////////////////////////////////
+                // -----------------------------
                 if (!in_array($clean_defaultvalue, $labels)) {
                     $errors['defaultvalue_group'] = get_string('defaultvalue_err', 'surveyfield_select', $clean_defaultvalue);
                 }
 
-                // //////////////////////////////////////////////////////////////////////////////////////
+                // -----------------------------
                 // third check
                 // each single option item has to be unique
-                // //////////////////////////////////////////////////////////////////////////////////////
+                // -----------------------------
                 $array_unique = array_unique($clean_options);
                 if (count($clean_options) != count($array_unique)) {
                     $errors['options'] = get_string('options_err', 'survey', $default);

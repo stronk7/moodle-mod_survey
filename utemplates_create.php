@@ -59,32 +59,32 @@ $confirm = SURVEY_UNCONFIRMED;
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:createusertemplates', $context);
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // calculations
-// ////////////////////////////////////////////////////////////
-$utemplate_manager = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid, $action, $confirm);
+// -----------------------------
+$utemplateman = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid, $action, $confirm);
 
-// ////////////////////////////
+// -----------------------------
 // define $create_utemplate return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('utemplates_create.php', $paramurl);
 // end of: define $create_utemplate return url
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // prepare params for the form
 $formparams = new stdClass();
 $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
-$formparams->utemplate_manager = $utemplate_manager;
+$formparams->utemplateman = $utemplateman;
 $create_utemplate = new survey_utemplatecreateform($formurl, $formparams);
 // end of: prepare params for the form
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // manage form submission
-if ($utemplate_manager->formdata = $create_utemplate->get_data()) {
-    $utemplate_manager->save_utemplate();
+if ($utemplateman->formdata = $create_utemplate->get_data()) {
+    $utemplateman->save_utemplate();
 
     $paramurl = array();
     $paramurl['s'] = $survey->id;
@@ -92,11 +92,11 @@ if ($utemplate_manager->formdata = $create_utemplate->get_data()) {
     redirect($redirecturl);
 }
 // end of: manage form submission
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // output starts here
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 $PAGE->set_url('/mod/survey/utemplates.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);

@@ -162,7 +162,6 @@ class mod_survey_itembase {
     public function item_load($itemid) {
         global $DB;
 
-        // Do own loading stuff here
         if (!$itemid) {
             debugging('Something was wrong at line '.__LINE__.' of file '.__FILE__.'! Can not load an item without its ID');
         }
@@ -209,19 +208,14 @@ class mod_survey_itembase {
         //     }
         // }
 
-        // the surveyitem lies in two different tables
-        // survey_item
-        // survey_<<plugin>>
         $tablename = 'survey_'.$this->plugin;
 
         // do not forget surveyid
         $record->surveyid = $cm->instance;
         $record->timemodified = $timenow;
 
-        // TAKE CARE: do not manage extrarow
-        // it is an advcheckbox
-
         // manage other checkboxes content
+        // TAKE CARE: do not manage extrarow: it is an advcheckbox
         $checkboxessettings = array('advanced', 'insearchform', 'hideinstructions', 'required', 'hide');
         foreach ($checkboxessettings as $checkboxessetting) {
             if ($this->formrequires[$checkboxessetting]) {
@@ -244,7 +238,7 @@ class mod_survey_itembase {
         }
 
         // $this->userfeedback
-        //   +--- children got limited access
+        //   +--- children inherited limited access
         //   |       +--- parents were made available for all
         //   |       |       +--- children were hided because this item was hided
         //   |       |       |       +--- parents were shown because this item was shown
@@ -259,7 +253,8 @@ class mod_survey_itembase {
 
         // (digit in place 2) == 1 means items were shown because this (as child) was shown
         // (digit in place 3) == 1 means items were hided because this (as parent) was hided
-        // (digit in place 4) == 1 means items inherited limited access because this (as parent) got a limited access
+        // (digit in place 4) == 1 means items reamin as they are because unlimiting parent does not force any change to children
+        // (digit in place 5) == 1 means items inherited limited access because this (as parent) got a limited access
 
         $this->userfeedback = SURVEY_NOFEEDBACK;
 
@@ -301,7 +296,7 @@ class mod_survey_itembase {
                 $record->id = $pluginid;
 
                 $DB->update_record($tablename, $record); // <-- update
-            // } else {
+                // } else {
                 // record->content follows stnandard flow and has already been saved at record save time
             }
         } else {
@@ -313,7 +308,7 @@ class mod_survey_itembase {
                     $record = file_postupdate_standard_editor($record, $fieldname, $editoroptions, $this->context, 'mod_survey', $filearea, $record->itemid);
                     $record->{$fieldname.'format'} = FORMAT_HTML;
                 }
-            // } else {
+                // } else {
                 // record->content follows stnandard flow and will be evaluated in the standard way
             }
 
@@ -349,9 +344,9 @@ class mod_survey_itembase {
             // save process is over. Good.
             // now hide or unhide (whether needed) chain of ancestors or descendents
             if ($this->userfeedback & 1) { // bitwise logic, alias: if the item was successfully saved
-                // /////////////////////////////////////////////////
+                // -----------------------------
                 // manage ($oldhide != $record->hide)
-                // /////////////////////////////////////////////////
+                // -----------------------------
                 if ($oldhide != $record->hide) {
                     $survey = $DB->get_record('survey', array('id' => $cm->instance), '*', MUST_EXIST);
                     $action = ($oldhide) ? SURVEY_SHOWITEM : SURVEY_HIDEITEM;
@@ -362,29 +357,29 @@ class mod_survey_itembase {
                     $parentid = 0;
                     $userfeedback = 0;
                     $saveasnew  = 0;
-                    $itemlist_manager = new mod_survey_itemlist($cm, $context, $survey, $record->type, $record->plugin,
+                    $itemlistman = new mod_survey_itemlist($cm, $context, $survey, $record->type, $record->plugin,
                                            $record->itemid, $action, $itemtomove, $lastitembefore,
                                            $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
                 }
 
                 // hide/unhide part 2
                 if ( ($oldhide == 1) && ($record->hide == 0) ) {
-                    if ($itemlist_manager->manage_item_show()) {
+                    if ($itemlistman->manage_item_show()) {
                         // a chain of parent items has been showed
                         $this->userfeedback += 4; // 1*2^2
                     }
                 }
                 if ( ($oldhide == 0) && ($record->hide == 1) ) {
-                    if ($itemlist_manager->manage_item_hide()) {
+                    if ($itemlistman->manage_item_hide()) {
                         // a chain of child items has been hided
                         $this->userfeedback += 8; // 1*2^3
                     }
                 }
                 // end of: hide/unhide part 2
 
-                // /////////////////////////////////////////////////
+                // -----------------------------
                 // manage ($oldadvanced != $record->advanced)
-                // /////////////////////////////////////////////////
+                // -----------------------------
                 if ($oldadvanced != $record->advanced) {
                     $survey = $DB->get_record('survey', array('id' => $cm->instance), '*', MUST_EXIST);
                     $action = ($oldadvanced) ? SURVEY_MAKEFORALL : SURVEY_MAKELIMITED;
@@ -395,19 +390,19 @@ class mod_survey_itembase {
                     $parentid = 0;
                     $userfeedback = 0;
                     $saveasnew  = 0;
-                    $itemlist_manager = new mod_survey_itemlist($cm, $context, $survey, $record->type, $record->plugin,
+                    $itemlistman = new mod_survey_itemlist($cm, $context, $survey, $record->type, $record->plugin,
                                            $record->itemid, $action, $itemtomove, $lastitembefore,
                                            $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
                 }
                 // limit/unlimit access part 2
                 if ( ($oldadvanced == 1) && ($record->advanced == 0) ) {
-                    if ($itemlist_manager->manage_item_makestandard()) {
+                    if ($itemlistman->manage_item_makestandard()) {
                         // a chain of parent items has been made available for all
                         $this->userfeedback += 16; // 1*2^4
                     }
                 }
                 if ( ($oldadvanced == 0) && ($record->advanced == 1) ) {
-                    if ($itemlist_manager->manage_item_makeadvanced()) {
+                    if ($itemlistman->manage_item_makeadvanced()) {
                         // a chain of child items got a limited access
                         $this->userfeedback += 32; // 1*2^5
                     }
@@ -618,7 +613,7 @@ class mod_survey_itembase {
      * @param $fieldlist
      * @return
      */
-    function item_clean_textarea_fields($record, $fieldlist) {
+    public function item_clean_textarea_fields($record, $fieldlist) {
         foreach ($fieldlist as $field) {
             // do not forget some item may be undefined causing:
             // Notice: Undefined property: stdClass::$defaultvalue
@@ -693,7 +688,7 @@ class mod_survey_itembase {
      * @return string
      *
      */
-    public static function item_get_item_schema() {
+    public function item_get_item_schema() {
         $schema = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $schema .= '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">'."\n";
         $schema .= '    <xs:element name="survey_item">'."\n";
@@ -993,11 +988,11 @@ class mod_survey_itembase {
     /*
      * get_form_requires
      *
-     * @param $setup_itemform_element
+     * @param $itemformelement
      * @return
      */
-    public function get_form_requires($setup_itemform_element) {
-        return $this->formrequires[$setup_itemform_element];
+    public function get_form_requires($itemformelement) {
+        return $this->formrequires[$itemformelement];
     }
 
     // MARK set
@@ -1080,7 +1075,7 @@ class mod_survey_itembase {
 
         if (!$searchform) {
             if (!$this->get_hideinstructions()) {
-               $fillinginstruction = $this->userform_get_filling_instructions();
+                $fillinginstruction = $this->userform_get_filling_instructions();
             }
             if (isset($this->extranote)) {
                 $extranote = strip_tags($this->extranote);
@@ -1160,11 +1155,11 @@ class mod_survey_itembase {
      *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
      * ----------------------------------------------------------------------
      *
-     * @param: $child_parentcontent, $data
+     * @param: $childparentcontent, $data
      * @return
      */
-    public function userform_child_item_allowed_dynamic($child_parentcontent, $data) {
-        return ($data[$this->itemname] == $child_parentcontent);
+    public function userform_child_item_allowed_dynamic($childparentcontent, $data) {
+        return ($data[$this->itemname] == $childparentcontent);
     }
 
     /*
@@ -1253,7 +1248,7 @@ class mod_survey_itembase {
                     $mform->disabledIf($fieldname, $parentinfo->parentname, $parentinfo->content);
                 }
             }
-            //$mform->disabledIf('survey_field_select_2491', 'survey_field_multiselect_2490[]', 'neq', array(0,4));
+            // $mform->disabledIf('survey_field_select_2491', 'survey_field_multiselect_2490[]', 'neq', array(0,4));
         }
     }
 

@@ -37,7 +37,7 @@ class survey_importutemplateform extends moodleform {
 
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
-        $utemplate_manager = $this->_customdata->utemplate_manager;
+        $utemplateman = $this->_customdata->utemplateman;
         $filemanageroptions = $this->_customdata->filemanager_options;
 
         // ----------------------------------------
@@ -59,7 +59,7 @@ class survey_importutemplateform extends moodleform {
         $fieldname = 'sharinglevel';
         $options = array();
 
-        $options = $utemplate_manager->get_sharinglevel_options($cmid, $survey);
+        $options = $utemplateman->get_sharinglevel_options($cmid, $survey);
 
         $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
@@ -77,7 +77,7 @@ class survey_importutemplateform extends moodleform {
 
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
-        $utemplate_manager = $this->_customdata->utemplate_manager;
+        $utemplateman = $this->_customdata->utemplateman;
 
         $errors = parent::validation($data, $files);
 
@@ -96,9 +96,9 @@ class survey_importutemplateform extends moodleform {
             $uploadedfiles[] = $xmlfilename;
             try {
                 $xmlfileid = $file->get_id();
-                $xml = $utemplate_manager->get_utemplate_content($xmlfileid);
+                $xml = $utemplateman->get_utemplate_content($xmlfileid);
                 // $xml = @new SimpleXMLElement($templatecontent);
-                if (!$utemplate_manager->validate_xml($xml)) {
+                if (!$utemplateman->validate_xml($xml)) {
                     $errors['importfile_filemanager'] = get_string('invalidtemplate', 'survey', $xmlfilename);
                     return $errors;
                 }
@@ -116,8 +116,8 @@ class survey_importutemplateform extends moodleform {
         }
 
         // get all template files in the specified context
-        $contextid = $utemplate_manager->get_contextid_from_sharinglevel($data['sharinglevel']);
-        $componentfiles = $utemplate_manager->get_available_templates($contextid);
+        $contextid = $utemplateman->get_contextid_from_sharinglevel($data['sharinglevel']);
+        $componentfiles = $utemplateman->get_available_templates($contextid);
 
         foreach ($componentfiles as $xmlfile) {
             $filename = $xmlfile->get_filename();

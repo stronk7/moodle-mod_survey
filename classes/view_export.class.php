@@ -57,7 +57,6 @@ class mod_survey_exportmanager {
      */
     public $formdata = null;
 
-
     /*
      * Class constructor
      */
@@ -82,7 +81,7 @@ class mod_survey_exportmanager {
         // do I need to filter groups?
         $filtergroups = survey_need_group_filtering($this->cm, $this->context);
 
-        // ////////////////////////////
+        // -----------------------------
         // get the field list
         //     no matter for the page
         $where = array();
@@ -100,7 +99,7 @@ class mod_survey_exportmanager {
             die;
         }
         // end of: get the field list
-        // ////////////////////////////
+        // -----------------------------
 
         if ($filtergroups) {
             $grouprow = array();
@@ -112,7 +111,7 @@ class mod_survey_exportmanager {
             $andgroup .= ') ';
         }
 
-        // ////////////////////////////
+        // -----------------------------
         // write the query
         $richsubmissionssql = 'SELECT s.id as submissionid, s.status, s.timecreated, s.timemodified, ';
         if (empty($this->survey->anonymous)) {
@@ -142,7 +141,7 @@ class mod_survey_exportmanager {
         $richsubmissionssql .= ' AND si.type = "'.SURVEY_TYPEFIELD.'" ';
         $richsubmissionssql .= ' ORDER BY s.id ASC, si.sortindex ASC';
         // end of: write the query
-        // ////////////////////////////
+        // -----------------------------
 
         $richsubmissions = $DB->get_recordset_sql($richsubmissionssql, $whereparams);
         if ($richsubmissions->valid()) {

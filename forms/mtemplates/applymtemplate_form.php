@@ -75,15 +75,15 @@ class survey_applymtemplateform extends moodleform {
 
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
-        $mtemplate_manager = $this->_customdata->mtemplate_manager;
+        $mtemplateman = $this->_customdata->mtemplateman;
 
         $errors = parent::validation($data, $files);
 
         $templatename = $data['mastertemplate'];
-        $template_path = $CFG->dirroot.'/mod/survey/template/'.$templatename.'/template.xml';
-        $xml = file_get_contents($template_path);
+        $templatepath = $CFG->dirroot.'/mod/survey/template/'.$templatename.'/template.xml';
+        $xml = file_get_contents($templatepath);
         // $xml = @new SimpleXMLElement($templatecontent);
-        if (!$mtemplate_manager->validate_xml($xml)) {
+        if (!$mtemplateman->validate_xml($xml)) {
             $errors['mastertemplate'] = get_string('invalidtemplate', 'survey', $templatename);
             return $errors;
         }

@@ -71,9 +71,9 @@ class mod_survey_itembaseform extends moodleform {
         $mform->addElement('hidden', $fieldname, 'dummyplugin');
         $mform->setType($fieldname, PARAM_RAW);
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         $fieldname = 'common_fs';
         if ($item->get_form_requires($fieldname)) {
             $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
@@ -183,9 +183,9 @@ class mod_survey_itembaseform extends moodleform {
             $mform->setType($fieldname, PARAM_TEXT);
         }
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         $fieldname = 'availability_fs';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
@@ -220,9 +220,9 @@ class mod_survey_itembaseform extends moodleform {
         }
 
         if ($item->get_form_requires('parentid')) {
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            // -----------------------------
             // here I open a new fieldset
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            // -----------------------------
             $fieldname = 'branching_fs';
             $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
@@ -303,9 +303,9 @@ class mod_survey_itembaseform extends moodleform {
         }
 
         if ($item->get_type() == SURVEY_TYPEFIELD) {
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            // -----------------------------
             // here I open a new fieldset
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
+            // -----------------------------
             $fieldname = 'specializations';
             $typename = get_string('pluginname', 'surveyfield_'.$item->get_plugin());
             $mform->addElement('header', $fieldname, get_string($fieldname, 'survey', $typename));
@@ -363,7 +363,7 @@ class mod_survey_itembaseform extends moodleform {
             return $errors;
         }
 
-        // /////////////////////////////////////////////////
+        // -----------------------------
         // mform issue (never rose up)
         // I have a parent-child couple of items.
         // After the relation was been done, the parent was made hidden.
@@ -377,7 +377,7 @@ class mod_survey_itembaseform extends moodleform {
         if (!isset($data['parentid'])) { // parentid is disabled because parent is hidden
             $data['parentid'] = $item->get_parentid();
         }
-        // /////////////////////////////////////////////////
+        // -----------------------------
 
         // you choosed a parentid but you are missing the parentcontent
         if (empty($data['parentid']) && (strlen($data['parentcontent']) > 0)) { // $data['parentcontent'] can be = 0

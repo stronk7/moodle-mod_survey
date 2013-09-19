@@ -45,9 +45,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         // I close with the common section of the form
         parent::definition();
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         $fieldname = 'specializations';
         $typename = get_string('pluginname', 'surveyformat_'.$item->plugin);
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey', $typename));

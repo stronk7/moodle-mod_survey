@@ -54,14 +54,14 @@ $hassubmissions = survey_count_submissions($survey->id);
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:accessreports', $context);
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // calculations
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // nothing to do here ;-)
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // output starts here
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 $PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);

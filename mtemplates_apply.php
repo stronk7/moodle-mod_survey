@@ -53,49 +53,49 @@ add_to_log($course->id, 'survey', 'view', "mtemplates.php?id=$cm->id", $survey->
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:applymastertemplate', $context);
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // calculations
-// ////////////////////////////////////////////////////////////
-$mtemplate_manager = new mod_survey_mastertemplate($survey);
-$mtemplate_manager->prevent_direct_user_input();
+// -----------------------------
+$mtemplateman = new mod_survey_mastertemplate($survey);
+$mtemplateman->prevent_direct_user_input();
 
-// ////////////////////////////
+// -----------------------------
 // define $applymtemplate return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('mtemplates_apply.php', $paramurl);
 // end of: define $applymtemplate return url
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // prepare params for the form
 $formparams = new stdClass();
 $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
-$formparams->mtemplate_manager = $mtemplate_manager;
+$formparams->mtemplateman = $mtemplateman;
 
 $applymtemplate = new survey_applymtemplateform($formurl, $formparams);
 // end of: prepare params for the form
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // manage form submission
 if ($applymtemplate->is_cancelled()) {
     $returnurl = new moodle_url('utemplates_add.php', $paramurl);
     redirect($returnurl);
 }
 
-if ($mtemplate_manager->formdata = $applymtemplate->get_data()) {
-    $mtemplate_manager->apply_template(SURVEY_MASTERTEMPLATE);
+if ($mtemplateman->formdata = $applymtemplate->get_data()) {
+    $mtemplateman->apply_template(SURVEY_MASTERTEMPLATE);
 
     $redirecturl = new moodle_url('view.php', array('id' => $cm->id, 'act' => SURVEY_PREVIEWSURVEY));
     redirect($redirecturl);
 }
 // end of: manage form submission
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // output starts here
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 $PAGE->set_url('/mod/survey/mtemplates.php', $paramurl);
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);

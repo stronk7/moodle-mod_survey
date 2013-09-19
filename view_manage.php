@@ -52,18 +52,18 @@ add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, 
 $submissionid = optional_param('submissionid', 0, PARAM_INT);
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
-$searchfields_get = optional_param('searchquery', '', PARAM_RAW);
+$searchfieldsget = optional_param('searchquery', '', PARAM_RAW);
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // calculations
-// ////////////////////////////////////////////////////////////
-$submission_manager = new mod_survey_submissionmanager($cm, $survey, $submissionid, $action, $confirm, $searchfields_get);
-$submission_manager->prevent_direct_user_input();
-$submission_manager->submission_to_pdf();
+// -----------------------------
+$submissionman = new mod_survey_submissionmanager($cm, $survey, $submissionid, $action, $confirm, $searchfieldsget);
+$submissionman->prevent_direct_user_input();
+$submissionman->submission_to_pdf();
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // output starts here
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 $PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
@@ -78,9 +78,9 @@ $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 $currentpage = SURVEY_SUBMISSION_MANAGE; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-$submission_manager->manage_actions();
+$submissionman->manage_actions();
 
-$submission_manager->manage_submissions();
+$submissionman->manage_submissions();
 
 // Finish the page
 echo $OUTPUT->footer();

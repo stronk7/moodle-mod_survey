@@ -73,9 +73,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->setType($fieldname, PARAM_INT);
         $mform->setDefault($fieldname, SURVEYFIELD_TEXTAREA_DEFAULTCOLS);
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         $fieldname = 'validation';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 

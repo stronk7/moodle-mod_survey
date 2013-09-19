@@ -20,7 +20,6 @@ to students
 
 to teachers
 
-
 A survey can be delivered in a lot of different ways for a lot of different purposes. So it is natural that some settings were added to personalize your own survey.
 They are divided into: general site settings level and instance settings level.
 You can get the first through Administration -> Plugins -> Activity modules -> Survey

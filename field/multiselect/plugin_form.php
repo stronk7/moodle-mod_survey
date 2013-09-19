@@ -112,11 +112,11 @@ class survey_pluginform extends mod_survey_itembaseform {
             }
         }
 
-        // //////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // first check
         // each item of default has to be among options item OR has to be == to otherlabel value
         // this also verify (helped by the second check) that the number of default is not gretr than the number of options
-        // //////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         if (!empty($data['defaultvalue'])) {
             foreach ($clean_defaultvalue as $default) {
                 if (!in_array($default, $labels)) {
@@ -126,11 +126,11 @@ class survey_pluginform extends mod_survey_itembaseform {
             }
         }
 
-        // //////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // second check
         // each single option item has to be unique
         // each single default item has to be unique
-        // //////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         $array_unique = array_unique($clean_options);
         if (count($clean_options) != count($array_unique)) {
             $errors['options'] = get_string('optionsduplicated_err', 'surveyfield_checkbox', $default);
@@ -140,10 +140,10 @@ class survey_pluginform extends mod_survey_itembaseform {
             $errors['defaultvalue'] = get_string('defaultvalue_err', 'surveyfield_checkbox', $default);
         }
 
-        // //////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // third check
         // SURVEY_DBMULTIVALUESEPARATOR can not be contained into values
-        // //////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         foreach ($values as $value) {
             if (strpos($value, SURVEY_DBMULTIVALUESEPARATOR) !== false) {
                 $errors['options'] = get_string('optionswithseparator_err', 'surveyfield_checkbox', SURVEY_DBMULTIVALUESEPARATOR);

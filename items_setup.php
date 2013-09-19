@@ -66,42 +66,42 @@ $saveasnew = null;
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:additems', $context);
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // calculations
-// ////////////////////////////////////////////////////////////
-$itemlist_manager = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
+// -----------------------------
+$itemlistman = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
                                            $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
-$itemlist_manager->prevent_direct_user_input();
+$itemlistman->prevent_direct_user_input();
 
-require_once($CFG->dirroot.'/mod/survey/'.$itemlist_manager->type.'/'.$itemlist_manager->plugin.'/plugin.class.php');
-require_once($CFG->dirroot.'/mod/survey/'.$itemlist_manager->type.'/'.$itemlist_manager->plugin.'/plugin_form.php');
+require_once($CFG->dirroot.'/mod/survey/'.$itemlistman->type.'/'.$itemlistman->plugin.'/plugin.class.php');
+require_once($CFG->dirroot.'/mod/survey/'.$itemlistman->type.'/'.$itemlistman->plugin.'/plugin_form.php');
 
-// ////////////////////////////
+// -----------------------------
 // get item
-$itemclass = 'survey'.$itemlist_manager->type.'_'.$itemlist_manager->plugin;
-$item = new $itemclass($itemlist_manager->itemid);
+$itemclass = 'survey'.$itemlistman->type.'_'.$itemlistman->plugin;
+$item = new $itemclass($itemlistman->itemid);
 $item->item_set_editor($cm->id, $item);
 // end of: get item
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // define $itemform return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('items_setup.php', $paramurl);
 // end of: define $itemform return url
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // prepare params for the form
 $formparams = new stdClass();
 $formparams->survey = $survey;                               // needed to setup date boundaries in date fields
 $formparams->item = $item;                                   // needed in many situations
-$formparams->hassubmissions = $itemlist_manager->hassubmissions; // are editing features restricted?
+$formparams->hassubmissions = $itemlistman->hassubmissions; // are editing features restricted?
 $itemform = new survey_pluginform($formurl, $formparams);
 // end of: prepare params for the form
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////
+// -----------------------------
 // manage form submission
 if ($itemform->is_cancelled()) {
     $returnurl = new moodle_url('items_manage.php', $paramurl);
@@ -121,11 +121,11 @@ if ($fromform = $itemform->get_data()) {
     redirect($returnurl);
 }
 // end of: manage form submission
-// ////////////////////////////
+// -----------------------------
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // output starts here
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 $PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
@@ -140,10 +140,10 @@ $currenttab = SURVEY_TABITEMS; // needed by tabs.php
 $currentpage = SURVEY_ITEMS_SETUP; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-if ($itemlist_manager->hassubmissions) {
+if ($itemlistman->hassubmissions) {
     echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
 }
-$itemlist_manager->item_welcome();
+$itemlistman->item_welcome();
 $itemform->set_data($item);
 $itemform->display();
 

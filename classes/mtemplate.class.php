@@ -66,49 +66,46 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
 
         $pluginname = clean_filename($this->formdata->mastertemplatename);
         $pluginname = str_replace(' ', '_', $pluginname);
-        $temp_subdir = "mod_survey/surveyplugins/$pluginname";
-        $temp_basedir = $CFG->tempdir.'/'.$temp_subdir;
+        $tempsubdir = "mod_survey/surveyplugins/$pluginname";
+        $tempbasedir = $CFG->tempdir.'/'.$tempsubdir;
 
-        $master_basepath = "$CFG->dirroot/mod/survey/templatemaster";
-        $master_filelist = get_directory_list($master_basepath);
+        $masterbasepath = "$CFG->dirroot/mod/survey/templatemaster";
+        $masterfilelist = get_directory_list($masterbasepath);
 
         // I need to get xml content now because, to save time, I get xml AND $this->langtree contemporary
-        // $xmlcontent = $this->build_xml();
         $xmlcontent = $this->write_template_content(SURVEY_MASTERTEMPLATE);
-// echo '<textarea rows="10" cols="100">'.$xmlcontent.'</textarea>';
-// die;
-        foreach ($master_filelist as $master_file) {
-            $master_fileinfo = pathinfo($master_file);
+
+        foreach ($masterfilelist as $masterfile) {
+            $masterfileinfo = pathinfo($masterfile);
             // create the structure of the temporary folder
             // the folder has to be created WITHOUT $CFG->tempdir/
-            $temp_path = $temp_subdir.'/'.dirname($master_file);
-            make_temp_directory($temp_path); // <-- just created the folder for the current plugin
+            $temppath = $tempsubdir.'/'.dirname($masterfile);
+            make_temp_directory($temppath); // <-- just created the folder for the current plugin
 
-            $temp_fullpath = $CFG->tempdir.'/'.$temp_path;
+            $tempfullpath = $CFG->tempdir.'/'.$temppath;
 
-            // echo '<hr />Operate on the file: '.$master_file.'<br />';
-            // echo $master_fileinfo["dirname"] . "<br />";
-            // echo $master_fileinfo["basename"] . "<br />";
-            // echo $master_fileinfo["extension"] . "<br />";
-            // echo dirname($master_file) . "<br />";
+            // echo '<hr />Operate on the file: '.$masterfile.'<br />';
+            // echo $masterfileinfo["dirname"] . "<br />";
+            // echo $masterfileinfo["basename"] . "<br />";
+            // echo $masterfileinfo["extension"] . "<br />";
+            // echo dirname($masterfile) . "<br />";
 
-            if ($master_fileinfo['basename'] == 'icon.gif') {
+            if ($masterfileinfo['basename'] == 'icon.gif') {
                 // simply copy icon.gif
-                copy($master_basepath.'/'.$master_file, $temp_fullpath.'/'.$master_fileinfo['basename']);
+                copy($masterbasepath.'/'.$masterfile, $tempfullpath.'/'.$masterfileinfo['basename']);
                 continue;
             }
 
-            if ($master_fileinfo['basename'] == 'template.class.php') {
-                $templateclass = file_get_contents($master_basepath.'/'.$master_file);
-// echo '<textarea rows="10" cols="100">'.$templateclass.'</textarea>';
+            if ($masterfileinfo['basename'] == 'template.class.php') {
+                $templateclass = file_get_contents($masterbasepath.'/'.$masterfile);
+
                 // replace surveyTemplatePluginMaster with the name of the current survey
                 $templateclass = str_replace(SURVEYTEMPLATE_NAMEPLACEHOLDER, $pluginname, $templateclass);
-// echo '<textarea rows="10" cols="100">'.$templateclass.'</textarea>';
-// die;
-                $temp_path = $CFG->tempdir.'/'.$temp_subdir.'/'.$master_fileinfo['basename'];
 
-                // create $temp_path
-                $filehandler = fopen($temp_path, 'w');
+                $temppath = $CFG->tempdir.'/'.$tempsubdir.'/'.$masterfileinfo['basename'];
+
+                // create $temppath
+                $filehandler = fopen($temppath, 'w');
                 // write inside all the strings
                 fwrite($filehandler, $templateclass);
                 // close
@@ -116,11 +113,11 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
                 continue;
             }
 
-            if ($master_fileinfo['basename'] == 'template.xml') {
-                $temp_path = $CFG->tempdir.'/'.$temp_subdir.'/'.$master_fileinfo['basename'];
+            if ($masterfileinfo['basename'] == 'template.xml') {
+                $temppath = $CFG->tempdir.'/'.$tempsubdir.'/'.$masterfileinfo['basename'];
 
-                // create $temp_path
-                $filehandler = fopen($temp_path, 'w');
+                // create $temppath
+                $filehandler = fopen($temppath, 'w');
                 // write inside all the strings
                 fwrite($filehandler, $xmlcontent);
                 // close
@@ -128,21 +125,21 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
                 continue;
             }
 
-            if ($master_fileinfo['dirname'] == 'lang/en') {
+            if ($masterfileinfo['dirname'] == 'lang/en') {
                 // in which language the user is using Moodle?
                 $userlang = current_language();
-                $temp_path = $CFG->tempdir.'/'.$temp_subdir.'/lang/'.$userlang;
+                $temppath = $CFG->tempdir.'/'.$tempsubdir.'/lang/'.$userlang;
 
                 // this is the language folder of the strings hardcoded in the survey
                 // the folder lang/en already exist
                 if ($userlang != 'en') {
                     // I need to create the folder lang/it
-                    make_temp_directory($temp_subdir.'/lang/'.$userlang);
+                    make_temp_directory($tempsubdir.'/lang/'.$userlang);
                 }
 
-                // echo '$master_basepath = '.$master_basepath.'<br />';
+                // echo '$masterbasepath = '.$masterbasepath.'<br />';
 
-                $filecopyright = file_get_contents($master_basepath.'/lang/en/surveytemplate_pluginname.php');
+                $filecopyright = file_get_contents($masterbasepath.'/lang/en/surveytemplate_pluginname.php');
                 // replace surveyTemplatePluginMaster with the name of the current survey
                 $filecopyright = str_replace(SURVEYTEMPLATE_NAMEPLACEHOLDER, $pluginname, $filecopyright);
 
@@ -151,7 +148,7 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
                 // die;
 
                 // create - this could be 'en' such as 'it'
-                $filehandler = fopen($temp_path.'/surveytemplate_'.$pluginname.'.php', 'w');
+                $filehandler = fopen($temppath.'/surveytemplate_'.$pluginname.'.php', 'w');
                 // write inside all the strings
                 fwrite($filehandler, $savedstrings);
                 // close
@@ -159,9 +156,9 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
 
                 // this is the folder of the language en in case the user language is different from en
                 if ($userlang != 'en') {
-                    $temp_path = $CFG->tempdir.'/'.$temp_subdir.'/lang/en';
+                    $temppath = $CFG->tempdir.'/'.$tempsubdir.'/lang/en';
                     // create
-                    $filehandler = fopen($temp_path.'/surveytemplate_'.$pluginname.'.php', 'w');
+                    $filehandler = fopen($temppath.'/surveytemplate_'.$pluginname.'.php', 'w');
                     // write inside all the strings in teh form: 'english translation of $string[stringxx]'
                     $savedstrings = $filecopyright.$this->get_translated_strings($userlang);
                     // save into surveytemplate_<<$pluginname>>.php
@@ -174,15 +171,15 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
 
             // for all the other files: version.php
             // read the master
-            $filecontent = file_get_contents($master_basepath.'/'.$master_file);
+            $filecontent = file_get_contents($masterbasepath.'/'.$masterfile);
             // replace surveyTemplatePluginMaster with the name of the current survey
             $filecontent = str_replace(SURVEYTEMPLATE_NAMEPLACEHOLDER, $pluginname, $filecontent);
-            if ($master_fileinfo['basename'] == 'version.php') {
+            if ($masterfileinfo['basename'] == 'version.php') {
                 $currentdate = gmdate("Ymd").'01';
                 $filecontent = str_replace('1965100401', $currentdate, $filecontent);
             }
             // open
-            $filehandler = fopen($temp_basedir.'/'.$master_file, 'w');
+            $filehandler = fopen($tempbasedir.'/'.$masterfile, 'w');
             // write
             fwrite($filehandler, $filecontent);
             // close
@@ -202,10 +199,10 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
 
         $filelist = array();
         foreach ($filenames as $filename) {
-            $filelist[$filename] = $temp_basedir.'/'.$filename;
+            $filelist[$filename] = $tempbasedir.'/'.$filename;
         }
 
-        $exportfile = $temp_basedir.'.zip';
+        $exportfile = $tempbasedir.'.zip';
         file_exists($exportfile) && unlink($exportfile);
 
         $fp = get_file_packer('application/zip');
@@ -222,9 +219,9 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
             unlink($file);
         }
         foreach ($dirnames as $dir) {
-            rmdir($temp_basedir.'/'.$dir);
+            rmdir($tempbasedir.'/'.$dir);
         }
-        rmdir($temp_basedir);
+        rmdir($tempbasedir);
         // }
 
         // Return the full path to the exported template file:

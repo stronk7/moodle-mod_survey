@@ -192,9 +192,9 @@ define('SURVEY_FIRENDLYFORMAT', -1);
 define('SURVEY_USERTEMPLATE', 0);
 define('SURVEY_MASTERTEMPLATE', 1);
 
-// //////////////////////////////////////////////////////////////////////////////
-// Moodle core API                                                            //
-// //////////////////////////////////////////////////////////////////////////////
+// -----------------------------
+// Moodle core API
+// -----------------------------
 
 /*
  * Saves a new instance of the survey into the database
@@ -394,9 +394,9 @@ function survey_delete_instance($id) {
     // finally, delete the survey record
     $DB->delete_records('survey', array('id' => $survey->id));
 
-    // ////////////////////////////////////
+    // -----------------------------
     // TODO: Am I supposed to delete files too?
-    // ////////////////////////////////////
+    // -----------------------------
 
     // AREAS:
     //     SURVEY_STYLEFILEAREA
@@ -577,9 +577,9 @@ function survey_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames', 'moodle/rating:view', 'moodle/rating:viewany', 'moodle/rating:viewall', 'moodle/rating:rate');
 }
 
-// //////////////////////////////////////////////////////////////////////////////
-// Gradebook API                                                              //
-// //////////////////////////////////////////////////////////////////////////////
+// -----------------------------
+// Gradebook API
+// -----------------------------
 
 /*
  * Is a given scale used by the instance of survey?
@@ -663,9 +663,9 @@ function survey_update_grades(stdClass $survey, $userid = 0) {
     grade_update('mod/survey', $survey->course, 'mod', 'survey', $survey->id, 0, $grades);
 }
 
-// //////////////////////////////////////////////////////////////////////////////
-// File API                                                                   //
-// //////////////////////////////////////////////////////////////////////////////
+// -----------------------------
+// File API
+// -----------------------------
 
 /*
  * Returns the lists of all browsable file areas within the given module context
@@ -762,9 +762,9 @@ function survey_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
     return false;
 }
 
-// //////////////////////////////////////////////////////////////////////////////
-// Navigation API                                                             //
-// //////////////////////////////////////////////////////////////////////////////
+// -----------------------------
+// Navigation API
+// -----------------------------
 
 /*
  * Extends the settings navigation with the survey settings
@@ -899,7 +899,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
 function survey_extend_navigation(navigation_node $navref, stdClass $course, stdClass $survey, cm_info $cm) {
     global $CFG, $OUTPUT, $USER, $DB;
 
-    //$context = context_system::instance();
+    // $context = context_system::instance();
     $context = context_module::instance($cm->id);
 
     $cansubmit = has_capability('mod/survey:submit', $context, null, true);
@@ -935,9 +935,9 @@ function survey_extend_navigation(navigation_node $navref, stdClass $course, std
     }
 }
 
-// //////////////////////////////////////////////////////////////////////////////
-// CUSTOM SURVEY API                                                           //
-// //////////////////////////////////////////////////////////////////////////////
+// -----------------------------
+// CUSTOM SURVEY API
+// -----------------------------
 
 /*
  * Is re-captcha enabled at site level

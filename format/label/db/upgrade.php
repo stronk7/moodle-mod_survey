@@ -45,7 +45,6 @@ function xmldb_surveyformat_label_upgrade($oldversion) {
             $dbman->drop_field($table, $field);
         }
 
-
         // Define field label to be added to survey_label.
         $table = new xmldb_table('survey_label');
         $field = new xmldb_field('leftlabel', XMLDB_TYPE_TEXT, null, null, null, null, null, 'indent');
@@ -54,7 +53,6 @@ function xmldb_surveyformat_label_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-
 
         // Define field labelformat to be added to survey_label.
         $table = new xmldb_table('survey_label');

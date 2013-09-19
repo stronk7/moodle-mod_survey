@@ -139,9 +139,9 @@ class surveyformat_label extends mod_survey_itembase {
     public function item_save($record) {
         global $DB;
 
-        // //////////////////////////////////
+        // -----------------------------
         // Now execute very specific plugin level actions
-        // //////////////////////////////////
+        // -----------------------------
 
         // ------ begin of fields saved in survey_items ------ //
         /* surveyid
@@ -237,9 +237,9 @@ EOS;
             $content .= html_writer::start_tag('div', array('class' => 'centerpara'));
             $content .= html_writer::start_tag('div', array('class' => 'itemlabel')); // it will never get grayed because class != fitem
             $content .= html_writer::start_tag('div', array('class' => 'fstatic fullwidth'));
-            //$content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
+            // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
             $content .= $this->content;
-            //$content .= html_writer::end_tag('div');
+            // $content .= html_writer::end_tag('div');
             $content .= html_writer::end_tag('div');
             $content .= html_writer::end_tag('div');
             $content .= html_writer::end_tag('div');

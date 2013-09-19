@@ -54,9 +54,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_character');
         $mform->setType($fieldname, PARAM_RAW);
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         $fieldname = 'validation';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
@@ -118,7 +118,6 @@ class survey_pluginform extends mod_survey_itembaseform {
                 }
             }
         }
-
 
         if (!empty($data['defaultvalue'])) {
             // Maximum characters > length of default

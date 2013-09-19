@@ -36,6 +36,6 @@ $context = context_module::instance($cm->id);
 require_course_login($course, true, $cm);
 require_capability('mod/survey:accessreports', $context);
 
-$report_manager = new report_missing($cm, $survey);
-$report_manager->fetch_information();
-$report_manager->output_information();
+$reportman = new report_missing($cm, $survey);
+$reportman->fetch_information();
+$reportman->output_information();

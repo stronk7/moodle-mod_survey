@@ -91,9 +91,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addElement('select', $fieldname, get_string($fieldname, 'surveyfield_date'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_date');
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         $fieldname = 'validation';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 

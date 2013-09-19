@@ -83,7 +83,6 @@ class survey_admin_page_manage_survey_plugins extends admin_externalpage {
     }
 }
 
-
 /**
  * Class that handles the display and configuration of the list of submission plugins.
  *
@@ -109,7 +108,6 @@ class survey_plugin_manager {
         $this->subtype = $subtype;
     }
 
-
     /**
      * Return a list of plugins sorted by the order defined in the admin interface
      *
@@ -134,7 +132,6 @@ class survey_plugin_manager {
 
         return $result;
     }
-
 
     /**
      * Util function for writing an action icon link
@@ -381,8 +378,6 @@ class survey_plugin_manager {
         $this->view_footer();
     }
 
-
-
     /**
      * Hide this plugin.
      *
@@ -404,7 +399,6 @@ class survey_plugin_manager {
         set_config('disabled', 0, $this->subtype.'_'.$plugin);
         return 'view';
     }
-
 
     /**
      * This is the entry point for this controller class.

@@ -38,7 +38,7 @@ class survey_submissionform extends moodleform {
         $mform = $this->_form;
 
         $cmid = $this->_customdata->cmid;
-        $firstpage_right = $this->_customdata->firstpage_right;
+        $firstpageright = $this->_customdata->firstpageright;
         $maxassignedpage = $this->_customdata->maxassignedpage;
         $survey = $this->_customdata->survey;
         $submissionid = $this->_customdata->submissionid;
@@ -77,7 +77,7 @@ class survey_submissionform extends moodleform {
         }
 
         if ($formpage > 0) {
-            //$canaccessadvanceditems, $searchform=false, $type=false, $formpage
+            // $canaccessadvanceditems, $searchform=false, $type=false, $formpage
             list($sql, $whereparams) = survey_fetch_items_seeds($survey->id, $canaccessadvanceditems, false, false, $formpage);
             $itemseeds = $DB->get_recordset_sql($sql, $whereparams);
             // I do not need to be sure items are found because I already know this
@@ -230,7 +230,7 @@ class survey_submissionform extends moodleform {
         $survey = $this->_customdata->survey;
         $submissionid = $this->_customdata->submissionid;
         $formpage = $this->_customdata->formpage;
-        $firstpage_right = $this->_customdata->firstpage_right;
+        $firstpageright = $this->_customdata->firstpageright;
         $maxassignedpage = $this->_customdata->maxassignedpage;
         $canaccessadvanceditems = $this->_customdata->canaccessadvanceditems;
 

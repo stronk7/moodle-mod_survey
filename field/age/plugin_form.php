@@ -77,9 +77,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addGroup($elementgroup, $fieldname.'_group', null, ' ', false);
         $mform->disabledIf($fieldname.'_group', 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
 
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         // here I open a new fieldset
-        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // -----------------------------
         $fieldname = 'validation';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
@@ -94,7 +94,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'surveyfield_age');
         $mform->setDefault($fieldname.'_year', '0');
         $mform->setDefault($fieldname.'_month', '0');
-        //$mform->disabledIf($fieldname.'_group', $fieldname.'_select', 'neq', constant($constantname));
+        // $mform->disabledIf($fieldname.'_group', $fieldname.'_select', 'neq', constant($constantname));
 
         // ----------------------------------------
         // newitem::upperbound

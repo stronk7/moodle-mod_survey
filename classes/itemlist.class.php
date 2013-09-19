@@ -151,7 +151,6 @@ class mod_survey_itemlist {
         }
     }
 
-
     /*
      * manage_actions
      *
@@ -305,14 +304,14 @@ class mod_survey_itemlist {
         $moveheretitle = get_string('movehere');
         $namenotset = get_string('namenotset', 'survey');
 
-        // /////////////////////////////////////////////////
+        // -----------------------------
         // $paramurlmove definition
         $paramurlmove = array();
         $paramurlmove['id'] = $this->cm->id;
         $paramurlmove['act'] = SURVEY_CHANGEORDER;
         $paramurlmove['itm'] = $this->itemtomove;
         // end of $paramurlmove definition
-        // /////////////////////////////////////////////////
+        // -----------------------------
 
         $where = array('surveyid' => $this->survey->id);
         $itemseeds = $DB->get_records('survey_item', $where, $table->get_sql_sort(), '*, id as itemid');
@@ -339,7 +338,7 @@ class mod_survey_itemlist {
         foreach ($itemseeds as $itemseed) {
             $item = survey_get_item($itemseed->itemid, $itemseed->type, $itemseed->plugin);
 
-            // /////////////////////////////////////////////////
+            // -----------------------------
             // $paramurlbase definition
             $paramurlbase = array();
             $paramurlbase['id'] = $this->cm->id;
@@ -347,7 +346,7 @@ class mod_survey_itemlist {
             $paramurlbase['type'] = $item->get_type();
             $paramurlbase['plugin'] = $item->get_plugin();
             // end of $paramurlbase definition
-            // /////////////////////////////////////////////////
+            // -----------------------------
 
             $tablerow = array();
 
@@ -624,7 +623,7 @@ class mod_survey_itemlist {
      * @param $additionalcondition
      * @return
      */
-    function add_child_node(&$nodelist, &$sortindexnodelist, $additionalcondition) {
+    public function add_child_node(&$nodelist, &$sortindexnodelist, $additionalcondition) {
         global $DB;
 
         if (!is_array($additionalcondition)) {
@@ -648,7 +647,7 @@ class mod_survey_itemlist {
      * @param $additionalcondition
      * @return
      */
-    function add_parent_node($additionalcondition) {
+    public function add_parent_node($additionalcondition) {
         global $DB;
 
         if (!is_array($additionalcondition)) {
@@ -1288,7 +1287,7 @@ class mod_survey_itemlist {
             }
 
             // *************************************** actions
-            // /////////////////////////////////////////////////
+            // -----------------------------
             // $paramurlbase definition
             $paramurlbase = array();
             $paramurlbase['id'] = $this->cm->id;
@@ -1296,7 +1295,7 @@ class mod_survey_itemlist {
             $paramurlbase['type'] = $item->get_type();
             $paramurlbase['plugin'] = $item->get_plugin();
             // end of $paramurlbase definition
-            // /////////////////////////////////////////////////
+            // -----------------------------
 
             // *************************************** SURVEY_EDITITEM
             $paramurl = $paramurlbase + array('act' => SURVEY_EDITITEM);

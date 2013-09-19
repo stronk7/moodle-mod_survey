@@ -166,9 +166,9 @@ class surveyfield_boolean extends mod_survey_itembase {
      * @return
      */
     public function item_save($record) {
-        // //////////////////////////////////
+        // -----------------------------
         // Now execute very specific plugin level actions
-        // //////////////////////////////////
+        // -----------------------------
 
         // ------ begin of fields saved in survey_items ------ //
         /* surveyid
@@ -193,7 +193,6 @@ class surveyfield_boolean extends mod_survey_itembase {
 
         $record->hideinstructions = 1;
         // ------- end of fields saved in this plugin table ------- //
-
 
         // Do parent item saving stuff here (field_base::save($record)))
         return parent::item_save($record);

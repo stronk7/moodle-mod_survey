@@ -64,14 +64,14 @@ class mod_survey_userformmanager {
     public $maxassignedpage = 0;
 
     /*
-     * $firstpage_right
+     * $firstpageright
      */
-    public $firstpage_right = 0;
+    public $firstpageright = 0;
 
     /*
-     * $firstpage_left
+     * $firstpageleft
      */
-    public $firstpage_left = 0;
+    public $firstpageleft = 0;
 
     /*
      * $action
@@ -113,8 +113,6 @@ class mod_survey_userformmanager {
      */
     public $formdata = null;
 
-
-
     /*
      * Class constructor
      */
@@ -135,21 +133,20 @@ class mod_survey_userformmanager {
 
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
 
-
         // assign pages to items
         if (!$this->maxassignedpage = $DB->get_field('survey_item', 'MAX(formpage)', array('surveyid' => $survey->id))) {
             $this->assign_pages();
         }
 
-        // calculare $this->firstpage_right
+        // calculare $this->firstpageright
         if ($this->canaccessadvanceditems) {
-            $this->firstpage_right = 1;
+            $this->firstpageright = 1;
         } else {
             $this->next_not_empty_page(true, 0); // this calculates $this->firstformpage
         }
 
         if ($formpage == 0) { // you are viewing the survey for the first time
-            $this->formpage = $this->firstpage_right;
+            $this->formpage = $this->firstpageright;
         } else {
             $this->formpage = $formpage;
         }
@@ -165,8 +162,8 @@ class mod_survey_userformmanager {
     public function next_not_empty_page($forward, $startingpage) {
         // depending on user provided answer, in the previous or next page there may be no questions to display
         // get the first page WITH questions
-        // this method write the page number of the first non empty page (according to user answers) in $this->firstpage_right
-        // or the page number of the last non empty page (according to user answers) in $this->firstpage_left
+        // this method write the page number of the first non empty page (according to user answers) in $this->firstpageright
+        // or the page number of the last non empty page (according to user answers) in $this->firstpageleft
         // returns $nextpage or 0 if no more empty pages are found in the specified direction
 
         $condition1 = ($startingpage == SURVEY_RIGHT_OVERFLOW) && ($forward);
@@ -198,9 +195,9 @@ class mod_survey_userformmanager {
         } while ($nextpage != $overflowpage);
 
         if ($forward) {
-            $this->firstpage_right = ($nextpage == $overflowpage) ? SURVEY_RIGHT_OVERFLOW : $nextpage;
+            $this->firstpageright = ($nextpage == $overflowpage) ? SURVEY_RIGHT_OVERFLOW : $nextpage;
         } else {
-            $this->firstpage_left = ($nextpage == $overflowpage) ? SURVEY_LEFT_OVERFLOW : $nextpage;
+            $this->firstpageleft = ($nextpage == $overflowpage) ? SURVEY_LEFT_OVERFLOW : $nextpage;
         }
     }
 
@@ -213,7 +210,7 @@ class mod_survey_userformmanager {
     public function page_has_items($formpage) {
         global $CFG, $DB;
 
-        //$canaccessadvanceditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$formpage
+        // $canaccessadvanceditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$formpage
         list($sql, $whereparams) = survey_fetch_items_seeds($this->survey->id, $this->canaccessadvanceditems, false, SURVEY_TYPEFIELD, $formpage);
         $itemseeds = $DB->get_records_sql($sql, $whereparams);
 
@@ -238,7 +235,7 @@ class mod_survey_userformmanager {
             $parentitem = new $itemclass($itemseed->parentid);
 
             if ($parentitem->userform_child_item_allowed_static($this->submissionid, $itemseed)) {
-            //if (userform_child_item_allowed_static($this->submissionid, $itemseed)) {
+                // if (userform_child_item_allowed_static($this->submissionid, $itemseed)) {
                 return true;
             }
         }
@@ -253,7 +250,7 @@ class mod_survey_userformmanager {
      * @param
      * @return
      */
-    function set_page_from_action() {
+    public function set_page_from_action() {
         switch ($this->action) {
             case SURVEY_NOACTION:
                 $this->currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
@@ -282,7 +279,7 @@ class mod_survey_userformmanager {
      * @param
      * @return
      */
-    function survey_add_custom_css() {
+    public function survey_add_custom_css() {
         global $PAGE;
 
         $filearea = SURVEY_STYLEFILEAREA;
@@ -414,12 +411,12 @@ class mod_survey_userformmanager {
     public function save_user_data() {
         global $DB;
 
-        // ////////////////////////////
+        // -----------------------------
         // begin by saving survey_submissions first
         $this->save_survey_submissions();
         // in this method I also assign $this->submissionid and $this->status
         // end of: begin by saving survey_submissions first
-        // ////////////////////////////
+        // -----------------------------
 
         // save now all the answers provided by the user
         $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
@@ -1043,13 +1040,13 @@ class mod_survey_userformmanager {
         unset($submissions->timemodified);
         $submissionid = $DB->insert_record('survey_submissions', $submissions);
 
-        $survey_userdata = $DB->get_recordset('survey_userdata', array('submissionid' => $this->submissionid));
-        foreach ($survey_userdata as $userdatum) {
+        $surveyuserdata = $DB->get_recordset('survey_userdata', array('submissionid' => $this->submissionid));
+        foreach ($surveyuserdata as $userdatum) {
             unset($userdatum->id);
             $userdatum->submissionid = $submissionid;
             $DB->insert_record('survey_userdata', $userdatum);
         }
-        $survey_userdata->close();
+        $surveyuserdata->close();
         $this->submissionid = $submissionid;
     }
 }

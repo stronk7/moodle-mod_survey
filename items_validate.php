@@ -65,15 +65,15 @@ $saveasnew = null;
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:setupitems', $context);
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // calculations
-// ////////////////////////////////////////////////////////////
-$itemlist_manager = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
+// -----------------------------
+$itemlistman = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
                                            $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
 
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 // output starts here
-// ////////////////////////////////////////////////////////////
+// -----------------------------
 $PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
@@ -88,7 +88,7 @@ $currenttab = SURVEY_TABITEMS; // needed by tabs.php
 $currentpage = SURVEY_ITEMS_VALIDATE; // needed by tabs.php
 include_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-$itemlist_manager->validate_relations();
+$itemlistman->validate_relations();
 
 // Finish the page
 echo $OUTPUT->footer();

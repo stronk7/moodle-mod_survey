@@ -24,12 +24,12 @@
         <!-- end of fields belonging to itembase_form.php -->
 
         <!-- begin of fields belonging to plugin_form.php of this specific plugin -->
-        <FIELD NAME="hiddenfield"      TYPE="int"  LENGTH="4"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="indent"        NEXT="element_1"/>
-        <FIELD NAME="element_1"        TYPE="char" LENGTH="32"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="hiddenfield"   NEXT="element_2"/>
-        <FIELD NAME="element_2"        TYPE="char" LENGTH="32"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="element_1"     NEXT="element_3"/>
-        <FIELD NAME="element_3"        TYPE="char" LENGTH="32"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="element_2"     NEXT="element_4"/>
-        <FIELD NAME="element_4"        TYPE="char" LENGTH="32"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="element_3"     NEXT="element_5"/>
-        <FIELD NAME="element_5"        TYPE="char" LENGTH="32"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="element_4"/>
+        <FIELD NAME="hiddenfield"      TYPE="int"  LENGTH="4"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="indent"        NEXT="element01"/>
+        <FIELD NAME="element01"        TYPE="char" LENGTH="32"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="hiddenfield"   NEXT="element02"/>
+        <FIELD NAME="element02"        TYPE="char" LENGTH="32"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="element01"     NEXT="element03"/>
+        <FIELD NAME="element03"        TYPE="char" LENGTH="32"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="element02"     NEXT="element04"/>
+        <FIELD NAME="element04"        TYPE="char" LENGTH="32"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="element03"     NEXT="element05"/>
+        <FIELD NAME="element05"        TYPE="char" LENGTH="32"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="element04"/>
         <!-- end of fields belonging to plugin_form.php of this specific plugin -->
       </FIELDS>
       <KEYS>

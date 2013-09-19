@@ -337,12 +337,12 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
 
         require_once($CFG->libdir.'/tablelib.php');
 
-        // /////////////////////////////////////////////////
+        // -----------------------------
         // $paramurl definition
         $paramurl = array();
         $paramurl['id'] = $this->cm->id;
         // end of $paramurl definition
-        // /////////////////////////////////////////////////
+        // -----------------------------
 
         $table = new flexible_table('templatelist');
 
@@ -457,28 +457,28 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
      */
     public function create_fictitious_table($templates, $usersort) {
         // original table per columns: originaltablepercols
-        $templatename_col = array();
-        $sharinglevel_col = array();
-        $creationdate_col = array();
-        $xmlfileid_col = array();
+        $templatenamecol = array();
+        $sharinglevelcol = array();
+        $creationdatecol = array();
+        $xmlfileidcol = array();
         foreach ($templates as $contextstring => $contextfiles) {
             foreach ($contextfiles as $xmlfile) {
-                $templatename_col[] = $xmlfile->get_filename();
-                $sharinglevel_col[] = get_string($contextstring, 'survey');
-                $creationdate_col[] = $xmlfile->get_timecreated();
-                $xmlfileid_col[] = $xmlfile->get_id();
+                $templatenamecol[] = $xmlfile->get_filename();
+                $sharinglevelcol[] = get_string($contextstring, 'survey');
+                $creationdatecol[] = $xmlfile->get_timecreated();
+                $xmlfileidcol[] = $xmlfile->get_id();
             }
         }
-        $originaltablepercols = array($templatename_col, $sharinglevel_col, $creationdate_col, $xmlfileid_col);
+        $originaltablepercols = array($templatenamecol, $sharinglevelcol, $creationdatecol, $xmlfileidcol);
 
         // original table per rows: originaltableperrows
         $originaltableperrows = array();
-        foreach($templatename_col as $k => $value) {
+        foreach ($templatenamecol as $k => $value) {
             $tablerow = array();
-            $tablerow['templatename'] = $templatename_col[$k];
-            $tablerow['sharinglevel'] = $sharinglevel_col[$k];
-            $tablerow['creationdate'] = $creationdate_col[$k];
-            $tablerow['xmlfileid'] = $xmlfileid_col[$k];
+            $tablerow['templatename'] = $templatenamecol[$k];
+            $tablerow['sharinglevel'] = $sharinglevelcol[$k];
+            $tablerow['creationdate'] = $creationdatecol[$k];
+            $tablerow['xmlfileid'] = $xmlfileidcol[$k];
 
             $originaltableperrows[] = $tablerow;
         }

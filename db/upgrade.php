@@ -52,7 +52,6 @@ function xmldb_survey_upgrade($oldversion) {
         // Launch rename field forceediting.
         $dbman->rename_field($table, $field, 'riskyeditdeadline');
 
-
         // Changing precision of field riskyeditdeadline on table survey to (10).
         $table = new xmldb_table('survey');
         $field = new xmldb_field('riskyeditdeadline', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'thankshtmlformat');

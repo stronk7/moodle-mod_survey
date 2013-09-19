@@ -37,18 +37,18 @@ class survey_applyutemplateform extends moodleform {
 
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
-        $utemplate_manager = $this->_customdata->utemplate_manager;
+        $utemplateman = $this->_customdata->utemplateman;
 
-        $options = $utemplate_manager->get_sharinglevel_options();
+        $options = $utemplateman->get_sharinglevel_options();
 
         $templates = new stdClass();
         $templatesfiles = array();
         foreach ($options as $sharinglevel => $v) {
             $parts = explode('_', $sharinglevel);
             $contextlevel = $parts[0];
-            $contextid = $utemplate_manager->get_contextid_from_sharinglevel($sharinglevel);
-            $contextstring = $utemplate_manager->get_contextstring_from_sharinglevel($contextlevel);
-            $templates->{$contextstring} = $utemplate_manager->get_available_templates($contextid);
+            $contextid = $utemplateman->get_contextid_from_sharinglevel($sharinglevel);
+            $contextstring = $utemplateman->get_contextstring_from_sharinglevel($contextlevel);
+            $templates->{$contextstring} = $utemplateman->get_available_templates($contextid);
         }
 
         foreach ($templates as $contextstring => $contextfiles) {
