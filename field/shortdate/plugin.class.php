@@ -316,13 +316,13 @@ class surveyfield_shortdate extends mod_survey_itembase {
         }
         $option['unixtime'] = get_string('unixtime', 'survey');
         /*
-	     * Giugno 2013
+         * Giugno 2013
          * Giugno '13
          * Giu 2013
          * Giu '13
          * 06/2013
          * 06/13
-	     * unix time
+         * unix time
          */
         return $option;
     }
