@@ -102,15 +102,15 @@ class survey_pluginform extends mod_survey_itembaseform {
         $errors = parent::validation($data, $files);
 
         // clean inputs
-        $clean_options = survey_textarea_to_array($data['options']);
-        $clean_defaultvalue = survey_textarea_to_array($data['defaultvalue']);
-        $clean_labelother = trim($data['labelother']);
+        $cleanoptions = survey_textarea_to_array($data['options']);
+        $cleandefaultvalue = survey_textarea_to_array($data['defaultvalue']);
+        $cleanlabelother = trim($data['labelother']);
 
-        // build $value and $label arrays starting from $clean_options and $clean_labelother
+        // build $value and $label arrays starting from $cleanoptions and $cleanlabelother
         $values = array();
         $labels = array();
 
-        foreach ($clean_options as $option) {
+        foreach ($cleanoptions as $option) {
             if (strpos($option, SURVEY_VALUELABELSEPARATOR) === false) {
                 $values[] = trim($option);
                 $labels[] = trim($option);
@@ -120,12 +120,12 @@ class survey_pluginform extends mod_survey_itembaseform {
                 $labels[] = $pair[1];
             }
         }
-        if (!empty($clean_labelother)) {
-            if (strpos($clean_labelother, SURVEY_OTHERSEPARATOR) === false) {
-                $values[] = $clean_labelother;
-                $labels[] = $clean_labelother;
+        if (!empty($cleanlabelother)) {
+            if (strpos($cleanlabelother, SURVEY_OTHERSEPARATOR) === false) {
+                $values[] = $cleanlabelother;
+                $labels[] = $cleanlabelother;
             } else {
-                $pair = explode(SURVEY_OTHERSEPARATOR, $clean_labelother);
+                $pair = explode(SURVEY_OTHERSEPARATOR, $cleanlabelother);
                 $values[] = $pair[1];
                 $labels[] = $pair[0];
             }
@@ -137,7 +137,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         // this also verify (helped by the second check) that the number of default is not gretr than the number of options
         // -----------------------------
         if (!empty($data['defaultvalue'])) {
-            foreach ($clean_defaultvalue as $default) {
+            foreach ($cleandefaultvalue as $default) {
                 if (!in_array($default, $labels)) {
                     $errors['defaultvalue'] = get_string('defaultvalue_err', 'surveyfield_checkbox', $default);
                     break;
@@ -150,12 +150,12 @@ class survey_pluginform extends mod_survey_itembaseform {
         // each single option item has to be unique
         // each single default item has to be unique
         // -----------------------------
-        $array_unique = array_unique($clean_options);
-        if (count($clean_options) != count($array_unique)) {
+        $arrayunique = array_unique($cleanoptions);
+        if (count($cleanoptions) != count($arrayunique)) {
             $errors['options'] = get_string('optionsduplicated_err', 'surveyfield_checkbox', $default);
         }
-        $array_unique = array_unique($clean_defaultvalue);
-        if (count($clean_defaultvalue) != count($array_unique)) {
+        $arrayunique = array_unique($cleandefaultvalue);
+        if (count($cleandefaultvalue) != count($arrayunique)) {
             $errors['defaultvalue'] = get_string('defaultvalue_err', 'surveyfield_checkbox', $default);
         }
 
@@ -165,7 +165,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         // -----------------------------
         foreach ($values as $value) {
             if (strpos($value, SURVEY_DBMULTIVALUESEPARATOR) !== false) {
-                if (!empty($clean_labelother) && ($value == end($values))) { // if $value is the last
+                if (!empty($cleanlabelother) && ($value == end($values))) { // if $value is the last
                     $errors['labelother'] = get_string('optionswithseparator_err', 'surveyfield_checkbox', SURVEY_DBMULTIVALUESEPARATOR);
                 } else {
                     $errors['options'] = get_string('optionswithseparator_err', 'surveyfield_checkbox', SURVEY_DBMULTIVALUESEPARATOR);
@@ -174,8 +174,8 @@ class survey_pluginform extends mod_survey_itembaseform {
             }
         }
 
-// print_object($errors);
-// die;
+        // print_object($errors);
+        // die;
         return $errors;
     }
 }

@@ -114,7 +114,7 @@ echo $OUTPUT->header();
 
 $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 $currentpage = SURVEY_SUBMISSION_SEARCH; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 if (!$searchman->count_search_items()) {
     $searchman->noitem_stopexecution();

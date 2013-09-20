@@ -138,7 +138,7 @@ echo $OUTPUT->header();
 
 $currenttab = SURVEY_TABITEMS; // needed by tabs.php
 $currentpage = SURVEY_ITEMS_SETUP; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 if ($itemlistman->hassubmissions) {
     echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));

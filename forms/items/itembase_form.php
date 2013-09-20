@@ -326,8 +326,7 @@ class mod_survey_itembaseform extends moodleform {
 
         // -------------------------------------------------------------------------------
         // buttons
-        $item_itemid = $item->get_itemid();
-        if (!empty($item_itemid)) {
+        if (!empty($item->get_itemid())) {
             $fieldname = 'buttons';
             $elementgroup = array();
             $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));

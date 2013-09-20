@@ -132,26 +132,20 @@ class survey_pluginform extends mod_survey_itembaseform {
         $errors = parent::validation($data, $files);
 
         // clean inputs
-        $clean_options = survey_textarea_to_array($data['options']);
-        $clean_rates = survey_textarea_to_array($data['rates']);
-        $clean_defaultvalue = isset($data['defaultvalue']) ? survey_textarea_to_array($data['defaultvalue']) : '';
-
-        // $clean_defaultvalue = isset($data['defaultvalue']) ? survey_textarea_to_array($data[$afield]) : '';
-        // ora ho
-        // clean_options
-        // clean_rates
-        // clean_defaultvalue
+        $cleanoptions = survey_textarea_to_array($data['options']);
+        $cleanrates = survey_textarea_to_array($data['rates']);
+        $cleandefaultvalue = isset($data['defaultvalue']) ? survey_textarea_to_array($data['defaultvalue']) : '';
 
         // if a default is required
         if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
             // il numero dei default deve essere pari al numero delle opzioni
-            if (count($clean_defaultvalue) != count($clean_options)) {
+            if (count($cleandefaultvalue) != count($cleanoptions)) {
                 $errors['defaultvalue_group'] = get_string('defaults_wrongdefaultsnumber', 'surveyfield_rate');
             }
 
             $values = array();
             $labels = array();
-            foreach ($clean_rates as $rate) {
+            foreach ($cleanrates as $rate) {
                 if (strpos($rate, SURVEY_VALUELABELSEPARATOR) === false) {
                     $values[] = $rate;
                     $labels[] = $rate;
@@ -163,7 +157,7 @@ class survey_pluginform extends mod_survey_itembaseform {
             }
 
             // values in the default field must all be hold among rates ($labels)
-            foreach ($clean_defaultvalue as $default) {
+            foreach ($cleandefaultvalue as $default) {
                 if (!in_array($default, $labels)) {
                     $errors['defaultvalue_group'] = get_string('default_notamongrates', 'surveyfield_rate', $default);
                     break;
@@ -178,16 +172,16 @@ class survey_pluginform extends mod_survey_itembaseform {
         }
 
         // if differentrates was requested
-        // count($clean_rates) HAS TO be >= count($clean_rates)
+        // count($cleanrates) HAS TO be >= count($cleanrates)
         if (isset($data['differentrates'])) {
             // if I claim for different rates, I must provide a sufficient number of rates
-            if (count($clean_options) > count($clean_rates)) {
+            if (count($cleanoptions) > count($cleanrates)) {
                 $errors['rates'] = get_string('notenoughrares', 'surveyfield_rate');
             }
 
             if ($data['defaultoption'] == SURVEY_CUSTOMDEFAULT) {
                 // if I claim for different rates, I have to respect the constraint in the default
-                if (count($clean_defaultvalue) > count(array_unique($clean_defaultvalue))) {
+                if (count($cleandefaultvalue) > count(array_unique($cleandefaultvalue))) {
                     $errors['defaultvalue_group'] = get_string('deafultsnotunique', 'surveyfield_rate');
                 }
             }

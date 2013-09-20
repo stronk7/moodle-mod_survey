@@ -449,8 +449,8 @@ EOS;
                     $errors[$errorkey] = get_string('uerr_negative', 'surveyfield_numeric');
                 }
                 // if it has decimal but has been defined as integer, shouts
-                $is_integer = (bool)(strval(intval($userinput)) == strval($userinput));
-                if (($this->decimals == 0) && (!$is_integer)) {
+                $isinteger = (bool)(strval(intval($userinput)) == strval($userinput));
+                if (($this->decimals == 0) && (!$isinteger)) {
                     $errors[$errorkey] = get_string('uerr_notinteger', 'surveyfield_numeric');
                 }
             }

@@ -63,7 +63,7 @@ class mod_survey_itembase {
     public $plugin = '';
 
     /*
-     * $itemname = the name of the field as it is in the userpage_form
+     * $itemname = the name of the field as it is in userpageform
      */
     public $itemname = '';
 

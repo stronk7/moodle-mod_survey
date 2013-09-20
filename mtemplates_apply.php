@@ -108,7 +108,7 @@ echo $OUTPUT->header();
 
 $currenttab = SURVEY_TABMTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_MTEMPLATES_APPLY; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 if (survey_count_submissions($survey->id, SURVEY_STATUSALL)) {
     echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));

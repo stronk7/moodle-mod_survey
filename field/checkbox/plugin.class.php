@@ -473,17 +473,17 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from child_parentvalue defines syntax for disabledIf
+     * from childparentvalue defines syntax for disabledIf
      *
-     * @param: $child_parentvalue
+     * @param: $childparentvalue
      * @return
      */
-    public function userform_get_parent_disabilitation_info($child_parentvalue) {
+    public function userform_get_parent_disabilitation_info($childparentvalue) {
         $disabilitationinfo = array();
 
-        // I need to know the names of mfrom element corresponding to the content of $child_parentvalue
+        // I need to know the names of mfrom element corresponding to the content of $childparentvalue
         $labels = $this->item_get_labels_array('options');
-        $request = survey_textarea_to_array($child_parentvalue);
+        $request = survey_textarea_to_array($childparentvalue);
 
         foreach ($labels as $k => $label) {
             $mformelementinfo = new stdClass();
@@ -583,10 +583,10 @@ EOS;
      * @param: $parentcontent, $parentsubmitted
      * @return $status: true: the item is welcome; false: the item must be dropped out
      */
-    public function userform_child_item_allowed_dynamic($child_parentcontent, $data) {
+    public function userform_child_item_allowed_dynamic($childparentcontent, $data) {
         // I need to verify (checkbox per checkbox) if they hold the same value the user entered
         $labels = $this->item_get_labels_array('options');
-        $request = survey_textarea_to_array($child_parentcontent);
+        $request = survey_textarea_to_array($childparentcontent);
 
         $status = true;
         foreach ($labels as $k => $label) {

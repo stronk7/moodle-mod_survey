@@ -313,7 +313,7 @@ class surveyfield_date extends mod_survey_itembase {
         $option = array();
         $timenow = time();
 
-        for ( $i = 1; $i < 11; $i++ ) {
+        for ($i = 1; $i < 11; $i++) {
             $strname = 'strftime'.str_pad($i, 2, '0', STR_PAD_LEFT);
             $option[$strname] = userdate($timenow, get_string($strname, 'surveyfield_date')); // Lunedì 17 Giugno, 05.15
         }

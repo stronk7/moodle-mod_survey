@@ -78,9 +78,9 @@ class mod_survey_mod_form extends moodleform_mod {
             }
 
             // access right
-            $ro_label = get_string('readonly', 'survey');
-            $rw_label = get_string('readwrite', 'survey');
-            $del_label = get_string('delete', 'survey');
+            $rolabel = get_string('readonly', 'survey');
+            $rwlabel = get_string('readwrite', 'survey');
+            $dellabel = get_string('delete', 'survey');
 
             $accessrights = array();
             $i = ($groupmode) ? SURVEY_ALL : SURVEY_GROUP;
@@ -91,7 +91,7 @@ class mod_survey_mod_form extends moodleform_mod {
                     while ($k >= SURVEY_NONE) {
                         $index = $i.'.'.$j.'.'.$k;
                         $index = ($groupmode) ? $index : str_replace(SURVEY_GROUP, SURVEY_ALL, $index);
-                        $accessrights[$index] = $ro_label.': '.$subjects[$i].', '.$rw_label.': '.$subjects[$j].', '.$del_label.': '.$subjects[$k];
+                        $accessrights[$index] = $rolabel.': '.$subjects[$i].', '.$rwlabel.': '.$subjects[$j].', '.$dellabel.': '.$subjects[$k];
                         $k--;
                     }
                     $j--;

@@ -76,7 +76,7 @@ echo $OUTPUT->header();
 
 $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 $currentpage = SURVEY_SUBMISSION_MANAGE; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $submissionman->manage_actions();
 

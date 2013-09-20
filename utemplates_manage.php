@@ -90,7 +90,7 @@ echo $OUTPUT->header();
 
 $currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_UTEMPLATES_MANAGE; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $utemplateman->delete_utemplate();
 

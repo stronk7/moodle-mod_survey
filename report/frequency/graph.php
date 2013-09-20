@@ -1,5 +1,4 @@
 <?php
-
 require_once('../../../../config.php');
 require_once($CFG->libdir.'/graphlib.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');

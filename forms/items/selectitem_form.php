@@ -41,20 +41,20 @@ class survey_itemtypeform extends moodleform {
         // ----------------------------------------
         $fieldname = 'plugin';
         // TAKE CARE! Here the plugin holds type and plugin both
-        $field_plugins = survey_get_plugin_list(SURVEY_TYPEFIELD, true);
-        foreach ($field_plugins as $k => $v) {
-            $field_plugins[$k] = get_string('userfriendlypluginname', 'surveyfield_'.$v);
+        $fieldplugins = survey_get_plugin_list(SURVEY_TYPEFIELD, true);
+        foreach ($fieldplugins as $k => $v) {
+            $fieldplugins[$k] = get_string('userfriendlypluginname', 'surveyfield_'.$v);
         }
-        asort($field_plugins);
+        asort($fieldplugins);
 
-        $format_plugins = survey_get_plugin_list(SURVEY_TYPEFORMAT, true);
-        foreach ($format_plugins as $k => $v) {
-            $format_plugins[$k] = get_string('userfriendlypluginname', 'surveyformat_'.$v);
+        $formatplugins = survey_get_plugin_list(SURVEY_TYPEFORMAT, true);
+        foreach ($formatplugins as $k => $v) {
+            $formatplugins[$k] = get_string('userfriendlypluginname', 'surveyformat_'.$v);
         }
-        asort($format_plugins);
+        asort($formatplugins);
 
-        $pluginlist = array(get_string('typefield' , 'survey') => $field_plugins,
-                            get_string('typeformat', 'survey') => $format_plugins);
+        $pluginlist = array(get_string('typefield' , 'survey') => $fieldplugins,
+                            get_string('typeformat', 'survey') => $formatplugins);
 
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('selectgroups', $fieldname, '', $pluginlist);

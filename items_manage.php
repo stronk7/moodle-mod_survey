@@ -88,7 +88,7 @@ echo $OUTPUT->header();
 
 $currenttab = SURVEY_TABITEMS; // needed by tabs.php
 $currentpage = SURVEY_ITEMS_MANAGE; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $itemlistman->manage_actions();
 

@@ -65,10 +65,10 @@ require_capability('mod/survey:createusertemplates', $context);
 $utemplateman = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid, $action, $confirm);
 
 // -----------------------------
-// define $create_utemplate return url
+// define $createutemplate return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('utemplates_create.php', $paramurl);
-// end of: define $create_utemplate return url
+// end of: define $createutemplate return url
 // -----------------------------
 
 // -----------------------------
@@ -77,13 +77,13 @@ $formparams = new stdClass();
 $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
 $formparams->utemplateman = $utemplateman;
-$create_utemplate = new survey_utemplatecreateform($formurl, $formparams);
+$createutemplate = new survey_utemplatecreateform($formurl, $formparams);
 // end of: prepare params for the form
 // -----------------------------
 
 // -----------------------------
 // manage form submission
-if ($utemplateman->formdata = $create_utemplate->get_data()) {
+if ($utemplateman->formdata = $createutemplate->get_data()) {
     $utemplateman->save_utemplate();
 
     $paramurl = array();
@@ -109,7 +109,7 @@ echo $OUTPUT->header();
 
 $currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_UTEMPLATES_BUILD; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $a = get_string('sharinglevel', 'survey');
 $message = get_string('templatecreateinfo', 'survey', $a);
@@ -118,8 +118,8 @@ echo $OUTPUT->box($message, 'generaltable generalbox boxaligncenter boxwidthnorm
 $record = new stdClass();
 $record->surveyid = $survey->id;
 
-$create_utemplate->set_data($record);
-$create_utemplate->display();
+$createutemplate->set_data($record);
+$createutemplate->display();
 
 // Finish the page
 echo $OUTPUT->footer();

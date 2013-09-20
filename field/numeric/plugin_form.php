@@ -153,9 +153,9 @@ class survey_pluginform extends mod_survey_itembaseform {
                     $errors['defaultvalue'] = get_string('defaultsignnotallowed', 'surveyfield_numeric');
                 }
 
-                $is_integer = (bool)(strval(intval($defaultvalue)) == strval($defaultvalue));
+                $isinteger = (bool)(strval(intval($defaultvalue)) == strval($defaultvalue));
                 // if it has decimal but has been defined as integer, shouts
-                if ( ($data['decimals'] == 0) && (!$is_integer) ) {
+                if ( ($data['decimals'] == 0) && (!$isinteger) ) {
                     $errors['defaultvalue'] = get_string('default_notinteger', 'surveyfield_numeric');
                 }
 

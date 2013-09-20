@@ -404,8 +404,8 @@ EOS;
         }
 
         if ( (!$this->required) || $searchform ) {
-            $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-            $labels += array(SURVEY_NOANSWERVALUE => $check_label);
+            $checklabel = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
+            $labels += array(SURVEY_NOANSWERVALUE => $checklabel);
         }
 
         if (!$this->labelother) {
@@ -526,17 +526,17 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from child_parentvalue defines syntax for disabledIf
+     * from childparentvalue defines syntax for disabledIf
      *
-     * @param: $child_parentvalue
+     * @param: $childparentvalue
      * @return
      */
-    public function userform_get_parent_disabilitation_info($child_parentvalue) {
+    public function userform_get_parent_disabilitation_info($childparentvalue) {
         $disabilitationinfo = array();
 
         $labels = $this->item_get_labels_array('options');
 
-        $index = array_search($child_parentvalue, $labels);
+        $index = array_search($childparentvalue, $labels);
         if ($index !== false) {
             $mformelementinfo = new stdClass();
             $mformelementinfo->parentname = $this->itemname;
@@ -553,7 +553,7 @@ EOS;
             $mformelementinfo = new stdClass();
             $mformelementinfo->parentname = $this->itemname.'_text';
             $mformelementinfo->operator = 'neq';
-            $mformelementinfo->content = $child_parentvalue;
+            $mformelementinfo->content = $childparentvalue;
             $disabilitationinfo[] = $mformelementinfo;
         }
 
@@ -585,15 +585,15 @@ EOS;
         $where = array('submissionid' => $submissionid, 'itemid' => $this->itemid);
         $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
 
-        $child_parentvalue = $childitemrecord->parentvalue;
+        $childparentvalue = $childitemrecord->parentvalue;
 
         $values = $this->item_get_labels_array('options');
-        $index = array_search($child_parentvalue, $values);
+        $index = array_search($childparentvalue, $values);
 
         if ($index !== false) {
             $status = ($givenanswer == $index);
         } else { // other
-            $status = ($givenanswer == $child_parentvalue);
+            $status = ($givenanswer == $childparentvalue);
         }
 
         return $status;
@@ -611,17 +611,17 @@ EOS;
      *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
      * ----------------------------------------------------------------------
      *
-     * @param: $child_parentcontent, $data
+     * @param: $childparentcontent, $data
      * @return $status: true: the item is welcome; false: the item must be dropped out
      */
-    public function userform_child_item_allowed_dynamic($child_parentcontent, $data) {
+    public function userform_child_item_allowed_dynamic($childparentcontent, $data) {
         $labels = $this->item_get_labels_array('options');
-        $index = array_search($child_parentcontent, $labels);
+        $index = array_search($childparentcontent, $labels);
         if ($index !== false) {
             $status = ($data[$this->itemname] == $index);
         } else {
             $status = ($data[$this->itemname] == 'other');
-            $status = $status && ($data[$this->itemname.'_text'] == $child_parentcontent);
+            $status = $status && ($data[$this->itemname.'_text'] == $childparentcontent);
         }
 
         return $status;

@@ -94,14 +94,14 @@ class survey_pluginform extends mod_survey_itembaseform {
         $errors = parent::validation($data, $files);
 
         // clean inputs
-        $clean_options = survey_textarea_to_array($data['options']);
-        $clean_defaultvalue = survey_textarea_to_array($data['defaultvalue']);
+        $cleanoptions = survey_textarea_to_array($data['options']);
+        $cleandefaultvalue = survey_textarea_to_array($data['defaultvalue']);
 
-        // build $value array (I do not care about $label) starting from $clean_options
+        // build $value array (I do not care about $label) starting from $cleanoptions
         $values = array();
         $labels = array();
 
-        foreach ($clean_options as $option) {
+        foreach ($cleanoptions as $option) {
             if (strpos($option, SURVEY_VALUELABELSEPARATOR) === false) {
                 $values[] = trim($option);
                 $labels[] = trim($option);
@@ -118,7 +118,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         // this also verify (helped by the second check) that the number of default is not gretr than the number of options
         // -----------------------------
         if (!empty($data['defaultvalue'])) {
-            foreach ($clean_defaultvalue as $default) {
+            foreach ($cleandefaultvalue as $default) {
                 if (!in_array($default, $labels)) {
                     $errors['defaultvalue'] = get_string('defaultvalue_err', 'surveyfield_multiselect', $default);
                     break;
@@ -131,12 +131,12 @@ class survey_pluginform extends mod_survey_itembaseform {
         // each single option item has to be unique
         // each single default item has to be unique
         // -----------------------------
-        $array_unique = array_unique($clean_options);
-        if (count($clean_options) != count($array_unique)) {
+        $arrayunique = array_unique($cleanoptions);
+        if (count($cleanoptions) != count($arrayunique)) {
             $errors['options'] = get_string('optionsduplicated_err', 'surveyfield_checkbox', $default);
         }
-        $array_unique = array_unique($clean_defaultvalue);
-        if (count($clean_defaultvalue) != count($array_unique)) {
+        $arrayunique = array_unique($cleandefaultvalue);
+        if (count($cleandefaultvalue) != count($arrayunique)) {
             $errors['defaultvalue'] = get_string('defaultvalue_err', 'surveyfield_checkbox', $default);
         }
 
@@ -151,8 +151,6 @@ class survey_pluginform extends mod_survey_itembaseform {
             }
         }
 
-// print_object($errors);
-// die;
         return $errors;
     }
 }

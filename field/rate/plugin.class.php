@@ -413,7 +413,7 @@ EOS;
         }
 
         if ($this->style == SURVEYFIELD_RATE_USERADIO) {
-            $separator_block = array_fill(0, count($rates) - 1, ' ');
+            $separatorblock = array_fill(0, count($rates) - 1, ' ');
 
             $separator = array();
             $elementgroup = array();
@@ -424,7 +424,7 @@ EOS;
                     $elementgroup[] = $mform->createElement('radio', $uniquename, '', $rate, $j, $class);
                     $class = '';
                 }
-                $separator += array_merge($separator, $separator_block);
+                $separator += array_merge($separator, $separatorblock);
                 $separator[] = '<br />';
             }
 
@@ -525,7 +525,7 @@ EOS;
         if (!empty($this->differentrates)) {
             $optionscount = count($this->item_get_labels_array('options'));
             $rates = array();
-            for ( $i = 0; $i < $optionscount; $i++) {
+            for ($i = 0; $i < $optionscount; $i++) {
                 $rates[] = $data[$this->itemname.'_'.$i];
             }
 

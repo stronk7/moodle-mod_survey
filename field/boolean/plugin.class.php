@@ -395,19 +395,19 @@ EOS;
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
 
-        $yes_label = get_string('yes');
-        $no_label = get_string('no');
+        $yeslabel = get_string('yes');
+        $nolabel = get_string('no');
 
         if ($this->style == SURVEYFIELD_BOOLEAN_USESELECT) {
             $options = array();
             if ( ($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform) ) {
                 $options[SURVEY_INVITATIONVALUE] = get_string('choosedots');
             }
-            $options += array('1' => $yes_label, '0' => $no_label);
+            $options += array('1' => $yeslabel, '0' => $nolabel);
 
             if ( (!$this->required) || $searchform ) {
-                $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-                $options += array(SURVEY_NOANSWERVALUE => $check_label);
+                $checklabel = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
+                $options += array(SURVEY_NOANSWERVALUE => $checklabel);
             }
             $mform->addElement('select', $this->itemname, $elementlabel, $options, array('class' => 'indent-'.$this->indent));
         } else { // SURVEYFIELD_BOOLEAN_USERADIOV or SURVEYFIELD_BOOLEAN_USERADIOH
@@ -421,9 +421,9 @@ EOS;
             } else {
                 $class = array('class' => 'indent-'.$this->indent);
             }
-            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $yes_label, '1', $class);
+            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $yeslabel, '1', $class);
             $class = ($this->style == SURVEYFIELD_BOOLEAN_USERADIOV) ? array('class' => 'indent-'.$this->indent) : '';
-            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $no_label, '0', $class);
+            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $nolabel, '0', $class);
 
             if (!$searchform) {
                 if (!$this->required) {
@@ -504,18 +504,18 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from child_parentvalue defines syntax for disabledIf
+     * from childparentvalue defines syntax for disabledIf
      *
-     * @param: $child_parentvalue
+     * @param: $childparentvalue
      * @return
      */
-    public function userform_get_parent_disabilitation_info($child_parentvalue) {
+    public function userform_get_parent_disabilitation_info($childparentvalue) {
         $disabilitationinfo = array();
 
         $mformelementinfo = new stdClass();
         $mformelementinfo->parentname = $this->itemname;
         $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $child_parentvalue;
+        $mformelementinfo->content = $childparentvalue;
         $disabilitationinfo[] = $mformelementinfo;
 
         return $disabilitationinfo;

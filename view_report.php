@@ -74,7 +74,7 @@ echo $OUTPUT->header();
 
 $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 $currentpage = SURVEY_SUBMISSION_REPORT; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 // prevent manual addressing in the addressbar
 if (!empty($canaccessreports)) {

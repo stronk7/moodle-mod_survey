@@ -59,16 +59,16 @@ require_capability('mod/survey:createmastertemplate', $context);
 $mtemplateman = new mod_survey_mastertemplate($survey);
 
 // -----------------------------
-// define $create_utemplate return url
+// define $createmtemplate return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('mtemplates_create.php', $paramurl);
-$create_utemplate = new survey_mtemplatecreateform($formurl);
-// define $create_utemplate return url
+$createmtemplate = new survey_mtemplatecreateform($formurl);
+// define $createmtemplate return url
 // -----------------------------
 
 // -----------------------------
 // manage form submission
-if ($mtemplateman->formdata = $create_utemplate->get_data()) {
+if ($mtemplateman->formdata = $createmtemplate->get_data()) {
     $exportfile = $mtemplateman->create_mtemplate();
     $exportfilename = basename($exportfile);
     header("Content-Type: application/download\n");
@@ -100,15 +100,15 @@ echo $OUTPUT->header();
 
 $currenttab = SURVEY_TABMTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_MTEMPLATES_BUILD; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 echo $OUTPUT->notification(get_string('currenttotemplate', 'survey'), 'generaltable generalbox boxaligncenter boxwidthwide');
 
 $record = new stdClass();
 $record->surveyid = $survey->id;
 
-$create_utemplate->set_data($record);
-$create_utemplate->display();
+$createmtemplate->set_data($record);
+$createmtemplate->display();
 
 // Finish the page
 echo $OUTPUT->footer();

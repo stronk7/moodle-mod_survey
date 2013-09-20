@@ -377,8 +377,8 @@ EOS;
         $integers += array_combine(range($this->lowerbound, $this->upperbound), range($this->lowerbound, $this->upperbound));
 
         if ( (!$this->required) || $searchform ) {
-            $check_label = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-            $integers += array(SURVEY_NOANSWERVALUE => $check_label);
+            $checklabel = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
+            $integers += array(SURVEY_NOANSWERVALUE => $checklabel);
         }
 
         $mform->addElement('select', $this->itemname, $elementlabel, $integers, array('class' => 'indent-'.$this->indent));
@@ -509,18 +509,18 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from child_parentvalue defines syntax for disabledIf
+     * from childparentvalue defines syntax for disabledIf
      *
-     * @param: $child_parentvalue
+     * @param: $childparentvalue
      * @return
      */
-    public function userform_get_parent_disabilitation_info($child_parentvalue) {
+    public function userform_get_parent_disabilitation_info($childparentvalue) {
         $disabilitationinfo = array();
 
         $mformelementinfo = new stdClass();
         $mformelementinfo->parentname = $this->itemname;
         $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $child_parentvalue;
+        $mformelementinfo->content = $childparentvalue;
         $disabilitationinfo[] = $mformelementinfo;
 
         return $disabilitationinfo;

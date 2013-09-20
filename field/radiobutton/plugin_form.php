@@ -115,15 +115,15 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         // clean inputs
         // first of all get the value from the field
-        $clean_options = survey_textarea_to_array($data['options']);
-        $clean_labelother = trim($data['labelother']);
-        $clean_defaultvalue = isset($data['defaultvalue']) ? trim($data['defaultvalue']) : '';
+        $cleanoptions = survey_textarea_to_array($data['options']);
+        $cleanlabelother = trim($data['labelother']);
+        $cleandefaultvalue = isset($data['defaultvalue']) ? trim($data['defaultvalue']) : '';
 
-        // build $value and $label arrays starting from $clean_options and $clean_labelother
+        // build $value and $label arrays starting from $cleanoptions and $cleanlabelother
         $values = array();
         $labels = array();
 
-        foreach ($clean_options as $option) {
+        foreach ($cleanoptions as $option) {
             if (strpos($option, SURVEY_VALUELABELSEPARATOR) === false) {
                 $values[] = trim($option);
                 $labels[] = trim($option);
@@ -133,12 +133,12 @@ class survey_pluginform extends mod_survey_itembaseform {
                 $labels[] = $pair[1];
             }
         }
-        if (!empty($clean_labelother)) {
-            if (strpos($clean_labelother, SURVEY_OTHERSEPARATOR) === false) {
-                $values[] = $clean_labelother;
-                $labels[] = $clean_labelother;
+        if (!empty($cleanlabelother)) {
+            if (strpos($cleanlabelother, SURVEY_OTHERSEPARATOR) === false) {
+                $values[] = $cleanlabelother;
+                $labels[] = $cleanlabelother;
             } else {
-                $pair = explode(SURVEY_OTHERSEPARATOR, $clean_labelother);
+                $pair = explode(SURVEY_OTHERSEPARATOR, $cleanlabelother);
                 $values[] = $pair[1];
                 $labels[] = $pair[0];
             }
@@ -163,16 +163,16 @@ class survey_pluginform extends mod_survey_itembaseform {
                 // second check
                 // each item of default has to also be among options OR has to be == to otherlabel value
                 // -----------------------------
-                if (!in_array($clean_defaultvalue, $labels)) {
-                    $errors['defaultvalue_group'] = get_string('defaultvalue_err', 'surveyfield_radiobutton', $clean_defaultvalue);
+                if (!in_array($cleandefaultvalue, $labels)) {
+                    $errors['defaultvalue_group'] = get_string('defaultvalue_err', 'surveyfield_radiobutton', $cleandefaultvalue);
                 }
 
                 // -----------------------------
                 // second check
                 // each single option item has to be unique
                 // -----------------------------
-                $array_unique = array_unique($clean_options);
-                if (count($clean_options) != count($array_unique)) {
+                $arrayunique = array_unique($cleanoptions);
+                if (count($cleanoptions) != count($arrayunique)) {
                     $errors['options'] = get_string('options_err', 'surveyfield_radiobutton', $default);
                 }
             }

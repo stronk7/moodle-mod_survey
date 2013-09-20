@@ -155,7 +155,7 @@ class report_count {
     /*
      * output_information
      */
-    public function output_information()  {
+    public function output_information() {
         global $OUTPUT;
 
         echo $OUTPUT->heading(get_string('pluginname', 'surveyreport_count'));

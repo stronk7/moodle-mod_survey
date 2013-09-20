@@ -310,7 +310,7 @@ class surveyfield_shortdate extends mod_survey_itembase {
         $option = array();
         $timenow = time();
 
-        for ( $i = 1; $i < 7; $i++ ) {
+        for ($i = 1; $i < 7; $i++) {
             $strname = 'strftime'.str_pad($i, 2, '0', STR_PAD_LEFT);
             $option[$strname] = userdate($timenow, get_string($strname, 'surveyfield_shortdate'));
         }
@@ -323,7 +323,7 @@ class surveyfield_shortdate extends mod_survey_itembase {
          * 06/2013
          * 06/13
 	     * unix time
-        */
+         */
         return $option;
     }
 
@@ -439,9 +439,9 @@ EOS;
                 $starplace = ($this->extrarow) ? $this->itemname.'_extrarow' : $this->itemname.'_group';
                 $mform->_required[] = $starplace;
             } else {
-            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'));
-            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
-            $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
+                $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'));
+                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
+                $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
             }
         } else {
             $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('star', 'survey'));

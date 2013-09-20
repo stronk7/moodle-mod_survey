@@ -326,7 +326,7 @@ class surveyfield_datetime extends mod_survey_itembase {
         $option = array();
         $timenow = time();
 
-        for ( $i = 1; $i < 13; $i++ ) {
+        for ($i = 1; $i < 13; $i++) {
             $strname = 'strftime'.str_pad($i, 2, '0', STR_PAD_LEFT);
             $option[$strname] = userdate($timenow, get_string($strname, 'surveyfield_datetime')); // Lunedì 17 Giugno, 05.15
         }
@@ -570,7 +570,7 @@ EOS;
              ($data[$this->itemname.'_hour'] == SURVEY_INVITATIONVALUE) ||
              ($data[$this->itemname.'_minute'] == SURVEY_INVITATIONVALUE) ) {
             if ($this->required) {
-                $errors[errorkey] = get_string('uerr_datetimenotsetrequired', 'surveyfield_datetime');
+                $errors[$errorkey] = get_string('uerr_datetimenotsetrequired', 'surveyfield_datetime');
             } else {
                 $a = get_string('noanswer', 'survey');
                 $errors[$errorkey] = get_string('uerr_datetimenotset', 'surveyfield_datetime', $a);

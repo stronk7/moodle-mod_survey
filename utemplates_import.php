@@ -66,10 +66,10 @@ $utemplateman = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid
 $utemplateman->prevent_direct_user_input();
 
 // -----------------------------
-// define $import_utemplate return url
+// define $importutemplate return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('utemplates_import.php', $paramurl);
-// end of: define $import_utemplate return url
+// end of: define $importutemplate return url
 // -----------------------------
 
 // -----------------------------
@@ -79,14 +79,14 @@ $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
 $formparams->utemplateman = $utemplateman;
 $formparams->filemanager_options = $utemplateman->get_filemanager_options();
-$import_utemplate = new survey_importutemplateform($formurl, $formparams);
+$importutemplate = new survey_importutemplateform($formurl, $formparams);
 // end of: prepare params for the form
 // -----------------------------
 
 // -----------------------------
 // manage form submission
 
-if ($utemplateman->formdata = $import_utemplate->get_data()) {
+if ($utemplateman->formdata = $importutemplate->get_data()) {
     $utemplateman->upload_utemplate();
 
     $paramurl = array();
@@ -112,9 +112,9 @@ echo $OUTPUT->header();
 
 $currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_UTEMPLATES_IMPORT; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-$import_utemplate->display();
+$importutemplate->display();
 
 // Finish the page
 echo $OUTPUT->footer();

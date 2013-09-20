@@ -340,13 +340,13 @@ EOS;
 
         if (!$searchform) {
             if ($defaults = survey_textarea_to_array($this->defaultvalue)) {
-                $default_keys = array();
+                $defaultkeys = array();
                 foreach ($defaults as $default) {
-                    $default_keys[] = array_search($default, $labels);
+                    $defaultkeys[] = array_search($default, $labels);
                 }
-                $mform->setDefault($this->itemname, $default_keys);
+                $mform->setDefault($this->itemname, $defaultkeys);
             }
-        // } else {
+            // } else {
             // $mform->setDefault($this->itemname, array());
         }
         /* this last item is needed because:
@@ -372,7 +372,7 @@ EOS;
                 // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
                 $starplace = ($this->extrarow) ? $this->itemname.'_extrarow' : $this->itemname;
-               $mform->_required[] = $starplace; // add the star for mandatory fields at the end of the page with server side validation too
+                $mform->_required[] = $starplace; // add the star for mandatory fields at the end of the page with server side validation too
             }
         }
     }
@@ -402,16 +402,16 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from child_parentvalue defines syntax for disabledIf
+     * from childparentvalue defines syntax for disabledIf
      *
-     * @param: $child_parentvalue
+     * @param: $childparentvalue
      * @return
      */
-    public function userform_get_parent_disabilitation_info($child_parentvalue) {
+    public function userform_get_parent_disabilitation_info($childparentvalue) {
         $disabilitationinfo = array();
 
         $labels = $this->item_get_labels_array('options');
-        $constrains = survey_textarea_to_array($child_parentvalue);
+        $constrains = survey_textarea_to_array($childparentvalue);
 
         $key = array();
         foreach ($constrains as $constrain) {
@@ -471,15 +471,15 @@ EOS;
      *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
      * ----------------------------------------------------------------------
      *
-     * @param: $child_parentcontent, $data
+     * @param: $childparentcontent, $data
      * @return $status: true: the item is welcome; false: the item must be dropped out
      */
-    public function userform_child_item_allowed_dynamic($child_parentcontent, $data) {
+    public function userform_child_item_allowed_dynamic($childparentcontent, $data) {
         // if a child has me as parent, its parentcontent attribute will be a list of elements
         $labels = $this->item_get_labels_array('options');
 
         $key = array();
-        $request = survey_textarea_to_array($child_parentcontent);
+        $request = survey_textarea_to_array($childparentcontent);
         foreach ($request as $label) {
             $index = array_search($label, $labels);
             if ($index !== false) {

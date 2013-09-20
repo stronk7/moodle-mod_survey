@@ -72,13 +72,13 @@ $formurl = new moodle_url('view_export.php', $paramurl);
 $formparams = new stdClass();
 $formparams->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $context, null, true);
 $formparams->saveresume = $survey->saveresume;
-$export_form = new survey_exportform($formurl, $formparams);
+$exportform = new survey_exportform($formurl, $formparams);
 // end of: prepare params for the form
 // -----------------------------
 
 // -----------------------------
 // manage form submission
-if ($exportman->formdata = $export_form->get_data()) {
+if ($exportman->formdata = $exportform->get_data()) {
     $exportoutcome = $exportman->survey_export();
     if (empty($exportoutcome)) {
         die;
@@ -104,7 +104,7 @@ echo $OUTPUT->header();
 
 $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 $currentpage = SURVEY_SUBMISSION_EXPORT; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 if ($exportoutcome == SURVEY_NOFIELDSSELECTED) {
     echo $OUTPUT->box(get_string('nothingtodownload', 'survey'), 'generalbox boxaligncenter boxwidthnormal');
@@ -114,7 +114,7 @@ if ($exportoutcome == SURVEY_NORECORDSFOUND) {
     echo $OUTPUT->box(get_string('emptydownload', 'survey'), 'generalbox boxaligncenter boxwidthnormal');
 }
 
-$export_form->display();
+$exportform->display();
 
 // Finish the page
 echo $OUTPUT->footer();

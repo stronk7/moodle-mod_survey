@@ -66,10 +66,10 @@ $utemplateman = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid
 $utemplateman->prevent_direct_user_input();
 
 // -----------------------------
-// define $apply_utemplate return url
+// define $applyutemplate return url
 $paramurl = array('id' => $cm->id);
 $formurl = new moodle_url('utemplates_apply.php', $paramurl);
-// end of: define $apply_utemplate return url
+// end of: define $applyutemplate return url
 // -----------------------------
 
 // -----------------------------
@@ -78,13 +78,13 @@ $formparams = new stdClass();
 $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
 $formparams->utemplateman = $utemplateman;
-$apply_utemplate = new survey_applyutemplateform($formurl, $formparams);
+$applyutemplate = new survey_applyutemplateform($formurl, $formparams);
 // end of: prepare params for the form
 // -----------------------------
 
 // -----------------------------
 // manage form submission
-if ($utemplateman->formdata = $apply_utemplate->get_data()) {
+if ($utemplateman->formdata = $applyutemplate->get_data()) {
     $utemplateman->apply_template(SURVEY_USERTEMPLATE);
 
     $redirecturl = new moodle_url('items_manage.php', $paramurl);
@@ -108,7 +108,7 @@ echo $OUTPUT->header();
 
 $currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_UTEMPLATES_APPLY; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 if (survey_count_submissions($survey->id, SURVEY_STATUSALL)) {
     echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
@@ -123,7 +123,7 @@ $a->deleteallitems = get_string('deleteallitems', 'survey');
 $message = get_string('applyutemplateinfo', 'survey', $a);
 echo $OUTPUT->box($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
 
-$apply_utemplate->display();
+$applyutemplate->display();
 
 // Finish the page
 echo $OUTPUT->footer();

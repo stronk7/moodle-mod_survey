@@ -156,7 +156,7 @@ class report_frequency {
         $this->answers->close();
     }
 
-    public function output_information($url)  {
+    public function output_information($url) {
         global $OUTPUT;
 
         echo $OUTPUT->heading(get_string('pluginname', 'surveyreport_count'));
@@ -170,7 +170,7 @@ class report_frequency {
      * @global int
      * @param string $url
      */
-    function print_graph($url) {
+    public function print_graph($url) {
         global $CFG;
 
         if (empty($CFG->gdversion)) {

@@ -176,13 +176,13 @@ class survey_submissionform extends moodleform {
                 if ($survey->saveresume) {
                     $buttonlist['pausebutton'] = get_string('pause', 'survey');
                 }
-                if (($formpage == $maxassignedpage) || ($formpage == SURVEY_RIGHT_OVERFLOW)){
+                if (($formpage == $maxassignedpage) || ($formpage == SURVEY_RIGHT_OVERFLOW)) {
                     if ($survey->history) {
-                        $submission_status = $DB->get_field('survey_submissions', 'status', array('id' => $submissionid), IGNORE_MISSING);
-                        if ($submission_status === false) { // submissions still does not exist
+                        $submissionstatus = $DB->get_field('survey_submissions', 'status', array('id' => $submissionid), IGNORE_MISSING);
+                        if ($submissionstatus === false) { // submissions still does not exist
                             $usesimplesavebutton = true;
                         } else {
-                            $usesimplesavebutton = ($submission_status == SURVEY_STATUSINPROGRESS);
+                            $usesimplesavebutton = ($submissionstatus == SURVEY_STATUSINPROGRESS);
                         }
                     } else {
                         $usesimplesavebutton = true;
@@ -212,8 +212,6 @@ class survey_submissionform extends moodleform {
                 }
             }
         }
-// echo '$mform:';
-// var_dump($mform);
     }
 
     public function validation($data, $files) {
@@ -278,7 +276,7 @@ class survey_submissionform extends moodleform {
 
                 if ($itemisenabled) {
                     $item->userform_mform_validation($data, $errors, $survey);
-                // } else {
+                    // } else {
                     // echo 'parent item didn\'t allow the validation of the child item '.$item->itemid.', plugin = '.$item->plugin.'('.$item->content.')<br />';
                 }
             }

@@ -208,17 +208,17 @@ class surveyfield_time extends mod_survey_itembase {
 
         // round defaultvalue according to step
         $timearray = $this->item_split_unix_time($record->defaultvalue);
-        $defaultvalue_hours = $timearray['hours'];
-        $defaultvalue_minute = $timearray['minutes'];
+        $defaultvaluehour = $timearray['hours'];
+        $defaultvalueminute = $timearray['minutes'];
 
-        $stepscount = intval($defaultvalue_minute/$record->step);
-        $exceed = $defaultvalue_minute % $record->step;
+        $stepscount = intval($defaultvalueminute/$record->step);
+        $exceed = $defaultvalueminute % $record->step;
         if ($exceed < ($record->step/2)) {
-            $defaultvalue_minute = $stepscount * $record->step;
+            $defaultvalueminute = $stepscount * $record->step;
         } else {
-            $defaultvalue_minute = (1 + $stepscount) * $record->step;
+            $defaultvalueminute = (1 + $stepscount) * $record->step;
         }
-        $record->defaultvalue = $this->item_time_to_unix_time($defaultvalue_hours, $defaultvalue_minute);
+        $record->defaultvalue = $this->item_time_to_unix_time($defaultvaluehour, $defaultvalueminute);
         // end of: round defaultvalue according to step
         // ------- end of fields saved in this plugin table ------- //
 

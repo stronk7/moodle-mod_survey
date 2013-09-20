@@ -96,19 +96,19 @@ $formparams->cansubmit = $userpageman->cansubmit;
 // -----------------------------
 
 if ($action == SURVEY_READONLYRESPONSE) {
-    $userpage_form = new survey_submissionform($formurl, $formparams, 'post', '', array('id' => 'remoteuserentry'), false);
+    $userpageform = new survey_submissionform($formurl, $formparams, 'post', '', array('id' => 'remoteuserentry'), false);
 } else {
-    $userpage_form = new survey_submissionform($formurl, $formparams, 'post', '', array('id' => 'remoteuserentry'));
+    $userpageform = new survey_submissionform($formurl, $formparams, 'post', '', array('id' => 'remoteuserentry'));
 }
 
 // -----------------------------
 // manage form submission
-if ($userpage_form->is_cancelled()) {
+if ($userpageform->is_cancelled()) {
     $redirecturl = new moodle_url('view_manage.php', $paramurl);
     redirect($redirecturl, get_string('usercanceled', 'survey'));
 }
 
-if ($userpageman->formdata = $userpage_form->get_data()) {
+if ($userpageman->formdata = $userpageform->get_data()) {
     // SAVE unless the "previous" button has been pressed
     //             and "pause"    button has been pressed
     $prevbutton = (isset($userpageman->formdata->prevbutton) && ($userpageman->formdata->prevbutton));
@@ -160,7 +160,7 @@ echo $OUTPUT->header();
 
 $currenttab = $userpageman->currenttab; // needed by tabs.php
 $currentpage = $userpageman->currentpage; // needed by tabs.php
-include_once($CFG->dirroot.'/mod/survey/tabs.php');
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 // -----------------------------
 // if survey is without items, alert and stop
@@ -179,7 +179,8 @@ if ($hassubmitbutton) {
         if (!$userpageman->submissions_allowed()) {
             $userpageman->submissions_exceeded_stopexecution();
         }
-    } else { // I am editing an "in progress" submission
+        // } else {
+        // I am editing an "in progress" submission
         // you are always allowed to carry on with your "in progress" submission
     }
 }
@@ -219,8 +220,8 @@ if ($hassubmitbutton) {
 // go to populate the hidden field of the form
 $prefill['formpage'] = $userpageman->formpage;
 
-$userpage_form->set_data($prefill);
-$userpage_form->display();
+$userpageform->set_data($prefill);
+$userpageform->display();
 // end of: calculate prefill for fields and prepare standard editors and filemanager
 // -----------------------------
 
