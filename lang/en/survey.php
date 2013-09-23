@@ -156,7 +156,7 @@ $string['emptymaxformpage'] = 'Required max form page (whether $add = true) is m
 $string['emptysearchform'] = 'No elements were found for this search form.<br />This could be due to elements:<ul><li>still not created;</li><li>not visible;</li><li>not searchable;</li><li>not set to belong to this form.</li></ul>To add an element to the search form use its availability feature.<br />Take care because only searchable questions type elements can be added to the search form.';
 $string['enabletemplate'] = 'Enable {$a}';
 $string['enabletemplateplugin'] = 'Enable/Disable master templates';
-$string['enteruniquename'] = 'Please choose a unique name since {$a} already exists in the choosen context';
+$string['enteruniquename'] = 'Please choose a unique name or tick the option {$a->overwrite} since "{$a->filename}" already exists in the choosen context';
 $string['exporttemplate'] = 'export template';
 $string['extranote_help'] = 'Write here a description/note about extra informations the user is supposed to know about this element.';
 $string['extranote'] = 'Additional note';

@@ -30,6 +30,51 @@
  * @return bool true
  */
 function xmldb_surveyfield_autofill_upgrade($oldversion) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2013092301) {
+
+        // Rename field element01 on table survey_autofill to element01.
+        $table = new xmldb_table('survey_autofill');
+        $field = new xmldb_field('element_1', XMLDB_TYPE_CHAR, '32', null, null, null, null, 'hiddenfield');
+
+        // Launch rename field element01.
+        $dbman->rename_field($table, $field, 'element01');
+
+        // Rename field element01 on table survey_autofill to element02.
+        $table = new xmldb_table('survey_autofill');
+        $field = new xmldb_field('element_2', XMLDB_TYPE_CHAR, '32', null, null, null, null, 'hiddenfield');
+
+        // Launch rename field element01.
+        $dbman->rename_field($table, $field, 'element02');
+
+        // Rename field element01 on table survey_autofill to element03.
+        $table = new xmldb_table('survey_autofill');
+        $field = new xmldb_field('element_3', XMLDB_TYPE_CHAR, '32', null, null, null, null, 'hiddenfield');
+
+        // Launch rename field element01.
+        $dbman->rename_field($table, $field, 'element03');
+
+        // Rename field element01 on table survey_autofill to element04.
+        $table = new xmldb_table('survey_autofill');
+        $field = new xmldb_field('element_4', XMLDB_TYPE_CHAR, '32', null, null, null, null, 'hiddenfield');
+
+        // Launch rename field element01.
+        $dbman->rename_field($table, $field, 'element04');
+
+        // Rename field element01 on table survey_autofill to element05.
+        $table = new xmldb_table('survey_autofill');
+        $field = new xmldb_field('element_5', XMLDB_TYPE_CHAR, '32', null, null, null, null, 'hiddenfield');
+
+        // Launch rename field element01.
+        $dbman->rename_field($table, $field, 'element05');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013092301, 'surveyfield', 'autofill');
+    }
+
     return true;
 }
 

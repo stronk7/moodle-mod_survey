@@ -107,6 +107,8 @@ class mod_survey_templatebase {
         $where = array('surveyid' => $this->survey->id);
         $itemseeds = $DB->get_records('survey_item', $where, 'sortindex', 'id, type, plugin');
 
+        $fs = get_file_storage();
+
         $counter = array();
         $xmltemplate = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><items></items>');
         foreach ($itemseeds as $itemseed) {
@@ -186,6 +188,17 @@ class mod_survey_templatebase {
                     // } else {
                     // it is empty, do not evaluate: jump
                 }
+
+                if ($field == 'content') {
+                    if ($files = $fs->get_area_files($item->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid)) {
+                        foreach ($files as $file) {
+                            $xmlembedded = $xmltable->addChild('embedded');
+                            $xmlembedded->addChild('filename', $file->get_filename());
+                            $xmlembedded->addChild('filecontent', base64_encode($file->get_content()));
+                        }
+                    }
+                }
+
             }
         }
 

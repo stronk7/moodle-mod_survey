@@ -243,14 +243,15 @@ class surveyfield_autofill extends mod_survey_itembase {
 
         $items = array();
         for ($i = 1; $i < 6; $i++) {
-            $fieldname = 'element_'.$i.'_select';
-            if (in_array($this->{'element_'.$i}, $referencearray)) {
-                $this->{$fieldname} = $this->{'element_'.$i};
+            $index = sprintf('%02d', $i);
+            $fieldname = 'element'.$index.'_select';
+            if (in_array($this->{'element'.$index}, $referencearray)) {
+                $this->{$fieldname} = $this->{'element'.$index};
             } else {
                 $constantname = 'SURVEYFIELD_AUTOFILL_CONTENTELEMENT'.SURVEYFIELD_AUTOFILL_CONTENTELEMENT_COUNT;
                 $this->{$fieldname} = constant($constantname);
-                $fieldname = 'element_'.$i.'_text';
-                $this->{$fieldname} = $this->{'element_'.$i};
+                $fieldname = 'element'.$index.'_text';
+                $this->{$fieldname} = $this->{'element'.$index};
             }
         }
     }
@@ -278,14 +279,15 @@ class surveyfield_autofill extends mod_survey_itembase {
 
         // 4. special management for autofill contents
         for ($i = 1; $i < 6; $i++) {
-            if (!empty($record->{'element_'.$i.'_select'})) {
+            $index = sprintf('%02d', $i);
+            if (!empty($record->{'element'.$index.'_select'})) {
                 $constantname = 'SURVEYFIELD_AUTOFILL_CONTENTELEMENT'.SURVEYFIELD_AUTOFILL_CONTENTELEMENT_COUNT;
                 // intanto aggiorna le variabili
                 // per i campi della tabella survey_autofill
-                if ($record->{'element_'.$i.'_select'} == constant($constantname)) {
-                    $record->{'element_'.$i} = $record->{'element_'.$i.'_text'};
+                if ($record->{'element'.$index.'_select'} == constant($constantname)) {
+                    $record->{'element'.$index} = $record->{'element'.$index.'_text'};
                 } else {
-                    $record->{'element_'.$i} = $record->{'element_'.$i.'_select'};
+                    $record->{'element'.$index} = $record->{'element'.$index.'_select'};
                 }
             }
         }
@@ -318,6 +320,14 @@ class surveyfield_autofill extends mod_survey_itembase {
         <xs:complexType>
             <xs:sequence>
                 <xs:element type="xs:string" name="content"/>
+                <xs:element name="embedded" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="filename"/>
+                            <xs:element type="xs:base64Binary" name="filecontent"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element type="xs:int" name="contentformat"/>
 
                 <xs:element type="xs:string" name="customnumber" minOccurs="0"/>
@@ -406,8 +416,9 @@ EOS;
 
         $olduserdata->content = '';
         for ($i = 1; $i < 6; $i++) {
-            if (!empty($this->{'element_'.$i})) {
-                switch ($this->{'element_'.$i}) {
+            $index = sprintf('%02d', $i);
+            if (!empty($this->{'element'.$index})) {
+                switch ($this->{'element'.$index}) {
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT01:
                         $olduserdata->content .= $olduserdata->id;
                         break;
@@ -454,7 +465,7 @@ EOS;
                         $olduserdata->content .= $COURSE->name;
                         break;
                     default:
-                        $olduserdata->content .= $this->{'element_'.$i};
+                        $olduserdata->content .= $this->{'element'.$index};
                 }
             }
         }
@@ -502,8 +513,9 @@ EOS;
 
         $label = '';
         for ($i = 1; $i < 6; $i++) {
-            if (!empty($this->{'element_'.$i})) {
-                switch ($this->{'element_'.$i}) {
+            $index = sprintf('%02d', $i);
+            if (!empty($this->{'element'.$index})) {
+                switch ($this->{'element'.$index}) {
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT01: // submissionid
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT02: // submissiontime
                     case SURVEYFIELD_AUTOFILL_CONTENTELEMENT03: // submissiondate
@@ -543,7 +555,7 @@ EOS;
                         $label .= $COURSE->name;
                         break;
                     default:                                    // label
-                        $label .= $this->{'element_'.$i};
+                        $label .= $this->{'element'.$index};
                 }
             }
         }

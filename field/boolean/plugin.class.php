@@ -328,6 +328,14 @@ class surveyfield_boolean extends mod_survey_itembase {
         <xs:complexType>
             <xs:sequence>
                 <xs:element type="xs:string" name="content"/>
+                <xs:element name="embedded" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="filename"/>
+                            <xs:element type="xs:base64Binary" name="filecontent"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element type="xs:int" name="contentformat"/>
 
                 <xs:element type="xs:string" name="customnumber" minOccurs="0"/>

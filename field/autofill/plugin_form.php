@@ -51,7 +51,8 @@ class survey_pluginform extends mod_survey_itembaseform {
         // ----------------------------------------
         $options = survey_autofill_get_elements($survey->id);
         for ($i = 1; $i < 6; $i++) {
-            $fieldname = 'element_'.$i;
+            $index = sprintf('%02d', $i);
+            $fieldname = 'element'.$index;
 
             $elementgroup = array();
             $elementgroup[] = $mform->createElement('selectgroups', $fieldname.'_select', '', $options);
@@ -86,7 +87,8 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $uniontext = '';
         for ($i = 1; $i < 6; $i++) {
-            $fieldname = 'element_'.$i;
+            $index = sprintf('%02d', $i);
+            $fieldname = 'element'.$index;
             $constantname = 'SURVEYFIELD_AUTOFILL_CONTENTELEMENT'.SURVEYFIELD_AUTOFILL_CONTENTELEMENT_COUNT;
             if ( ($data[$fieldname.'_select'] == constant($constantname)) && (!$data[$fieldname.'_text']) ) {
                 $errors[$fieldname.'_group'] = get_string('contenttext_err', 'surveyfield_autofill');

@@ -687,7 +687,7 @@ class mod_survey_itembase {
      * @return string
      *
      */
-    public function item_get_item_schema() {
+    public static function item_get_item_schema() {
         $schema = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $schema .= '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">'."\n";
         $schema .= '    <xs:element name="survey_item">'."\n";

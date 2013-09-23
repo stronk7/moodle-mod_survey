@@ -97,7 +97,10 @@ class survey_utemplatecreateform extends moodleform {
                 if (isset($data['overwrite'])) {
                     $xmlfile->delete();
                 } else {
-                    $errors['templatename'] = get_string('enteruniquename', 'survey', $data['templatename']);
+                    $a = new StdClass();
+                    $a->filename = $data['templatename'];
+                    $a->overwrite = get_string('overwrite', 'survey');
+                    $errors['templatename'] = get_string('enteruniquename', 'survey', $a);
                 }
                 break;
             }

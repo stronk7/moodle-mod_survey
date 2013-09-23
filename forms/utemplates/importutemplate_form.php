@@ -43,7 +43,7 @@ class survey_importutemplateform extends moodleform {
         // templateimport::importfile
         // ----------------------------------------
         $fieldname = 'importfile';
-        $mform->addElement('filemanager', $fieldname.'_filemanager', get_string($fieldname, 'survey'), null, $filemanagerptions);
+        $mform->addElement('filemanager', $fieldname.'_filemanager', get_string($fieldname, 'survey'), null, $filemanageroptions);
 
         // ----------------------------------------
         // templateimport::overwrite
@@ -124,7 +124,10 @@ class survey_importutemplateform extends moodleform {
                 if (isset($data['overwrite'])) {
                     $xmlfile->delete();
                 } else {
-                    $errors['importfile_filemanager'] = get_string('enteruniquename', 'survey', $filename);
+                    $a = new StdClass();
+                    $a->filename = $filename;
+                    $a->overwrite = get_string('overwrite', 'survey');
+                    $errors['importfile_filemanager'] = get_string('enteruniquename', 'survey', $a);
                     break;
                 }
             }
