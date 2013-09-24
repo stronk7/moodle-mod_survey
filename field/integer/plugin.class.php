@@ -33,11 +33,6 @@ require_once($CFG->dirroot.'/mod/survey/field/integer/lib.php');
 class surveyfield_integer extends mod_survey_itembase {
 
     /*
-     * $rawcontent = the text content using @@PLUGINFILE@@
-     */
-    public $rawcontent = '';
-
-    /*
      * $content = the text content of the item.
      */
     public $content = '';
@@ -494,12 +489,12 @@ EOS;
         $haslowerbound = ($this->lowerbound != 0);
         $hasupperbound = ($this->upperbound != $maximuminteger);
 
-        $a = new StdClass();
+        $a = new stdClass();
         $lowerbound = $this->lowerbound;
         $upperbound = $this->upperbound;
 
         if ($haslowerbound && $hasupperbound) {
-            $a = new StdClass();
+            $a = new stdClass();
             $a->lowerbound = $lowerbound;
             $a->upperbound = $upperbound;
 

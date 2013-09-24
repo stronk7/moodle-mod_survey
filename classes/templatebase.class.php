@@ -341,7 +341,7 @@ class mod_survey_templatebase {
             }
         } else {
             $this->mtemplatename = $this->formdata->mastertemplate;
-            $record = new StdClass();
+            $record = new stdClass();
 
             $record->id = $this->survey->id;
             $record->template = $this->mtemplatename;
@@ -404,7 +404,7 @@ class mod_survey_templatebase {
                         // echo 'I need to add: "'.$filename.'" to the filearea<br />';
 
                         // add the file described by $filename and $filecontent to filearea
-                        $filerecord = new StdClass();
+                        $filerecord = new stdClass();
                         $filerecord->contextid = $context->id;
                         $filerecord->component = 'mod_survey';
                         $filerecord->filearea = SURVEY_ITEMCONTENTFILEAREA;

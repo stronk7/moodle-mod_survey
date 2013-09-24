@@ -544,18 +544,12 @@ class mod_survey_itembase {
         // each SURVEY_ITEMFIELD has: $this->formrequires['content'] == true  and $this->flag->editorslist == array('content')
         // fieldset              has: $this->formrequires['content'] == true  and $this->flag->editorslist == null
         // pagebreak             has: $this->formrequires['content'] == false and $this->flag->editorslist == null
+        $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => -1, 'context' => $this->context);
         $fieldnames = array();
         foreach ($this->flag->editorslist as $fieldname => $filearea) {
-            $fieldnames[$fieldname] = $filearea;
-        }
-
-        foreach ($fieldnames as $fieldname => $filearea) {
-            $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => -1, 'context' => $this->context);
-
+            $saveditem = file_prepare_standard_editor($saveditem, $fieldname, $editoroptions, $this->context, 'mod_survey', $filearea, $saveditem->itemid);
             $saveditem->{$fieldname.'format'} = FORMAT_HTML;
             $saveditem->{$fieldname.'trust'} = 1;
-
-            $saveditem = file_prepare_standard_editor($saveditem, $fieldname, $editoroptions, $this->context, 'mod_survey', $filearea, $saveditem->itemid);
         }
     }
 
@@ -1189,7 +1183,7 @@ class mod_survey_itembase {
         // if I am here this means I have a parent FOR SURE
         // instead of making one more query, I assign two variables manually
         // at the beginning, $currentitem is me
-        $currentitem = new StdClass();
+        $currentitem = new stdClass();
         $currentitem->parentid = $this->get_parentid();
         $currentitem->parentcontent = $this->get_parentcontent();
         $mypage = $this->get_formpage(); // once and forever

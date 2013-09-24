@@ -1052,7 +1052,7 @@ class mod_survey_itemlist {
                         $item = survey_get_item($id, $type, $plugin);
                         if ($multilangfields = $item->item_get_multilang_fields()) {
                             foreach ($multilangfields as $plugin => $fieldnames) {
-                                $record = new StdClass();
+                                $record = new stdClass();
                                 if ($plugin == 'item') {
                                     $record->id = $item->get_itemid();
                                 } else {
@@ -1076,7 +1076,7 @@ class mod_survey_itemlist {
                         }
                     }
 
-                    $record = new StdClass();
+                    $record = new stdClass();
                     $record->id = $this->survey->id;
                     $record->template = '';
                     $DB->update_record('survey', $record);

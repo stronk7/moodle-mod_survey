@@ -33,11 +33,6 @@ require_once($CFG->dirroot.'/mod/survey/format/label/lib.php');
 class surveyformat_label extends mod_survey_itembase {
 
     /*
-     * $rawcontent = the text content using @@PLUGINFILE@@
-     */
-    public $rawcontent = '';
-
-    /*
      * $content = the text content of the item.
      */
     public $content = '';

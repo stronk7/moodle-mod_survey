@@ -124,7 +124,7 @@ class survey_importutemplateform extends moodleform {
                 if (isset($data['overwrite'])) {
                     $xmlfile->delete();
                 } else {
-                    $a = new StdClass();
+                    $a = new stdClass();
                     $a->filename = $filename;
                     $a->overwrite = get_string('overwrite', 'survey');
                     $errors['importfile_filemanager'] = get_string('enteruniquename', 'survey', $a);

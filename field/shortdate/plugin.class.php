@@ -33,11 +33,6 @@ require_once($CFG->dirroot.'/mod/survey/field/shortdate/lib.php');
 class surveyfield_shortdate extends mod_survey_itembase {
 
     /*
-     * $rawcontent = the text content using @@PLUGINFILE@@
-     */
-    public $rawcontent = '';
-
-    /*
      * $content = the text content of the item.
      */
     public $content = '';
@@ -570,7 +565,7 @@ EOS;
 
         $format = get_string('strftimemonthyear', 'langconfig');
         if ($haslowerbound && $hasupperbound) {
-            $a = new StdClass();
+            $a = new stdClass();
             $a->lowerbound = userdate($this->lowerbound, $format, 0);
             $a->upperbound = userdate($this->upperbound, $format, 0);
 

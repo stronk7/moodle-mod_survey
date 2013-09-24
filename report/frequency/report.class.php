@@ -120,7 +120,7 @@ class report_frequency {
             $tablerow = array();
 
             // answer
-            $itemvalue = new StdClass();
+            $itemvalue = new stdClass();
             $itemvalue->id = $answer->id;
             $itemvalue->content = $answer->content;
             $tablerow[] = $dummyitem->userform_db_to_export($itemvalue);

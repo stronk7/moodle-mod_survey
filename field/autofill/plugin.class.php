@@ -33,11 +33,6 @@ require_once($CFG->dirroot.'/mod/survey/field/autofill/lib.php');
 class surveyfield_autofill extends mod_survey_itembase {
 
     /*
-     * $rawcontent = the text content using @@PLUGINFILE@@
-     */
-    public $rawcontent = '';
-
-    /*
      * $content = the text content of the item.
      */
     public $content = '';

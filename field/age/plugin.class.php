@@ -33,11 +33,6 @@ require_once($CFG->dirroot.'/mod/survey/field/age/lib.php');
 class surveyfield_age extends mod_survey_itembase {
 
     /*
-     * $rawcontent = the text content using @@PLUGINFILE@@
-     */
-    public $rawcontent = '';
-
-    /*
      * $content = the text content of the item.
      */
     public $content = '';
@@ -553,7 +548,7 @@ EOS;
 
         $fillinginstruction = '';
         if ($haslowerbound && $hasupperbound) {
-            $a = new StdClass();
+            $a = new stdClass();
             $a->lowerbound = $this->item_age_to_text($lowerbound);
             $a->upperbound = $this->item_age_to_text($upperbound);
 

@@ -33,11 +33,6 @@ require_once($CFG->dirroot.'/mod/survey/field/numeric/lib.php');
 class surveyfield_numeric extends mod_survey_itembase {
 
     /*
-     * $rawcontent = the text content using @@PLUGINFILE@@
-     */
-    public $rawcontent = '';
-
-    /*
      * $content = the text content of the item.
      */
     public $content = '';
@@ -516,7 +511,7 @@ EOS;
         }
 
         if ($haslowerbound && $hasupperbound) {
-            $a = new StdClass();
+            $a = new stdClass();
             $a->lowerbound = $this->lowerbound;
             $a->upperbound = $this->upperbound;
 
