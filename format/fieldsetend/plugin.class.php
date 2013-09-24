@@ -93,9 +93,6 @@ class surveyformat_fieldsetend extends mod_survey_itembase {
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
-            $this->rawcontent = $this->content;
-            // for this plugin, $context is ALWAYS a plain text
-            // $this->content = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
         }
     }
 

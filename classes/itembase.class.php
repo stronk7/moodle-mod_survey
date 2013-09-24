@@ -772,8 +772,7 @@ class mod_survey_itembase {
      * @return
      */
     public function get_content() {
-        // TODO: what if this is an html with images, for instance?
-        return $this->content;
+        return file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
     }
 
     /*

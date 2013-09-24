@@ -190,11 +190,6 @@ class mod_survey_templatebase {
                 }
 
                 if ($field == 'content') {
-                    $val = $item->rawcontent;
-                    // content has been loaded in the item __construct using:
-                    // $this->content = file_rewrite_pluginfile_urls(...
-                    // So I need to discard it to have @@PLUGINFILE@@ instead of the real path
-
                     if ($files = $fs->get_area_files($item->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid)) {
                         foreach ($files as $file) {
                             $xmlembedded = $xmltable->addChild('embedded');

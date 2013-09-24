@@ -137,8 +137,6 @@ class surveyfield_fileupload extends mod_survey_itembase {
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
-            $this->rawcontent = $this->content;
-            $this->content = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
         }
     }
 
@@ -267,7 +265,8 @@ EOS;
         $fieldname = $this->itemname.'_filemanager';
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
+        $content = $this->get_content(); // needed because it adds file_rewrite_pluginfile_urls
+        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($content);
 
         $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
         $mform->addElement('filemanager', $fieldname, $elementlabel, null, $attachmentoptions);

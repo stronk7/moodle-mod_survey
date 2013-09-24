@@ -142,8 +142,6 @@ class surveyfield_multiselect extends mod_survey_itembase {
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
-            $this->rawcontent = $this->content;
-            $this->content = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
         }
     }
 
@@ -344,7 +342,8 @@ EOS;
      */
     public function userform_mform_element($mform, $searchform) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->content);
+        $content = $this->get_content(); // needed because it adds file_rewrite_pluginfile_urls
+        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($content);
 
         $labels = $this->item_get_labels_array('options');
 
