@@ -33,6 +33,11 @@ require_once($CFG->dirroot.'/mod/survey/field/character/lib.php');
 class surveyfield_character extends mod_survey_itembase {
 
     /*
+     * $rawcontent = the text content using @@PLUGINFILE@@
+     */
+    public $rawcontent = '';
+
+    /*
      * $content = the text content of the item.
      */
     public $content = '';
@@ -79,7 +84,7 @@ class surveyfield_character extends mod_survey_itembase {
      */
     public $indent = 0;
 
-    /*******************************************************************/
+    // -----------------------------
 
     /*
      * $defaultvalue = the value of the field when the form is initially displayed.
@@ -112,7 +117,7 @@ class surveyfield_character extends mod_survey_itembase {
      */
     public static $canbeparent = false;
 
-    /*******************************************************************/
+    // -----------------------------
 
     /*
      * Class constructor
@@ -143,6 +148,7 @@ class surveyfield_character extends mod_survey_itembase {
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
+            $this->rawcontent = $this->content;
             $this->content = file_rewrite_pluginfile_urls($this->content, 'pluginfile.php', $this->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $this->itemid);
         }
     }

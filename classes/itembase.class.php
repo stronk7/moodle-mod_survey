@@ -296,7 +296,7 @@ class mod_survey_itembase {
 
                 $DB->update_record($tablename, $record); // <-- update
                 // } else {
-                // record->content follows stnandard flow and has already been saved at record save time
+                // record->content follows standard flow and has already been saved at first save time
             }
         } else {
 
@@ -308,7 +308,7 @@ class mod_survey_itembase {
                     $record->{$fieldname.'format'} = FORMAT_HTML;
                 }
                 // } else {
-                // record->content follows stnandard flow and will be evaluated in the standard way
+                // record->content follows standard flow and will be evaluated in the standard way
             }
 
             // hide/unhide part 1

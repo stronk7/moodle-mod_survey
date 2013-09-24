@@ -190,6 +190,11 @@ class mod_survey_templatebase {
                 }
 
                 if ($field == 'content') {
+                    $val = $item->rawcontent;
+                    // content has been loaded in the item __construct using:
+                    // $this->content = file_rewrite_pluginfile_urls(...
+                    // So I need to discard it to have @@PLUGINFILE@@ instead of the real path
+
                     if ($files = $fs->get_area_files($item->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid)) {
                         foreach ($files as $file) {
                             $xmlembedded = $xmltable->addChild('embedded');
@@ -198,13 +203,12 @@ class mod_survey_templatebase {
                         }
                     }
                 }
-
             }
         }
 
         // $option == false if 100% waste of time BUT BUT BUT
         // the output in the file is well written
-        // I prefer a more readable xml file instead of some milliseconds more
+        // I prefer a more readable xml file instead of few nanoseconds saved
         $option = false;
         if ($option) {
             // echo '$xmltemplate->asXML() = <br />';
@@ -359,7 +363,11 @@ class mod_survey_templatebase {
      * @return
      */
     public function add_survey_from_template($templatetype) {
-        global $DB, $CFG;
+        global $DB, $CFG, $PAGE;
+
+        $cm = $PAGE->cm;
+        $context = context_module::instance($cm->id);
+        $fs = get_file_storage();
 
         if ($templatetype == SURVEY_MASTERTEMPLATE) { // it is multilang
             $templatename = $this->mtemplatename;
@@ -379,21 +387,41 @@ class mod_survey_templatebase {
         }
 
         $simplexml = new SimpleXMLElement($templatecontent);
-        // $simplexml = simplexml_load_string($templatecontent);
         // echo '<h2>Items saved in the file ('.count($simplexml->item).')</h2>';
 
         $sortindexoffset = $DB->get_field('survey_item', 'MAX(sortindex)', array('surveyid' => $this->survey->id));
         foreach ($simplexml->children() as $xmlitem) {
             // echo '<h3>Count of tables for the current item: '.count($xmlitem->children()).'</h3>';
-            foreach ($xmlitem->children() as $xmltable) {
+            foreach ($xmlitem->children() as $xmltable) { // survey_item and survey_<<plugin>>
                 $tablename = $xmltable->getName();
                 // echo '<h4>Count of fields of the table '.$xmltablename.': '.count($xmltable->children()).'</h4>';
                 $record = array();
                 foreach ($xmltable->children() as $xmlfield) {
                     $fieldname = $xmlfield->getName();
-                    $fieldvalue = (string)$xmlfield;
 
-                    $record[$fieldname] = $fieldvalue;
+                    // tag <embedded> always belong to survey_<<plugin>> table
+                    // so: ($fieldname == 'embedded') only when survey_item has already been saved
+                    // so: $itemid is known
+                    if ($fieldname == 'embedded') {
+                        $filename = $xmlfield->children();
+                        $filecontent = base64_decode($xmlfield->children());
+
+                        // echo 'I need to add: "'.$filename.'" to the filearea<br />';
+
+                        // add the file described by $filename and $filecontent to filearea
+                        $filerecord = new StdClass();
+                        $filerecord->contextid = $context->id;
+                        $filerecord->component = 'mod_survey';
+                        $filerecord->filearea = SURVEY_ITEMCONTENTFILEAREA;
+                        $filerecord->itemid = $itemid;
+                        $filerecord->filepath = '/';
+                        $filerecord->filename = $filename;
+                        $fileinfo = $fs->create_file_from_string($filerecord, $filecontent);
+                    } else {
+                        $fieldvalue = (string)$xmlfield;
+
+                        $record[$fieldname] = $fieldvalue;
+                    }
                 }
 
                 unset($record['id']);
