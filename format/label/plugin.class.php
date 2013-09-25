@@ -244,7 +244,7 @@ EOS;
             $content .= html_writer::start_tag('div', array('class' => 'itemlabel')); // it will never get grayed because class != fitem
             $content .= html_writer::start_tag('div', array('class' => 'fstatic fullwidth'));
             // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
-            $content .= $this->content;
+            $content .= $this->get_content();
             // $content .= html_writer::end_tag('div');
             $content .= html_writer::end_tag('div');
             $content .= html_writer::end_tag('div');
@@ -257,7 +257,7 @@ EOS;
 
             $content = '';
             $content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
-            $content .= $this->content;
+            $content .= $this->get_content();
             $content .= html_writer::end_tag('div');
             // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
 

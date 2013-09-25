@@ -190,7 +190,7 @@ EOS;
     public function userform_mform_element($mform, $searchform) {
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        $mform->addElement('header', $this->itemname, $this->content);
+        $mform->addElement('header', $this->itemname, $this->get_content());
     }
 
     /*
