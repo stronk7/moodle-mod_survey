@@ -389,7 +389,7 @@ class mod_survey_templatebase {
             // echo '<h3>Count of tables for the current item: '.count($xmlitem->children()).'</h3>';
             foreach ($xmlitem->children() as $xmltable) { // survey_item and survey_<<plugin>>
                 $tablename = $xmltable->getName();
-                // echo '<h4>Count of fields of the table '.$xmltablename.': '.count($xmltable->children()).'</h4>';
+                // echo '<h4>Count of fields of the table '.$tablename.': '.count($xmltable->children()).'</h4>';
                 $record = array();
                 foreach ($xmltable->children() as $xmlfield) {
                     $fieldname = $xmlfield->getName();
@@ -398,8 +398,16 @@ class mod_survey_templatebase {
                     // so: ($fieldname == 'embedded') only when survey_item has already been saved
                     // so: $itemid is known
                     if ($fieldname == 'embedded') {
-                        $filename = $xmlfield->children();
-                        $filecontent = base64_decode($xmlfield->children());
+                        // echo '<h5>Count of attributes of the field '.$fieldname.': '.count($xmlfield->children()).'</h5>';
+                        foreach ($xmlfield->children() as $xmlfileattribute) {
+                            $fileattributename = $xmlfileattribute->getName();
+                            if ($fileattributename == 'filename') {
+                                $filename = $xmlfileattribute;
+                            }
+                            if ($fileattributename == 'filecontent') {
+                                $filecontent = base64_decode($xmlfileattribute);
+                            }
+                        }
 
                         // echo 'I need to add: "'.$filename.'" to the filearea<br />';
 
