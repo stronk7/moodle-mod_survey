@@ -535,9 +535,12 @@ function survey_cron() {
     //     these records are older than maximum allowed time delay
     $maxinputdelay = get_config('survey', 'maxinputdelay');
     foreach ($permission as $saveresume) {
+        if (($saveresume == 1) && ($maxinputdelay == 0)) { // maxinputdelay == 0 means, please don't delete
+            continue;
+        }
         if ($surveys = $DB->get_records('survey', array('saveresume' => $saveresume), null, 'id')) {
             $where = 'surveyid IN ('.implode(',', array_keys($surveys)).') AND status = :status AND timecreated < :sofar';
-            $sofar = ($saveresume == 1) ? ($maxinputdelay*3600) : (4*3600);
+            $sofar = ($saveresume == 0) ? (4*3600) : ($maxinputdelay*3600);
             $sofar = time() - $sofar;
             $whereparams = array('status' => SURVEY_STATUSINPROGRESS, 'sofar' => $sofar);
             if ($submissionidlist = $DB->get_fieldset_select('survey_submissions', 'id', $where, $whereparams)) {

@@ -393,8 +393,7 @@ EOS;
      */
     public function userform_mform_element($mform, $searchform) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $content = $this->get_content(); // needed because it adds file_rewrite_pluginfile_urls
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($content);
+        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->get_content());
 
         $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent, 'itemid' => $this->itemid));
         $mform->setType($this->itemname, PARAM_RAW); // see: moodlelib.php lines 133+

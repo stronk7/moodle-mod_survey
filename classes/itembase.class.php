@@ -545,7 +545,6 @@ class mod_survey_itembase {
         // fieldset              has: $this->formrequires['content'] == true  and $this->flag->editorslist == null
         // pagebreak             has: $this->formrequires['content'] == false and $this->flag->editorslist == null
         $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => -1, 'context' => $this->context);
-        $fieldnames = array();
         foreach ($this->flag->editorslist as $fieldname => $filearea) {
             $saveditem = file_prepare_standard_editor($saveditem, $fieldname, $editoroptions, $this->context, 'mod_survey', $filearea, $saveditem->itemid);
             $saveditem->{$fieldname.'format'} = FORMAT_HTML;

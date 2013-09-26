@@ -260,8 +260,7 @@ EOS;
         $fieldname = $this->itemname.'_filemanager';
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $content = $this->get_content(); // needed because it adds file_rewrite_pluginfile_urls
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($content);
+        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->get_content());
 
         $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
         $mform->addElement('filemanager', $fieldname, $elementlabel, null, $attachmentoptions);

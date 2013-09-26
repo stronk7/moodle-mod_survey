@@ -352,8 +352,7 @@ EOS;
         // TODO: make issearchable true
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $content = $this->get_content(); // needed because it adds file_rewrite_pluginfile_urls
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($content);
+        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->get_content());
 
         if (!empty($this->useeditor)) {
             $fieldname = $this->itemname.'_editor';
