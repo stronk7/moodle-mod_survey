@@ -531,11 +531,10 @@ class mod_survey_itembase {
      * defines presets for the editor field of surveyitem in itembase_form.php
      * (copied from moodle20/cohort/edit.php)
      *
-     * @param $cmid
      * @param &$saveditem
      * @return
      */
-    public function item_set_editor($cmid, &$saveditem) {
+    public function item_set_editor() {
         if (!$this->flag->editorslist) {
             return;
         }
@@ -546,9 +545,9 @@ class mod_survey_itembase {
         // pagebreak             has: $this->formrequires['content'] == false and $this->flag->editorslist == null
         $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => -1, 'context' => $this->context);
         foreach ($this->flag->editorslist as $fieldname => $filearea) {
-            $saveditem = file_prepare_standard_editor($saveditem, $fieldname, $editoroptions, $this->context, 'mod_survey', $filearea, $saveditem->itemid);
-            $saveditem->{$fieldname.'format'} = FORMAT_HTML;
-            $saveditem->{$fieldname.'trust'} = 1;
+            $this->{$fieldname.'format'} = FORMAT_HTML;
+            $this->{$fieldname.'trust'} = 1;
+            file_prepare_standard_editor($this, $fieldname, $editoroptions, $this->context, 'mod_survey', $filearea, $this->itemid);
         }
     }
 

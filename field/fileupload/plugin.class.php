@@ -38,7 +38,11 @@ class surveyfield_fileupload extends mod_survey_itembase {
     public $content = '';
 
     /*
-     * $contentformat = the text format of the item.
+     * $contenttrust
+     */
+    public $contenttrust = 1;
+
+    /*
      * public $contentformat = '';
      */
     public $contentformat = '';

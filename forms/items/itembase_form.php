@@ -99,6 +99,27 @@ class mod_survey_itembaseform extends moodleform {
         }
 
         // ----------------------------------------
+        // newitem::required
+        // ----------------------------------------
+        $fieldname = 'required';
+        if ($item->get_form_requires($fieldname)) {
+            $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
+            $mform->addHelpButton($fieldname, $fieldname, 'survey');
+            $mform->setType($fieldname, PARAM_INT);
+        }
+
+        // ----------------------------------------
+        // newitem::indent
+        // ----------------------------------------
+        $fieldname = 'indent';
+        if ($item->get_form_requires($fieldname)) {
+            $options = array_combine(range(0, 9), range(0, 9));
+            $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
+            $mform->addHelpButton($fieldname, $fieldname, 'survey');
+            $mform->setDefault($fieldname, '0');
+        }
+
+        // ----------------------------------------
         // newitem::extrarow
         // ----------------------------------------
         $fieldname = 'extrarow';
@@ -119,11 +140,11 @@ class mod_survey_itembaseform extends moodleform {
         }
 
         // ----------------------------------------
-        // newitem::extranote
+        // newitem::customnumber
         // ----------------------------------------
-        $fieldname = 'extranote';
+        $fieldname = 'customnumber';
         if ($item->get_form_requires($fieldname)) {
-            $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'), array('class' => 'longfield'));
+            $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_TEXT);
         }
@@ -139,37 +160,6 @@ class mod_survey_itembaseform extends moodleform {
         }
 
         // ----------------------------------------
-        // newitem::customnumber
-        // ----------------------------------------
-        $fieldname = 'customnumber';
-        if ($item->get_form_requires($fieldname)) {
-            $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'));
-            $mform->addHelpButton($fieldname, $fieldname, 'survey');
-            $mform->setType($fieldname, PARAM_TEXT);
-        }
-
-        // ----------------------------------------
-        // newitem::indent
-        // ----------------------------------------
-        $fieldname = 'indent';
-        if ($item->get_form_requires($fieldname)) {
-            $options = array_combine(range(0, 9), range(0, 9));
-            $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
-            $mform->addHelpButton($fieldname, $fieldname, 'survey');
-            $mform->setDefault($fieldname, '0');
-        }
-
-        // ----------------------------------------
-        // newitem::required
-        // ----------------------------------------
-        $fieldname = 'required';
-        if ($item->get_form_requires($fieldname)) {
-            $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
-            $mform->addHelpButton($fieldname, $fieldname, 'survey');
-            $mform->setType($fieldname, PARAM_INT);
-        }
-
-        // ----------------------------------------
         // newitem::variable
         // ----------------------------------------
         // for SURVEY_TYPEFIELD only
@@ -178,6 +168,16 @@ class mod_survey_itembaseform extends moodleform {
             $options = array('maxlength' => 64, 'size' => 12, 'class' => 'longfield');
 
             $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'), $options);
+            $mform->addHelpButton($fieldname, $fieldname, 'survey');
+            $mform->setType($fieldname, PARAM_TEXT);
+        }
+
+        // ----------------------------------------
+        // newitem::extranote
+        // ----------------------------------------
+        $fieldname = 'extranote';
+        if ($item->get_form_requires($fieldname)) {
+            $mform->addElement('text', $fieldname, get_string($fieldname, 'survey'), array('class' => 'longfield'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->setType($fieldname, PARAM_TEXT);
         }

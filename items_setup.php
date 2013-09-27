@@ -79,7 +79,8 @@ require_once($CFG->dirroot.'/mod/survey/'.$itemlistman->type.'/'.$itemlistman->p
 // get item
 $itemclass = 'survey'.$itemlistman->type.'_'.$itemlistman->plugin;
 $item = new $itemclass($itemlistman->itemid);
-$item->item_set_editor($cm->id, $item);
+
+$item->item_set_editor();
 // end of: get item
 // -----------------------------
 

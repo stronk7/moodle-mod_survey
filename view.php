@@ -114,8 +114,10 @@ if ($userpageman->formdata = $userpageform->get_data()) {
     $pausebutton = (isset($userpageman->formdata->pausebutton) && ($userpageman->formdata->pausebutton));
 
     if (!$prevbutton && !$pausebutton) {
-        $userpageman->save_user_data();
-        $userpageman->notifyroles();
+        if ($userpageman->currentpage != SURVEY_ITEMS_PREVIEW) {
+            $userpageman->save_user_data();
+            $userpageman->notifyroles();
+        }
     }
 
     // if "pause" button has been pressed, redirect

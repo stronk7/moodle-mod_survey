@@ -38,7 +38,11 @@ class surveyfield_shortdate extends mod_survey_itembase {
     public $content = '';
 
     /*
-     * $contentformat = the text format of the item.
+     * $contenttrust
+     */
+    public $contenttrust = 1;
+
+    /*
      * public $contentformat = '';
      */
     public $contentformat = '';
@@ -87,14 +91,24 @@ class surveyfield_shortdate extends mod_survey_itembase {
     public $defaultoption = SURVEY_INVITATIONDEFAULT;
 
     /*
+     * $downloadformat = the format of the content once downloaded
+     */
+    public $downloadformat = '';
+
+    /*
      * $defaultvalue = the value of the field when the form is initially displayed.
      */
     public $defaultvalue = 0;
 
     /*
-     * $downloadformat = the format of the content once downloaded
+     * $defaultvalue_month
      */
-    public $downloadformat = '';
+    public $defaultvalue_month = 0;
+
+    /*
+     * $defaultvalue_year
+     */
+    public $defaultvalue_year = 0;
 
     /*
      * $lowerbound = the minimum allowed short date
@@ -102,9 +116,29 @@ class surveyfield_shortdate extends mod_survey_itembase {
     public $lowerbound = 0;
 
     /*
+     * $lowerbound_month
+     */
+    public $lowerbound_month = 0;
+
+    /*
+     * $lowerbound_year
+     */
+    public $lowerbound_year = 0;
+
+    /*
      * $upperbound = the maximum allowed short date
      */
     public $upperbound = 0;
+
+    /*
+     * $upperbound_month
+     */
+    public $upperbound_month = 0;
+
+    /*
+     * $upperbound_year
+     */
+    public $upperbound_year = 0;
 
     /*
      * $flag = features describing the object

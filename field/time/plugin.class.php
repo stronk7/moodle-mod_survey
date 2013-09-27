@@ -38,7 +38,11 @@ class surveyfield_time extends mod_survey_itembase {
     public $content = '';
 
     /*
-     * $contentformat = the text format of the item.
+     * $contenttrust
+     */
+    public $contenttrust = 1;
+
+    /*
      * public $contentformat = '';
      */
     public $contentformat = '';
@@ -92,14 +96,24 @@ class surveyfield_time extends mod_survey_itembase {
     public $defaultoption = SURVEY_INVITATIONDEFAULT;
 
     /*
+     * $downloadformat = the format of the content once downloaded
+     */
+    public $downloadformat = '';
+
+    /*
      * $defaultvalue = the value of the field when the form is initially displayed.
      */
     public $defaultvalue = 0;
 
     /*
-     * $downloadformat = the format of the content once downloaded
+     * $defaultvalue_hour
      */
-    public $downloadformat = '';
+    public $defaultvalue_hour = 0;
+
+    /*
+     * $defaultvalue_minute
+     */
+    public $defaultvalue_minute = 0;
 
     /*
      * $lowerbound = the minimum allowed time
@@ -107,9 +121,29 @@ class surveyfield_time extends mod_survey_itembase {
     public $lowerbound = 0;
 
     /*
+     * $lowerbound_hour
+     */
+    public $lowerbound_hour = 0;
+
+    /*
+     * $lowerbound_minute
+     */
+    public $lowerbound_minute = 0;
+
+    /*
      * $upperbound = the maximum allowed time
      */
     public $upperbound = 86340;
+
+    /*
+     * $upperbound_hour
+     */
+    public $upperbound_hour = 0;
+
+    /*
+     * $upperbound_minute
+     */
+    public $upperbound_minute = 0;
 
     /*
      * $flag = features describing the object

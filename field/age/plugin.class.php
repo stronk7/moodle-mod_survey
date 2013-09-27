@@ -38,7 +38,11 @@ class surveyfield_age extends mod_survey_itembase {
     public $content = '';
 
     /*
-     * $contentformat = the text format of the item.
+     * $contenttrust
+     */
+    public $contenttrust = 1;
+
+    /*
      * public $contentformat = '';
      */
     public $contentformat = '';
@@ -87,9 +91,29 @@ class surveyfield_age extends mod_survey_itembase {
     public $defaultvalue = -2635200;
 
     /*
+     * $defaultvalue_year
+     */
+    public $defaultvalue_year = 0;
+
+    /*
+     * $defaultvalue_month
+     */
+    public $defaultvalue_month = 0;
+
+    /*
      * $lowerbound = the minimum allowed age
      */
     public $lowerbound = -2635200;
+
+    /*
+     * $lowerbound_year
+     */
+    public $lowerbound_year = 0;
+
+    /*
+     * $lowerbound_month
+     */
+    public $lowerbound_month = 0;
 
     /*
      * $upperbound = the maximum allowed age

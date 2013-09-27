@@ -38,7 +38,11 @@ class surveyfield_autofill extends mod_survey_itembase {
     public $content = '';
 
     /*
-     * $contentformat = the text format of the item.
+     * $contenttrust
+     */
+    public $contenttrust = 1;
+
+    /*
      * public $contentformat = '';
      */
     public $contentformat = '';
@@ -92,9 +96,29 @@ class surveyfield_autofill extends mod_survey_itembase {
     public $element01 = '';
 
     /*
+     * $element01_select
+     */
+    public $element01_select = '';
+
+    /*
+     * $element01_text
+     */
+    public $element01_text = '';
+
+    /*
      * $element02 = element for $content
      */
     public $element02 = '';
+
+    /*
+     * $element02_select
+     */
+    public $element02_select = '';
+
+    /*
+     * $element02_text
+     */
+    public $element02_text = '';
 
     /*
      * $element03 = element for $content
@@ -102,14 +126,44 @@ class surveyfield_autofill extends mod_survey_itembase {
     public $element03 = '';
 
     /*
+     * $element03_select
+     */
+    public $element03_select = '';
+
+    /*
+     * $element03_text
+     */
+    public $element03_text = '';
+
+    /*
      * $element04 = element for $content
      */
     public $element04 = '';
 
     /*
+     * $element04_select
+     */
+    public $element04_select = '';
+
+    /*
+     * $element04_text
+     */
+    public $element04_text = '';
+
+    /*
      * $element05 = element for $content
      */
     public $element05 = '';
+
+    /*
+     * $element05_select
+     */
+    public $element05_select = '';
+
+    /*
+     * $element05_text
+     */
+    public $element05_text = '';
 
     /*
      * $flag = features describing the object
