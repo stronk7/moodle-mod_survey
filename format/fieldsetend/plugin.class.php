@@ -214,8 +214,7 @@ EOS;
             $mform->closeHeaderBefore($this->itemname);
         } else {
             $cm = $PAGE->cm;
-            $context = context_module::instance($cm->id);
-            $canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $context, null, true);
+            $canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
             $sql = 'SELECT id, type, plugin
                 FROM {survey_item}
                 WHERE surveyid = :surveyid
@@ -229,10 +228,9 @@ EOS;
                 LIMIT 1';
 
             $whereparams = array('surveyid' => $cm->instance, 'sortindex' => $this->sortindex);
-            $itemseed = $DB->get_record_sql($sql, $whereparams, IGNORE_MISSING);
-            if ($itemseed) { // The element really exists
+            if ($itemseed = $DB->get_record_sql($sql, $whereparams, IGNORE_MISSING)) { // The element really exists
                 $nextitem = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
-                if ($nextitem->extrarow) {
+                if (isset($nextitem->extrarow) && $nextitem->extrarow) {
                     $mform->closeHeaderBefore($nextitem->itemname.'_extrarow');
                 } else {
                     if ($nextitem->userform_mform_element_is_group()) {

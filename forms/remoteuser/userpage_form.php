@@ -205,8 +205,9 @@ class survey_submissionform extends moodleform {
                 $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
                 $mform->setType('buttonar', PARAM_RAW);
                 $mform->closeHeaderBefore('buttonar');
-            } else {
+            } else { // only one button here
                 foreach ($buttonlist as $name => $label) {
+                    $mform->closeHeaderBefore($name);
                     $mform->addElement('submit', $name, $label);
                 }
             }

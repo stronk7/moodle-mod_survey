@@ -210,7 +210,7 @@ class mod_survey_userformmanager {
         global $CFG, $DB;
 
         // $canaccessadvanceditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$formpage
-        list($sql, $whereparams) = survey_fetch_items_seeds($this->survey->id, $this->canaccessadvanceditems, false, SURVEY_TYPEFIELD, $formpage);
+        list($sql, $whereparams) = survey_fetch_items_seeds($this->survey->id, $this->canaccessadvanceditems, false, false, $formpage);
         $itemseeds = $DB->get_records_sql($sql, $whereparams);
 
         // start looking ONLY at empty($item->parentid) because it doesn't involve extra queries

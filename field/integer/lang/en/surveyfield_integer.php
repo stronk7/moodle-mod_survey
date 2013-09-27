@@ -45,4 +45,4 @@ $string['uerr_lowerthanminimum'] = 'Provided value is lower than minimum allowed
 $string['uerr_outofinternalrange'] = 'Provided value does not fall within the specified range';
 $string['upperbound_help'] = 'The biggest integer the user is allowed to enter';
 $string['upperbound'] = 'Upper bound';
-$string['userfriendlypluginname'] = 'Integer';
+$string['userfriendlypluginname'] = 'Integer (small)';
