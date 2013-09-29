@@ -97,7 +97,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         // "noanswer" default option is not allowed when the item is mandatory
         if ( ($data['defaultoption'] == SURVEY_NOANSWERDEFAULT) && isset($data['required']) ) {
             $a = get_string('noanswer', 'survey');
-            $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);
+            $errors['defaultoption_group'] = get_string('notalloweddefault', 'survey', $a);
         }
 
         return $errors;

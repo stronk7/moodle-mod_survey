@@ -83,6 +83,22 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $errors = parent::validation($data, $files);
 
+        $filetypes = array_map('trim', explode(',', $data['filetypes']));
+        foreach ($filetypes as $filetype) {
+            $testtype = str_replace('.', '', $filetype);
+            if (!$filetype) {
+                $errors['filetypes'] = get_string('extensionisempty', 'surveyfield_fileupload');
+                break;
+            }
+            if ($filetype[0] != '.') {
+                $errors['filetypes'] = get_string('extensionmissingdot', 'surveyfield_fileupload');
+                break;
+            }
+            if (strlen($testtype) != strlen($testtype) - 1) {
+                $errors['filetypes'] = get_string('extensiononlyonedot', 'surveyfield_fileupload');
+                break;
+            }
+        }
         return $errors;
     }
 }

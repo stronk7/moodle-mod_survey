@@ -1007,13 +1007,13 @@ class mod_survey_userformmanager {
                 break;
             case SURVEY_EDITRESPONSE:
                 $condition1 = ($submission);
-                $condition2 = has_extrapermission('edit', $this->survey, $mygroups, $submission->userid);
+                $condition2 = survey_user_has_extrapermission('edit', $this->survey, $mygroups, $submission->userid);
                 $condition3 = ($submission->userid == $USER->id) && ($submission->status == SURVEY_STATUSINPROGRESS);
                 $allowed = $condition1 && ($condition2 || $condition3);
                 break;
             case SURVEY_READONLYRESPONSE:
                 $condition1 = ($submission);
-                $condition2 = has_extrapermission('read', $this->survey, $mygroups, $submission->userid);
+                $condition2 = survey_user_has_extrapermission('read', $this->survey, $mygroups, $submission->userid);
                 $allowed = $condition1 && $condition2;
                 break;
             default:

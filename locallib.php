@@ -77,12 +77,12 @@ function survey_textarea_to_array($textareacontent) {
 }
 
 /*
- * has_extrapermission
- * advancedpermissions
+ * survey_user_has_extrapermission
+ *
  * @param $survey, $mygroups, $ownerid
- * @return whether I am allowed to see the survey submitted by the user belonging to $ownergroup
+ * @return whether user is allowed to see responses submitted by gropumates
  */
-function has_extrapermission($extrapermission, $survey, $mygroups, $ownerid) {
+function survey_user_has_extrapermission($extrapermission, $survey, $mygroups, $ownerid) {
     global $USER, $COURSE;
 
     if (!in_array($extrapermission, array('read', 'edit', 'delete'))) {

@@ -177,7 +177,7 @@ class mod_survey_exportmanager {
             $oldrichsubmissionid = 0;
 
             foreach ($richsubmissions as $richsubmission) {
-                if (!$this->canmanageallsubmissions && !has_extrapermission('read', $this->survey, $mygroups, $richsubmission->userid)) {
+                if (!$this->canmanageallsubmissions && !survey_user_has_extrapermission('read', $this->survey, $mygroups, $richsubmission->userid)) {
                     continue;
                 }
 

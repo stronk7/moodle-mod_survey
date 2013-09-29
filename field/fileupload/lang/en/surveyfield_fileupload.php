@@ -32,3 +32,6 @@ $string['filetypes'] = 'Allowed file types (comma separated)';
 $string['allowedtypes'] = 'Allowed file types are: ';
 $string['maxfiles_help'] = 'Maximum uploadable attachments';
 $string['maxfiles'] = 'Maximum files';
+$string['extensionmissingdot'] = 'Extension/s start with a dot';
+$string['extensiononlyonedot'] = 'Only one dot is allowed in the extension';
+$string['extensionisempty'] = 'Extension can not be empty. Probabily you typed two closed comma';

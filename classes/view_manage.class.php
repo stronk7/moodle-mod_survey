@@ -426,7 +426,7 @@ class mod_survey_submissionmanager {
             }
 
             foreach ($submissions as $submission) {
-                if (!$this->canmanageallsubmissions && !has_extrapermission('read', $this->survey, $mygroups, $submission->userid)) {
+                if (!$this->canmanageallsubmissions && !survey_user_has_extrapermission('read', $this->survey, $mygroups, $submission->userid)) {
                     continue;
                 }
 
@@ -455,7 +455,7 @@ class mod_survey_submissionmanager {
 
                 // actions
                 $paramurl['submissionid'] = $submission->submissionid;
-                if ($this->canmanageallsubmissions || has_extrapermission('edit', $this->survey, $mygroups, $submission->userid)) { // "edit" or "edit as new"
+                if ($this->canmanageallsubmissions || survey_user_has_extrapermission('edit', $this->survey, $mygroups, $submission->userid)) { // "edit" or "edit as new"
                     $paramurl['act'] = SURVEY_EDITRESPONSE;
                     if ($submission->status == SURVEY_STATUSCLOSED) {
                         if ($this->survey->history) {
@@ -474,7 +474,7 @@ class mod_survey_submissionmanager {
                     $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
                 } else { // read only
-                    // I don't have canmanageallsubmissions || has_extrapermission
+                    // I don't have canmanageallsubmissions || survey_user_has_extrapermission
                     // but if I meet an "in progress" submission of mine...
                     if (($submission->status == SURVEY_STATUSINPROGRESS) && ($submission->userid == $USER->id)) {
                         $paramurl['act'] = SURVEY_EDITRESPONSE;
@@ -491,7 +491,7 @@ class mod_survey_submissionmanager {
                     }
                 }
 
-                if ($this->canmanageallsubmissions || has_extrapermission('delete', $this->survey, $mygroups, $submission->userid)) { // delete
+                if ($this->canmanageallsubmissions || survey_user_has_extrapermission('delete', $this->survey, $mygroups, $submission->userid)) { // delete
                     $paramurl['act'] = SURVEY_DELETERESPONSE;
                     $basepath = new moodle_url('view_manage.php', $paramurl);
                     $icons .= '&nbsp;<a class="editing_update" title="'.$deletetitle.'" href="'.$basepath.'">';
@@ -542,13 +542,13 @@ class mod_survey_submissionmanager {
         $mygroups = survey_get_my_groups($this->cm);
         switch ($this->action) {
             case SURVEY_EDITRESPONSE:
-                $allowed = has_extrapermission('edit', $this->survey, $mygroups, $ownerid);
+                $allowed = survey_user_has_extrapermission('edit', $this->survey, $mygroups, $ownerid);
                 break;
             case SURVEY_READONLYRESPONSE:
-                $allowed = has_extrapermission('read', $this->survey, $mygroups, $ownerid);
+                $allowed = survey_user_has_extrapermission('read', $this->survey, $mygroups, $ownerid);
                 break;
             case SURVEY_DELETERESPONSE:
-                $allowed = has_extrapermission('delete', $this->survey, $mygroups, $ownerid);
+                $allowed = survey_user_has_extrapermission('delete', $this->survey, $mygroups, $ownerid);
                 break;
             case SURVEY_RESPONSETOPDF:
                 $allowed = has_capability('mod/survey:submissiontopdf', $this->context);
