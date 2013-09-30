@@ -80,7 +80,7 @@ $exportform = new survey_exportform($formurl, $formparams);
 if ($exportman->formdata = $exportform->get_data()) {
     $exportoutcome = $exportman->survey_export();
     if (empty($exportoutcome)) {
-        die;
+        die();
     }
 } else {
     $exportoutcome = null;

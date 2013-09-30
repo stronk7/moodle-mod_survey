@@ -41,4 +41,5 @@ $string['hasmaxlength'] = 'Text is supposed to be shorter or equal than {$a} cha
 $string['texttoolong'] = 'Text is too long';
 $string['texttooshort'] = 'Text is too short';
 $string['maxlengthlowerthanminlength'] = 'Maximum length can not be lowwer-equal than minimum length';
+$string['maxlengthnotinteger'] = 'Maximum length must be integer';
 

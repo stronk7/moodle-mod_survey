@@ -153,7 +153,7 @@ class mod_survey_searchmanager {
         echo $OUTPUT->continue_button($continueurl);
 
         echo $OUTPUT->footer();
-        die;
+        die();
     }
 
 }

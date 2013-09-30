@@ -719,7 +719,7 @@ class mod_survey_userformmanager {
         $continueurl = new moodle_url('/course/view.php', array('id' => $COURSE->id));
         echo $OUTPUT->continue_button($continueurl);
         echo $OUTPUT->footer();
-        die;
+        die();
     }
 
     /*
@@ -779,7 +779,7 @@ class mod_survey_userformmanager {
 
         echo $OUTPUT->continue_button($continueurl);
         echo $OUTPUT->footer();
-        die;
+        die();
     }
 
     /*
@@ -796,7 +796,7 @@ class mod_survey_userformmanager {
         if ($savebutton || $saveasnewbutton) {
             $this->show_thanks_page();
             echo $OUTPUT->footer();
-            die;
+            die();
         }
     }
 

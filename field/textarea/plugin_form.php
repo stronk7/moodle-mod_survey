@@ -107,7 +107,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         if (strlen($data['maxlength'])) {
             $isinteger = (bool)(strval(intval($data['maxlength'])) == strval($data['maxlength']));
             if (!$isinteger) {
-                $errors['maxlength'] = 'maxlength non è intero';
+                $errors['maxlength'] = get_string('maxlengthnotinteger', 'surveyfield_textarea');
             } else {
                 if ($data['maxlength'] <= $data['minlength']) {
                     if (!$data['maxlength']) {

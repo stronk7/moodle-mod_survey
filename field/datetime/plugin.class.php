@@ -405,18 +405,18 @@ class surveyfield_datetime extends mod_survey_itembase {
 
         for ($i = 1; $i < 13; $i++) {
             $strname = 'strftime'.str_pad($i, 2, '0', STR_PAD_LEFT);
-            $option[$strname] = userdate($timenow, get_string($strname, 'surveyfield_datetime')); // Lunedì 17 Giugno, 05.15
+            $option[$strname] = userdate($timenow, get_string($strname, 'surveyfield_datetime')); // Monday 17 June, 05.15
         }
         $option['unixtime'] = get_string('unixtime', 'survey');
         /*
-         * Venerdì, 21 Giugno 2013, 08:14
-         * Venerdì, 21 Giugno 2013, 8:14 am
-         * Ven, 21 Giu 2013, 8:14 am
-         * Ven, 21 Giu 2013, 08:14
-         * 21 Giugno 2013, 08:14
-         * 21 Giugno 2013, 8:14 am
-         * 21 Giu, 08:14
-         * 21 Giu, 8:14 am
+         * Friday, 21 June 2013, 08:14
+         * Friday, 21 June 2013, 8:14 am
+         * Fri, 21 Jun 2013, 8:14 am
+         * Fri, 21 Jun 2013, 08:14
+         * 21 June 2013, 08:14
+         * 21 June 2013, 8:14 am
+         * 21 Jun, 08:14
+         * 21 Jun, 8:14 am
          * 21/06/13, 08:14
          * 21/06/13, 8:14 am
          * 21/06/2013, 08:14

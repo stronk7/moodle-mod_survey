@@ -95,7 +95,7 @@ class mod_survey_exportmanager {
 
         if (!$itemseeds = $DB->get_records('survey_item', $where, 'sortindex', 'id, plugin')) {
             return SURVEY_NOFIELDSSELECTED;
-            die;
+            die();
         }
         // end of: get the field list
         // -----------------------------

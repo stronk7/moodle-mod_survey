@@ -163,7 +163,7 @@ class mod_survey_submissionmanager {
 
             echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
             echo $OUTPUT->footer();
-            die;
+            die();
         } else {
             switch ($this->confirm) {
                 case SURVEY_CONFIRMED_YES:
@@ -206,7 +206,7 @@ class mod_survey_submissionmanager {
 
             echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
             echo $OUTPUT->footer();
-            die;
+            die();
         } else {
             switch ($this->confirm) {
                 case SURVEY_CONFIRMED_YES:
@@ -395,7 +395,7 @@ class mod_survey_submissionmanager {
             $message = get_string('noreadaccess', 'survey');
             echo $OUTPUT->box($message, 'notice centerpara');
             echo $OUTPUT->footer();
-            die;
+            die();
         }
 
         $status = array(SURVEY_STATUSINPROGRESS => get_string('statusinprogress', 'survey'),
@@ -715,6 +715,6 @@ class mod_survey_submissionmanager {
 
         $filename = $this->survey->name.'_'.$this->submissionid.'.pdf';
         $pdf->Output($filename, 'D');
-        die;
+        die();
     }
 }

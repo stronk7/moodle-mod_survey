@@ -461,7 +461,7 @@ class mod_survey_itembase {
         } else {
             $datestring = gmstrftime('%B_%A_%j_%Y_%m_%w_%d_%H_%M_%S', $time);
         }
-        // Luglio_Mercoledì_193_2012_07_3_11_16_03_59
+        // May_Tuesday_193_2012_07_3_11_16_03_59
 
         list(
             $getdate['month'],

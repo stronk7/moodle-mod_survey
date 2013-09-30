@@ -144,7 +144,7 @@ class mod_survey_mastertemplate extends mod_survey_templatebase {
 
                 $savedstrings = $filecopyright.$this->extract_original_string();
                 // echo '<textarea rows="30" cols="100">'.$savedstrings.'</textarea>';
-                // die;
+                // die();
 
                 // create - this could be 'en' such as 'it'
                 $filehandler = fopen($temppath.'/surveytemplate_'.$pluginname.'.php', 'w');

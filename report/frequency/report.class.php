@@ -43,8 +43,9 @@ class report_frequency {
     /*
      * Class constructor
      */
-    public function __construct($cm) {
+    public function __construct($cm, $survey) {
         $this->cm = $cm;
+        $this->survey = $survey;
 
         $this->outputtable = new flexible_table('submissionslist');
         $this->setup_outputtable();
@@ -92,6 +93,37 @@ class report_frequency {
         $this->outputtable->setup();
     }
 
+    /*
+     *
+     */
+    public function stop_if_textareas_only() {
+        global $CFG, $DB, $OUTPUT;
+
+        $where = 'surveyid = :surveyid AND type = :type AND advanced = :advanced AND hide = :hide AND plugin <> :plugin';
+
+        $params = array();
+        $params['surveyid'] = $this->survey->id;
+        $params['type'] = SURVEY_TYPEFIELD;
+        $params['advanced'] = 0;
+        $params['hide'] = 0;
+        $params['plugin'] = 'textarea';
+
+        $countfields = $DB->count_records_select('survey_item', $where, $params);
+
+        if (!$countfields) {
+            $a = get_string('userfriendlypluginname', 'surveyfield_textarea');
+            echo $OUTPUT->box(get_string('textareasarenotallowed', 'surveyreport_frequency', $a));
+            $url = $CFG->wwwroot.'/mod/survey/view.php?s='.$this->survey->id;
+            echo $OUTPUT->continue_button($url);
+            echo $OUTPUT->footer();
+
+            die();
+        }
+    }
+
+    /*
+     *
+     */
     public function fetch_information($itemid, $submissionscount) {
         global $DB;
 
@@ -165,9 +197,6 @@ class report_frequency {
     }
 
     /**
-     * @global object
-     * @global int
-     * @global int
      * @param string $url
      */
     public function print_graph($url) {

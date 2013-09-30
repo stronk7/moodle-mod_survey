@@ -174,7 +174,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         }
 
         // print_object($errors);
-        // die;
+        // die();
         return $errors;
     }
 }

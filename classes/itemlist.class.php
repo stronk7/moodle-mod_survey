@@ -708,7 +708,7 @@ class mod_survey_itemlist {
 
                 echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
                 echo $OUTPUT->footer();
-                die;
+                die();
             } else { // hide without asking
                 $DB->set_field('survey_item', 'hide', 1, array('id' => $this->itemid));
                 survey_reset_items_pages($this->cm->instance);
@@ -768,7 +768,7 @@ class mod_survey_itemlist {
 
                 echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
                 echo $OUTPUT->footer();
-                die;
+                die();
             } else { // show without asking
                 $DB->set_field('survey_item', 'hide', 0, array('id' => $this->itemid));
                 survey_reset_items_pages($this->cm->instance);
@@ -834,7 +834,7 @@ class mod_survey_itemlist {
 
                 echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
                 echo $OUTPUT->footer();
-                die;
+                die();
             } else { // hide without asking
                 $DB->set_field('survey_item', 'advanced', 1, array('id' => $this->itemid));
                 survey_reset_items_pages($this->cm->instance);
@@ -894,7 +894,7 @@ class mod_survey_itemlist {
 
                 echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
                 echo $OUTPUT->footer();
-                die;
+                die();
             } else { // show without asking
                 $DB->set_field('survey_item', 'advanced', 0, array('id' => $this->itemid));
                 survey_reset_items_pages($this->cm->instance);
@@ -958,7 +958,7 @@ class mod_survey_itemlist {
 
             echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
             echo $OUTPUT->footer();
-            die;
+            die();
         } else {
             switch ($this->confirm) {
                 case SURVEY_CONFIRMED_YES:
@@ -1038,7 +1038,7 @@ class mod_survey_itemlist {
 
             echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
             echo $OUTPUT->footer();
-            die;
+            die();
         } else {
             switch ($this->confirm) {
                 case SURVEY_CONFIRMED_YES:

@@ -44,6 +44,12 @@ require_capability('mod/survey:accessreports', $context);
 $reportman = new report_frequency($cm, $survey);
 
 // -----------------------------
+// stop here if only textareas are in the survey
+$reportman->stop_if_textareas_only();
+// end of: stop here if only textareas are in the survey
+// -----------------------------
+
+// -----------------------------
 // define $mform return url
 $paramurl = array('id' => $cm->id, 'rname' => 'frequency');
 $formurl = new moodle_url('view_report.php', $paramurl);

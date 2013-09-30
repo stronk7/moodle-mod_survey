@@ -52,6 +52,9 @@ class survey_chooseitemform extends moodleform {
         // build options array
         $options = array(get_string('choosedots'));
         foreach ($itemseeds as $itemseed) {
+            if ($itemseed->plugin == 'textarea') {
+                continue;
+            }
             $thiscontent = $DB->get_field('survey_'.$itemseed->plugin, 'content', array('itemid' => $itemseed->id));
             if (!empty($survey->template)) {
                 $thiscontent = get_string($thiscontent, 'surveytemplate_'.$survey->template);
@@ -69,7 +72,6 @@ class survey_chooseitemform extends moodleform {
         // ----------------------------------------
         // buttons
         $this->add_action_buttons(false, get_string('continue'));
-
     }
 
     public function validation($data, $files) {

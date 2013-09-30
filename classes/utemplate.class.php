@@ -107,7 +107,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
         print $content;
         fclose($xmlfile);
         unlink($exportdir.'/'.$exportfilename);
-        die;
+        die();
     }
 
     /*
@@ -532,7 +532,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
 
             echo $OUTPUT->confirm($message, $buttonyes, $buttonno);
             echo $OUTPUT->footer();
-            die;
+            die();
         } else {
             switch ($this->confirm) {
                 case SURVEY_CONFIRMED_YES:
