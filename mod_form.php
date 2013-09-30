@@ -168,8 +168,6 @@ class mod_survey_mod_form extends moodleform_mod {
         $options = array();
         $context = context_course::instance($COURSE->id);
         $roles = get_roles_used_in_context($context);
-        $guestrole = get_guest_role();
-        $roles[$guestrole->id] = $guestrole;
         $roleoptions = role_fix_names($roles, $context, ROLENAME_ALIAS, true);
         foreach ($roleoptions as $roleid => $rolename) {
             $options[$roleid] = $rolename;
