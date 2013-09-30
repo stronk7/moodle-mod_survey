@@ -34,13 +34,13 @@ require_once($CFG->dirroot.'/mod/survey/format/fieldset/lib.php');
 class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // $item = $this->_customdata->item;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $mform = $this->_form;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // I close with the common section of the form
         parent::definition();
 
@@ -48,7 +48,7 @@ class survey_pluginform extends mod_survey_itembaseform {
     }
 
     public function validation($data, $files) {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // $item = $this->_customdata->item;
 
         $errors = parent::validation($data, $files);

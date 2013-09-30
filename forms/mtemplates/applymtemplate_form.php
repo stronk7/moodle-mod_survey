@@ -57,7 +57,7 @@ class survey_applymtemplateform extends moodleform {
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
             $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
 
-            // -------------------------------------------------------------------------------
+            // ----------------------------------------
             // buttons
             $this->add_action_buttons(true, get_string('continue'));
         } else {

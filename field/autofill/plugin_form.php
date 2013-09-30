@@ -34,15 +34,15 @@ require_once($CFG->dirroot.'/mod/survey/field/autofill/lib.php');
 class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // $item = $this->_customdata->item;
         $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $mform = $this->_form;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // I close with the common section of the form
         parent::definition();
 
@@ -78,7 +78,7 @@ class survey_pluginform extends mod_survey_itembaseform {
     }
 
     public function validation($data, $files) {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // $item = $this->_customdata->item;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;

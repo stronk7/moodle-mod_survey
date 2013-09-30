@@ -34,7 +34,7 @@ class mod_survey_itembaseform extends moodleform {
     public function definition() {
         global $DB, $CFG;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // start getting $customdata
         $item = $this->_customdata->item;
         $survey = $this->_customdata->survey;
@@ -316,14 +316,14 @@ class mod_survey_itembaseform extends moodleform {
 
         $mform = $this->_form;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $item = $this->_customdata->item;
         $survey = $this->_customdata->survey;
         $hassubmissions = $this->_customdata->hassubmissions;
 
         $forceediting = ($survey->riskyeditdeadline > time());
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // buttons
         $itemid = $item->get_itemid();
         if (!empty($itemid)) {
@@ -344,7 +344,7 @@ class mod_survey_itembaseform extends moodleform {
     public function validation($data, $files) {
         global $CFG, $DB;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $item = $this->_customdata->item;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;

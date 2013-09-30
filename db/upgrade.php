@@ -62,5 +62,20 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013090501, 'survey');
     }
 
+    if ($oldversion < 2013093001) {
+
+        // Define field contentformat to be added to survey_userdata.
+        $table = new xmldb_table('survey_userdata');
+        $field = new xmldb_field('contentformat', XMLDB_TYPE_INTEGER, '4', null, null, null, '0', 'content');
+
+        // Conditionally launch add field contentformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013093001, 'survey');
+    }
+
     return true;
 }

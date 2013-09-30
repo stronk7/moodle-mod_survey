@@ -412,7 +412,6 @@ EOS;
         $options = survey_textarea_to_array($this->options);
         $rates = $this->item_get_labels_array('rates');
         $defaultvalues = survey_textarea_to_array($this->defaultvalue);
-        $elementlabel = implode('<br />', $options);
 
         if (($this->defaultoption == SURVEY_INVITATIONDEFAULT)) {
             if ($this->style == SURVEYFIELD_RATE_USERADIO) {
@@ -422,41 +421,63 @@ EOS;
             }
         }
 
-        if ($this->style == SURVEYFIELD_RATE_USERADIO) {
-            $separatorblock = array_fill(0, count($rates) - 1, ' ');
+        $MDL41767isfixed = false;
+        if ($MDL41767isfixed) {
+            $elementlabel = implode('<br />', $options);
 
-            $separator = array();
-            $elementgroup = array();
-            foreach ($options as $k => $option) {
-                $class = array('class' => 'indent-'.$this->indent);
-                foreach ($rates as $j => $rate) {
-                    $uniquename = $this->itemname.'_'.$k;
-                    $elementgroup[] = $mform->createElement('radio', $uniquename, '', $rate, $j, $class);
-                    $class = '';
+            if ($this->style == SURVEYFIELD_RATE_USERADIO) {
+                $separatorblock = array_fill(0, count($rates) - 1, ' ');
+
+                $separator = array();
+                $elementgroup = array();
+                foreach ($options as $k => $option) {
+                    $class = array('class' => 'indent-'.$this->indent);
+                    foreach ($rates as $j => $rate) {
+                        $uniquename = $this->itemname.'_'.$k;
+                        $elementgroup[] = $mform->createElement('radio', $uniquename, '', $rate, $j, $class);
+                        $class = '';
+                    }
+                    $separator += array_merge($separator, $separatorblock);
+                    $separator[] = '<br />';
                 }
-                $separator += array_merge($separator, $separatorblock);
-                $separator[] = '<br />';
-            }
 
-            if (!$this->required) {
-                $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
-                // no need to add one more $separator, the elements stops here
-            }
+                if (!$this->required) {
+                    $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
+                    // no need to add one more $separator, the elements stops here
+                }
 
-            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
-        } else { // SURVEYFIELD_RATE_USESELECT
-            $elementgroup = array();
-            foreach ($options as $k => $option) {
-                $uniquename = $this->itemname.'_'.$k;
-                $elementgroup[] = $mform->createElement('select', $uniquename, $option, $rates, array('class' => 'indent-'.$this->indent));
-            }
+                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
+            } else { // SURVEYFIELD_RATE_USESELECT
+                $elementgroup = array();
+                foreach ($options as $k => $option) {
+                    $uniquename = $this->itemname.'_'.$k;
+                    $elementgroup[] = $mform->createElement('select', $uniquename, $option, $rates, array('class' => 'indent-'.$this->indent));
+                }
 
-            if (!$this->required) {
-                $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
-                // no need to add one more $separator, the elements stops here
-            }
+                if (!$this->required) {
+                    $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
+                    // no need to add one more $separator, the elements stops here
+                }
 
-            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, '<br />', false);
+                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, '<br />', false);
+            }
+        } else {
+            if ($this->style == SURVEYFIELD_RATE_USERADIO) {
+                foreach ($options as $k => $option) {
+                    $uniquename = $this->itemname.'_'.$k;
+                    $elementgroup = array();
+                    foreach ($rates as $j => $rate) {
+                        $elementgroup[] = $mform->createElement('radio', $uniquename, '', $rate, $j);
+                    }
+                    $mform->addGroup($elementgroup, $uniquename.'_group', $option, ' ', false);
+                }
+            } else { // SURVEYFIELD_RATE_USESELECT
+                foreach ($options as $k => $option) {
+                    $uniquename = $this->itemname.'_'.$k;
+                    $mform->addElement('select', $uniquename, $option, $rates, array('class' => 'indent-'.$this->indent));
+
+                }
+            }
         }
 
         if ($this->required) {
@@ -467,7 +488,25 @@ EOS;
             // $mform->_required[] = $this->itemname.'_group';
             $mform->_required[] = $this->itemname.'_extrarow';
         } else {
-            $mform->disabledIf($uniquename.'_group', $this->itemname.'_noanswer', 'checked');
+            if ($MDL41767isfixed) {
+                $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
+            } else {
+                $mform->addElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
+                $optionindex = 0;
+                foreach ($options as $option) {
+                    if ($this->style == SURVEYFIELD_RATE_USERADIO) {
+                        $uniquename = $this->itemname.'_'.$optionindex.'_group';
+                    } else {
+                        $uniquename = $this->itemname.'_'.$optionindex;
+                    }
+
+                    $mform->disabledIf($uniquename, $this->itemname.'_noanswer', 'checked');
+                    $optionindex++;
+                }
+                if ($this->defaultoption == SURVEY_NOANSWERDEFAULT) {
+                    $mform->setDefault($this->itemname.'_noanswer', '1');
+                }
+            }
         }
 
         switch ($this->defaultoption) {
@@ -619,11 +658,6 @@ EOS;
                         $prefill[$uniquename] = $answers[$optionindex];
                     }
                 }
-            }
-
-            // _noanswer
-            if (!$this->required) { // if this item foresaw the $this->itemname.'_noanswer'
-                $prefill[$this->itemname.'_noanswer'] = is_null($fromdb->content) ? 1 : 0;
             }
         } // else use item defaults
 

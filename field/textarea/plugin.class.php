@@ -108,7 +108,7 @@ class surveyfield_textarea extends mod_survey_itembase {
     /*
      * $maxlength = the maximum allowed text length
      */
-    public $maxlength = '';
+    public $maxlength = null;
 
     /*
      * $flag = features describing the object
@@ -209,10 +209,10 @@ class surveyfield_textarea extends mod_survey_itembase {
             $record->{$checkbox} = (isset($record->{$checkbox})) ? 1 : 0;
         }
         if (!strlen($record->minlength)) {
-            unset($record->minlength);
+            $record->minlength = 0;
         }
         if (!strlen($record->maxlength)) {
-            unset($record->maxlength);
+            $record->maxlength = null;
         }
         if (empty($record->arearows)) {
             $record->arearows = SURVEYFIELD_TEXTAREA_DEFAULTROWS;
@@ -257,11 +257,8 @@ class surveyfield_textarea extends mod_survey_itembase {
 
         // 2. special management for composite fields
         // nothing to do: they don't exist in this plugin
-        if (strlen($record->minlength) == 0) {
+        if (!strlen($record->minlength)) {
             $record->minlength = 0;
-        }
-        if (strlen($record->maxlength) == 0) {
-            $record->maxlength = 0;
         }
 
         // 3. special management for defaultvalue
@@ -420,7 +417,7 @@ EOS;
             $itemcontent = $data[$fieldname];
         }
 
-        if ( ($this->maxlength) && (strlen($itemcontent) > $this->maxlength) ) {
+        if ( $this->maxlength && (strlen($itemcontent) > $this->maxlength) ) {
             $errors[$errorkey] = get_string('texttoolong', 'surveyfield_textarea');
         }
         if (strlen($itemcontent) < $this->minlength) {
@@ -475,6 +472,7 @@ EOS;
             $olduserdata = file_postupdate_standard_editor($olduserdata, $this->itemname, $editoroptions, $this->context,
                     'mod_survey', SURVEYFIELD_TEXTAREA_FILEAREA, $olduserdata->id);
             $olduserdata->content = $olduserdata->{$this->itemname};
+            $olduserdata->contentformat = FORMAT_HTML;
         } else {
             $olduserdata->content = $answer['mainelement'];
         }

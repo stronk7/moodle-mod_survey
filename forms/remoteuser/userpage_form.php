@@ -163,7 +163,7 @@ class survey_submissionform extends moodleform {
         }
 
         if ($cansubmit) {
-            // -------------------------------------------------------------------------------
+            // ----------------------------------------
             // buttons
             $buttonlist = array();
 

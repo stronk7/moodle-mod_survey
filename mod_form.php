@@ -27,7 +27,7 @@ class mod_survey_mod_form extends moodleform_mod {
 
         $mform = $this->_form;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // Adding the "general" fieldset, where all the common settings are showed
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
@@ -62,7 +62,7 @@ class mod_survey_mod_form extends moodleform_mod {
             $groupmode = 0;
         }
         if ($useadvancedpermissions) {
-            // -------------------------------------------------------------------------------
+            // ----------------------------------------
             $fieldname = 'access';
             $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
@@ -104,7 +104,7 @@ class mod_survey_mod_form extends moodleform_mod {
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
         }
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $fieldname = 'dataentry';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
@@ -194,11 +194,11 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', $fieldname, get_string($fieldname, 'survey'));
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // add standard elements, common to all modules
         $this->standard_coursemodule_elements();
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // add standard buttons, common to all modules
         $this->add_action_buttons();
     }

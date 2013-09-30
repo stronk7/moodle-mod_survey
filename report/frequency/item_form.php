@@ -66,7 +66,7 @@ class survey_chooseitemform extends moodleform {
         $mform->addElement('select', $fieldname, get_string('variable', 'survey'), $options);
         $mform->addHelpButton($fieldname, $fieldname, 'surveyreport_frequency');
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // buttons
         $this->add_action_buttons(false, get_string('continue'));
 

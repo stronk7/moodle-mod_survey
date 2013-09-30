@@ -34,19 +34,19 @@ require_once($CFG->dirroot.'/mod/survey/field/time/lib.php');
 class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $item = $this->_customdata->item;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // I start with the common "section" form
         parent::definition();
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $mform = $this->_form;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $hoptions = array();
         for ($i = 0; $i <= 23; $i++) {
             $hoptions[$i] = sprintf("%02d", $i);
@@ -137,7 +137,7 @@ class survey_pluginform extends mod_survey_itembaseform {
     }
 
     public function validation($data, $files) {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $item = $this->_customdata->item;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;

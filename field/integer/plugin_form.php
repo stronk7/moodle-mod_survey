@@ -36,19 +36,19 @@ class survey_pluginform extends mod_survey_itembaseform {
     public function definition() {
         $maximuminteger = get_config('surveyfield_integer', 'maximuminteger');
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // $item = $this->_customdata->item;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // I start with the common "section" form
         parent::definition();
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $mform = $this->_form;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $integers = array_combine(range(0, $maximuminteger), range(0, $maximuminteger));
 
         // ----------------------------------------
@@ -97,7 +97,7 @@ class survey_pluginform extends mod_survey_itembaseform {
     }
 
     public function validation($data, $files) {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // $item = $this->_customdata->item;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;

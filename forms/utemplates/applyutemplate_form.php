@@ -81,7 +81,7 @@ class survey_applyutemplateform extends moodleform {
         $mform->addHelpButton($fieldname.'_group', $fieldname, 'survey');
         $mform->setDefault($fieldname, SURVEY_IGNOREITEMS);
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // buttons
         $this->add_action_buttons(true, get_string('continue'));
     }

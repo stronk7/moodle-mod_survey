@@ -94,8 +94,8 @@ $formurl = new moodle_url('items_setup.php', $paramurl);
 // -----------------------------
 // prepare params for the form
 $formparams = new stdClass();
-$formparams->survey = $survey;                               // needed to setup date boundaries in date fields
-$formparams->item = $item;                                   // needed in many situations
+$formparams->survey = $survey;                              // needed to setup date boundaries in date fields
+$formparams->item = $item;                                  // needed in many situations
 $formparams->hassubmissions = $itemlistman->hassubmissions; // are editing features restricted?
 $itemform = new survey_pluginform($formurl, $formparams);
 // end of: prepare params for the form

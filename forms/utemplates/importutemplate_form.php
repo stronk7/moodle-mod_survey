@@ -64,7 +64,7 @@ class survey_importutemplateform extends moodleform {
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
         $mform->setDefault($fieldname, CONTEXT_SYSTEM);
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // buttons
         $this->add_action_buttons(false, get_string('templateimport', 'survey'));
     }

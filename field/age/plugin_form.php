@@ -36,19 +36,19 @@ class survey_pluginform extends mod_survey_itembaseform {
     public function definition() {
         $maximumage = get_config('surveyfield_age', 'maximumage');
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // $item = $this->_customdata->item;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // I start with the common "section" form
         parent::definition();
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $mform = $this->_form;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $format = get_string('strftimemonthyear', 'langconfig');
 
         $years = array_combine(range(0, $maximumage), range(0, $maximumage));
@@ -111,7 +111,7 @@ class survey_pluginform extends mod_survey_itembaseform {
     }
 
     public function validation($data, $files) {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $item = $this->_customdata->item;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;

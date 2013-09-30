@@ -73,7 +73,7 @@ class survey_utemplatecreateform extends moodleform {
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
         $mform->setDefault($fieldname, CONTEXT_SYSTEM);
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // buttons
         $this->add_action_buttons(false, get_string('continue'));
     }

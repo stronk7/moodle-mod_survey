@@ -34,19 +34,19 @@ require_once($CFG->dirroot.'/mod/survey/field/date/lib.php');
 class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $item = $this->_customdata->item;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // start with common section of the form
         parent::definition();
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $mform = $this->_form;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $startyear = $this->_customdata->survey->startyear;
         $stopyear = $this->_customdata->survey->stopyear;
 
@@ -128,7 +128,7 @@ class survey_pluginform extends mod_survey_itembaseform {
     }
 
     public function validation($data, $files) {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $item = $this->_customdata->item;
         // $survey = $this->_customdata->survey;
         // $hassubmissions = $this->_customdata->hassubmissions;

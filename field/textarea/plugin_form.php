@@ -34,14 +34,14 @@ require_once($CFG->dirroot.'/mod/survey/field/textarea/lib.php');
 class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // $item = $this->_customdata->item;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // I start with the common "section" form
         parent::definition();
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $mform = $this->_form;
 
         // ----------------------------------------
@@ -94,20 +94,26 @@ class survey_pluginform extends mod_survey_itembaseform {
         $fieldname = 'maxlength';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_textarea'));
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_textarea');
-        $mform->setType($fieldname, PARAM_INT);
+        $mform->setType($fieldname, PARAM_RAW);
 
         $this->add_item_buttons();
     }
 
     public function validation($data, $files) {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // $item = $this->_customdata->item;
 
         $errors = parent::validation($data, $files);
-
-        if (isset($data['maxlength'])) {
-            if ($data['maxlength'] <= $data['minlength']) {
-                $errors['maxlength'] = get_string('maxlengthlowerthanminlength', 'surveyfield_textarea');
+        if (strlen($data['maxlength'])) {
+            $isinteger = (bool)(strval(intval($data['maxlength'])) == strval($data['maxlength']));
+            if (!$isinteger) {
+                $errors['maxlength'] = 'maxlength non è intero';
+            } else {
+                if ($data['maxlength'] <= $data['minlength']) {
+                    if (!$data['maxlength']) {
+                        $errors['maxlength'] = get_string('maxlengthlowerthanminlength', 'surveyfield_textarea');
+                    }
+                }
             }
         }
 

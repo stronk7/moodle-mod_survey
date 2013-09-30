@@ -453,13 +453,12 @@ class mod_survey_userformmanager {
                         // this is the black hole where is thrown each useless info like:
                         // - formpage
                         // - nextbutton
-                        // - placeholders
                         // and some more
                 }
                 continue; // to next foreach
             }
 
-            $itemid = $matches[3]; // itemid of the mform element (o of the group of mform elements referring to the same item)
+            $itemid = $matches[3]; // itemid of the mform element (or of the group of mform elements referring to the same item)
             if (!isset($infoperitem[$itemid])) {
                 $infoperitem[$itemid] = new stdClass();
                 $infoperitem[$itemid]->surveyid = $surveyid;
@@ -495,6 +494,7 @@ class mod_survey_userformmanager {
                 $userdatarec->submissionid = $iteminfo->submissionid;
                 $userdatarec->itemid = $iteminfo->itemid;
                 $userdatarec->content = 'dummy_content';
+                $userdatarec->contentformat = null;
 
                 $id = $DB->insert_record('survey_userdata', $userdatarec);
                 $userdatarec = $DB->get_record('survey_userdata', array('id' => $id));

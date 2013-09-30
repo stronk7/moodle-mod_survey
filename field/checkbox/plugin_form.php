@@ -34,14 +34,14 @@ require_once($CFG->dirroot.'/mod/survey/field/checkbox/lib.php');
 class survey_pluginform extends mod_survey_itembaseform {
 
     public function definition() {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // $item = $this->_customdata->item;
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // I start with the common "section" form
         parent::definition();
 
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         $mform = $this->_form;
 
         // ----------------------------------------
@@ -95,7 +95,7 @@ class survey_pluginform extends mod_survey_itembaseform {
     }
 
     public function validation($data, $files) {
-        // -------------------------------------------------------------------------------
+        // ----------------------------------------
         // $item = $this->_customdata->item;
 
         $errors = parent::validation($data, $files);
