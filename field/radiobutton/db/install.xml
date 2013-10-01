@@ -6,40 +6,40 @@
   <TABLES>
     <TABLE NAME="survey_radiobutton" COMMENT="Radio button type surveyfield">
       <FIELDS>
-        <FIELD NAME="id"               TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"             SEQUENCE="true"                              NEXT="surveyid"/>
-        <FIELD NAME="surveyid"         TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id"               NEXT="itemid"/>
-        <FIELD NAME="itemid"           TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="surveyid"         NEXT="content"/>
+        <FIELD NAME="id"               TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"             SEQUENCE="true"/>
+        <FIELD NAME="surveyid"         TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="itemid"           TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
 
         <!-- begin of fields belonging to itembase_form.php -->
-        <FIELD NAME="content"          TYPE="text" LENGTH="small"  NOTNULL="false"                             SEQUENCE="false" PREVIOUS="itemid"           NEXT="contentformat"/>
-        <FIELD NAME="contentformat"    TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="content"          NEXT="customnumber"/>
+        <FIELD NAME="content"          TYPE="text" LENGTH="small"  NOTNULL="false"                             SEQUENCE="false"/>
+        <FIELD NAME="contentformat"    TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false"/>
 
-        <FIELD NAME="customnumber"     TYPE="char" LENGTH="64"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="contentformat"    NEXT="extrarow"/>
-        <FIELD NAME="extrarow"         TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="customnumber"     NEXT="extranote"/>
-        <FIELD NAME="extranote"        TYPE="char" LENGTH="255"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="extrarow"         NEXT="required"/>
-        <FIELD NAME="required"         TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="extranote"        NEXT="variable"/>
-        <!-- <FIELD NAME="hideinstructions" TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="required"         NEXT="variable"/> -->
-        <FIELD NAME="variable"         TYPE="char" LENGTH="64"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="required"         NEXT="indent"/>
-        <FIELD NAME="indent"           TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="variable"         NEXT="options"/>
+        <FIELD NAME="customnumber"     TYPE="char" LENGTH="64"     NOTNULL="false"                             SEQUENCE="false"/>
+        <FIELD NAME="extrarow"         TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="extranote"        TYPE="char" LENGTH="255"    NOTNULL="false"                             SEQUENCE="false"/>
+        <FIELD NAME="required"         TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false"/>
+        <!-- <FIELD NAME="hideinstructions" TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false"/> -->
+        <FIELD NAME="variable"         TYPE="char" LENGTH="64"     NOTNULL="false"                             SEQUENCE="false"/>
+        <FIELD NAME="indent"           TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false"/>
         <!-- end of fields belonging to itembase_form.php -->
 
         <!-- begin of fields belonging to plugin_form.php of this specific plugin -->
-        <FIELD NAME="options"          TYPE="text" LENGTH="medium" NOTNULL="false"                             SEQUENCE="false" PREVIOUS="indent"           NEXT="labelother"/>
-        <FIELD NAME="labelother"       TYPE="char" LENGTH="64"     NOTNULL="false"                             SEQUENCE="false" PREVIOUS="options"          NEXT="defaultoption"/>
+        <FIELD NAME="options"          TYPE="text" LENGTH="medium" NOTNULL="false"                             SEQUENCE="false"/>
+        <FIELD NAME="labelother"       TYPE="char" LENGTH="64"     NOTNULL="false"                             SEQUENCE="false"/>
 
-        <FIELD NAME="defaultoption"    TYPE="int"  LENGTH="2"      NOTNULL="true" UNSIGNED="true"  DEFAULT="2" SEQUENCE="false" PREVIOUS="labelother"       NEXT="defaultvalue"/>
-        <FIELD NAME="defaultvalue"     TYPE="char" LENGTH="255"    NOTNULL="false"                             SEQUENCE="false" PREVIOUS="defaultoption"    NEXT="downloadformat"/>
-        <FIELD NAME="downloadformat"   TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false" PREVIOUS="defaultvalue"     NEXT="adjustment"/>
+        <FIELD NAME="defaultoption"    TYPE="int"  LENGTH="2"      NOTNULL="true" UNSIGNED="true"  DEFAULT="2" SEQUENCE="false"/>
+        <FIELD NAME="defaultvalue"     TYPE="char" LENGTH="255"    NOTNULL="false"                             SEQUENCE="false"/>
+        <FIELD NAME="downloadformat"   TYPE="int"  LENGTH="4"      NOTNULL="false"                             SEQUENCE="false"/>
 
-        <FIELD NAME="adjustment"       TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="downloadformat"/>
+        <FIELD NAME="adjustment"       TYPE="int"  LENGTH="4"      NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
         <!-- end of fields belonging to plugin_form.php of this specific plugin -->
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="surveyid" UNIQUE="false" FIELDS="surveyid" NEXT="itemid"/>
-        <INDEX NAME="itemid"   UNIQUE="true"  FIELDS="itemid"   PREVIOUS="surveyid"/>
+        <INDEX NAME="surveyid" UNIQUE="false" FIELDS="surveyid"/>
+        <INDEX NAME="itemid"   UNIQUE="true"  FIELDS="itemid"/>
       </INDEXES>
     </TABLE>
   </TABLES>

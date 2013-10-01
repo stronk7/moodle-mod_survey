@@ -561,6 +561,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
 
         $context = context_coursecat::instance($COURSE->category);
         $canmanagecat = has_capability('moodle/category:manage', $context);
+        $canassigntocategotylevel = has_capability('moodle/category:canassigntocategoty', $context);
 
         $options = array();
         $options[CONTEXT_USER.'_'.$USER->id] = get_string('user').': '.fullname($USER);
@@ -570,7 +571,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
         if ($COURSE->id != $SITE->id) { // I am not in homepage
             $options[CONTEXT_COURSE.'_'.$COURSE->id] = get_string('course').': '.$COURSE->shortname;
 
-            if ($canmanagecat) { // is more than a teacher, is an admin
+            if ($canmanagecat && $canassigntocategotylevel) { // is more than a teacher, is an admin
                 $categorystr = get_string('category').': ';
                 $category = $DB->get_record('course_categories', array('id' => $COURSE->category), 'id, name');
                 $options[CONTEXT_COURSECAT.'_'.$COURSE->category] = $categorystr.$category->name;
@@ -582,7 +583,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
             }
         }
 
-        if ($canmanagecat) { // TODO: how to verify if the user is a site admin?
+        if ($canmanagecat && $canincreasesharinglevel) {
             $options[CONTEXT_SYSTEM.'_0'] = get_string('site');
         }
 
