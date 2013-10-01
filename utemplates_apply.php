@@ -62,7 +62,6 @@ require_capability('mod/survey:applyusertemplates', $context);
 // calculations
 // -----------------------------
 $utemplateman = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid, $action, $confirm);
-$utemplateman->prevent_direct_user_input();
 
 // -----------------------------
 // define $applyutemplate return url
@@ -108,6 +107,8 @@ echo $OUTPUT->header();
 $currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_UTEMPLATES_APPLY; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
+
+$utemplateman->friendly_halt();
 
 if (survey_count_submissions($survey->id, SURVEY_STATUSALL)) {
     echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));

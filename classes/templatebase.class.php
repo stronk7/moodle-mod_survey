@@ -53,30 +53,21 @@ class mod_survey_templatebase {
 
         $forceediting = ($this->survey->riskyeditdeadline > time());
         $hassubmissions = survey_count_submissions($this->survey->id);
+
         if ($hassubmissions && (!$forceediting)) {
-            echo $OUTPUT->box(get_string('applyusertemplatedenied', 'survey'));
+            echo $OUTPUT->box(get_string('applyusertemplatedenied01', 'survey'));
             $url = $CFG->wwwroot.'/mod/survey/view.php?s='.$this->survey->id;
             echo $OUTPUT->continue_button($url);
             echo $OUTPUT->footer();
             die();
         }
-    }
 
-    /*
-     * prevent_direct_user_input
-     *
-     * @param
-     * @return
-     */
-    public function prevent_direct_user_input() {
-        $forceediting = ($this->survey->riskyeditdeadline > time());
-
-        $hassubmissions = survey_count_submissions($this->survey->id);
-        if ($hassubmissions && (!$forceediting)) {
-            print_error('incorrectaccessdetected', 'survey');
-        }
         if ($this->survey->template && (!$forceediting)) {
-            print_error('incorrectaccessdetected', 'survey');
+            echo $OUTPUT->box(get_string('applyusertemplatedenied02', 'survey'));
+            $url = $CFG->wwwroot.'/mod/survey/view.php?s='.$this->survey->id;
+            echo $OUTPUT->continue_button($url);
+            echo $OUTPUT->footer();
+            die();
         }
     }
 
@@ -206,8 +197,12 @@ class mod_survey_templatebase {
                 if ($field == 'content') {
                     if ($files = $fs->get_area_files($item->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid)) {
                         foreach ($files as $file) {
+                            $filename = $file->get_filename();
+                            if ($filename = '.') {
+                                continue;
+                            }
                             $xmlembedded = $xmltable->addChild('embedded');
-                            $xmlembedded->addChild('filename', $file->get_filename());
+                            $xmlembedded->addChild('filename', $filename);
                             $xmlembedded->addChild('filecontent', base64_encode($file->get_content()));
                         }
                     }

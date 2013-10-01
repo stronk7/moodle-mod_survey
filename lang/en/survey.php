@@ -396,4 +396,5 @@ $string['xmltemplate_help'] = 'Choose the template you want to download as zip f
 $string['xmltemplate'] = 'Preset to export';
 $string['you'] = 'You';
 $string['youarenotinagroup'] = 'You do not belong to any of the group in which this course is divided';
-$string['applyusertemplatedenied'] = 'You are not allowed to apply a user template because the current survey has already been responded';
+$string['applyusertemplatedenied01'] = 'You are not allowed to apply a user template because the current survey has already been responded';
+$string['applyusertemplatedenied02'] = 'You are not allowed to apply a user template overa master template';

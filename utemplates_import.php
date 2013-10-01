@@ -62,7 +62,6 @@ require_capability('mod/survey:uploadusertemplates', $context);
 // calculations
 // -----------------------------
 $utemplateman = new mod_survey_usertemplate($cm, $survey, $context, $utemplateid, $action, $confirm);
-$utemplateman->prevent_direct_user_input();
 
 // -----------------------------
 // define $importutemplate return url
