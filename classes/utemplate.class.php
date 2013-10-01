@@ -561,7 +561,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
 
         $context = context_coursecat::instance($COURSE->category);
         $canmanagecat = has_capability('moodle/category:manage', $context);
-        $canassigntocategotylevel = has_capability('moodle/category:canassigntocategoty', $context);
+        $canassigntocategotylevel = has_capability('moodle/category:assignutemplatestocat', $context);
 
         $options = array();
         $options[CONTEXT_USER.'_'.$USER->id] = get_string('user').': '.fullname($USER);

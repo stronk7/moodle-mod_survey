@@ -337,7 +337,7 @@ $capabilities = array(
         )
     ),
 
-    'moodle/category:canassigntocategoty' => array(
+    'moodle/category:assignutemplatestocat' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
