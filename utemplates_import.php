@@ -113,6 +113,8 @@ $currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_UTEMPLATES_IMPORT; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
+$utemplateman->friendly_halt();
+
 $importutemplate->display();
 
 // Finish the page

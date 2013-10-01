@@ -48,6 +48,20 @@ class mod_survey_templatebase {
         $this->survey = $survey;
     }
 
+    public function friendly_halt() {
+        global $CFG, $OUTPUT;
+
+        $forceediting = ($this->survey->riskyeditdeadline > time());
+        $hassubmissions = survey_count_submissions($this->survey->id);
+        if ($hassubmissions && (!$forceediting)) {
+            echo $OUTPUT->box(get_string('applyusertemplatedenied', 'survey'));
+            $url = $CFG->wwwroot.'/mod/survey/view.php?s='.$this->survey->id;
+            echo $OUTPUT->continue_button($url);
+            echo $OUTPUT->footer();
+            die();
+        }
+    }
+
     /*
      * prevent_direct_user_input
      *
