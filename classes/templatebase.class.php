@@ -198,7 +198,7 @@ class mod_survey_templatebase {
                     if ($files = $fs->get_area_files($item->context->id, 'mod_survey', SURVEY_ITEMCONTENTFILEAREA, $item->itemid)) {
                         foreach ($files as $file) {
                             $filename = $file->get_filename();
-                            if ($filename = '.') {
+                            if ($filename == '.') {
                                 continue;
                             }
                             $xmlembedded = $xmltable->addChild('embedded');
