@@ -370,13 +370,13 @@ function survey_delete_instance($id) {
     }
 
     // Delete any dependent records here
-    $submissions = $DB->get_records('survey_submissions', array('surveyid' => $survey->id), '', 'id');
+    $submissions = $DB->get_records('survey_submission', array('surveyid' => $survey->id), '', 'id');
 
     // delete all associated survey_userdata
     $DB->delete_records_list('survey_userdata', 'submissionid', array_keys($submissions));
 
-    // delete all associated survey_submissions
-    $DB->delete_records('survey_submissions', array('surveyid' => $survey->id));
+    // delete all associated survey_submission
+    $DB->delete_records('survey_submission', array('surveyid' => $survey->id));
 
     // get all item_<<plugin>> and format_<<plugin>>
     $pluginlist = survey_get_plugin_list();
@@ -524,7 +524,7 @@ function survey_print_recent_mod_activity($activity, $courseid, $detail, $modnam
 function survey_cron() {
     global $CFG, $DB;
 
-    // delete too old submissions from survey_userdata and survey_submissions
+    // delete too old submissions from survey_userdata and survey_submission
 
     $permission = array(0, 1);
     // permission == 0:  saveresume is not allowed
@@ -543,9 +543,9 @@ function survey_cron() {
             $sofar = ($saveresume == 0) ? (4*3600) : ($maxinputdelay*3600);
             $sofar = time() - $sofar;
             $whereparams = array('status' => SURVEY_STATUSINPROGRESS, 'sofar' => $sofar);
-            if ($submissionidlist = $DB->get_fieldset_select('survey_submissions', 'id', $where, $whereparams)) {
+            if ($submissionidlist = $DB->get_fieldset_select('survey_submission', 'id', $where, $whereparams)) {
                 $DB->delete_records_list('survey_userdata', 'submissionid', $submissionidlist);
-                $DB->delete_records_list('survey_submissions', 'id', $submissionidlist);
+                $DB->delete_records_list('survey_submission', 'id', $submissionidlist);
             }
         }
     }
@@ -1113,7 +1113,7 @@ function survey_count_submissions($surveyid, $status=SURVEY_STATUSALL) {
         $params['status'] = $status;
     }
 
-    return $DB->count_records('survey_submissions', $params);
+    return $DB->count_records('survey_submission', $params);
 }
 
 /*
@@ -1153,7 +1153,7 @@ function survey_get_completion_state($course, $cm, $userid, $type) {
     // If completion option is enabled, evaluate it and return true/false.
     if ($survey->completionsubmit) {
         $params = array('surveyid' => $cm->instance, 'userid' => $userid, 'status' => SURVEY_STATUSCLOSED);
-        $submissioncount = $DB->count_records('survey_submissions', $params);
+        $submissioncount = $DB->count_records('survey_submission', $params);
         return ($submissioncount >= $completionsubmit);
     } else {
         // Completion option is not enabled so just return $type.

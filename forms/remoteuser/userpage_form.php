@@ -177,7 +177,7 @@ class survey_submissionform extends moodleform {
                 }
                 if (($formpage == $maxassignedpage) || ($formpage == SURVEY_RIGHT_OVERFLOW)) {
                     if ($survey->history) {
-                        $submissionstatus = $DB->get_field('survey_submissions', 'status', array('id' => $submissionid), IGNORE_MISSING);
+                        $submissionstatus = $DB->get_field('survey_submission', 'status', array('id' => $submissionid), IGNORE_MISSING);
                         if ($submissionstatus === false) { // submissions still does not exist
                             $usesimplesavebutton = true;
                         } else {

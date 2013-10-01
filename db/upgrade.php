@@ -77,5 +77,17 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013093001, 'survey');
     }
 
+    if ($oldversion < 2013100101) {
+
+        // Define table survey_submissions to be renamed to survey_submission.
+        $table = new xmldb_table('survey_submissions');
+
+        // Launch rename table for survey_submissions.
+        $dbman->rename_table($table, 'survey_submission');
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013100101, 'survey');
+    }
+
     return true;
 }

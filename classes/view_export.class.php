@@ -118,7 +118,7 @@ class mod_survey_exportmanager {
         }
         $richsubmissionssql .= 'ud.id as id, ud.itemid, ud.content,
                                 si.sortindex, si.plugin
-                            FROM {survey_submissions} s
+                            FROM {survey_submission} s
                                 INNER JOIN {user} u ON u.id = s.userid
                                 INNER JOIN {survey_userdata} ud ON ud.submissionid = s.id
                                 INNER JOIN {survey_item} si ON si.id = ud.itemid

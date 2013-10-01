@@ -513,15 +513,15 @@ class mod_survey_itembase {
         }
 
         $emptysurveys = 'SELECT c.id
-                             FROM {survey_submissions} c
+                             FROM {survey_submission} c
                                  LEFT JOIN {survey_userdata} d ON c.id = d.submissionid
                              WHERE (d.id IS null)';
         if ($surveytodelete = $DB->get_records_sql($emptysurveys)) {
             $surveytodelete = array_keys($surveytodelete);
-            if ($DB->delete_records_select('survey_submissions', 'id IN ('.implode(',', $surveytodelete).')')) {
+            if ($DB->delete_records_select('survey_submission', 'id IN ('.implode(',', $surveytodelete).')')) {
                 add_to_log($COURSE->id, 'survey', 'item deletet', 'view.php?id='.$cm->id, get_string('survey', 'survey'), $cm->id, $USER->id);
             } else {
-                print_error('Unable to delete record id IN '.implode(',', $surveytodelete).' from survey_submissions');
+                print_error('Unable to delete record id IN '.implode(',', $surveytodelete).' from survey_submission');
             }
         }
     }

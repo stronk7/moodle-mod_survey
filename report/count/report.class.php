@@ -122,7 +122,7 @@ class report_count {
                         WHERE contextid = '.$this->coursecontext->id.'
                           AND roleid IN ('.implode(',', $role).')) ra ON u.id = ra.userid
                 LEFT JOIN (SELECT *, count(s.id) as attempts
-                             FROM {survey_submissions} s
+                             FROM {survey_submission} s
                              WHERE s.surveyid = :surveyid
                              GROUP BY s.userid) s ON s.userid = u.id';
         if ($this->outputtable->get_sql_sort()) {

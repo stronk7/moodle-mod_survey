@@ -411,10 +411,10 @@ class mod_survey_userformmanager {
         global $DB;
 
         // -----------------------------
-        // begin by saving survey_submissions first
-        $this->save_survey_submissions();
+        // begin by saving survey_submission first
+        $this->save_survey_submission();
         // in this method I also assign $this->submissionid and $this->status
-        // end of: begin by saving survey_submissions first
+        // end of: begin by saving survey_submission first
         // -----------------------------
 
         // save now all the answers provided by the user
@@ -516,12 +516,12 @@ class mod_survey_userformmanager {
     }
 
     /*
-     * save_survey_submissions
+     * save_survey_submission
      *
      * @param
-     * @return survey_submissions record
+     * @return survey_submission record
      */
-    public function save_survey_submissions() {
+    public function save_survey_submission() {
         global $USER, $DB;
 
         if (!$this->survey->newpageforchild) {
@@ -538,7 +538,7 @@ class mod_survey_userformmanager {
 
         $submissions = new stdClass();
         if (empty($this->formdata->submissionid)) {
-            // add a new record to survey_submissions
+            // add a new record to survey_submission
             $submissions->surveyid = $this->survey->id;
             $submissions->userid = $USER->id;
             $submissions->timecreated = $timenow;
@@ -551,22 +551,22 @@ class mod_survey_userformmanager {
                 $submissions->status = SURVEY_STATUSCLOSED;
             }
 
-            $submissions->id = $DB->insert_record('survey_submissions', $submissions);
+            $submissions->id = $DB->insert_record('survey_submission', $submissions);
 
         } else {
-            // survey_submissions already exists
+            // survey_submission already exists
             // but I asked to save
             if ($savebutton) {
                 $submissions->id = $this->formdata->submissionid;
                 $submissions->status = SURVEY_STATUSCLOSED;
                 $submissions->timemodified = $timenow;
-                $DB->update_record('survey_submissions', $submissions);
+                $DB->update_record('survey_submission', $submissions);
             } else {
                 // I have $this->formdata->submissionid
                 // case: "save" was requested, I am not here
                 // case: "save as" was requested, I am not here
                 // case: "next" was requested, so status = SURVEY_STATUSINPROGRESS
-                $status = $DB->get_field('survey_submissions', 'status', array('id' => $this->formdata->submissionid), MUST_EXIST);
+                $status = $DB->get_field('survey_submission', 'status', array('id' => $this->formdata->submissionid), MUST_EXIST);
                 $submissions->id = $this->formdata->submissionid;
                 $submissions->status = $status;
             }
@@ -759,7 +759,7 @@ class mod_survey_userformmanager {
             $whereparams['status'] = $status;
         }
 
-        return $DB->count_records('survey_submissions', $whereparams);
+        return $DB->count_records('survey_submission', $whereparams);
     }
 
     /*
@@ -817,7 +817,7 @@ class mod_survey_userformmanager {
 
         $paramurl = array('id' => $this->cm->id);
         // just to save a query
-        $alreadysubmitted = empty($this->survey->maxentries) ? 0 : $DB->count_records('survey_submissions', array('surveyid' => $this->survey->id, 'userid' => $USER->id));
+        $alreadysubmitted = empty($this->survey->maxentries) ? 0 : $DB->count_records('survey_submission', array('surveyid' => $this->survey->id, 'userid' => $USER->id));
         if (($alreadysubmitted < $this->survey->maxentries) || empty($this->survey->maxentries)) { // if the user is allowed to submit one more survey
             $buttonurl = new moodle_url('view.php', $paramurl);
             $onemore = new single_button($buttonurl, get_string('onemorerecord', 'survey'));
@@ -992,7 +992,7 @@ class mod_survey_userformmanager {
         if ($this->canmanageallsubmissions) {
             return true;
         }
-        $submission = $DB->get_record('survey_submissions', array('id' => $this->submissionid), '*', IGNORE_MISSING);
+        $submission = $DB->get_record('survey_submission', array('id' => $this->submissionid), '*', IGNORE_MISSING);
 
         $allowed = true;
         $mygroups = survey_get_my_groups($this->cm);
@@ -1033,11 +1033,11 @@ class mod_survey_userformmanager {
     public function duplicate_submission() {
         global $DB;
 
-        $submissions = $DB->get_record('survey_submissions', array('id' => $this->submissionid));
+        $submissions = $DB->get_record('survey_submission', array('id' => $this->submissionid));
         $submissions->timecreated = time();
         $submissions->status = SURVEY_STATUSINPROGRESS;
         unset($submissions->timemodified);
-        $submissionid = $DB->insert_record('survey_submissions', $submissions);
+        $submissionid = $DB->insert_record('survey_submission', $submissions);
 
         $surveyuserdata = $DB->get_recordset('survey_userdata', array('submissionid' => $this->submissionid));
         foreach ($surveyuserdata as $userdatum) {

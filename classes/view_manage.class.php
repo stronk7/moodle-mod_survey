@@ -131,7 +131,7 @@ class mod_survey_submissionmanager {
 
         if ($this->confirm == SURVEY_UNCONFIRMED) {
             // ask for confirmation
-            $submission = $DB->get_record('survey_submissions', array('id' => $this->submissionid));
+            $submission = $DB->get_record('survey_submission', array('id' => $this->submissionid));
 
             $a = new stdClass();
             $a->timecreated = userdate($submission->timecreated);
@@ -168,7 +168,7 @@ class mod_survey_submissionmanager {
             switch ($this->confirm) {
                 case SURVEY_CONFIRMED_YES:
                     $DB->delete_records('survey_userdata', array('submissionid' => $this->submissionid));
-                    $DB->delete_records('survey_submissions', array('id' => $this->submissionid));
+                    $DB->delete_records('survey_submission', array('id' => $this->submissionid));
                     echo $OUTPUT->notification(get_string('responsedeleted', 'survey'), 'notifyproblem');
                     break;
                 case SURVEY_CONFIRMED_NO:
@@ -211,7 +211,7 @@ class mod_survey_submissionmanager {
             switch ($this->confirm) {
                 case SURVEY_CONFIRMED_YES:
                     $sql = 'SELECT s.id
-                                FROM {survey_submissions} s
+                                FROM {survey_submission} s
                                 WHERE s.surveyid = :surveyid';
                     $idlist = $DB->get_records_sql($sql, array('surveyid' => $this->survey->id));
 
@@ -219,7 +219,7 @@ class mod_survey_submissionmanager {
                         $DB->delete_records('survey_userdata', array('submissionid' => $submissionid->id));
                     }
 
-                    $DB->delete_records('survey_submissions', array('surveyid' => $this->survey->id));
+                    $DB->delete_records('survey_submission', array('surveyid' => $this->survey->id));
                     echo $OUTPUT->notification(get_string('allsurveysdeleted', 'survey'), 'notifyproblem');
                     break;
                 case SURVEY_CONFIRMED_NO:
@@ -242,7 +242,7 @@ class mod_survey_submissionmanager {
         global $USER;
 
         $sql = 'SELECT s.*, s.id as submissionid, '.user_picture::fields('u').'
-                FROM {survey_submissions} s ';
+                FROM {survey_submission} s ';
 
         list($where, $whereparams) = $table->get_sql_where();
 
@@ -534,7 +534,7 @@ class mod_survey_submissionmanager {
         if ($this->action == SURVEY_NOACTION) {
             return true;
         }
-        if (!$ownerid = $DB->get_field('survey_submissions', 'userid', array('id' => $this->submissionid), IGNORE_MISSING)) {
+        if (!$ownerid = $DB->get_field('survey_submission', 'userid', array('id' => $this->submissionid), IGNORE_MISSING)) {
             print_error('incorrectaccessdetected', 'survey');
         }
 
@@ -582,7 +582,7 @@ class mod_survey_submissionmanager {
 
         $emptyanswer = get_string('notanswereditem', 'survey');
 
-        $submission = $DB->get_record('survey_submissions', array('id' => $this->submissionid));
+        $submission = $DB->get_record('survey_submission', array('id' => $this->submissionid));
         $user = $DB->get_record('user', array('id' => $submission->userid));
         $userdatarecord = $DB->get_records('survey_userdata', array('submissionid' => $this->submissionid), '', 'itemid, id, content');
 
@@ -593,7 +593,7 @@ class mod_survey_submissionmanager {
         // I am not allowed to get ONLY answers from survey_userdata
         // because I also need to gather info about fieldset and label
         // $sql = 'SELECT *, s.id as submissionid, ud.id as userdataid, ud.itemid as id
-        //         FROM {survey_submissions} s
+        //         FROM {survey_submission} s
         //             JOIN {survey_userdata} ud ON ud.submissionid = s.id
         //         WHERE s.id = :submissionid';
         $itemseeds = $DB->get_recordset_sql($sql, $whereparams);
