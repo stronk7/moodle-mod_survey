@@ -80,6 +80,7 @@ class survey_pluginform extends mod_survey_itembaseform {
         $elementgroup = array();
         $mform->addElement('text', $fieldname, '');
         $mform->disabledIf($fieldname, 'defaultoption', 'neq', SURVEY_CUSTOMDEFAULT);
+        $mform->setType($fieldname, PARAM_RAW);
 
         // ----------------------------------------
         // newitem::downloadformat
@@ -138,8 +139,8 @@ class survey_pluginform extends mod_survey_itembaseform {
                 $labels[] = $cleanlabelother;
             } else {
                 $pair = explode(SURVEY_OTHERSEPARATOR, $cleanlabelother);
-                $values[] = $pair[1];
-                $labels[] = $pair[0];
+                $values[] = $pair[0];
+                $labels[] = $pair[1];
             }
         }
 

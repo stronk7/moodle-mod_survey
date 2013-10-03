@@ -103,17 +103,17 @@ class surveyfield_date extends mod_survey_itembase {
     /*
      * $defaultvalue_year
      */
-    public $defaultvalue_year = 0;
+    public $defaultvalue_year = null;
 
     /*
      * $defaultvalue_month
      */
-    public $defaultvalue_month = 0;
+    public $defaultvalue_month = null;
 
     /*
      * $defaultvalue_day
      */
-    public $defaultvalue_day = 0;
+    public $defaultvalue_day = null;
 
     /*
      * $lowerbound = the minimum allowed date
@@ -123,17 +123,17 @@ class surveyfield_date extends mod_survey_itembase {
     /*
      * $lowerbound_year
      */
-    public $lowerbound_year = 0;
+    public $lowerbound_year = null;
 
     /*
      * $lowerbound_month
      */
-    public $lowerbound_month = 0;
+    public $lowerbound_month = null;
 
     /*
      * $lowerbound_day
      */
-    public $lowerbound_day = 0;
+    public $lowerbound_day = null;
 
     /*
      * $upperbound = the maximum allowed date
@@ -143,17 +143,17 @@ class surveyfield_date extends mod_survey_itembase {
     /*
      * $upperbound_year
      */
-    public $upperbound_year = 0;
+    public $upperbound_year = null;
 
     /*
      * $upperbound_month
      */
-    public $upperbound_month = 0;
+    public $upperbound_month = null;
 
     /*
      * $upperbound_day
      */
-    public $upperbound_day = 0;
+    public $upperbound_day = null;
 
     /*
      * $flag = features describing the object

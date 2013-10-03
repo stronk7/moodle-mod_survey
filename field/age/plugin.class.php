@@ -93,12 +93,12 @@ class surveyfield_age extends mod_survey_itembase {
     /*
      * $defaultvalue_year
      */
-    public $defaultvalue_year = 0;
+    public $defaultvalue_year = null;
 
     /*
      * $defaultvalue_month
      */
-    public $defaultvalue_month = 0;
+    public $defaultvalue_month = null;
 
     /*
      * $lowerbound = the minimum allowed age
@@ -108,12 +108,12 @@ class surveyfield_age extends mod_survey_itembase {
     /*
      * $lowerbound_year
      */
-    public $lowerbound_year = 0;
+    public $lowerbound_year = null;
 
     /*
      * $lowerbound_month
      */
-    public $lowerbound_month = 0;
+    public $lowerbound_month = null;
 
     /*
      * $upperbound = the maximum allowed age

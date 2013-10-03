@@ -108,27 +108,27 @@ class surveyfield_datetime extends mod_survey_itembase {
     /*
      * $defaultvalue_year
      */
-    public $defaultvalue_year = 0;
+    public $defaultvalue_year = null;
 
     /*
      * $defaultvalue_month
      */
-    public $defaultvalue_month = 0;
+    public $defaultvalue_month = null;
 
     /*
      * $defaultvalue_day
      */
-    public $defaultvalue_day = 0;
+    public $defaultvalue_day = null;
 
     /*
      * $defaultvalue_hour
      */
-    public $defaultvalue_hour = 0;
+    public $defaultvalue_hour = null;
 
     /*
      * $defaultvalue_minute
      */
-    public $defaultvalue_minute = 0;
+    public $defaultvalue_minute = null;
 
     /*
      * $lowerbound = the minimum allowed date and time
@@ -138,27 +138,27 @@ class surveyfield_datetime extends mod_survey_itembase {
     /*
      * $lowerbound_year
      */
-    public $lowerbound_year = 0;
+    public $lowerbound_year = null;
 
     /*
      * $lowerbound_month
      */
-    public $lowerbound_month = 0;
+    public $lowerbound_month = null;
 
     /*
      * $lowerbound_day
      */
-    public $lowerbound_day = 0;
+    public $lowerbound_day = null;
 
     /*
      * $lowerbound_year
      */
-    public $lowerbound_hour = 0;
+    public $lowerbound_hour = null;
 
     /*
      * $lowerbound_month
      */
-    public $lowerbound_minute = 0;
+    public $lowerbound_minute = null;
 
     /*
      * $upperbound = the maximum allowed date and time
@@ -168,27 +168,27 @@ class surveyfield_datetime extends mod_survey_itembase {
     /*
      * $upperbound_year
      */
-    public $upperbound_year = 0;
+    public $upperbound_year = null;
 
     /*
      * $upperbound_month
      */
-    public $upperbound_month = 0;
+    public $upperbound_month = null;
 
     /*
      * $upperbound_day
      */
-    public $upperbound_day = 0;
+    public $upperbound_day = null;
 
     /*
      * $upperbound_year
      */
-    public $upperbound_hour = 0;
+    public $upperbound_hour = null;
 
     /*
      * $upperbound_month
      */
-    public $upperbound_minute = 0;
+    public $upperbound_minute = null;
 
     /*
      * $flag = features describing the object

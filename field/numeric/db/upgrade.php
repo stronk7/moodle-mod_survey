@@ -30,5 +30,38 @@
  * @return bool true
  */
 function xmldb_surveyfield_numeric_upgrade($oldversion) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2013100201) {
+
+        // Changing precision of field defaultvalue on table survey_numeric to (20, 10).
+        $table = new xmldb_table('survey_numeric');
+        $field = new xmldb_field('defaultvalue', XMLDB_TYPE_FLOAT, '20, 10', null, null, null, null, 'indent');
+
+        // Launch change of precision for field defaultvalue.
+        $dbman->change_field_precision($table, $field);
+
+
+        // Changing precision of field defaultvalue on table survey_integer to (20, 10).
+        $table = new xmldb_table('survey_numeric');
+        $field = new xmldb_field('lowerbound', XMLDB_TYPE_FLOAT, '20, 10', null, null, null, null, 'signed');
+
+        // Launch change of precision for field defaultvalue.
+        $dbman->change_field_precision($table, $field);
+
+
+        // Changing precision of field defaultvalue on table survey_integer to (20, 10).
+        $table = new xmldb_table('survey_numeric');
+        $field = new xmldb_field('upperbound', XMLDB_TYPE_FLOAT, '20, 10', null, null, null, null, 'lowerbound');
+
+        // Launch change of precision for field defaultvalue.
+        $dbman->change_field_precision($table, $field);
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013100201, 'surveyfield', 'numeric');
+    }
+
     return true;
 }

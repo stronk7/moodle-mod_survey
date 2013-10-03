@@ -478,8 +478,11 @@ EOS;
 
                 switch ($this->defaultoption) {
                     case SURVEY_CUSTOMDEFAULT:
-                        $index = array_search($this->defaultvalue, $labels);
-                        $mform->setDefault($this->itemname, "$index");
+                        if (array_search($this->defaultvalue, $labels)) {
+                            $mform->setDefault($this->itemname, "$index");
+                        } else {
+                            $mform->setDefault($this->itemname, 'other');
+                        }
                         break;
                     case SURVEY_INVITATIONDEFAULT:
                         $mform->setDefault($this->itemname, SURVEY_INVITATIONVALUE);

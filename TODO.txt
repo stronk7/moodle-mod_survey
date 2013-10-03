@@ -15,3 +15,4 @@ button is needed. (thanks to JR)
 -> possible better solution: use the first 32 chars of the question escaped
 -> is the autofill field saved to userdata even if it is not shown?
 -> responses equipped with images are reported without images in PDF
+-> allow upperbound date/datetime == to now

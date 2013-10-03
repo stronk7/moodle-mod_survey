@@ -428,7 +428,7 @@ EOS;
 
         if (!empty($this->labelother)) {
             list($othervalue, $otherlabel) = $this->item_get_other();
-            $labels['other'] = $otherlabel;
+            $labels['other'] = $othervalue;
 
             $class = ($this->adjustment == SURVEY_VERTICAL) ? array('class' => 'indent-'.$this->indent) : '';
             $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $otherlabel, 'other', $class);

@@ -14,6 +14,7 @@ They are:
 -> item type "character" to ask for question like: "Write down your email" or "Enter your personal web site URL" or "Enter the PIN code of your card"
 -> item type "checkbox" to ask for question like: "What do you usually eat for breakfast? milk, sugar, jam, chocolate, other..."
 -> item type "date" to ask for question like: "When were you born?" A: October 12, 1492
+-> item type "datetime" to ask for question like: "In which day and at what time do you remember the event?" A: October 12, 1492 at 14:45
 -> item type "fileupload" to ask for question like: "Please, upload your CV in PDF format"
 -> item type "integer" to ask for question like: "How many days do you foreseen for your Easter holidays?"
 -> item type "multiselect" to ask for question like: "What do you usually eat for breakfast? milk, sugar, jam, chocolate, other..."

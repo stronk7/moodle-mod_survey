@@ -108,12 +108,12 @@ class surveyfield_time extends mod_survey_itembase {
     /*
      * $defaultvalue_hour
      */
-    public $defaultvalue_hour = 0;
+    public $defaultvalue_hour = null;
 
     /*
      * $defaultvalue_minute
      */
-    public $defaultvalue_minute = 0;
+    public $defaultvalue_minute = null;
 
     /*
      * $lowerbound = the minimum allowed time
@@ -123,12 +123,12 @@ class surveyfield_time extends mod_survey_itembase {
     /*
      * $lowerbound_hour
      */
-    public $lowerbound_hour = 0;
+    public $lowerbound_hour = null;
 
     /*
      * $lowerbound_minute
      */
-    public $lowerbound_minute = 0;
+    public $lowerbound_minute = null;
 
     /*
      * $upperbound = the maximum allowed time
@@ -138,12 +138,12 @@ class surveyfield_time extends mod_survey_itembase {
     /*
      * $upperbound_hour
      */
-    public $upperbound_hour = 0;
+    public $upperbound_hour = null;
 
     /*
      * $upperbound_minute
      */
-    public $upperbound_minute = 0;
+    public $upperbound_minute = null;
 
     /*
      * $flag = features describing the object

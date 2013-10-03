@@ -128,8 +128,8 @@ class survey_pluginform extends mod_survey_itembaseform {
                 $labels[] = $cleanlabelother;
             } else {
                 $pair = explode(SURVEY_OTHERSEPARATOR, $cleanlabelother);
-                $values[] = $pair[1];
-                $labels[] = $pair[0];
+                $values[] = $pair[0];
+                $labels[] = $pair[1];
             }
         }
 
@@ -146,14 +146,14 @@ class survey_pluginform extends mod_survey_itembaseform {
                 // user asks for SURVEY_CUSTOMDEFAULT but doesn't provide it
                 // -----------------------------
                 $a = get_string('standarddefault', 'surveyfield_select');
-                $errors['defaultvalue_group'] = get_string('default_missing', 'surveyfield_select', $a);
+                $errors['defaultvalue'] = get_string('default_missing', 'surveyfield_select', $a);
             } else {
                 // -----------------------------
                 // second check
                 // each item of default has to be among options item OR has to be == to otherlabel value
                 // -----------------------------
                 if (!in_array($cleandefaultvalue, $labels)) {
-                    $errors['defaultvalue_group'] = get_string('defaultvalue_err', 'surveyfield_select', $cleandefaultvalue);
+                    $errors['defaultvalue'] = get_string('defaultvalue_err', 'surveyfield_select', $cleandefaultvalue);
                 }
 
                 // -----------------------------

@@ -103,12 +103,12 @@ class surveyfield_shortdate extends mod_survey_itembase {
     /*
      * $defaultvalue_month
      */
-    public $defaultvalue_month = 0;
+    public $defaultvalue_month = null;
 
     /*
      * $defaultvalue_year
      */
-    public $defaultvalue_year = 0;
+    public $defaultvalue_year = null;
 
     /*
      * $lowerbound = the minimum allowed short date
@@ -118,12 +118,12 @@ class surveyfield_shortdate extends mod_survey_itembase {
     /*
      * $lowerbound_month
      */
-    public $lowerbound_month = 0;
+    public $lowerbound_month = null;
 
     /*
      * $lowerbound_year
      */
-    public $lowerbound_year = 0;
+    public $lowerbound_year = null;
 
     /*
      * $upperbound = the maximum allowed short date
@@ -133,12 +133,12 @@ class surveyfield_shortdate extends mod_survey_itembase {
     /*
      * $upperbound_month
      */
-    public $upperbound_month = 0;
+    public $upperbound_month = null;
 
     /*
      * $upperbound_year
      */
-    public $upperbound_year = 0;
+    public $upperbound_year = null;
 
     /*
      * $flag = features describing the object

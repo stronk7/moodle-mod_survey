@@ -389,10 +389,9 @@ EOS;
             $mform->setType($this->itemname.'_text', PARAM_RAW);
 
             if (!$searchform) {
-                $index = in_array($otherlabel, $defaults);
-                if ($index !== false) {
+                $mform->setDefault($this->itemname.'_text', $othervalue);
+                if (in_array($othervalue, $defaults)) {
                     $mform->setDefault($this->itemname.'_other', '1');
-                    $mform->setDefault($this->itemname.'_text', $othervalue);
                 }
             }
             $mform->disabledIf($this->itemname.'_text', $this->itemname.'_other', 'notchecked');

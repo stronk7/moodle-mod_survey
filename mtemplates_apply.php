@@ -56,7 +56,6 @@ require_capability('mod/survey:applymastertemplate', $context);
 // calculations
 // -----------------------------
 $mtemplateman = new mod_survey_mastertemplate($survey);
-$mtemplateman->prevent_direct_user_input();
 
 // -----------------------------
 // define $applymtemplate return url
@@ -108,6 +107,8 @@ echo $OUTPUT->header();
 $currenttab = SURVEY_TABMTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_MTEMPLATES_APPLY; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
+
+$mtemplateman->friendly_halt();
 
 if (survey_count_submissions($survey->id, SURVEY_STATUSALL)) {
     echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));

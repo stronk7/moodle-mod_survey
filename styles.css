@@ -224,6 +224,15 @@
     overflow: hidden;
 }
 
+#page-mod-survey-view .mform .fcheckbox label,
+#page-mod-survey-view .mform .fduration label,
+#page-mod-survey-view .mform .fitem fieldset.fgroup label,
+#page-mod-survey-view .mform .fradio label,
+#page-mod-survey-view .mform fieldset.fdate_selector label,
+#page-mod-survey-view .mform fieldset.fdate_time_selector label {
+     vertical-align:baseline;
+}
+
 #page-mod-survey-view .mform .fitem .felement .indent-1 {
     margin-left:5%;
 }

@@ -103,12 +103,12 @@ class surveyfield_recurrence extends mod_survey_itembase {
     /*
      * $defaultvalue_month
      */
-    public $defaultvalue_month = 0;
+    public $defaultvalue_month = null;
 
     /*
      * $defaultvalue_year
      */
-    public $defaultvalue_day = 0;
+    public $defaultvalue_day = null;
 
     /*
      * $lowerbound = the minimum allowed recurrence
@@ -118,12 +118,12 @@ class surveyfield_recurrence extends mod_survey_itembase {
     /*
      * $lowerbound_month
      */
-    public $lowerbound_month = 0;
+    public $lowerbound_month = null;
 
     /*
      * $lowerbound_year
      */
-    public $lowerbound_day = 0;
+    public $lowerbound_day = null;
 
     /*
      * $upperbound = the maximum allowed recurrence
@@ -133,12 +133,12 @@ class surveyfield_recurrence extends mod_survey_itembase {
     /*
      * $upperbound_month
      */
-    public $upperbound_month = 0;
+    public $upperbound_month = null;
 
     /*
      * $upperbound_year
      */
-    public $upperbound_day = 0;
+    public $upperbound_day = null;
 
     /*
      * $flag = features describing the object
