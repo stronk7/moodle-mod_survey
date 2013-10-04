@@ -94,7 +94,7 @@ class report_frequency {
     }
 
     /*
-     *
+     * stop_if_textareas_only
      */
     public function stop_if_textareas_only() {
         global $CFG, $DB, $OUTPUT;
@@ -122,7 +122,10 @@ class report_frequency {
     }
 
     /*
+     * fetch_information
      *
+     * @param int $itemid
+     * @param int $submissionscount
      */
     public function fetch_information($itemid, $submissionscount) {
         global $DB;
@@ -188,6 +191,11 @@ class report_frequency {
         $this->answers->close();
     }
 
+    /*
+     * output_information
+     *
+     * @param string $url
+     */
     public function output_information($url) {
         global $OUTPUT;
 
@@ -196,7 +204,7 @@ class report_frequency {
         $this->print_graph($url);
     }
 
-    /**
+    /*
      * @param string $url
      */
     public function print_graph($url) {

@@ -70,6 +70,7 @@ $formparams = new stdClass();
 $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
 $formparams->mtemplateman = $mtemplateman;
+$formparams->inline = false;
 
 $applymtemplate = new survey_applymtemplateform($formurl, $formparams);
 // end of: prepare params for the form

@@ -382,7 +382,7 @@ class surveyfield_shortdate extends mod_survey_itembase {
         return $fieldlist;
     }
 
-    /**
+    /*
      * item_get_plugin_schema
      * Return the xml schema for survey_<<plugin>> table.
      *

@@ -449,7 +449,7 @@ class surveyfield_datetime extends mod_survey_itembase {
         return 'strftime01';
     }
 
-    /**
+    /*
      * item_get_plugin_schema
      * Return the xml schema for survey_<<plugin>> table.
      *

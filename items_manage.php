@@ -67,6 +67,56 @@ require_capability('mod/survey:manageitems', $context);
 // -----------------------------
 // calculations
 // -----------------------------
+
+// -----------------------------
+// the form showing the drop down menu with the list of mater templates
+$itemcount = $DB->count_records('survey_item', array('surveyid' => $survey->id));
+if (!$itemcount) {
+    require_once($CFG->dirroot.'/mod/survey/classes/mtemplate.class.php');
+    require_once($CFG->dirroot.'/mod/survey/forms/mtemplates/applymtemplate_form.php');
+
+    $mtemplateman = new mod_survey_mastertemplate($survey);
+
+    // -----------------------------
+    // define $applymtemplate return url
+    $paramurl = array('id' => $cm->id);
+    $formurl = new moodle_url('mtemplates_apply.php', $paramurl);
+    // end of: define $applymtemplate return url
+    // -----------------------------
+
+    // -----------------------------
+    // prepare params for the form
+    $formparams = new stdClass();
+    $formparams->cmid = $cm->id;
+    $formparams->survey = $survey;
+    $formparams->mtemplateman = $mtemplateman;
+    $formparams->inline = true;
+
+    $applymtemplate = new survey_applymtemplateform($formurl, $formparams);
+    // end of: prepare params for the form
+    // -----------------------------
+
+    // -----------------------------
+    // manage form submission
+    if ($applymtemplate->is_cancelled()) {
+        $returnurl = new moodle_url('utemplates_add.php', $paramurl);
+        redirect($returnurl);
+    }
+
+    if ($mtemplateman->formdata = $applymtemplate->get_data()) {
+        $mtemplateman->apply_template(SURVEY_MASTERTEMPLATE);
+
+        $redirecturl = new moodle_url('view.php', array('id' => $cm->id, 'act' => SURVEY_PREVIEWSURVEY));
+        redirect($redirecturl);
+    }
+    // end of: manage form submission
+    // -----------------------------
+}
+// end of: the form showing the drop down menu with the list of mater templates
+// -----------------------------
+
+// -----------------------------
+// the form showing the drop down menu with the list of items
 $itemlistman = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
                                             $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
 // I need to execute this method before the page load because it modifies TAB elements
@@ -95,6 +145,14 @@ $itemlistman->display_user_feedback();
 
 if ($itemlistman->hassubmissions) {
     echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
+}
+
+// add Master templates selection form
+if (!$itemcount) {
+    $message = get_string('beginfromscratch', 'survey');
+    echo $OUTPUT->box($message, 'generaltable generalbox boxaligncenter boxwidthnormal');
+
+    $applymtemplate->display();
 }
 
 // add item form

@@ -583,7 +583,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
             }
         }
 
-        if ($canmanagecat && $canincreasesharinglevel) {
+        if ($canmanagecat && $canassigntocategotylevel) {
             $options[CONTEXT_SYSTEM.'_0'] = get_string('site');
         }
 

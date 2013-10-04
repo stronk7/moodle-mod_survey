@@ -38,7 +38,7 @@ class survey_admin_page_manage_survey_plugins extends admin_externalpage {
     /** @var string the name of plugin subtype */
     private $subtype = '';
 
-    /**
+    /*
      * The constructor - calls parent constructor
      *
      * @param string $subtype
@@ -51,7 +51,7 @@ class survey_admin_page_manage_survey_plugins extends admin_externalpage {
                             $url);
     }
 
-    /**
+    /*
      * Search plugins for the specified string
      *
      * @param string $query The string to search for
@@ -99,7 +99,7 @@ class survey_plugin_manager {
     /** @var string either submission or feedback */
     private $subtype = '';
 
-    /**
+    /*
      * Constructor for this assignment plugin manager
      * @param string $subtype - either assignsubmission or assignfeedback
      */
@@ -108,7 +108,7 @@ class survey_plugin_manager {
         $this->subtype = $subtype;
     }
 
-    /**
+    /*
      * Return a list of plugins sorted by the order defined in the admin interface
      *
      * @return array The list of plugins
@@ -133,7 +133,7 @@ class survey_plugin_manager {
         return $result;
     }
 
-    /**
+    /*
      * Util function for writing an action icon link
      *
      * @param string $action URL parameter to include in the link
@@ -151,7 +151,7 @@ class survey_plugin_manager {
                 null, array('title' => $alt)).' ';
     }
 
-    /**
+    /*
      * Write the HTML for the submission plugins table.
      *
      * @return None
@@ -256,7 +256,7 @@ class survey_plugin_manager {
         $this->view_footer();
     }
 
-    /**
+    /*
      * Write the page header
      *
      * @return None
@@ -271,7 +271,7 @@ class survey_plugin_manager {
         echo $OUTPUT->heading(get_string('manage'.$this->subtype.'plugins', 'survey'));
     }
 
-    /**
+    /*
      * Write the page footer
      *
      * @return None
@@ -282,7 +282,7 @@ class survey_plugin_manager {
         echo $OUTPUT->footer();
     }
 
-    /**
+    /*
      * Check this user has permission to edit the list of installed plugins
      *
      * @return None
@@ -294,7 +294,7 @@ class survey_plugin_manager {
         require_capability('moodle/site:config', $systemcontext);
     }
 
-    /**
+    /*
      * Delete the database and files associated with this plugin.
      *
      * @param string $plugin - The type of the plugin to delete
@@ -337,7 +337,7 @@ class survey_plugin_manager {
 
     }
 
-    /**
+    /*
      * Show the page that gives the details of the plugin that was just deleted.
      *
      * @param string $plugin - The plugin that was just deleted
@@ -358,7 +358,7 @@ class survey_plugin_manager {
         $this->view_footer();
     }
 
-    /**
+    /*
      * Show the page that asks the user to confirm they want to delete a plugin.
      *
      * @param string $plugin - The plugin that will be deleted
@@ -378,7 +378,7 @@ class survey_plugin_manager {
         $this->view_footer();
     }
 
-    /**
+    /*
      * Hide this plugin.
      *
      * @param string $plugin - The plugin to hide
@@ -389,7 +389,7 @@ class survey_plugin_manager {
         return 'view';
     }
 
-    /**
+    /*
      * Show this plugin.
      *
      * @param string $plugin - The plugin to show
@@ -400,7 +400,7 @@ class survey_plugin_manager {
         return 'view';
     }
 
-    /**
+    /*
      * This is the entry point for this controller class.
      *
      * @param string $action - The action to perform
@@ -433,7 +433,7 @@ class survey_plugin_manager {
         }
     }
 
-    /**
+    /*
      * This function adds plugin pages to the navigation menu.
      *
      * @static

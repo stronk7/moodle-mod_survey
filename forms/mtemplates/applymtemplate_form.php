@@ -36,6 +36,7 @@ class survey_applymtemplateform extends moodleform {
         $mform = $this->_form;
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
+        $inline = $this->_customdata->inline;
 
         if ($mtemplatepluginlist = get_plugin_list('surveytemplate')) {
             $mtemplates = array();
@@ -53,13 +54,21 @@ class survey_applymtemplateform extends moodleform {
         // ----------------------------------------
         $fieldname = 'mastertemplate';
         if (count($mtemplates)) {
-            $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $mtemplates);
-            $mform->addHelpButton($fieldname, $fieldname, 'survey');
-            $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+            if ($inline) {
+                $elementgroup = array();
+                $elementgroup[] = $mform->createElement('select', $fieldname, get_string($fieldname, 'survey'), $mtemplates);
+                $elementgroup[] = $mform->createElement('submit', $fieldname.'_button', get_string('create'));
+                $mform->addGroup($elementgroup, $fieldname.'_group', get_string($fieldname, 'survey'), array(' '), false);
+                $mform->addHelpButton($fieldname.'_group', $fieldname, 'survey');
+            } else {
+                $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $mtemplates);
+                $mform->addHelpButton($fieldname, $fieldname, 'survey');
+                $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
 
-            // ----------------------------------------
-            // buttons
-            $this->add_action_buttons(true, get_string('continue'));
+                // ----------------------------------------
+                // buttons
+                $this->add_action_buttons(true, get_string('continue'));
+            }
         } else {
             $mform->addElement('static', 'nomtemplates', get_string('mastertemplate', 'survey'), get_string('nomtemplates_message', 'survey'));
             $mform->addHelpButton('nomtemplates', 'nomtemplates', 'survey');
@@ -75,6 +84,7 @@ class survey_applymtemplateform extends moodleform {
         $cmid = $this->_customdata->cmid;
         $survey = $this->_customdata->survey;
         $mtemplateman = $this->_customdata->mtemplateman;
+        $inline = $this->_customdata->inline;
 
         $errors = parent::validation($data, $files);
 

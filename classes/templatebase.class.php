@@ -48,6 +48,28 @@ class mod_survey_templatebase {
         $this->survey = $survey;
     }
 
+    /*
+     * prevent_direct_user_input
+     */
+    // the link may be available even if the template has submissions
+    // I can not hide the link, otherwise people complain for its absence
+    // so, I leave it and the I kindly stop the process from friendly_halt
+    // Because of this and, as far as I know, this method is not used any more
+    public function prevent_direct_user_input() {
+        $forceediting = ($this->survey->riskyeditdeadline > time());
+        $hassubmissions = survey_count_submissions($this->survey->id);
+
+        if ($hassubmissions && (!$forceediting)) {
+            print_error('incorrectaccessdetected', 'survey');
+        }
+        if ($this->survey->template && (!$forceediting)) {
+            print_error('incorrectaccessdetected', 'survey');
+        }
+    }
+
+    /*
+     * friendly_halt
+     */
     public function friendly_halt() {
         global $CFG, $OUTPUT;
 

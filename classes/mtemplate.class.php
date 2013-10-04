@@ -33,11 +33,6 @@ require_once($CFG->dirroot.'/mod/survey/classes/templatebase.class.php');
 
 class mod_survey_mastertemplate extends mod_survey_templatebase {
     /*
-     * $libcontent: the content of the file lib.php that is going to populate the master template
-     */
-    public $libcontent = '';
-
-    /*
      * $langtree
      */
     public $langtree = array();

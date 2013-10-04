@@ -672,7 +672,7 @@ class mod_survey_itembase {
         // nothing to do!
     }
 
-    /**
+    /*
      * item_get_plugin_schema
      * Return the xml schema for survey_<<plugin>> table.
      *

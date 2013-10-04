@@ -346,7 +346,7 @@ class surveyfield_select extends mod_survey_itembase {
         return $parentcontent;
     }
 
-    /**
+    /*
      * item_get_plugin_schema
      * Return the xml schema for survey_<<plugin>> table.
      *

@@ -289,7 +289,7 @@ class surveyfield_textarea extends mod_survey_itembase {
         return $this->useeditor;
     }
 
-    /**
+    /*
      * item_get_plugin_schema
      * Return the xml schema for survey_<<plugin>> table.
      *
