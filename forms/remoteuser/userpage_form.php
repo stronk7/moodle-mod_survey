@@ -122,7 +122,7 @@ class survey_submissionform extends moodleform {
                         $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
                         if ($position == SURVEY_POSITIONTOP) {
 
-                            // non working hack to simutate the missing style for static mform element
+                            // non working hack to simulate the missing style for static mform element
                             // $content = '';
                             // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$item->get_indent()));
                             // $content .= $item->get_content();
@@ -162,7 +162,7 @@ class survey_submissionform extends moodleform {
 
                     /***************  note  ****************/
                     if ($fullinfo = $item->userform_get_full_info(false)) {
-                        // non working hack to simutate the missing style for static mform element
+                        // non working hack to simulate the missing style for static mform element
                         // $content = '';
                         // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$item->get_indent()));
                         // $content .= $fullinfo;

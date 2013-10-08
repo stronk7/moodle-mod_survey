@@ -54,7 +54,7 @@ class survey_searchform extends moodleform {
                 $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
                 if ($position == SURVEY_POSITIONTOP) {
 
-                    // non working hack to simutate the missing style for static mform element
+                    // non working hack to simulate the missing style for static mform element
                     // $content = '';
                     // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$item->get_indent()));
                     // $content .= $item->get_content();
@@ -65,13 +65,21 @@ class survey_searchform extends moodleform {
                     $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content());
                 }
                 if ($position == SURVEY_POSITIONTOPLEFT) {
+                    $questioncontent = $item->get_content();
+                    if ($elementnumber) {
+                        // I want to change "4.2:<p>Do you live in NY?</p>" to "<p>4.2: Do you live in NY?</p>"
+                        if (preg_match('/^<p>(.*)$/', $questioncontent, $match)) {
+                            // print_object($match);
+                            $questioncontent = '<p>'.$elementnumber.' '.$match[1];
+                        }
+                    }
                     $content = '';
                     $content .= html_writer::start_tag('fieldset', array('class' => 'hidden'));
                     $content .= html_writer::start_tag('div');
                     $content .= html_writer::start_tag('div', array('class' => 'fitem'));
                     $content .= html_writer::start_tag('div', array('class' => 'fstatic fullwidth'));
                     // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
-                    $content .= $elementnumber.$item->get_content();
+                    $content .= $questioncontent;
                     // $content .= html_writer::end_tag('div');
                     $content .= html_writer::end_tag('div');
                     $content .= html_writer::end_tag('div');
@@ -86,7 +94,7 @@ class survey_searchform extends moodleform {
 
             /***************  note  ****************/
             if ($fullinfo = $item->userform_get_full_info(true)) {
-                // non working hack to simutate the missing style for static mform element
+                // non working hack to simulate the missing style for static mform element
                 // $content = '';
                 // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$item->get_indent()));
                 // $content .= $fullinfo;
