@@ -79,7 +79,7 @@ class surveyformat_pagebreak extends mod_survey_itembase {
         $this->formrequires['common_fs'] = false;
         $this->formrequires['content'] = false;
         $this->formrequires['customnumber'] = false;
-        $this->formrequires['extrarow'] = false;
+        $this->formrequires['position'] = false;
         $this->formrequires['extranote'] = false;
         $this->formrequires['required'] = false;
         $this->formrequires['variable'] = false;

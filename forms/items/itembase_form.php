@@ -120,22 +120,18 @@ class mod_survey_itembaseform extends moodleform {
         }
 
         // ----------------------------------------
-        // newitem::extrarow
+        // newitem::position
         // ----------------------------------------
-        $fieldname = 'extrarow';
-        if ($forceextrarow = $item->get_form_requires($fieldname)) {
-            if ($forceextrarow === 'disable') {
-                $helplabel = get_string('extrarowisforced', 'survey');
-                $options = array('group' => '1', 'disabled' => 'disabled');
-            } else {
-                $helplabel = '';
-                $options = array('group' => $forceextrarow);
+        $fieldname = 'position';
+        if ($position = $item->get_form_requires($fieldname)) {
+            $options = array(SURVEY_POSITIONTOP => get_string('top', 'survey'),
+                            SURVEY_POSITIONTOPLEFT => get_string('topleft', 'survey'));
+            if ($item->get_plugin() != 'rate') { // position can not be SURVEY_POSITIONLEFT
+                $options = array(SURVEY_POSITIONLEFT => get_string('left', 'survey')) + $options;
             }
-            $mform->addElement('advcheckbox', $fieldname, get_string($fieldname, 'survey'), $helplabel, $options);
+            $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
-            if ($forceextrarow === 'disable') {
-                $mform->setDefault($fieldname, $forceextrarow);
-            }
+            $mform->setDefault($fieldname, $position);
             $mform->setType($fieldname, PARAM_INT);
         }
 

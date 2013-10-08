@@ -78,7 +78,7 @@ class surveyformat_fieldset extends mod_survey_itembase {
         // list of fields I do not want to have in the item definition form
         $this->formrequires['extranote'] = false;
         $this->formrequires['customnumber'] = false;
-        $this->formrequires['extrarow'] = false;
+        $this->formrequires['position'] = false;
         $this->formrequires['required'] = false;
         $this->formrequires['variable'] = false;
         $this->formrequires['indent'] = false;

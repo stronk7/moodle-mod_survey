@@ -54,9 +54,9 @@ class surveyfield_rate extends mod_survey_itembase {
     public $customnumber = '';
 
     /*
-     * $extrarow = is the extrarow required?
+     * $position = where does the question go?
      */
-    public $extrarow = 0;
+    public $position = SURVEY_POSITIONLEFT;
 
     /*
      * $extranote = an optional text describing the item
@@ -159,10 +159,7 @@ class surveyfield_rate extends mod_survey_itembase {
         // list of fields I do not want to have in the item definition form
         $this->formrequires['insearchform'] = false;
         $this->formrequires['hideinstructions'] = false;
-        // formrequires['extrarow'] = true // show extrarow checkbox
-        // formrequires['extrarow'] = false // do not show extrarow checkbox
-        // formrequires['extrarow'] = 'disable' //  disable the extrarow checkbox
-        $this->formrequires['extrarow'] = 'disable'; // show the checkbox
+        $this->formrequires['position'] = SURVEY_POSITIONLEFT;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
@@ -223,8 +220,8 @@ class surveyfield_rate extends mod_survey_itembase {
         // set custom fields value as defined for this question plugin
         $this->item_custom_fields_to_db($record);
 
-        // remember: extrarow is mandatory and equal to 1 by design
-        $record->extrarow = 1;
+        // remember: position is mandatory and equal to SURVEY_POSITIONTOP by design
+        $record->position = SURVEY_POSITIONTOP;
         $record->hideinstructions = 1;
         $record->differentrates = isset($record->differentrates) ? 1 : 0;
         // ------- end of fields saved in this plugin table ------- //
@@ -371,7 +368,7 @@ class surveyfield_rate extends mod_survey_itembase {
                 <xs:element type="xs:int" name="contentformat"/>
 
                 <xs:element type="xs:string" name="customnumber" minOccurs="0"/>
-                <xs:element type="xs:int" name="extrarow"/>
+                <xs:element type="xs:int" name="position"/>
                 <xs:element type="xs:string" name="extranote" minOccurs="0"/>
                 <xs:element type="xs:int" name="required"/>
                 <xs:element type="xs:int" name="hideinstructions"/>

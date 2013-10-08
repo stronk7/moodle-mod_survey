@@ -13,7 +13,7 @@
      * background is not reliable because it does not distinguish between items, label and notes.
      * I have to wait for MDL-28194
      */
-    /* background-color:#EDEDED; */
+    background-color:#EDEDED;
 }
 
 /* surveyfields */
@@ -224,13 +224,13 @@
     overflow: hidden;
 }
 
-#page-mod-survey-view .mform .fcheckbox label,
-#page-mod-survey-view .mform .fduration label,
-#page-mod-survey-view .mform .fitem fieldset.fgroup label,
-#page-mod-survey-view .mform .fradio label,
-#page-mod-survey-view .mform fieldset.fdate_selector label,
-#page-mod-survey-view .mform fieldset.fdate_time_selector label {
-     vertical-align:baseline;
+#page-mod-survey-view .mform fieldset.hidden {
+    margin: 0;
+    padding: 0;
+}
+
+#page-mod-survey-view .mform .fullwidth p {
+    margin:0;
 }
 
 #page-mod-survey-view .mform .fitem .felement .indent-1 {

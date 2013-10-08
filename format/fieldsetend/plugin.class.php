@@ -79,7 +79,7 @@ class surveyformat_fieldsetend extends mod_survey_itembase {
         $this->formrequires['common_fs'] = false;
         $this->formrequires['content'] = false;
         $this->formrequires['customnumber'] = false;
-        $this->formrequires['extrarow'] = false;
+        $this->formrequires['position'] = false;
         $this->formrequires['extranote'] = false;
         $this->formrequires['required'] = false;
         $this->formrequires['variable'] = false;
@@ -198,7 +198,7 @@ EOS;
          * -> get has_capability('mod/survey:accessadvanceditems', $context, null, true);
          * -> make the query to get the ID of the next item (remember that next item depends from your permissions to see advanced items)
          * -> instanciate $item class
-         * -> ask if $item uses an extrarow
+         * -> ask if $item uses a special position
          * -> ask $item->userform_mform_element_is_group()
          * finally write the simple:
          *     $mform->closeHeaderBefore($nextitem->itemname.'_extrarow');
@@ -230,7 +230,7 @@ EOS;
             $whereparams = array('surveyid' => $cm->instance, 'sortindex' => $this->sortindex);
             if ($itemseed = $DB->get_record_sql($sql, $whereparams, IGNORE_MISSING)) { // The element really exists
                 $nextitem = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
-                if (isset($nextitem->extrarow) && $nextitem->extrarow) {
+                if (isset($nextitem->position) && ($nextitem->position != SURVEY_POSITIONLEFT)) {
                     $mform->closeHeaderBefore($nextitem->itemname.'_extrarow');
                 } else {
                     if ($nextitem->userform_mform_element_is_group()) {

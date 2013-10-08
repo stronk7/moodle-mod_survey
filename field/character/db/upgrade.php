@@ -42,5 +42,18 @@ function xmldb_surveyfield_character_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013090701, 'surveyfield', 'character');
     }
 
+    if ($oldversion < 2013100601) {
+
+        // Rename field extrarow on table survey_age to position.
+        $table = new xmldb_table('survey_character');
+        $field = new xmldb_field('extrarow', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'customnumber');
+
+        // Launch rename field extrarow.
+        $dbman->rename_field($table, $field, 'position');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013100601, 'surveyfield', 'character');
+    }
+
     return true;
 }

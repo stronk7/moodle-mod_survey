@@ -54,9 +54,9 @@ class surveyfield_checkbox extends mod_survey_itembase {
     public $customnumber = '';
 
     /*
-     * $extrarow = is the extrarow required?
+     * $position = where does the question go?
      */
-    public $extrarow = 0;
+    public $position = SURVEY_POSITIONLEFT;
 
     /*
      * $extranote = an optional text describing the item
@@ -325,7 +325,7 @@ class surveyfield_checkbox extends mod_survey_itembase {
                 <xs:element type="xs:int" name="contentformat"/>
 
                 <xs:element type="xs:string" name="customnumber" minOccurs="0"/>
-                <xs:element type="xs:int" name="extrarow"/>
+                <xs:element type="xs:int" name="position"/>
                 <xs:element type="xs:string" name="extranote" minOccurs="0"/>
                 <xs:element type="xs:int" name="required"/>
                 <xs:element type="xs:string" name="variable" minOccurs="0"/>
@@ -359,7 +359,7 @@ EOS;
      */
     public function userform_mform_element($mform, $searchform) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->get_content());
+        $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
         $labels = $this->item_get_labels_array('options');
         $defaults = survey_textarea_to_array($this->defaultvalue);
@@ -432,7 +432,7 @@ EOS;
                 // -> I do not want JS form validation if the page is submitted through the "previous" button
                 // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                $starplace = ($this->extrarow) ? $this->itemname.'_extrarow' : $this->itemname.'_group';
+                $starplace = ($this->position != SURVEY_POSITIONLEFT) ? $this->itemname.'_extrarow' : $this->itemname.'_group';
                 $mform->_required[] = $starplace;
             }
         }
@@ -450,12 +450,7 @@ EOS;
     public function userform_mform_validation($data, &$errors, $survey) {
         if ($this->required) {
             $labels = $this->item_get_labels_array('options');
-
-            if ($this->extrarow) {
-                $errorkey = $this->itemname.'_extrarow';
-            } else {
-                $errorkey = $this->itemname.'_group';
-            }
+            $errorkey = $this->itemname.'_group';
 
             $missinganswer = true;
             foreach ($labels as $k => $label) {

@@ -31,7 +31,7 @@
     <survey_textarea>
       <content>textarea_content_02</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
       <indent>0</indent>
@@ -55,7 +55,7 @@
     <survey_textarea>
       <content>textarea_content_03</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
       <indent>0</indent>
@@ -79,7 +79,7 @@
     <survey_textarea>
       <content>textarea_content_04</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
       <indent>0</indent>
@@ -103,7 +103,7 @@
     <survey_textarea>
       <content>textarea_content_05</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
       <indent>0</indent>
@@ -127,7 +127,7 @@
     <survey_textarea>
       <content>textarea_content_06</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <hideinstructions>0</hideinstructions>
       <indent>0</indent>

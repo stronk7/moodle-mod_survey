@@ -54,9 +54,9 @@ class surveyfield_boolean extends mod_survey_itembase {
     public $customnumber = '';
 
     /*
-     * $extrarow = is the extrarow required?
+     * $position = where does the question go?
      */
-    public $extrarow = 0;
+    public $position = SURVEY_POSITIONLEFT;
 
     /*
      * $extranote = an optional text describing the item
@@ -342,7 +342,7 @@ class surveyfield_boolean extends mod_survey_itembase {
                 <xs:element type="xs:int" name="contentformat"/>
 
                 <xs:element type="xs:string" name="customnumber" minOccurs="0"/>
-                <xs:element type="xs:int" name="extrarow"/>
+                <xs:element type="xs:int" name="position"/>
                 <xs:element type="xs:string" name="extranote" minOccurs="0"/>
                 <xs:element type="xs:int" name="required"/>
                 <xs:element type="xs:string" name="variable" minOccurs="0"/>
@@ -403,7 +403,7 @@ EOS;
      */
     public function userform_mform_element($mform, $searchform) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->get_content());
+        $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
         $yeslabel = get_string('yes');
         $nolabel = get_string('no');
@@ -452,7 +452,7 @@ EOS;
                 // -> I do not want JS form validation if the page is submitted through the "previous" button
                 // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                if ($this->extrarow) {
+                if ($this->position != SURVEY_POSITIONLEFT) {
                     $starplace = $this->itemname.'_extrarow';
                 } else {
                     if ($this->style == SURVEYFIELD_BOOLEAN_USESELECT) {
@@ -495,14 +495,10 @@ EOS;
         // this plugin displays as dropdown menu or a radio buttons set. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
-        if ($this->extrarow) {
-            $errorkey = $this->itemname.'_extrarow';
+        if ($this->userform_mform_element_is_group()) {
+            $errorkey = $this->itemname.'_group';
         } else {
-            if ($this->userform_mform_element_is_group()) {
-                $errorkey = $this->itemname.'_group';
-            } else {
-                $errorkey = $this->itemname;
-            }
+            $errorkey = $this->itemname;
         }
 
         // I need to check value is different from SURVEY_INVITATIONVALUE even if it is not required

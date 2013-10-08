@@ -107,7 +107,7 @@ class surveyformat_label extends mod_survey_itembase {
         $this->flag->editorslist = array('content' => SURVEY_ITEMCONTENTFILEAREA);
 
         // list of fields I do not want to have in the item definition form
-        $this->formrequires['extrarow'] = false;
+        $this->formrequires['position'] = false;
         $this->formrequires['extranote'] = false;
         $this->formrequires['required'] = false;
         $this->formrequires['variable'] = false;

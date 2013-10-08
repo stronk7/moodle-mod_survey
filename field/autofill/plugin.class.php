@@ -54,9 +54,9 @@ class surveyfield_autofill extends mod_survey_itembase {
     public $customnumber = '';
 
     /*
-     * $extrarow = is the extrarow required?
+     * $position = where does the question go?
      */
-    public $extrarow = 0;
+    public $position = SURVEY_POSITIONLEFT;
 
     /*
      * $extranote = an optional text describing the item
@@ -384,7 +384,7 @@ class surveyfield_autofill extends mod_survey_itembase {
                 <xs:element type="xs:int" name="contentformat"/>
 
                 <xs:element type="xs:string" name="customnumber" minOccurs="0"/>
-                <xs:element type="xs:int" name="extrarow"/>
+                <xs:element type="xs:int" name="position"/>
                 <xs:element type="xs:string" name="extranote" minOccurs="0"/>
                 <xs:element type="xs:int" name="required"/>
                 <xs:element type="xs:string" name="variable" minOccurs="0"/>
@@ -419,7 +419,7 @@ EOS;
      */
     public function userform_mform_element($mform, $searchform) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->get_content());
+        $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
         if (!$searchform) {
             $referencearray = array(''); // <-- take care, the first element is already on board

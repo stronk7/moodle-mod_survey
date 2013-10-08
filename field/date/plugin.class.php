@@ -54,9 +54,9 @@ class surveyfield_date extends mod_survey_itembase {
     public $customnumber = '';
 
     /*
-     * $extrarow = is the extrarow required?
+     * $position = where does the question go?
      */
-    public $extrarow = 0;
+    public $position = SURVEY_POSITIONLEFT;
 
     /*
      * $extranote = an optional text describing the item
@@ -431,7 +431,7 @@ class surveyfield_date extends mod_survey_itembase {
                 <xs:element type="xs:int" name="contentformat"/>
 
                 <xs:element type="xs:string" name="customnumber" minOccurs="0"/>
-                <xs:element type="xs:int" name="extrarow"/>
+                <xs:element type="xs:int" name="position"/>
                 <xs:element type="xs:string" name="extranote" minOccurs="0"/>
                 <xs:element type="xs:int" name="required"/>
                 <xs:element type="xs:int" name="hideinstructions"/>
@@ -473,7 +473,7 @@ EOS;
         global $DB, $USER;
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->get_content());
+        $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
         $days = array();
         $months = array();
@@ -502,7 +502,7 @@ EOS;
                 // -> I do not want JS form validation if the page is submitted through the "previous" button
                 // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                 // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                $starplace = ($this->extrarow) ? $this->itemname.'_extrarow' : $this->itemname.'_group';
+                $starplace = ($this->position != SURVEY_POSITIONLEFT) ? $this->itemname.'_extrarow' : $this->itemname.'_group';
                 $mform->_required[] = $starplace;
             } else {
                 $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'));
@@ -576,11 +576,7 @@ EOS;
             return; // nothing to validate
         }
 
-        if ($this->extrarow) {
-            $errorkey = $this->itemname.'_extrarow';
-        } else {
-            $errorkey = $this->itemname.'_group';
-        }
+        $errorkey = $this->itemname.'_group';
 
         if ( ($data[$this->itemname.'_day'] == SURVEY_INVITATIONVALUE) ||
              ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) ||

@@ -54,9 +54,9 @@ class surveyfield_fileupload extends mod_survey_itembase {
     public $customnumber = '';
 
     /*
-     * $extrarow = is the extrarow required?
+     * $position = where does the question go?
      */
-    public $extrarow = 0;
+    public $position = SURVEY_POSITIONLEFT;
 
     /*
      * $extranote = an optional text describing the item
@@ -228,7 +228,7 @@ class surveyfield_fileupload extends mod_survey_itembase {
                 <xs:element type="xs:int" name="contentformat"/>
 
                 <xs:element type="xs:string" name="customnumber" minOccurs="0"/>
-                <xs:element type="xs:int" name="extrarow"/>
+                <xs:element type="xs:int" name="position"/>
                 <xs:element type="xs:string" name="extranote" minOccurs="0"/>
                 <xs:element type="xs:int" name="required"/>
                 <xs:element type="xs:string" name="variable" minOccurs="0"/>
@@ -264,7 +264,7 @@ EOS;
         $fieldname = $this->itemname.'_filemanager';
 
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->get_content());
+        $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
         $filetypes = array_map('trim', explode(',', $this->filetypes));
         $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
@@ -275,7 +275,7 @@ EOS;
             // -> I do not want JS form validation if the page is submitted through the "previous" button
             // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
             // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-            $starplace = ($this->extrarow) ? $this->itemname.'_extrarow' : $this->itemname;
+            $starplace = ($this->position != SURVEY_POSITIONLEFT) ? $this->itemname.'_extrarow' : $this->itemname;
             $mform->_required[] = $starplace;
         }
     }
@@ -291,11 +291,7 @@ EOS;
      */
     public function userform_mform_validation($data, &$errors, $survey) {
         if ($this->required) {
-            if ($this->extrarow) {
-                $errorkey = $this->itemname.'_extrarow';
-            } else {
-                $errorkey = $this->itemname.'_filemanager';
-            }
+            $errorkey = $this->itemname.'_filemanager';
 
             $fieldname = $this->itemname.'_filemanager';
             if (empty($data[$fieldname])) {

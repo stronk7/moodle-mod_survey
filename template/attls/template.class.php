@@ -33,8 +33,8 @@ class surveytemplate_attls {
     public function apply_template_settings(&$record) {
         $config = get_config('surveytemplate_attls');
 
-        if ($config->extrarow == 1) {
-            $record['extrarow'] = '1';
+        if ($config->position != SURVEY_POSITIONLEFT) {
+            $record['position'] = "$config->position";
         }
     }
 }

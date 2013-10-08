@@ -49,19 +49,36 @@ class survey_searchform extends moodleform {
         foreach ($itemseeds as $itemseed) {
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
-            /*************** extrarow ***************/
-            if ($item->get_extrarow()) {
+            /*************** position ***************/
+            if ($position = $item->get_position()) {
                 $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
+                if ($position == SURVEY_POSITIONTOP) {
 
-                // non working hack to simutate the missing style for static mform element
-                // $content = '';
-                // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$item->get_indent()));
-                // $content .= $item->get_content();
-                // $content .= html_writer::end_tag('div');
-                // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
+                    // non working hack to simutate the missing style for static mform element
+                    // $content = '';
+                    // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$item->get_indent()));
+                    // $content .= $item->get_content();
+                    // $content .= html_writer::end_tag('div');
+                    // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
 
-                // $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $content, array('class' => 'indent-'.$item->get_indent()));
-                $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content()); // here I  do not strip tags to content
+                    // $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content(), array('class' => 'indent-'.$item->get_indent()));
+                    $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content());
+                }
+                if ($position == SURVEY_POSITIONTOPLEFT) {
+                    $content = '';
+                    $content .= html_writer::start_tag('fieldset', array('class' => 'hidden'));
+                    $content .= html_writer::start_tag('div');
+                    $content .= html_writer::start_tag('div', array('class' => 'fitem'));
+                    $content .= html_writer::start_tag('div', array('class' => 'fstatic fullwidth'));
+                    // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
+                    $content .= $elementnumber.$item->get_content();
+                    // $content .= html_writer::end_tag('div');
+                    $content .= html_writer::end_tag('div');
+                    $content .= html_writer::end_tag('div');
+                    $content .= html_writer::end_tag('div');
+                    $content .= html_writer::end_tag('fieldset');
+                    $mform->addElement('html', $content);
+                }
             }
 
             /*************** element ***************/

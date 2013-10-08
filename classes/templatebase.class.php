@@ -492,7 +492,7 @@ class mod_survey_templatebase {
         global $CFG;
 
         // $debug = true; if you want to stop anyway to see where the xml template is buggy
-        $debug = false;
+        $debug = true;
 
         $simplexml = new SimpleXMLElement($xml);
         foreach ($simplexml->children() as $xmlitem) {

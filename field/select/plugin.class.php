@@ -54,9 +54,9 @@ class surveyfield_select extends mod_survey_itembase {
     public $customnumber = '';
 
     /*
-     * $extrarow = is the extrarow required?
+     * $position = where does the question go?
      */
-    public $extrarow = 0;
+    public $position = SURVEY_POSITIONLEFT;
 
     /*
      * $extranote = an optional text describing the item
@@ -372,7 +372,7 @@ class surveyfield_select extends mod_survey_itembase {
                 <xs:element type="xs:int" name="contentformat"/>
 
                 <xs:element type="xs:string" name="customnumber" minOccurs="0"/>
-                <xs:element type="xs:int" name="extrarow"/>
+                <xs:element type="xs:int" name="position"/>
                 <xs:element type="xs:string" name="extranote" minOccurs="0"/>
                 <xs:element type="xs:int" name="required"/>
                 <xs:element type="xs:string" name="variable" minOccurs="0"/>
@@ -406,7 +406,7 @@ EOS;
      */
     public function userform_mform_element($mform, $searchform) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
-        $elementlabel = $this->extrarow ? '&nbsp;' : $elementnumber.strip_tags($this->get_content());
+        $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
         $labels = $this->item_get_labels_array('options');
         if ( ($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform) ) {
@@ -427,7 +427,7 @@ EOS;
                     // -> I do not want JS form validation if the page is submitted through the "previous" button
                     // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                     // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                    if ($this->extrarow) {
+                    if ($this->position != SURVEY_POSITIONLEFT) {
                         $starplace = $this->itemname.'_extrarow';
                     } else {
                         $starplace = ($this->userform_mform_element_is_group()) ? $this->itemname.'_group' : $this->itemname;
@@ -468,7 +468,7 @@ EOS;
                     // -> I do not want JS form validation if the page is submitted through the "previous" button
                     // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
                     // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-                    if ($this->extrarow) {
+                    if ($this->position != SURVEY_POSITIONLEFT) {
                         $starplace = $this->itemname.'_extrarow';
                     } else {
                         $starplace = ($this->userform_mform_element_is_group()) ? $this->itemname.'_group' : $this->itemname;
@@ -518,14 +518,10 @@ EOS;
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
-        if ($this->extrarow) {
-            $errorkey = $this->itemname.'_extrarow';
+        if (!$this->labelother) {
+            $errorkey = $this->itemname;
         } else {
-            if (!$this->labelother) {
-                $errorkey = $this->itemname;
-            } else {
-                $errorkey = $this->itemname.'_group';
-            }
+            $errorkey = $this->itemname.'_group';
         }
 
         if ($data[$this->itemname] == SURVEY_INVITATIONVALUE) {

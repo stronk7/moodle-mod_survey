@@ -187,6 +187,11 @@ define('SURVEY_DELETEHIDDENITEMS' , '5');
 // friendly format
 define('SURVEY_FIRENDLYFORMAT', -1);
 
+// position of the content
+define('SURVEY_POSITIONLEFT', 0);
+define('SURVEY_POSITIONTOP', 1);
+define('SURVEY_POSITIONTOPLEFT', 2);
+
 // friendly format
 define('SURVEY_USERTEMPLATE', 0);
 define('SURVEY_MASTERTEMPLATE', 1);

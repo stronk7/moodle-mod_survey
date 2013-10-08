@@ -23,6 +23,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$settings->add(new admin_setting_configcheckbox('surveytemplate_attls/extrarow',
-    get_string('extrarow', 'surveytemplate_attls'),
-    get_string('extrarow_desc', 'surveytemplate_attls'), 1));
+$options = array(
+    SURVEY_POSITIONLEFT => get_string('left', 'survey'),
+    SURVEY_POSITIONTOP => get_string('top', 'survey'),
+    SURVEY_POSITIONTOPLEFT => get_string('topleft', 'survey'),
+);
+
+$settings->add(new admin_setting_configselect('surveytemplate_attls/position',
+    get_string('position', 'surveytemplate_attls'),
+    get_string('position_desc', 'surveytemplate_attls'), 2, $options));

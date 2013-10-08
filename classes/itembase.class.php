@@ -137,7 +137,7 @@ class mod_survey_itembase {
         'common_fs' => true,
         'content' => true,
         'customnumber' => true,
-        'extrarow' => true,
+        'position' => true,
         'extranote' => true,
         'hideinstructions' => true,
         'required' => true,
@@ -214,7 +214,6 @@ class mod_survey_itembase {
         $record->timemodified = $timenow;
 
         // manage other checkboxes content
-        // TAKE CARE: do not manage extrarow: it is an advcheckbox
         $checkboxessettings = array('advanced', 'insearchform', 'hideinstructions', 'required', 'hide');
         foreach ($checkboxessettings as $checkboxessetting) {
             if ($this->formrequires[$checkboxessetting]) {
@@ -924,7 +923,7 @@ class mod_survey_itembase {
     }
 
     /*
-     * get_extrarow
+     * get_hideinstructions
      *
      * @param
      * @return
@@ -938,21 +937,21 @@ class mod_survey_itembase {
     }
 
     /*
-     * get_extrarow
+     * get_position
      *
      * @param
      * @return
      */
-    public function get_extrarow() {
-        if (isset($this->extrarow)) {
-            return $this->extrarow;
+    public function get_position() {
+        if (isset($this->position)) {
+            return $this->position;
         } else {
             return false;
         }
     }
 
     /*
-     * get_extrarow
+     * get_extranote
      *
      * @param
      * @return

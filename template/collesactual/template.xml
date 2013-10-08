@@ -63,7 +63,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_03</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -87,7 +87,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_04</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -111,7 +111,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_05</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -135,7 +135,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_06</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -191,7 +191,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_07</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -215,7 +215,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_08</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -239,7 +239,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_09</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -263,7 +263,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_10</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -319,7 +319,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_11</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -343,7 +343,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_12</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -367,7 +367,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_13</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -391,7 +391,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_14</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -447,7 +447,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_15</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -471,7 +471,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_16</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -495,7 +495,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_17</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -519,7 +519,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_18</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -575,7 +575,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_19</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -599,7 +599,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_20</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -623,7 +623,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_21</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -647,7 +647,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_22</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -703,7 +703,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_23</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -727,7 +727,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_24</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -751,7 +751,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_25</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -775,7 +775,7 @@
     <survey_radiobutton>
       <content>radiobutton_content_26</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>radiobutton_options_01</options>
@@ -799,7 +799,7 @@
     <survey_select>
       <content>select_content_27</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>1</required>
       <indent>0</indent>
       <options>select_options_01</options>
@@ -822,7 +822,7 @@
     <survey_textarea>
       <content>textarea_content_28</content>
       <contentformat>1</contentformat>
-      <extrarow>0</extrarow>
+      <position>0</position>
       <required>0</required>
       <hideinstructions>0</hideinstructions>
       <indent>0</indent>
