@@ -28,25 +28,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class report_frequency {
+require_once($CFG->dirroot.'/mod/survey/classes/reportbase.class.php');
 
-    /*
-     * cm
-     */
-    public $cm = null;
-
+class report_frequency extends mod_survey_reportbase {
     /*
      * outputtable
      */
     public $outputtable = null;
 
     /*
-     * Class constructor
+     * setup
      */
-    public function __construct($cm, $survey) {
-        $this->cm = $cm;
-        $this->survey = $survey;
-
+    function setup($hassubmissions) {
+        $this->hassubmissions = $hassubmissions;
         $this->outputtable = new flexible_table('submissionslist');
         $this->setup_outputtable();
     }
@@ -122,12 +116,12 @@ class report_frequency {
     }
 
     /*
-     * fetch_information
+     * fetch_data
      *
      * @param int $itemid
      * @param int $submissionscount
      */
-    public function fetch_information($itemid, $submissionscount) {
+    public function fetch_data($itemid, $submissionscount) {
         global $DB;
 
         list($where, $whereparams) = $this->outputtable->get_sql_where();
@@ -192,11 +186,11 @@ class report_frequency {
     }
 
     /*
-     * output_information
+     * output_data
      *
      * @param string $url
      */
-    public function output_information($url) {
+    public function output_data($url) {
         global $OUTPUT;
 
         echo $OUTPUT->heading(get_string('pluginname', 'surveyreport_count'));
@@ -207,19 +201,23 @@ class report_frequency {
     /*
      * @param string $url
      */
-    public function print_graph($url) {
+    public function print_graph($graphurl) {
         global $CFG;
 
         if (empty($CFG->gdversion)) {
             echo '('.get_string('gdneed').')';
         } else {
-            echo '<div class="reportsummary">'.
-                 '<img class="resultgraph"'.
-                     ' height="'.SURVEY_GHEIGHT.'"'.
-                     ' width="'.SURVEY_GWIDTH.'"'.
-                     ' src="'.$url.'"'.
-                     ' alt="'.get_string('pluginname', 'surveyreport_frequency').'" />'.
-                 '</div>';
+            $imgparams = array();
+            $imgparams['class'] = 'resultgraph';
+            $imgparams['height'] = SURVEY_GHEIGHT;
+            $imgparams['width'] = SURVEY_GWIDTH;
+            $imgparams['src'] = $graphurl;
+            $imgparams['alt'] = get_string('pluginname', 'surveyreport_frequency');
+
+            $content = html_writer::start_tag('div', array('class' => 'centerpara'));
+            $content .= html_writer::empty_tag('img', $imgparams);
+            $content .= html_writer::end_tag('div');
+            echo $content;
         }
     }
 }

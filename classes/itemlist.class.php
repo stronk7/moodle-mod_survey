@@ -224,7 +224,7 @@ class mod_survey_itemlist {
 
         require_once($CFG->libdir.'/tablelib.php');
 
-        $forceediting = ($this->survey->riskyeditdeadline > time());
+        $riskyediting = ($this->survey->riskyeditdeadline > time());
 
         $table = new flexible_table('itemslist');
 
@@ -403,7 +403,7 @@ class mod_survey_itemlist {
             $tablerow[] = $content;
 
             // *************************************** page
-            if ($item->get_plugin() != 'pagebreak') {
+            if ($item->item_uses_form_page()) {
                 $content = $item->get_formpage();
             } else {
                 $content = '';
@@ -466,7 +466,7 @@ class mod_survey_itemlist {
             }
 
             // third icon: hide vs show
-            if (!$this->hassubmissions || $forceediting) {
+            if (!$this->hassubmissions || $riskyediting) {
                 $paramurl = $paramurlbase;
                 if (!empty($currenthide)) {
                     $icopath = 't/show';
@@ -509,7 +509,7 @@ class mod_survey_itemlist {
                 }
 
                 // *************************************** SURVEY_DELETEITEM
-                if (!$this->hassubmissions || $forceediting) {
+                if (!$this->hassubmissions || $riskyediting) {
                     $paramurl = $paramurlbase + array('act' => SURVEY_DELETEITEM);
                     $basepath = new moodle_url('items_manage.php', $paramurl);
 

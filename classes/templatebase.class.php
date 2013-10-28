@@ -56,13 +56,13 @@ class mod_survey_templatebase {
     // so, I leave it and the I kindly stop the process from friendly_halt
     // Because of this and, as far as I know, this method is not used any more
     public function prevent_direct_user_input() {
-        $forceediting = ($this->survey->riskyeditdeadline > time());
+        $riskyediting = ($this->survey->riskyeditdeadline > time());
         $hassubmissions = survey_count_submissions($this->survey->id);
 
-        if ($hassubmissions && (!$forceediting)) {
+        if ($hassubmissions && (!$riskyediting)) {
             print_error('incorrectaccessdetected', 'survey');
         }
-        if ($this->survey->template && (!$forceediting)) {
+        if ($this->survey->template && (!$riskyediting)) {
             print_error('incorrectaccessdetected', 'survey');
         }
     }
@@ -73,10 +73,10 @@ class mod_survey_templatebase {
     public function friendly_halt() {
         global $CFG, $OUTPUT;
 
-        $forceediting = ($this->survey->riskyeditdeadline > time());
+        $riskyediting = ($this->survey->riskyeditdeadline > time());
         $hassubmissions = survey_count_submissions($this->survey->id);
 
-        if ($hassubmissions && (!$forceediting)) {
+        if ($hassubmissions && (!$riskyediting)) {
             echo $OUTPUT->box(get_string('applyusertemplatedenied01', 'survey'));
             $url = $CFG->wwwroot.'/mod/survey/view.php?s='.$this->survey->id;
             echo $OUTPUT->continue_button($url);
@@ -84,7 +84,7 @@ class mod_survey_templatebase {
             die();
         }
 
-        if ($this->survey->template && (!$forceediting)) {
+        if ($this->survey->template && (!$riskyediting)) {
             echo $OUTPUT->box(get_string('applyusertemplatedenied02', 'survey'));
             $url = $CFG->wwwroot.'/mod/survey/view.php?s='.$this->survey->id;
             echo $OUTPUT->continue_button($url);

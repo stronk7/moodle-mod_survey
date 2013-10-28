@@ -126,7 +126,7 @@ class mod_survey_itembaseform extends moodleform {
         if ($position = $item->get_form_requires($fieldname)) {
             $options = array(SURVEY_POSITIONTOP => get_string('top', 'survey'),
                             SURVEY_POSITIONTOPLEFT => get_string('topleft', 'survey'));
-            if ($item->get_plugin() != 'rate') { // position can not be SURVEY_POSITIONLEFT
+            if ($item->item_left_position_allowed()) { // position can even be SURVEY_POSITIONLEFT
                 $options = array(SURVEY_POSITIONLEFT => get_string('left', 'survey')) + $options;
             }
             $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $options);
@@ -317,7 +317,7 @@ class mod_survey_itembaseform extends moodleform {
         $survey = $this->_customdata->survey;
         $hassubmissions = $this->_customdata->hassubmissions;
 
-        $forceediting = ($survey->riskyeditdeadline > time());
+        $riskyediting = ($survey->riskyeditdeadline > time());
 
         // ----------------------------------------
         // buttons
@@ -326,7 +326,7 @@ class mod_survey_itembaseform extends moodleform {
             $fieldname = 'buttons';
             $elementgroup = array();
             $elementgroup[] = $mform->createElement('submit', 'save', get_string('savechanges'));
-            if (!$hassubmissions || $forceediting) {
+            if (!$hassubmissions || $riskyediting) {
                 $elementgroup[] = $mform->createElement('submit', 'saveasnew', get_string('saveasnew', 'survey'));
             }
             $elementgroup[] = $mform->createElement('cancel');

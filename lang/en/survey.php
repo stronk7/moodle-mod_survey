@@ -401,3 +401,4 @@ $string['youarenotinagroup'] = 'You do not belong to any of the group in which t
 $string['top'] = 'top';
 $string['left'] = 'left';
 $string['topleft'] = 'top left (full width)';
+$string['settings'] = 'Survey settings';

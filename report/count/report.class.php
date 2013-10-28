@@ -28,37 +28,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class report_count {
+require_once($CFG->dirroot.'/mod/survey/classes/reportbase.class.php');
 
-    /*
-     * cm
-     */
-    public $cm = null;
-
-    /*
-     * coursecontext
-     */
-    public $coursecontext = 0;
-
-    /*
-     * survey
-     */
-    public $survey = null;
-
+class report_count extends mod_survey_reportbase {
     /*
      * outputtable
      */
     public $outputtable = null;
 
     /*
-     * Class constructor
+     * setup
      */
-    public function __construct($cm, $survey) {
-        global $COURSE;
-
-        $this->cm = $cm;
-        $this->coursecontext = context_course::instance($COURSE->id);
-        $this->survey = $survey;
+    function setup($hassubmissions) {
+        $this->hassubmissions = $hassubmissions;
         $this->outputtable = new flexible_table('userattempts');
         $this->setup_outputtable();
     }
@@ -104,9 +86,9 @@ class report_count {
     }
 
     /*
-     * fetch_information
+     * fetch_data
      */
-    public function fetch_information() {
+    public function fetch_data() {
         global $CFG, $DB, $COURSE, $OUTPUT;
 
         $roles = get_roles_used_in_context($this->coursecontext);
@@ -153,9 +135,9 @@ class report_count {
     }
 
     /*
-     * output_information
+     * output_data
      */
-    public function output_information() {
+    public function output_data() {
         global $OUTPUT;
 
         echo $OUTPUT->heading(get_string('pluginname', 'surveyreport_count'));

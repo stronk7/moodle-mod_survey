@@ -14,11 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * This is a one-line short description of the file
- *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
+/**
+ * This file adds the settings pages to the navigation menu
  *
  * @package   mod_survey
  * @copyright 2013 kordan <kordan@mclink.it>
@@ -26,36 +23,11 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-require_once($CFG->dirroot . '/mod/survey/adminlib.php');
+require_once($CFG->dirroot.'/mod/survey/adminlib.php');
 
-// folder 'survey plugins'
-$ADMIN->add('modules', new admin_category('surveyplugins',
-                new lang_string('surveyplugins', 'survey'), $module->is_enabled() === false));
+$ADMIN->add('modsettings', new admin_category('modsurveyfolder', new lang_string('pluginname', 'mod_survey'), !$module->is_enabled()));
 
-// folder 'survey field'
-$ADMIN->add('surveyplugins', new admin_category('surveyfieldplugins',
-                new lang_string('fieldplugins', 'survey'), $module->is_enabled() === false));
-$ADMIN->add('surveyfieldplugins', new survey_admin_page_manage_survey_plugins('surveyfield'));
-
-// folder 'survey format'
-$ADMIN->add('surveyplugins', new admin_category('surveyformatplugins',
-                new lang_string('formatplugins', 'survey'), $module->is_enabled() === false));
-$ADMIN->add('surveyformatplugins', new survey_admin_page_manage_survey_plugins('surveyformat'));
-
-// folder 'survey (master) templates'
-$ADMIN->add('surveyplugins', new admin_category('surveytemplateplugins',
-                new lang_string('mastertemplateplugins', 'survey'), $module->is_enabled() === false));
-$ADMIN->add('surveytemplateplugins', new survey_admin_page_manage_survey_plugins('surveytemplate'));
-
-// folder 'survey reports'
-$ADMIN->add('surveyplugins', new admin_category('surveyreportplugins',
-                new lang_string('reportplugins', 'survey'), $module->is_enabled() === false));
-$ADMIN->add('surveyreportplugins', new survey_admin_page_manage_survey_plugins('surveyreport'));
-
-survey_plugin_manager::add_admin_survey_plugin_settings('surveyfield', $ADMIN, $settings, $module);
-survey_plugin_manager::add_admin_survey_plugin_settings('surveyformat', $ADMIN, $settings, $module);
-survey_plugin_manager::add_admin_survey_plugin_settings('surveytemplate', $ADMIN, $settings, $module);
-survey_plugin_manager::add_admin_survey_plugin_settings('surveyreport', $ADMIN, $settings, $module);
+$settings = new admin_settingpage($section, get_string('settings', 'mod_survey'), 'moodle/site:config', !$module->is_enabled());
 
 if ($ADMIN->fulltree) {
     $name = new lang_string('maxinputdelay', 'mod_survey');
@@ -74,3 +46,49 @@ if ($ADMIN->fulltree) {
     $description = new lang_string('useadvancedpermissions_descr', 'mod_survey');
     $settings->add(new admin_setting_configcheckbox('survey/useadvancedpermissions', $name, $description, 0));
 }
+
+$ADMIN->add('modsurveyfolder', $settings);
+
+// Tell core we already added the settings structure.
+$settings = null;
+
+// folder 'survey field'
+$ADMIN->add('modsurveyfolder', new admin_category('surveyfieldplugins',
+                new lang_string('fieldplugins', 'survey'), !$module->is_enabled()));
+$ADMIN->add('surveyfieldplugins', new survey_admin_page_manage_survey_plugins('surveyfield'));
+
+// folder 'survey format'
+$ADMIN->add('modsurveyfolder', new admin_category('surveyformatplugins',
+                new lang_string('formatplugins', 'survey'), !$module->is_enabled()));
+$ADMIN->add('surveyformatplugins', new survey_admin_page_manage_survey_plugins('surveyformat'));
+
+// folder 'survey (master) templates'
+$ADMIN->add('modsurveyfolder', new admin_category('surveytemplateplugins',
+                new lang_string('mastertemplateplugins', 'survey'), !$module->is_enabled()));
+$ADMIN->add('surveytemplateplugins', new survey_admin_page_manage_survey_plugins('surveytemplate'));
+
+// folder 'survey reports'
+$ADMIN->add('modsurveyfolder', new admin_category('surveyreportplugins',
+                new lang_string('reportplugins', 'survey'), !$module->is_enabled()));
+$ADMIN->add('surveyreportplugins', new survey_admin_page_manage_survey_plugins('surveyreport'));
+
+foreach (core_plugin_manager::instance()->get_plugins_of_type('surveyfield') as $plugin) {
+    /** @var \mod_assign\plugininfo\assignsubmission $plugin */
+    $plugin->load_settings($ADMIN, 'surveyfieldplugins', $hassiteconfig);
+}
+
+foreach (core_plugin_manager::instance()->get_plugins_of_type('surveyformat') as $plugin) {
+    /** @var \mod_assign\plugininfo\assignsubmission $plugin */
+    $plugin->load_settings($ADMIN, 'surveyformatplugins', $hassiteconfig);
+}
+
+foreach (core_plugin_manager::instance()->get_plugins_of_type('surveytemplate') as $plugin) {
+    /** @var \mod_assign\plugininfo\assignsubmission $plugin */
+    $plugin->load_settings($ADMIN, 'surveytemplateplugins', $hassiteconfig);
+}
+
+foreach (core_plugin_manager::instance()->get_plugins_of_type('surveyreport') as $plugin) {
+    /** @var \mod_assign\plugininfo\assignsubmission $plugin */
+    $plugin->load_settings($ADMIN, 'surveyreportplugins', $hassiteconfig);
+}
+

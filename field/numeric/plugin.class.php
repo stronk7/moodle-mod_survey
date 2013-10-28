@@ -317,7 +317,6 @@ class surveyfield_numeric extends mod_survey_itembase {
         $doublefields = array('lowerbound', 'upperbound', 'defaultvalue');
         if (in_array($field, $doublefields)) {
             $value = parent::item_get_generic_field($field);
-            $value = number_format((double)$value, $this->decimals, $this->decimalseparator, '');
             return unformat_float($value, true);
         } else {
             return parent::item_get_generic_field($field);

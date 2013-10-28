@@ -157,9 +157,9 @@ if (!$itemcount) {
 
 // add item form
 if (!$itemlistman->survey->template) {
-    $forceediting = ($survey->riskyeditdeadline > time());
+    $riskyediting = ($survey->riskyeditdeadline > time());
 
-    if (!$hassubmissions || $forceediting) {
+    if (!$hassubmissions || $riskyediting) {
         if (has_capability('mod/survey:additems', $context)) {
             $paramurl = array('id' => $cm->id);
             $formurl = new moodle_url('items_setup.php', $paramurl);

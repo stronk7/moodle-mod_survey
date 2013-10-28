@@ -15,22 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Prints a particular instance of survey
+ * Defines the version of survey autofill subplugin
  *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
+ * This code fragment is called by moodle_needs_upgrading() and
+ * /admin/index.php
  *
- * @package   mod_survey
- * @copyright 2013 kordan <kordan@mclink.it>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    surveyreport
+ * @subpackage count
+ * @copyright  2013 kordan <kordan@mclink.it>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once($CFG->dirroot.'/mod/survey/locallib.php');
+require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
+require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->dirroot.'/mod/survey/report/count/report.class.php');
 
-$id = optional_param('id', 0, PARAM_INT); // course_module ID, or
-$s = optional_param('s', 0, PARAM_INT);  // survey instance ID
-
+$id = optional_param('id', 0, PARAM_INT);
+$s = optional_param('s', 0, PARAM_INT);
 if (!empty($id)) {
     $cm = get_coursemodule_from_id('survey', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -44,30 +45,15 @@ if (!empty($id)) {
 }
 
 require_course_login($course, true, $cm);
-
-add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
-
-$reportname = optional_param('rname', '', PARAM_ALPHA);
-$hassubmissions = survey_count_submissions($survey->id);
-
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:accessreports', $context);
 
 // -----------------------------
-// calculations
-// -----------------------------
-// nothing to do here ;-)
-
-// -----------------------------
 // output starts here
 // -----------------------------
-$PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/survey/report/missing/index.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
-
-// other things you may want to set - remove if not needed
-// $PAGE->set_cacheable(false);
-// $PAGE->set_focuscontrol('some-html-id');
 
 echo $OUTPUT->header();
 
@@ -75,18 +61,13 @@ $currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
 $currentpage = SURVEY_SUBMISSION_REPORT; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
-// prevent manual addressing in the addressbar
-if (!empty($canaccessreports)) {
-    if ($hassubmissions) {
-        include_once($CFG->dirroot.'/mod/survey/report/'.$reportname.'/index.php');
-    } else {
-        $message = get_string('nosubmissionfound', 'survey');
-        echo $OUTPUT->box($message, 'notice centerpara');
-    }
-} else {
-    // URL was manually written. Stop the user.
-    die();
-}
+$hassubmissions = survey_count_submissions($survey->id);
+$reportman = new report_count($cm, $survey);
+$reportman->setup($hassubmissions);
+
+$reportman->check_submissions();
+$reportman->fetch_data();
+$reportman->output_data();
 
 // Finish the page
 echo $OUTPUT->footer();

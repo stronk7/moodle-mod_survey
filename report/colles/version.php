@@ -21,21 +21,12 @@
  * /admin/index.php
  *
  * @package    surveyreport
- * @subpackage count
+ * @subpackage colles
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/tablelib.php');
-require_once($CFG->dirroot.'/mod/survey/report/count/report.class.php');
-
-$context = context_module::instance($cm->id);
-
-require_course_login($course, true, $cm);
-require_capability('mod/survey:accessreports', $context);
-
-$reportman = new report_count($cm, $survey);
-$reportman->fetch_information();
-$reportman->output_information();
+$plugin->version = 2012062301;
+$plugin->requires = 2010091600;  // Requires this Moodle version

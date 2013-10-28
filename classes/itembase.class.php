@@ -526,6 +526,24 @@ class mod_survey_itembase {
     }
 
     /*
+     * item_uses_form_page
+     *
+     * @return: boolean
+     */
+    public function item_uses_form_page() {
+        return true;
+    }
+
+    /*
+     * item_left_position_allowed
+     *
+     * @return: boolean
+     */
+    public function item_left_position_allowed() {
+        return true;
+    }
+
+    /*
      * item_set_editor
      * defines presets for the editor field of surveyitem in itembase_form.php
      * (copied from moodle20/cohort/edit.php)

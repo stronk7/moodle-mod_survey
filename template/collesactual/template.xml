@@ -14,7 +14,7 @@
       <content>label_content_01</content>
       <contentformat>1</contentformat>
       <indent>0</indent>
-      <fullwidth>0</fullwidth>
+      <fullwidth>1</fullwidth>
       <leftlabel>label_leftlabel_01</leftlabel>
     </survey_label>
   </item>

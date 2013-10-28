@@ -268,6 +268,15 @@ class surveyfield_rate extends mod_survey_itembase {
     }
 
     /*
+     * item_left_position_allowed
+     *
+     * @return: boolean
+     */
+    public function item_left_position_allowed() {
+        return false;
+    }
+
+    /*
      * item_generate_standard_default
      * sets record field to store the correct value to db for the date custom item
      *

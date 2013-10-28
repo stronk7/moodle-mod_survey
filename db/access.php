@@ -283,6 +283,15 @@ $capabilities = array(
         )
     ),
 
+    'mod/survey:accessownreports' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW,
+        )
+    ),
+
     'mod/survey:exportdata' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',

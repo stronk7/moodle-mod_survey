@@ -26,22 +26,38 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
+require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/report/frequency/report.class.php');
 require_once($CFG->dirroot.'/mod/survey/report/frequency/item_form.php');
 require_once($CFG->dirroot.'/mod/survey/report/frequency/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
-$context = context_module::instance($cm->id);
+$id = optional_param('id', 0, PARAM_INT);
+$s = optional_param('s', 0, PARAM_INT);
+if (!empty($id)) {
+    $cm = get_coursemodule_from_id('survey', $id, 0, false, MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $survey = $DB->get_record('survey', array('id' => $cm->instance), '*', MUST_EXIST);
+} else if (!empty($s)) {
+    $survey = $DB->get_record('survey', array('id' => $s), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $survey->course), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('survey', $survey->id, $course->id, false, MUST_EXIST);
+} else {
+    print_error('You must specify a course_module ID or an instance ID');
+}
 
 require_course_login($course, true, $cm);
+$context = context_module::instance($cm->id);
 require_capability('mod/survey:accessreports', $context);
+
+$hassubmissions = survey_count_submissions($survey->id);
 
 // -----------------------------
 // calculations
 // -----------------------------
+$hassubmissions = survey_count_submissions($survey->id);
 $reportman = new report_frequency($cm, $survey);
+$reportman->setup($hassubmissions);
 
 // -----------------------------
 // stop here if only textareas are in the survey
@@ -52,9 +68,24 @@ $reportman->stop_if_textareas_only();
 // -----------------------------
 // define $mform return url
 $paramurl = array('id' => $cm->id, 'rname' => 'frequency');
-$formurl = new moodle_url('view_report.php', $paramurl);
+$formurl = new moodle_url('view.php', $paramurl);
 // end of: define $mform return url
 // -----------------------------
+
+// -----------------------------
+// output starts here
+// -----------------------------
+$PAGE->set_url('/mod/survey/report/frequency/view.php', array('id' => $cm->id));
+$PAGE->set_title($survey->name);
+$PAGE->set_heading($course->shortname);
+
+echo $OUTPUT->header();
+
+$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+$currentpage = SURVEY_SUBMISSION_REPORT; // needed by tabs.php
+require_once($CFG->dirroot.'/mod/survey/tabs.php');
+
+$reportman->check_submissions();
 
 // -----------------------------
 // prepare params for the form
@@ -65,13 +96,16 @@ $mform = new survey_chooseitemform($formurl, $formparams);
 // end of: prepare params for the form
 // -----------------------------
 
-$fromform = $mform->get_data(); // get_data is needed to execute $mform->validation($data, $files);
+// -----------------------------
+// display the form
 $mform->display();
+// end of: display the form
+// -----------------------------
 
 // -----------------------------
 // manage form submission
-if ($fromform) {
-    $reportman->fetch_information($fromform->itemid, $hassubmissions);
+if ($fromform = $mform->get_data()) {
+    $reportman->fetch_data($fromform->itemid, $hassubmissions);
 
     $paramurl = array();
     $paramurl['id'] = $cm->id;
@@ -80,7 +114,9 @@ if ($fromform) {
     $paramurl['submissionscount'] = $hassubmissions;
     $url = new moodle_url('/mod/survey/report/frequency/graph.php', $paramurl);
 
-    $reportman->output_information($url->out());
+    $reportman->output_data($url);
 }
 // end of: manage form submission
 // -----------------------------
+
+echo $OUTPUT->footer();
