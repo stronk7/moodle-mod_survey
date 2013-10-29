@@ -50,18 +50,23 @@ $group = optional_param('group', 0, PARAM_INT);  // Group ID
 $area = optional_param('area', false, PARAM_INT);  // Student ID
 $qid = optional_param('qid', 0, PARAM_INT);  // 0..3 the question in the area
 
-$paramurl = array('s' => $s);
-if ($group !== 0) {
+$paramurl = array('type' => $type, 's' => $survey->id);
+if (!empty($group)) {
     $paramurl['group'] = $group;
 }
-if ($area !== false) {
+if ($area) {
     $paramurl['area'] = $area;
 }
-if ($qid !== 0) {
+if (!empty($qid)) {
     $paramurl['qid'] = $qid;
 }
-$url = new moodle_url('/mod/survey/report/colles/graph.php', $paramurl);
+$url = new moodle_url('/mod/survey/report/colles/view.php', $paramurl);
 $PAGE->set_url($url);
+
+$url = new moodle_url('/mod/survey/report/colles/view.php', array('type' => $type, 's' => $survey->id));
+navigation_node::override_active_url($url);
+
+// echo '$url = '.$url->out();
 
 $context = context_module::instance($cm->id);
 

@@ -51,9 +51,12 @@ require_capability('mod/survey:accessreports', $context);
 // -----------------------------
 // output starts here
 // -----------------------------
-$PAGE->set_url('/mod/survey/report/missing/index.php', array('id' => $cm->id));
+$url = new moodle_url('/mod/survey/report/missing/view.php', array('s' => $survey->id));
+$PAGE->set_url($url);
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
+
+navigation_node::override_active_url($url);
 
 echo $OUTPUT->header();
 

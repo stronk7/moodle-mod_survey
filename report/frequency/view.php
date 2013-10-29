@@ -75,9 +75,12 @@ $formurl = new moodle_url('view.php', $paramurl);
 // -----------------------------
 // output starts here
 // -----------------------------
-$PAGE->set_url('/mod/survey/report/frequency/view.php', array('id' => $cm->id));
+$url = new moodle_url('/mod/survey/report/frequency/view.php', array('s' => $survey->id));
+$PAGE->set_url($url);
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
+
+navigation_node::override_active_url($url);
 
 echo $OUTPUT->header();
 
