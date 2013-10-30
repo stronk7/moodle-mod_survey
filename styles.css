@@ -19,7 +19,7 @@
 /* surveyfields */
 #page-mod-survey-view table#manageitems,
 #page-mod-survey-view table#sortitems,
-#page-mod-survey-utemplates table#managetemplates {
+#page-mod-survey-utemplates_manage table#managetemplates {
     width:100%;
 }
 

@@ -83,7 +83,6 @@ $importutemplate = new survey_importutemplateform($formurl, $formparams);
 
 // -----------------------------
 // manage form submission
-
 if ($utemplateman->formdata = $importutemplate->get_data()) {
     $utemplateman->upload_utemplate();
 
@@ -98,9 +97,13 @@ if ($utemplateman->formdata = $importutemplate->get_data()) {
 // -----------------------------
 // output starts here
 // -----------------------------
-$PAGE->set_url('/mod/survey/utemplates.php', array('id' => $cm->id));
+$url = new moodle_url('/mod/survey/utemplates_import.php', array('s' => $survey->id));
+$PAGE->set_url($url);
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
+
+// make bold the navigation menu/link that refers to me
+navigation_node::override_active_url($url);
 
 // other things you may want to set - remove if not needed
 // $PAGE->set_cacheable(false);
@@ -111,8 +114,6 @@ echo $OUTPUT->header();
 $currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
 $currentpage = SURVEY_UTEMPLATES_IMPORT; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
-
-$utemplateman->friendly_halt();
 
 $importutemplate->display();
 

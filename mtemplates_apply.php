@@ -95,9 +95,13 @@ if ($mtemplateman->formdata = $applymtemplate->get_data()) {
 // -----------------------------
 // output starts here
 // -----------------------------
-$PAGE->set_url('/mod/survey/mtemplates.php', $paramurl);
+$url = new moodle_url('/mod/survey/mtemplates_apply.php', array('s' => $survey->id));
+$PAGE->set_url($url);
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
+
+// make bold the navigation menu/link that refers to me
+navigation_node::override_active_url($url);
 
 // other things you may want to set - remove if not needed
 // $PAGE->set_cacheable(false);

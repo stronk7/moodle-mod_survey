@@ -63,10 +63,9 @@ if (!empty($qid)) {
 $url = new moodle_url('/mod/survey/report/colles/view.php', $paramurl);
 $PAGE->set_url($url);
 
+// make bold the navigation menu/link that refers to me
 $url = new moodle_url('/mod/survey/report/colles/view.php', array('type' => $type, 's' => $survey->id));
 navigation_node::override_active_url($url);
-
-// echo '$url = '.$url->out();
 
 $context = context_module::instance($cm->id);
 

@@ -153,6 +153,10 @@ $PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
 
+// make bold the navigation menu/link that refers to me
+$url = new moodle_url('/mod/survey/view.php', array('s' => $survey->id, 'act' => $action));
+navigation_node::override_active_url($url);
+
 // other things you may want to set - remove if not needed
 // $PAGE->set_cacheable(false);
 // $PAGE->set_focuscontrol('some-html-id');
