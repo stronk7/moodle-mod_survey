@@ -63,7 +63,20 @@ class surveyfield extends base {
     }
 
     public function is_uninstall_allowed() {
+        // global $DB;
+
+        // return !$DB->record_exists('survey_item', array('type' => 'field', 'plugin' => $this->name));
         return true;
+    }
+
+    public function get_uninstall_extra_warning() {
+        global $DB;
+
+        if (!$count = $DB->count_records('survey_item', array('plugin' => $this->name))) {
+            return '';
+        }
+
+        return '<p>'.get_string('uninstallextraconfirmmod', 'core_plugin', array('instances' => $count)).'</p>';
     }
 
     /**
@@ -72,18 +85,6 @@ class surveyfield extends base {
      */
     public static function get_manage_url() {
         return new moodle_url('/mod/survey/adminmanageplugins.php', array('subtype' => 'surveyfield'));
-    }
-
-    /**
-     * Pre-uninstall hook.
-     * @private
-     */
-    public function uninstall_cleanup() {
-        global $DB;
-
-        $DB->delete_records('survey_plugin_config', array('plugin' => $this->name, 'subtype' => 'surveyfield'));
-
-        parent::uninstall_cleanup();
     }
 
     public function get_settings_section_name() {

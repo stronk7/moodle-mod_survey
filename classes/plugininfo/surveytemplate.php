@@ -74,18 +74,6 @@ class surveytemplate extends base {
         return new moodle_url('/mod/survey/adminmanageplugins.php', array('subtype' => 'surveytemplate'));
     }
 
-    /**
-     * Pre-uninstall hook.
-     * @private
-     */
-    public function uninstall_cleanup() {
-        global $DB;
-
-        $DB->delete_records('survey_plugin_config', array('plugin' => $this->name, 'subtype' => 'surveytemplate'));
-
-        parent::uninstall_cleanup();
-    }
-
     public function get_settings_section_name() {
         return $this->type.'_'.$this->name;
     }
