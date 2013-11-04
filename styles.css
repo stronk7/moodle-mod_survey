@@ -17,180 +17,180 @@
 }
 
 /* surveyfields */
-#page-mod-survey-view table#manageitems,
-#page-mod-survey-view table#sortitems,
+#page-mod-survey-items_manage table#manageitems,
+#page-mod-survey-items_manage table#sortitems,
 #page-mod-survey-utemplates_manage table#managetemplates {
     width:100%;
 }
 
-#page-mod-survey-view table#manageitems .plugin,
-#page-mod-survey-view table#sortitems .plugin {
+#page-mod-survey-items_manage table#manageitems .plugin,
+#page-mod-survey-items_manage table#sortitems .plugin {
     padding:0.5em;
     text-align:center;
 }
 
-#page-mod-survey-view table#sortitems .plugin {
+#page-mod-survey-items_manage table#sortitems .plugin {
     width:90px;
 }
 
-#page-mod-survey-view table#manageitems .sortindex,
-#page-mod-survey-view table#sortitems .sortindex {
+#page-mod-survey-items_manage table#manageitems .sortindex,
+#page-mod-survey-items_manage table#sortitems .sortindex {
     padding:0.5em;
     text-align:right;
     min-width:2.5em;
 }
 
-#page-mod-survey-view table#manageitems .parentitem,
-#page-mod-survey-view table#sortitems .parentitem {
+#page-mod-survey-items_manage table#manageitems .parentitem,
+#page-mod-survey-items_manage table#sortitems .parentitem {
     padding:0.5em;
     text-align:left;
     white-space:nowrap;
 }
 
-#page-mod-survey-view table#manageitems .availability,
-#page-mod-survey-view table#sortitems .availability {
+#page-mod-survey-items_manage table#manageitems .availability,
+#page-mod-survey-items_manage table#sortitems .availability {
     padding:0.5em;
     text-align:center;
     white-space:nowrap;
 }
 
-#page-mod-survey-view table#manageitems .formpage,
-#page-mod-survey-view table#sortitems .formpage {
+#page-mod-survey-items_manage table#manageitems .formpage,
+#page-mod-survey-items_manage table#sortitems .formpage {
     padding:0.5em;
     white-space:nowrap;
     text-align:center;
 }
 
-#page-mod-survey-view table#manageitems .content,
-#page-mod-survey-view table#sortitems .content {
+#page-mod-survey-items_manage table#manageitems .content,
+#page-mod-survey-items_manage table#sortitems .content {
     padding:0.5em;
 }
 
-#page-mod-survey-view table#manageitems .customnumber ,
-#page-mod-survey-view table#sortitems .customnumber {
-    padding:0.5em;
-    white-space:nowrap;
-}
-
-#page-mod-survey-view table#manageitems .actions,
-#page-mod-survey-view table#sortitems .actions {
+#page-mod-survey-items_manage table#manageitems .customnumber ,
+#page-mod-survey-items_manage table#sortitems .customnumber {
     padding:0.5em;
     white-space:nowrap;
 }
 
-#page-mod-survey-view table#manageitems img.movetarget,
-#page-mod-survey-view table#sortitems img.movetarget {
+#page-mod-survey-items_manage table#manageitems .actions,
+#page-mod-survey-items_manage table#sortitems .actions {
+    padding:0.5em;
+    white-space:nowrap;
+}
+
+#page-mod-survey-items_manage table#manageitems img.movetarget,
+#page-mod-survey-items_manage table#sortitems img.movetarget {
     height:16px;
     width:80px;
 }
 
-#page-mod-survey-view table#manageitems .header,
-#page-mod-survey-view table#sortitems .header {
+#page-mod-survey-items_manage table#manageitems .header,
+#page-mod-survey-items_manage table#sortitems .header {
     text-align:center;
 }
 
-#page-mod-survey-view table#manageitems .dimmed,
-#page-mod-survey-view table#sortitems .dimmed,
-#page-mod-survey-view table#validaterelations .dimmed {
+#page-mod-survey-items_manage table#manageitems .dimmed,
+#page-mod-survey-items_manage table#sortitems .dimmed,
+#page-mod-survey-items_validate table#validaterelations .dimmed {
     color:#CDCDCD;
 }
 
 /* validaterelations */
-#page-mod-survey-view table#validaterelations {
+#page-mod-survey-items_validate table#validaterelations {
     width:100%;
 }
 
-#page-mod-survey-view table#validaterelations .plugin {
+#page-mod-survey-items_validate table#validaterelations .plugin {
     padding:0.5em;
     text-align:center;
 }
 
-#page-mod-survey-view table#validaterelations .content {
+#page-mod-survey-items_validate table#validaterelations .content {
     padding:0.5em;
 }
 
-#page-mod-survey-view table#validaterelations .sortindex {
+#page-mod-survey-items_validate table#validaterelations .sortindex {
     padding:0.5em;
     text-align:right;
     min-width:2.5em;
 }
 
-#page-mod-survey-view table#validaterelations .parentitem {
+#page-mod-survey-items_validate table#validaterelations .parentitem {
     padding:0.5em;
     text-align:left;
     white-space:nowrap;
 }
 
-#page-mod-survey-view table#validaterelations .parentconstraints {
+#page-mod-survey-items_validate table#validaterelations .parentconstraints {
     padding:0.5em;
     text-align:left;
     white-space:nowrap;
 }
 
-#page-mod-survey-view table#validaterelations .status {
+#page-mod-survey-items_validate table#validaterelations .status {
     padding:0.5em;
     white-space:nowrap;
 }
 
-#page-mod-survey-view table#validaterelations .status .warningmessage {
+#page-mod-survey-items_validate table#validaterelations .status .warningmessage {
     color:yellow;
 }
 
-#page-mod-survey-view table#validaterelations .status .errormessage {
+#page-mod-survey-items_validate table#validaterelations .status .errormessage {
     color:red;
 }
 
-#page-mod-survey-view table#validaterelations .actions,
-#page-mod-survey-utemplates table#managetemplates .actions {
+#page-mod-survey-items_validate table#validaterelations .actions,
+#page-mod-survey-utemplates_manage table#managetemplates .actions {
     padding:0.5em;
     white-space:nowrap;
 }
 
-#page-mod-survey-view table#validaterelations .header {
+#page-mod-survey-items_validate table#validaterelations .header {
     text-align:center;
 }
 
 /* submissions */
-#page-mod-survey-view table#submissions {
+#page-mod-survey-view_manage table#submissions {
     width:100%;
 }
 
-#page-mod-survey-view table#submissions .cell {
+#page-mod-survey-view_manage table#submissions .cell {
     vertical-align:middle;
 }
 
-#page-mod-survey-view table#submissions .actions,
-#page-mod-survey-utemplates table#managetemplates .actions {
+#page-mod-survey-view_manage table#submissions .actions,
+#page-mod-survey-utemplates_manage table#managetemplates .actions {
     padding:0.5em;
     width:4.3em;
 }
 
-#page-mod-survey-view table#submissions .picture {
+#page-mod-survey-view_manage table#submissions .picture {
     padding:0.5em;
     width:1.2em;
 }
 
-#page-mod-survey-view .fitem .felement.fstatic > p {
+#page-mod-survey-items_manage .fitem .felement.fstatic > p {
     line-height:1.2em;
     display:inline;
 }
 
 /* BEGIN OF: selectors for the static field explaining the format needed by each plugin in parentcontent field */
-#page-mod-survey-view .pluginname {
+#page-mod-survey-item_setup .pluginname {
     left:0;
     width:25%;
     float:left;
     /*border:1px green solid;*/
 }
 
-#page-mod-survey-view .inputformat {
+#page-mod-survey-item_setup .inputformat {
     position:relative:
     padding-left:26%;
     margin-left:26%;
     /*border:1px blue solid;*/
 }
 
-#page-mod-survey-view .felement.fstatic ul {
+#page-mod-survey-item_setup .felement.fstatic ul {
     line-height:1.2em;
 }
 /* END OF: selectors for the static field explaining the format needed by each plugin in parentcontent field */

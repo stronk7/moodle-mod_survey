@@ -17,7 +17,7 @@
 /*
  * Functions used by some stages of select plugin upgrade
  *
- * @package    surveyitem
+ * @package    surveyfield
  * @subpackage select
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

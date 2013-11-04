@@ -28,7 +28,7 @@ use core\plugininfo\base, core_plugin_manager, moodle_url;
 defined('MOODLE_INTERNAL') || die();
 
 class surveyformat extends base {
-    /**
+    /*
      * Finds all enabled plugins, the result may include missing plugins.
      * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
      */
@@ -63,10 +63,12 @@ class surveyformat extends base {
     }
 
     public function is_uninstall_allowed() {
-        return true;
+        global $DB;
+
+        return !$DB->record_exists('survey_item', array('type' => 'format', 'plugin' => $this->name));
     }
 
-    /**
+    /*
      * Return URL used for management of plugins of this type.
      * @return moodle_url
      */
@@ -78,7 +80,7 @@ class surveyformat extends base {
         return $this->type.'_'.$this->name;
     }
 
-    /**
+    /*
      * Loads plugin settings to the settings tree
      *
      * This function usually includes settings.php file in plugins folder.

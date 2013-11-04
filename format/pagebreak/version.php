@@ -20,7 +20,7 @@
  * This code fragment is called by moodle_needs_upgrading() and
  * /admin/index.php
  *
- * @package    surveyitem
+ * @package    surveyformat
  * @subpackage pagebreak
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,5 +28,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2013081902;
+$plugin->version = 2013103101;
 $plugin->requires = 2010091600;  // Requires this Moodle version

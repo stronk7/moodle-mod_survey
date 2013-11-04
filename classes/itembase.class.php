@@ -167,7 +167,7 @@ class mod_survey_itembase {
 
         $sql = 'SELECT *, si.id as itemid, plg.id as pluginid
                 FROM {survey_item} si
-                    JOIN {survey_'.$this->plugin.'} plg ON si.id = plg.itemid
+                    JOIN {survey'.$this->type.'_'.$this->plugin.'} plg ON si.id = plg.itemid
                 WHERE si.id = :surveyitemid';
 
         if ($record = $DB->get_record_sql($sql, array('surveyitemid' => $itemid))) {
@@ -177,7 +177,7 @@ class mod_survey_itembase {
             unset($this->id); // I do not care it. I already heave: itemid and pluginid
             $this->itemname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
         } else {
-            debugging('Something was wrong at line '.__LINE__.' of file '.__FILE__.'!<br />I can not find the survey_item ID = '.$itemid.' using:<br />'.$sql);
+            debugging('Something was wrong at line '.__LINE__.' of file '.__FILE__.'!<br />I can not find the survey item ID = '.$itemid.' using:<br />'.$sql);
         }
     }
 
@@ -207,7 +207,7 @@ class mod_survey_itembase {
         //     }
         // }
 
-        $tablename = 'survey_'.$this->plugin;
+        $tablename = 'survey'.$this->type.'_'.$this->plugin;
 
         // do not forget surveyid
         $record->surveyid = $cm->instance;
@@ -493,8 +493,8 @@ class mod_survey_itembase {
             print_error('Unable to delete survey_item id='.$itemid);
         }
 
-        if (!$DB->delete_records('survey_'.$this->plugin, array('id' => $this->pluginid))) {
-            print_error('Unable to delete record id = '.$this->pluginid.' from surveyitem_'.$this->plugin);
+        if (!$DB->delete_records('survey'.$this->type.'_'.$this->plugin, array('id' => $this->pluginid))) {
+            print_error('Unable to delete record id = '.$this->pluginid.' from survey'.$this->type.'_'.$this->plugin);
         }
 
         if (isset($cm)) {

@@ -17,7 +17,7 @@
 /*
  * Keeps track of upgrades to the surveyitem rate
  *
- * @package    surveyitem
+ * @package    surveyfield
  * @subpackage rate
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -49,7 +49,7 @@ function xmldb_surveyfield_rate_upgrade($oldversion) {
 
     if ($oldversion < 2013100601) {
 
-        // Rename field extrarow on table survey_age to position.
+        // Rename field extrarow on table survey_rate to position.
         $table = new xmldb_table('survey_rate');
         $field = new xmldb_field('extrarow', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'customnumber');
 
@@ -58,6 +58,18 @@ function xmldb_surveyfield_rate_upgrade($oldversion) {
 
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013100601, 'surveyfield', 'rate');
+    }
+
+    if ($oldversion < 2013103101) {
+
+        // Define table survey_age to be renamed to survey_rate.
+        $table = new xmldb_table('survey_rate');
+
+        // Launch rename table for survey_age.
+        $dbman->rename_table($table, 'surveyfield_rate');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013103101, 'surveyfield', 'rate');
     }
 
     return true;

@@ -17,7 +17,7 @@
 /*
  * Keeps track of upgrades to the surveyitem character
  *
- * @package    surveyitem
+ * @package    surveyfield
  * @subpackage character
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -44,7 +44,7 @@ function xmldb_surveyfield_character_upgrade($oldversion) {
 
     if ($oldversion < 2013100601) {
 
-        // Rename field extrarow on table survey_age to position.
+        // Rename field extrarow on table survey_character to position.
         $table = new xmldb_table('survey_character');
         $field = new xmldb_field('extrarow', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'customnumber');
 
@@ -53,6 +53,18 @@ function xmldb_surveyfield_character_upgrade($oldversion) {
 
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013100601, 'surveyfield', 'character');
+    }
+
+    if ($oldversion < 2013103101) {
+
+        // Define table survey_age to be renamed to survey_character.
+        $table = new xmldb_table('survey_character');
+
+        // Launch rename table for survey_age.
+        $dbman->rename_table($table, 'surveyfield_character');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013103101, 'surveyfield', 'character');
     }
 
     return true;

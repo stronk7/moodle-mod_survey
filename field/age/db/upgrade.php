@@ -17,7 +17,7 @@
 /*
  * Keeps track of upgrades to the surveyitem age
  *
- * @package    surveyitem
+ * @package    surveyfield
  * @subpackage age
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -45,6 +45,18 @@ function xmldb_surveyfield_age_upgrade($oldversion) {
 
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013100601, 'surveyfield', 'age');
+    }
+
+    if ($oldversion < 2013103101) {
+
+        // Define table survey_age to be renamed to surveyfield_age.
+        $table = new xmldb_table('survey_age');
+
+        // Launch rename table for survey_age.
+        $dbman->rename_table($table, 'surveyfield_age');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013103101, 'surveyfield', 'age');
     }
 
     return true;

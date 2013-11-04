@@ -17,7 +17,7 @@
 /*
  * Keeps track of upgrades to the surveyitem integer
  *
- * @package    surveyitem
+ * @package    surveyfield
  * @subpackage integer
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -36,7 +36,7 @@ function xmldb_surveyfield_integer_upgrade($oldversion) {
 
     if ($oldversion < 2013100601) {
 
-        // Rename field extrarow on table survey_age to position.
+        // Rename field extrarow on table survey_integer to position.
         $table = new xmldb_table('survey_integer');
         $field = new xmldb_field('extrarow', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'customnumber');
 
@@ -45,6 +45,18 @@ function xmldb_surveyfield_integer_upgrade($oldversion) {
 
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013100601, 'surveyfield', 'integer');
+    }
+
+    if ($oldversion < 2013103101) {
+
+        // Define table survey_age to be renamed to survey_integer.
+        $table = new xmldb_table('survey_integer');
+
+        // Launch rename table for survey_age.
+        $dbman->rename_table($table, 'surveyfield_integer');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013103101, 'surveyfield', 'integer');
     }
 
     return true;

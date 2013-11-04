@@ -17,7 +17,7 @@
 /*
  * Keeps track of upgrades to the surveyitem datetime
  *
- * @package    surveyitem
+ * @package    surveyfield
  * @subpackage datetime
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -51,7 +51,7 @@ function xmldb_surveyfield_datetime_upgrade($oldversion) {
 
     if ($oldversion < 2013100601) {
 
-        // Rename field extrarow on table survey_age to position.
+        // Rename field extrarow on table survey_datetime to position.
         $table = new xmldb_table('survey_datetime');
         $field = new xmldb_field('extrarow', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'customnumber');
 
@@ -60,6 +60,18 @@ function xmldb_surveyfield_datetime_upgrade($oldversion) {
 
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013100601, 'surveyfield', 'datetime');
+    }
+
+    if ($oldversion < 2013103101) {
+
+        // Define table survey_age to be renamed to survey_datetime.
+        $table = new xmldb_table('survey_datetime');
+
+        // Launch rename table for survey_age.
+        $dbman->rename_table($table, 'surveyfield_datetime');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013103101, 'surveyfield', 'datetime');
     }
 
     return true;

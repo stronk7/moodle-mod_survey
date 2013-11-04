@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="survey_fileupload" COMMENT="File upload type surveyfield">
+    <TABLE NAME="surveyfield_fileupload" COMMENT="File upload type surveyfield">
       <FIELDS>
         <FIELD NAME="id"               TYPE="int"  LENGTH="10"    NOTNULL="true"  UNSIGNED="true"             SEQUENCE="true"/>
         <FIELD NAME="surveyid"         TYPE="int"  LENGTH="10"    NOTNULL="true"  UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>

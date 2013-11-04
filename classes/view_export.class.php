@@ -234,7 +234,7 @@ class mod_survey_exportmanager {
         }
         // variable
         foreach ($itemseeds as $singlefield) {
-            $variable = $DB->get_field('survey_'.$singlefield->plugin, 'variable', array('itemid' => $singlefield->id));
+            $variable = $DB->get_field('survey'.$singlefield->type.'_'.$singlefield->plugin, 'variable', array('itemid' => $singlefield->id));
             $recordtoexport[] = empty($variable) ? $singlefield->plugin.'_'.$singlefield->id : $variable;
         }
         $recordtoexport[] = get_string('timecreated', 'survey');

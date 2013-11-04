@@ -56,7 +56,7 @@ class survey_chooseitemform extends moodleform {
             if ($itemseed->plugin == 'textarea') {
                 continue;
             }
-            $thiscontent = $DB->get_field('survey_'.$itemseed->plugin, 'content', array('itemid' => $itemseed->id));
+            $thiscontent = $DB->get_field('survey'.$itemseed->type.'_'.$itemseed->plugin, 'content', array('itemid' => $itemseed->id));
             if (!empty($survey->template)) {
                 $thiscontent = get_string($thiscontent, 'surveytemplate_'.$survey->template);
             }

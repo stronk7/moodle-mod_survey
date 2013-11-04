@@ -73,7 +73,7 @@ $itemlistman = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $
 // -----------------------------
 // output starts here
 // -----------------------------
-$PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/survey/items_validate.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
 

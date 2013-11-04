@@ -185,13 +185,13 @@ class mod_survey_itemlist {
                 $this->reorder_items();
                 break;
             case SURVEY_REQUIREDON:
-                $DB->set_field('survey_'.$this->plugin, 'required', 1, array('itemid' => $this->itemid));
+                $DB->set_field('survey'.$this->type.'_'.$this->plugin, 'required', 1, array('itemid' => $this->itemid));
                 break;
             case SURVEY_REQUIREDOFF:
-                $DB->set_field('survey_'.$this->plugin, 'required', 0, array('itemid' => $this->itemid));
+                $DB->set_field('survey'.$this->type.'_'.$this->plugin, 'required', 0, array('itemid' => $this->itemid));
                 break;
             case SURVEY_CHANGEINDENT:
-                $DB->set_field('survey_'.$this->plugin, 'indent', $this->nextindent, array('itemid' => $this->itemid));
+                $DB->set_field('survey'.$this->type.'_'.$this->plugin, 'indent', $this->nextindent, array('itemid' => $this->itemid));
                 break;
             case SURVEY_ADDTOSEARCH:
                 $item = survey_get_item($this->itemid, $this->type, $this->plugin);
@@ -1061,7 +1061,7 @@ class mod_survey_itemlist {
 
                                 $where = array('id' => $record->id);
                                 $fieldlist = implode(',', $multilangfields[$plugin]);
-                                $reference = $DB->get_record('survey_'.$plugin, $where, $fieldlist, MUST_EXIST);
+                                $reference = $DB->get_record('survey'.$type.'_'.$plugin, $where, $fieldlist, MUST_EXIST);
 
                                 foreach ($fieldnames as $fieldname) {
                                     $stringkey = $reference->{$fieldname};
@@ -1071,14 +1071,14 @@ class mod_survey_itemlist {
                                         $record->{$fieldname} = null;
                                     }
                                 }
-                                $DB->update_record('survey_'.$plugin, $record);
+                                $DB->update_record('survey'.$type.'_'.$plugin, $record);
                             }
                         }
                     }
 
                     $record = new stdClass();
                     $record->id = $this->survey->id;
-                    $record->template = '';
+                    $record->template = null;
                     $DB->update_record('survey', $record);
 
                     $paramurl = array('id' => $this->cm->id);

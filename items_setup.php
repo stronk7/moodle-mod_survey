@@ -126,7 +126,7 @@ if ($fromform = $itemform->get_data()) {
 // -----------------------------
 // output starts here
 // -----------------------------
-$PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/survey/item_setup.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
 

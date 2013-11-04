@@ -63,7 +63,9 @@ class surveytemplate extends base {
     }
 
     public function is_uninstall_allowed() {
-        return true;
+        global $DB;
+
+        return !$DB->record_exists('survey', array('template' => $this->name));
     }
 
     /**

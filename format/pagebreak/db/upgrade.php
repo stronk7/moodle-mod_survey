@@ -17,7 +17,7 @@
 /*
  * Keeps track of upgrades to the surveyitem pagebreak
  *
- * @package    surveyitem
+ * @package    surveyformat
  * @subpackage pagebreak
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,5 +30,21 @@
  * @return bool true
  */
 function xmldb_surveyformat_pagebreak_upgrade($oldversion) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2013103101) {
+
+        // Define table survey_age to be renamed to survey_pagebreak.
+        $table = new xmldb_table('survey_pagebreak');
+
+        // Launch rename table for survey_age.
+        $dbman->rename_table($table, 'surveyformat_pagebreak');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013103101, 'surveyformat', 'pagebreak');
+    }
+
     return true;
 }

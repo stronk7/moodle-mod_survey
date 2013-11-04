@@ -17,7 +17,7 @@
 /*
  * Keeps track of upgrades to the surveyitem label
  *
- * @package    surveyitem
+ * @package    surveyformat
  * @subpackage label
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -95,6 +95,18 @@ function xmldb_surveyformat_label_upgrade($oldversion) {
 
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013091802, 'surveyformat', 'label');
+    }
+
+    if ($oldversion < 2013103101) {
+
+        // Define table survey_age to be renamed to survey_label.
+        $table = new xmldb_table('survey_label');
+
+        // Launch rename table for survey_age.
+        $dbman->rename_table($table, 'surveyformat_label');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013103101, 'surveyformat', 'label');
     }
 
     return true;

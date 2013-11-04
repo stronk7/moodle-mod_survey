@@ -17,7 +17,7 @@
 /*
  * Keeps track of upgrades to the surveyitem numeric
  *
- * @package    surveyitem
+ * @package    surveyfield
  * @subpackage numeric
  * @copyright  2013 kordan <kordan@mclink.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -65,7 +65,7 @@ function xmldb_surveyfield_numeric_upgrade($oldversion) {
 
     if ($oldversion < 2013100601) {
 
-        // Rename field extrarow on table survey_age to position.
+        // Rename field extrarow on table survey_numeric to position.
         $table = new xmldb_table('survey_numeric');
         $field = new xmldb_field('extrarow', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'customnumber');
 
@@ -74,6 +74,18 @@ function xmldb_surveyfield_numeric_upgrade($oldversion) {
 
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013100601, 'surveyfield', 'numeric');
+    }
+
+    if ($oldversion < 2013103101) {
+
+        // Define table survey_age to be renamed to survey_numeric.
+        $table = new xmldb_table('survey_numeric');
+
+        // Launch rename table for survey_age.
+        $dbman->rename_table($table, 'surveyfield_numeric');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013103101, 'surveyfield', 'numeric');
     }
 
     return true;

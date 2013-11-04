@@ -384,12 +384,15 @@ function survey_delete_instance($id) {
     $DB->delete_records('survey_submission', array('surveyid' => $survey->id));
 
     // get all item_<<plugin>> and format_<<plugin>>
-    $pluginlist = survey_get_plugin_list();
+    $surveytypes = array(SURVEY_TYPEFIELD, SURVEY_TYPEFORMAT);
+    foreach ($surveytypes as $surveytype) {
+        $pluginlist = survey_get_plugin_list($surveytype);
 
-    // delete all associated item_<<plugin>>
-    foreach ($pluginlist as $plugin) {
-        $tablename = 'survey_'.$plugin;
-        $DB->delete_records($tablename, array('surveyid' => $survey->id));
+        // delete all associated item_<<plugin>>
+        foreach ($pluginlist as $plugin) {
+            $tablename = 'survey'.$surveytype.'_'.$plugin;
+            $DB->delete_records($tablename, array('surveyid' => $survey->id));
+        }
     }
 
     // delete all associated survey_items
@@ -846,9 +849,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
         $navnode = $surveynode->add(SURVEY_TAB3NAME,  new moodle_url('/mod/survey/utemplates_create.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
         // CHILDREN
-        if (!$hassubmissions || $riskyediting) {
-            $navnode->add(get_string('tabutemplatepage1', 'survey'), new moodle_url('/mod/survey/utemplates_manage.php', $paramurl), navigation_node::TYPE_SETTING);
-        }
+        $navnode->add(get_string('tabutemplatepage1', 'survey'), new moodle_url('/mod/survey/utemplates_manage.php', $paramurl), navigation_node::TYPE_SETTING);
         if ($cancreateusertemplates) {
             $navnode->add(get_string('tabutemplatepage2', 'survey'), new moodle_url('/mod/survey/utemplates_create.php', $paramurl), navigation_node::TYPE_SETTING);
         }

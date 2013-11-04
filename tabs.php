@@ -235,11 +235,9 @@ switch ($currenttab) {
 
         if ($canmanageusertemplates) {
             $row = array();
-            if (!$hassubmissions || $riskyediting) { // if submissions were done, do not change the list of fields
-                $elementurl = new moodle_url('/mod/survey/utemplates_manage.php', $paramurl); // manage
-                $strlabel = get_string('tabutemplatepage1', 'survey');
-                $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
-            }
+            $elementurl = new moodle_url('/mod/survey/utemplates_manage.php', $paramurl); // manage
+            $strlabel = get_string('tabutemplatepage1', 'survey');
+            $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
 
             if ($cancreateusertemplates) { // create
                 $elementurl = new moodle_url('/mod/survey/utemplates_create.php', $paramurl);
@@ -253,7 +251,7 @@ switch ($currenttab) {
                 $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
             }
 
-            if ( (!$hassubmissions || $riskyediting) && $canapplyusertemplates ) { // if submissions were done, do not change the list of fields
+            if ( (!$hassubmissions || $riskyediting) && $canapplyusertemplates ) {
                 $elementurl = new moodle_url('/mod/survey/utemplates_apply.php', $paramurl); // apply
                 $strlabel = get_string('tabutemplatepage4', 'survey');
                 $row[] = new tabobject('idpage4', $elementurl->out(), $strlabel);

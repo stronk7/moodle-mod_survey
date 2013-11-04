@@ -63,20 +63,9 @@ class surveyfield extends base {
     }
 
     public function is_uninstall_allowed() {
-        // global $DB;
-
-        // return !$DB->record_exists('survey_item', array('type' => 'field', 'plugin' => $this->name));
-        return true;
-    }
-
-    public function get_uninstall_extra_warning() {
         global $DB;
 
-        if (!$count = $DB->count_records('survey_item', array('plugin' => $this->name))) {
-            return '';
-        }
-
-        return '<p>'.get_string('uninstallextraconfirmmod', 'core_plugin', array('instances' => $count)).'</p>';
+        return !$DB->record_exists('survey_item', array('type' => 'field', 'plugin' => $this->name));
     }
 
     /**

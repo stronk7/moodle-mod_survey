@@ -63,7 +63,7 @@ $submissionman->submission_to_pdf();
 // -----------------------------
 // output starts here
 // -----------------------------
-$PAGE->set_url('/mod/survey/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/survey/view_manage.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
 

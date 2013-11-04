@@ -205,6 +205,13 @@ class survey_plugin_manager {
             $whereparams = array('type' => $type);
             $counts = $DB->get_records_sql($countsql, $whereparams);
         }
+        if (($this->subtype == 'surveytemplate')) {
+            $countsql = 'SELECT template, COUNT(1) as numinstances
+                FROM {survey}
+                WHERE template IS NOT NULL
+                GROUP BY template';
+            $counts = $DB->get_records_sql($countsql);
+        }
 
         foreach ($plugins as $plugin) {
             $row = array();

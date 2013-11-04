@@ -193,9 +193,9 @@ class mod_survey_templatebase {
             }
 
             // child table
-            $xmltable = $xmlitem->addChild('survey_'.$itemseed->plugin);
+            $xmltable = $xmlitem->addChild('survey'.$itemseed->type.'_'.$itemseed->plugin);
 
-            $structure = $this->get_table_structure('survey_'.$itemseed->plugin);
+            $structure = $this->get_table_structure('survey'.$itemseed->type.'_'.$itemseed->plugin);
             foreach ($structure as $field) {
                 if ($field == 'surveyid') {
                     continue;
@@ -320,7 +320,7 @@ class mod_survey_templatebase {
                 $pluginseeds = $DB->get_records_sql($sql, $sqlparam);
 
                 foreach ($pluginseeds as $pluginseed) {
-                    $tablename = 'survey_'.$pluginseed->plugin;
+                    $tablename = 'survey'.$pluginseed->type.'_'.$pluginseed->plugin;
                     if ($dbman->table_exists($tablename)) {
                         $DB->delete_records($tablename, $sqlparam);
                     }
@@ -348,7 +348,7 @@ class mod_survey_templatebase {
 
                 $pluginonly = $sqlparam;
                 foreach ($pluginseeds as $pluginseed) {
-                    $tablename = 'survey_'.$pluginseed->plugin;
+                    $tablename = 'survey'.$pluginseed->type.'_'.$pluginseed->plugin;
                     if ($dbman->table_exists($tablename)) {
                         $pluginonly['plugin'] = $pluginseed->plugin;
                         $deletelist = $DB->get_recordset('survey_item', $pluginonly, 'id', 'id');
