@@ -674,7 +674,8 @@ class mod_survey_submissionmanager {
                 $html = str_replace('@@col1@@', $content, $html);
 
                 // second column: colspan 2
-                $content = trim(strip_tags($item->get_content()), " \t\n\r");
+                // $content = trim(strip_tags($item->get_content()), " \t\n\r"); <-- I want images in the PDF
+                $content = $item->get_content();
                 // why does $content here is already html encoded so that I do not have to apply htmlspecialchars?
                 // $content = htmlspecialchars($content, ENT_NOQUOTES, 'UTF-8');
                 $html = str_replace('@@col2@@', $content, $html);
@@ -689,7 +690,8 @@ class mod_survey_submissionmanager {
             $html = str_replace('@@col1@@', $content, $html);
 
             // second column
-            $content = trim(strip_tags($item->get_content()), " \t\n\r");
+            // $content = trim(strip_tags($item->get_content()), " \t\n\r"); <-- I want images in the PDF
+            $content = $item->get_content();
             // why does $content here is already html encoded so that I do not have to apply htmlspecialchars?
             // because it comes from an editor?
             // $content = htmlspecialchars($content, ENT_NOQUOTES, 'UTF-8');
