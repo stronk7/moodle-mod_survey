@@ -14,3 +14,4 @@ button is needed. (thanks to JR)
 -> is the autofill field saved to userdata even if it is not shown?
 -> responses equipped with images are reported without images in PDF
 -> allow upperbound date/datetime == to now
+-> the option "not answered" is missing in the search form even if a "Answer not provided" may be found
