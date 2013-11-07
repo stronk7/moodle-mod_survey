@@ -62,14 +62,29 @@ class mod_survey_submissionmanager {
     public $confirm = false;
 
     /*
+     * $canmanageallsubmissions
+     */
+    public $canmanageallsubmissions = false;
+
+    /*
      * $canmanagesubmissions
      */
     public $canmanagesubmissions = false;
 
     /*
-     * $canmanageallsubmissions
+     * $canseegroupsubmissions
      */
-    public $canmanageallsubmissions = false;
+    public $canseegroupsubmissions = false;
+
+    /*
+     * $caneditgroupsubmissions
+     */
+    public $caneditgroupsubmissions = false;
+
+    /*
+     * $candeletegroupsubmissions
+     */
+    public $candeletegroupsubmissions = false;
 
     /*
      * $searchfieldsget
@@ -95,6 +110,9 @@ class mod_survey_submissionmanager {
         $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
         $this->canmanagesubmissions = has_capability('mod/survey:managesubmissions', $this->context, null, true);
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
+        $this->canseegroupsubmissions = has_capability('mod/survey:seegroupsubmissions', $this->context, null, true);
+        $this->caneditgroupsubmissions = has_capability('mod/survey:editgroupsubmissions', $this->context, null, true);
+        $this->candeletegroupsubmissions = has_capability('mod/survey:deletegroupsubmissions', $this->context, null, true);
     }
 
     /*
@@ -241,12 +259,15 @@ class mod_survey_submissionmanager {
     public function get_manage_sql($table) {
         global $USER;
 
+        $mygroups = survey_get_my_groups($this->cm);
+
         $sql = 'SELECT s.*, s.id as submissionid, '.user_picture::fields('u').'
-                FROM {survey_submission} s ';
+                FROM {survey_submission} s
+                    JOIN {user} u ON s.userid = u.id';
 
         list($where, $whereparams) = $table->get_sql_where();
 
-        // write $userdatatransposed whether necessary
+        // write $transposeduserdata whether necessary
         if ($this->searchfields_get) {
             // this will be re-send to URL for next page reload, whether requested with a sort, for instance
             $paramurl['searchquery'] = $this->searchfields_get;
@@ -254,63 +275,42 @@ class mod_survey_submissionmanager {
             $searchrestrictions = unserialize($this->searchfields_get);
 
             // written following http://buysql.com/mysql/14-how-to-automate-pivot-tables.html
-            $userdatatransposed = 'SELECT submissionid, ';
+            $transposeduserdata = 'SELECT submissionid, ';
             $sqlrow = array();
             foreach ($searchrestrictions as $itemid => $searchrestriction) {
                 $sqlrow[] = 'MAX(IF(itemid = \''.$itemid.'\', content, NULL)) AS \'c_'.$itemid.'\'';
             }
-            $userdatatransposed .= implode(', ', $sqlrow);
-            $userdatatransposed .= ' FROM {survey_userdata}';
-            $userdatatransposed .= ' GROUP BY submissionid';
+            $transposeduserdata .= implode(', ', $sqlrow);
+            $transposeduserdata .= ' FROM {survey_userdata}';
+            $transposeduserdata .= ' GROUP BY submissionid';
 
-            $sql .= '    JOIN ('.$userdatatransposed.') udt ON udt.submissionid = s.id '; // udt == user data transposed
+            $sql .= ' JOIN ('.$transposeduserdata.') tud ON tud.submissionid = s.id '; // tud == transposed user data
         }
 
-        // if $survey->readaccess == SURVEY_GROUP I am sure that course or instance is divided by group too
-        if (!$this->canmanageallsubmissions) {
-            if ($this->survey->readaccess == SURVEY_GROUP) {
-                // apply the group filter ONLY IF "Advanced permissions"
-                $sql .= '    JOIN {groups_members} gm ON gm.userid = s.userid ';
-            }
+        if (!$this->canmanageallsubmissions && $mygroups) {
+            $sql .= ' JOIN {groups_members} gm ON gm.userid = s.userid ';
         }
 
-        $sql .= '    JOIN {user} u ON (s.userid = u.id)
-                WHERE s.surveyid = :surveyid';
+        // now finalise $sql
+        $sql .= ' WHERE s.surveyid = :surveyid';
         $whereparams['surveyid'] = $this->survey->id;
 
         if (!$this->canmanageallsubmissions) {
-            if ($this->survey->readaccess == SURVEY_OWNER) {
+            if (!$this->canseegroupsubmissions) {
                 $sql .= ' AND s.userid = :userid';
                 $whereparams['userid'] = $USER->id;
             }
+
+            if ($mygroups) {
+                $sql .= ' AND gm.groupid IN ('.implode(',', $mygroups).')';
+            }
         }
 
-        // specific restrictions over {survey_userdata}
         if ($this->searchfields_get) {
             foreach ($searchrestrictions as $itemid => $searchrestriction) {
-                $sql .= ' AND udt.c_'.$itemid.' = :c_'.$itemid;
+                $sql .= ' AND tud.c_'.$itemid.' = :c_'.$itemid;;
                 $whereparams['c_'.$itemid] = $searchrestriction;
             }
-        }
-
-        $mygroups = survey_get_my_groups($this->cm);
-        if (!$this->canmanageallsubmissions) {
-            if ($this->survey->readaccess == SURVEY_GROUP) { // if $survey->readaccess == SURVEY_GROUP then course or instance is divided by group
-                if (count($mygroups)) {
-                    $grouprow = array();
-                    $sql .= ' AND (';
-                    foreach ($mygroups as $mygroup) {
-                        $grouprow[] = '(gm.groupid = '.$mygroup.')';
-                    }
-                    $sql .= implode(' OR ', $grouprow);
-                    $sql .= ') ';
-                }
-            }
-        }
-
-        // specific restrictions coming from $table->get_sql_where()
-        if ($where) {
-            $sql .= ' AND '.$where;
         }
 
         // sort coming from $table->get_sql_sort()
@@ -321,7 +321,10 @@ class mod_survey_submissionmanager {
         }
 
         // echo '$sql = '.$sql.'<br />';
-        return array($sql, $whereparams, $mygroups);
+        // echo '$whereparams:';
+        // var_dump($whereparams);
+
+        return array($sql, $whereparams);
     }
 
     /*
@@ -336,9 +339,15 @@ class mod_survey_submissionmanager {
         require_once($CFG->libdir.'/tablelib.php');
 
         $table = new flexible_table('submissionslist');
-        $table->initialbars(true);
+        if ($this->canmanageallsubmissions || $this->canseegroupsubmissions) {
+            $table->initialbars(true);
+        }
 
-        $paramurl = array('id' => $this->cm->id);
+        $paramurl = array();
+        $paramurl['id'] = $this->cm->id;
+        if ($this->searchfields_get) {
+            $paramurl['searchquery'] = $this->searchfields_get;
+        }
         $table->define_baseurl(new moodle_url('view_manage.php', $paramurl));
 
         $tablecolumns = array();
@@ -391,13 +400,6 @@ class mod_survey_submissionmanager {
         $table->setup();
 
         /*****************************************************************************/
-        if ($this->survey->readaccess == SURVEY_NONE) {
-            $message = get_string('noreadaccess', 'survey');
-            echo $OUTPUT->box($message, 'notice centerpara');
-            echo $OUTPUT->footer();
-            die();
-        }
-
         $status = array(SURVEY_STATUSINPROGRESS => get_string('statusinprogress', 'survey'),
                         SURVEY_STATUSCLOSED => get_string('statusclosed', 'survey'));
         $downloadpdftitle = get_string('downloadpdf', 'survey');
@@ -411,7 +413,7 @@ class mod_survey_submissionmanager {
         $paramurl['id'] = $this->cm->id;
         $basepath = new moodle_url('view.php', $paramurl);
 
-        list($sql, $whereparams, $mygroups) = $this->get_manage_sql($table);
+        list($sql, $whereparams) = $this->get_manage_sql($table);
 
         $submissions = $DB->get_recordset_sql($sql, $whereparams, $table->get_sql_sort());
 
@@ -426,10 +428,6 @@ class mod_survey_submissionmanager {
             }
 
             foreach ($submissions as $submission) {
-                if (!$this->canmanageallsubmissions && !survey_user_has_extrapermission('read', $this->survey, $mygroups, $submission->userid)) {
-                    continue;
-                }
-
                 $tablerow = array();
 
                 // icon
@@ -455,7 +453,7 @@ class mod_survey_submissionmanager {
 
                 // actions
                 $paramurl['submissionid'] = $submission->submissionid;
-                if ($this->canmanageallsubmissions || survey_user_has_extrapermission('edit', $this->survey, $mygroups, $submission->userid)) { // "edit" or "edit as new"
+                if ($this->canmanageallsubmissions || $this->caneditgroupsubmissions) { // edit
                     $paramurl['act'] = SURVEY_EDITRESPONSE;
                     if ($submission->status == SURVEY_STATUSCLOSED) {
                         if ($this->survey->history) {
@@ -474,7 +472,7 @@ class mod_survey_submissionmanager {
                     $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
                     $icons .= '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
                 } else { // read only
-                    // I don't have canmanageallsubmissions || survey_user_has_extrapermission
+                    // I don't have canmanageallsubmissions && $this->caneditgroupsubmissions
                     // but if I meet an "in progress" submission of mine...
                     if (($submission->status == SURVEY_STATUSINPROGRESS) && ($submission->userid == $USER->id)) {
                         $paramurl['act'] = SURVEY_EDITRESPONSE;
@@ -491,7 +489,7 @@ class mod_survey_submissionmanager {
                     }
                 }
 
-                if ($this->canmanageallsubmissions || survey_user_has_extrapermission('delete', $this->survey, $mygroups, $submission->userid)) { // delete
+                if ($this->canmanageallsubmissions || $this->candeletegroupsubmissions) { // delete
                     $paramurl['act'] = SURVEY_DELETERESPONSE;
                     $basepath = new moodle_url('view_manage.php', $paramurl);
                     $icons .= '&nbsp;<a class="editing_update" title="'.$deletetitle.'" href="'.$basepath.'">';
@@ -541,14 +539,14 @@ class mod_survey_submissionmanager {
         $allowed = true;
         $mygroups = survey_get_my_groups($this->cm);
         switch ($this->action) {
-            case SURVEY_EDITRESPONSE:
-                $allowed = survey_user_has_extrapermission('edit', $this->survey, $mygroups, $ownerid);
-                break;
             case SURVEY_READONLYRESPONSE:
-                $allowed = survey_user_has_extrapermission('read', $this->survey, $mygroups, $ownerid);
+                $allowed = $this->canseegroupsubmissions;
+                break;
+            case SURVEY_EDITRESPONSE:
+                $allowed = $this->caneditgroupsubmissions;
                 break;
             case SURVEY_DELETERESPONSE:
-                $allowed = survey_user_has_extrapermission('delete', $this->survey, $mygroups, $ownerid);
+                $allowed = $this->candeletegroupsubmissions;
                 break;
             case SURVEY_RESPONSETOPDF:
                 $allowed = has_capability('mod/survey:submissiontopdf', $this->context);

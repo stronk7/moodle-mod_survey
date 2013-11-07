@@ -41,10 +41,6 @@ if ($ADMIN->fulltree) {
     $name = new lang_string('fillinginstructioninsearch', 'mod_survey');
     $description = new lang_string('fillinginstructioninsearch_descr', 'mod_survey');
     $settings->add(new admin_setting_configcheckbox('survey/fillinginstructioninsearch', $name, $description, 0));
-
-    $name = new lang_string('useadvancedpermissions', 'mod_survey');
-    $description = new lang_string('useadvancedpermissions_descr', 'mod_survey');
-    $settings->add(new admin_setting_configcheckbox('survey/useadvancedpermissions', $name, $description, 0));
 }
 
 $ADMIN->add('modsurveyfolder', $settings);

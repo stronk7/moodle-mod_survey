@@ -70,7 +70,6 @@ $formurl = new moodle_url('view_export.php', $paramurl);
 // prepare params for the form
 $formparams = new stdClass();
 $formparams->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $context, null, true);
-$formparams->saveresume = $survey->saveresume;
 $exportform = new survey_exportform($formurl, $formparams);
 // end of: prepare params for the form
 // -----------------------------

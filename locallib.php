@@ -77,45 +77,6 @@ function survey_textarea_to_array($textareacontent) {
 }
 
 /*
- * survey_user_has_extrapermission
- *
- * @param $survey, $mygroups, $ownerid
- * @return whether user is allowed to see responses submitted by gropumates
- */
-function survey_user_has_extrapermission($extrapermission, $survey, $mygroups, $ownerid) {
-    global $USER, $COURSE;
-
-    if (!in_array($extrapermission, array('read', 'edit', 'delete'))) {
-        debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $extrapermission = '.$extrapermission);
-    }
-    switch ($survey->{$extrapermission.'access'}) {
-        case SURVEY_NONE:
-            return false;
-            break;
-        case SURVEY_OWNER:
-            return ($USER->id == $ownerid);
-            break;
-        case SURVEY_GROUP:
-            $return = false;
-            // $ownergroupid is the ID of the group of the owner of the submitted survey record
-            $ownergroup = groups_get_user_groups($COURSE->id, $ownerid);
-            foreach ($ownergroup[0] as $ownergroupid) { // [0] is for all groupings combined
-                if (in_array($ownergroupid, $mygroups)) {
-                    $return = true;
-                    break;
-                }
-            }
-            return $return;
-            break;
-        case SURVEY_ALL:
-            return true;
-            break;
-        default:
-            debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $survey->readaccess = '.$survey->readaccess);
-    }
-}
-
-/*
  * survey_get_my_groups
  * @param $cm
  * @return

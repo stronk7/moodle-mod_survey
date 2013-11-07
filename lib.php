@@ -30,12 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// Subjects for permissions
-define('SURVEY_ALL'  , 3);
-define('SURVEY_GROUP', 2);
-define('SURVEY_OWNER', 1);
-define('SURVEY_NONE' , 0);
-
 // Some constants
 define('SURVEY_MAX_ENTRIES'        , 50);
 define('SURVEY_MINEVERYEAR'        , 1970);
@@ -215,27 +209,9 @@ define('SURVEY_MASTERTEMPLATE', 1);
 function survey_add_instance($survey) {
     global $CFG, $DB, $COURSE;
 
-    $useadvancedpermissions = get_config('survey', 'useadvancedpermissions');
-
     $survey->timecreated = time();
 
     // You may have to add extra stuff in here
-    if ($useadvancedpermissions) {
-        list($survey->readaccess, $survey->editaccess, $survey->deleteaccess) = explode('.', $survey->accessrights);
-    } else {
-        // since $cm->groupmode will be updated once this method is over, I here use $survey->groupmode instead of $cm->groupmode to get $groupmode
-        $groupmode = empty($COURSE->groupmodeforce) ? $survey->groupmode : $COURSE->groupmode;
-        if ($groupmode) {
-            $survey->readaccess = SURVEY_GROUP;
-            $survey->editaccess = SURVEY_GROUP;
-            $survey->deleteaccess = SURVEY_OWNER;
-        } else {
-            $survey->readaccess = SURVEY_OWNER;
-            $survey->editaccess = SURVEY_OWNER;
-            $survey->deleteaccess = SURVEY_OWNER;
-        }
-    }
-
     $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers');
     foreach ($checkboxes as $checkbox) {
         if (!isset($survey->{$checkbox})) {
@@ -282,26 +258,8 @@ function survey_add_instance($survey) {
 function survey_update_instance($survey) {
     global $CFG, $DB, $COURSE;
 
-    $useadvancedpermissions = get_config('survey', 'useadvancedpermissions');
-
     $survey->timemodified = time();
     $survey->id = $survey->instance;
-
-    if ($useadvancedpermissions) {
-        list($survey->readaccess, $survey->editaccess, $survey->deleteaccess) = explode('.', $survey->accessrights);
-    } else {
-        // since $cm->groupmode will be updated once this method is over, I here use $survey->groupmode instead of $cm->groupmode to get $groupmode
-        $groupmode = empty($COURSE->groupmodeforce) ? $survey->groupmode : $COURSE->groupmode;
-        if ($groupmode) {
-            $survey->readaccess = SURVEY_GROUP;
-            $survey->editaccess = SURVEY_GROUP;
-            $survey->deleteaccess = SURVEY_OWNER;
-        } else {
-            $survey->readaccess = SURVEY_OWNER;
-            $survey->editaccess = SURVEY_OWNER;
-            $survey->deleteaccess = SURVEY_OWNER;
-        }
-    }
 
     $checkboxes = array('newpageforchild', 'history', 'saveresume', 'anonymous', 'notifyteachers');
     foreach ($checkboxes as $checkbox) {

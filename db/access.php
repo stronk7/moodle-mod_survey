@@ -73,6 +73,9 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
     SUB-TAB == SURVEY_SUBMISSION_MANAGE
         $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
         mod/survey:manageallsubmissions
+        mod/survey:seegroupsubmissions
+        mod/survey:editgroupsubmissions
+        mod/survey:deletegroupsubmissions
         mod/survey:managesubmissions <-- Guest is not allowed to manage submissions because they are really anonymous
 
     SUB-TAB == SURVEY_SUBMISSION_EDIT
@@ -215,6 +218,39 @@ $capabilities = array(
 
     'mod/survey:manageallsubmissions' => array(
         'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:seegroupsubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:editgroupsubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:deletegroupsubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(

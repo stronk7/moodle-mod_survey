@@ -51,6 +51,21 @@ class mod_survey_exportmanager {
      */
     public $canmanageallsubmissions = false;
 
+    /*
+     * $canseegroupsubmissions
+     */
+    public $canseegroupsubmissions = false;
+
+    /*
+     * $caneditgroupsubmissions
+     */
+    public $caneditgroupsubmissions = false;
+
+    /*
+     * $candeletegroupsubmissions
+     */
+    public $candeletegroupsubmissions = false;
+
     /********************** this will be provided later
      * $formdata: the form content as submitted by the user
      */
@@ -64,6 +79,73 @@ class mod_survey_exportmanager {
         $this->context = context_module::instance($cm->id);
         $this->survey = $survey;
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
+        $this->canseegroupsubmissions = has_capability('mod/survey:seegroupsubmissions', $this->context, null, true);
+        $this->caneditgroupsubmissions = has_capability('mod/survey:editgroupsubmissions', $this->context, null, true);
+        $this->candeletegroupsubmissions = has_capability('mod/survey:deletegroupsubmissions', $this->context, null, true);
+    }
+
+    /*
+     * get_manage_sql
+     *
+     * @param
+     * @return
+     */
+    public function get_export_sql() {
+        global $USER;
+
+        $mygroups = survey_get_my_groups($this->cm);
+
+        $sql = 'SELECT s.id as submissionid, s.status, s.timecreated, s.timemodified, ';
+        if (empty($this->survey->anonymous)) {
+            $sql .= 'u.id as userid, u.firstname,  u.lastname, ';
+        }
+        $sql .= 'ud.id as id, ud.itemid, ud.content,
+                                si.sortindex, si.plugin
+                            FROM {survey_submission} s
+                                     JOIN {user} u ON u.id = s.userid
+                                LEFT JOIN {survey_userdata} ud ON ud.submissionid = s.id
+                                LEFT JOIN {survey_item} si ON si.id = ud.itemid';
+
+        if (!$this->canmanageallsubmissions && $mygroups) {
+            $sql .= ' JOIN {groups_members} gm ON gm.userid = s.userid ';
+        }
+
+        // now finalise $sql
+        $sql .= ' WHERE s.surveyid = :surveyid';
+        $whereparams['surveyid'] = $this->survey->id;
+
+        // for IN PROGRESS submission where no fields were filled
+        // I need the LEFT JOIN {survey_item}
+        // In thi s case,
+        // if I add a clause for fields of UNEXISTING {survey_item} (because no fields was filled)
+        // I will miss the record if I do not further add OR ISNULL(si.xxxx)
+        if (!isset($this->formdata->includehidden)) {
+            $sql .= ' AND (si.hide = 0 OR ISNULL(si.hide))';
+        }
+        if (!isset($this->formdata->advanced)) {
+            $sql .= ' AND (si.advanced = 0 OR ISNULL(si.advanced))';
+        }
+        if ($this->formdata->status != SURVEY_STATUSALL) {
+            $sql .= ' AND s.status = :status';
+            $whereparams['status'] = $this->formdata->status;
+        }
+
+        if (!$this->canmanageallsubmissions) {
+            if (!$this->canseegroupsubmissions) {
+                $sql .= ' AND s.userid = :userid';
+                $whereparams['userid'] = $USER->id;
+            }
+
+            if ($mygroups) {
+                $sql .= ' AND gm.groupid IN ('.implode(',', $mygroups).')';
+            }
+        }
+
+        // echo '$sql = '.$sql.'<br />';
+        // echo '$whereparams:';
+        // var_dump($whereparams);
+
+        return array($sql, $whereparams);
     }
 
     /*
@@ -74,8 +156,6 @@ class mod_survey_exportmanager {
      */
     public function survey_export() {
         global $CFG, $DB;
-
-        $whereparams = array('surveyid' => $this->survey->id);
 
         // do I need to filter groups?
         $filtergroups = survey_need_group_filtering($this->cm, $this->context);
@@ -100,47 +180,7 @@ class mod_survey_exportmanager {
         // end of: get the field list
         // -----------------------------
 
-        if ($filtergroups) {
-            $grouprow = array();
-            $andgroup = ' AND (';
-            foreach ($mygroups as $mygroup) {
-                $grouprow[] = '(gm.groupid = '.$mygroup.')';
-            }
-            $andgroup .= implode(' OR ', $grouprow);
-            $andgroup .= ') ';
-        }
-
-        // -----------------------------
-        // write the query
-        $richsubmissionssql = 'SELECT s.id as submissionid, s.status, s.timecreated, s.timemodified, ';
-        if (empty($this->survey->anonymous)) {
-            $richsubmissionssql .= 'u.id as userid, u.firstname,  u.lastname, ';
-        }
-        $richsubmissionssql .= 'ud.id as id, ud.itemid, ud.content,
-                                si.sortindex, si.plugin
-                            FROM {survey_submission} s
-                                INNER JOIN {user} u ON u.id = s.userid
-                                INNER JOIN {survey_userdata} ud ON ud.submissionid = s.id
-                                INNER JOIN {survey_item} si ON si.id = ud.itemid
-                            WHERE s.surveyid = :surveyid';
-        if (!isset($this->formdata->advanced)) {
-            // I need records with:
-            $richsubmissionssql .= ' AND si.advanced = 0';
-        }
-        if (!isset($this->formdata->includehidden)) {
-            $richsubmissionssql .= ' AND si.hide = 0';
-        }
-        if ($this->formdata->status != SURVEY_STATUSALL) {
-            $richsubmissionssql .= ' AND s.status = :status';
-            $whereparams['status'] = $this->formdata->status;
-        }
-        if ($filtergroups) {
-            $richsubmissionssql .= $andgroup;
-        }
-        $richsubmissionssql .= ' AND si.type = "'.SURVEY_TYPEFIELD.'" ';
-        $richsubmissionssql .= ' ORDER BY s.id ASC, si.sortindex ASC';
-        // end of: write the query
-        // -----------------------------
+        list($richsubmissionssql, $whereparams) = $this->get_export_sql();
 
         $richsubmissions = $DB->get_recordset_sql($richsubmissionssql, $whereparams);
         if ($richsubmissions->valid()) {
@@ -177,10 +217,6 @@ class mod_survey_exportmanager {
             $oldrichsubmissionid = 0;
 
             foreach ($richsubmissions as $richsubmission) {
-                if (!$this->canmanageallsubmissions && !survey_user_has_extrapermission('read', $this->survey, $mygroups, $richsubmission->userid)) {
-                    continue;
-                }
-
                 if ($oldrichsubmissionid == $richsubmission->submissionid) {
                     $recordtoexport[$richsubmission->itemid] = $this->decode_content($richsubmission);
                 } else {
@@ -234,7 +270,7 @@ class mod_survey_exportmanager {
         }
         // variable
         foreach ($itemseeds as $singlefield) {
-            $variable = $DB->get_field('survey'.$singlefield->type.'_'.$singlefield->plugin, 'variable', array('itemid' => $singlefield->id));
+            $variable = $DB->get_field('survey'.SURVEY_TYPEFIELD.'_'.$singlefield->plugin, 'variable', array('itemid' => $singlefield->id));
             $recordtoexport[] = empty($variable) ? $singlefield->plugin.'_'.$singlefield->id : $variable;
         }
         $recordtoexport[] = get_string('timecreated', 'survey');

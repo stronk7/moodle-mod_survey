@@ -29,7 +29,7 @@ class survey_exportform extends moodleform {
         // submissionexport::status
         // ----------------------------------------
         $fieldname = 'status';
-        if ($this->_customdata->saveresume) {
+        if ($DB->get_records('survey_submission', array('status' => SURVEY_STATUSINPROGRESS))) {
             $options = array(SURVEY_STATUSCLOSED => get_string('statusclosed', 'survey'),
                              SURVEY_STATUSINPROGRESS => get_string('statusinprogress', 'survey'),
                              SURVEY_STATUSALL => get_string('statusboth', 'survey'));

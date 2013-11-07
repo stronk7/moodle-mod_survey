@@ -23,8 +23,6 @@ class mod_survey_mod_form extends moodleform_mod {
     public function definition() {
         global $COURSE, $DB, $CFG, $cm;
 
-        $useadvancedpermissions = get_config('survey', 'useadvancedpermissions');
-
         $mform = $this->_form;
 
         // ----------------------------------------
@@ -53,56 +51,6 @@ class mod_survey_mod_form extends moodleform_mod {
         // Close date
         $fieldname = 'timeclose';
         $mform->addElement('date_time_selector', $fieldname, get_string($fieldname, 'survey'), array('optional' => true));
-
-        // I can save a query because I know in which $COURSE I am
-        // $groupmode = isset($cm) ? groups_get_activity_groupmode($cm) : 0;
-        if (isset($cm)) {
-            $groupmode = empty($COURSE->groupmodeforce) ? $cm->groupmode : $COURSE->groupmode;
-        } else {
-            $groupmode = 0;
-        }
-        if ($useadvancedpermissions) {
-            // ----------------------------------------
-            $fieldname = 'access';
-            $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
-
-            // note about access rights
-            $fieldname = 'accessrightsnote';
-            // prepare access right
-            if (!empty($groupmode)) {
-                $mform->addElement('static', $fieldname, 'Note:', get_string($fieldname.'_group', 'survey'));
-                $subjects = array('none', 'owner', 'group', 'all');
-            } else {
-                $mform->addElement('static', $fieldname, get_string('note', 'survey'), get_string($fieldname.'_nogroup', 'survey'));
-                $subjects = array('none', 'owner', 'all');
-            }
-
-            // access right
-            $rolabel = get_string('readonly', 'survey');
-            $rwlabel = get_string('readwrite', 'survey');
-            $dellabel = get_string('delete', 'survey');
-
-            $accessrights = array();
-            $i = ($groupmode) ? SURVEY_ALL : SURVEY_GROUP;
-            while ($i >= SURVEY_NONE) {
-                $j = $i;
-                while ($j >= SURVEY_NONE) {
-                    $k = $j;
-                    while ($k >= SURVEY_NONE) {
-                        $index = $i.'.'.$j.'.'.$k;
-                        $index = ($groupmode) ? $index : str_replace(SURVEY_GROUP, SURVEY_ALL, $index);
-                        $accessrights[$index] = $rolabel.': '.$subjects[$i].', '.$rwlabel.': '.$subjects[$j].', '.$dellabel.': '.$subjects[$k];
-                        $k--;
-                    }
-                    $j--;
-                }
-                $i--;
-            }
-
-            $fieldname = 'accessrights';
-            $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $accessrights);
-            $mform->addHelpButton($fieldname, $fieldname, 'survey');
-        }
 
         // ----------------------------------------
         $fieldname = 'dataentry';

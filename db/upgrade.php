@@ -89,5 +89,39 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013100101, 'survey');
     }
 
+    if ($oldversion < 2013110601) {
+
+        // Define field readaccess to be dropped from survey.
+        $table = new xmldb_table('survey');
+        $field = new xmldb_field('readaccess');
+
+        // Conditionally launch drop field readaccess.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field editaccess to be dropped from survey.
+        $table = new xmldb_table('survey');
+        $field = new xmldb_field('editaccess');
+
+        // Conditionally launch drop field editaccess.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field deleteaccess to be dropped from survey.
+        $table = new xmldb_table('survey');
+        $field = new xmldb_field('deleteaccess');
+
+        // Conditionally launch drop field deleteaccess.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013110601, 'survey');
+    }
+
+
     return true;
 }
