@@ -312,7 +312,7 @@ class mod_survey_templatebase {
             case SURVEY_DELETEALLITEMS:
                 // BEGIN: delete all other items
                 $sqlparam = array('surveyid' => $this->survey->id);
-                $sql = 'SELECT si.plugin
+                $sql = 'SELECT si.plugin, si.type
                         FROM {survey_item} si
                         WHERE si.surveyid = :surveyid
                         GROUP BY si.plugin';

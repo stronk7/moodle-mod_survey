@@ -27,8 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $DB;
-
 $logs = array(
     array('module' => 'survey', 'action' => 'add', 'mtable' => 'survey', 'field' => 'name'),
     array('module' => 'survey', 'action' => 'update', 'mtable' => 'survey', 'field' => 'name'),

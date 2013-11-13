@@ -8,7 +8,8 @@
 }
 
 /* background-color:#EDEDED; for each odd div ONLY IN remoteuserentry */
-#page-mod-survey-view #remoteuserentry fieldset div.fitem:nth-child(odd) {
+#page-mod-survey-view #remoteuserentry fieldset div.fitem:nth-child(odd),
+#page-mod-survey-view #remoteusersearch fieldset div.fitem:nth-child(odd) {
     /*
      * background is not reliable because it does not distinguish between items, label and notes.
      * I have to wait for MDL-28194
@@ -170,7 +171,7 @@
     width:1.2em;
 }
 
-#page-mod-survey-items_manage .fitem .felement.fstatic > p {
+#page-mod-survey-view .fitem .felement.fstatic > p {
     line-height:1.2em;
     display:inline;
 }
@@ -235,38 +236,38 @@
     margin:0;
 }
 
-#page-mod-survey-view .mform .fitem .felement .indent-1 {
+#page-mod-survey-view .mform .fitem .indent-1 {
     margin-left:5%;
 }
 
-#page-mod-survey-view .mform .fitem .felement .indent-2 {
+#page-mod-survey-view .mform .fitem .indent-2 {
     margin-left:10%;
 }
 
-#page-mod-survey-view .mform .fitem .felement .indent-3 {
+#page-mod-survey-view .mform .fitem .indent-3 {
     margin-left:15%;
 }
 
-#page-mod-survey-view .mform .fitem .felement .indent-4 {
+#page-mod-survey-view .mform .fitem .indent-4 {
     margin-left:20%;
 }
 
-#page-mod-survey-view .mform .fitem .felement .indent-5 {
+#page-mod-survey-view .mform .fitem .indent-5 {
     margin-left:25%;
 }
 
-#page-mod-survey-view .mform .fitem .felement .indent-6 {
+#page-mod-survey-view .mform .fitem .indent-6 {
     margin-left:30%;
 }
 
-#page-mod-survey-view .mform .fitem .felement .indent-7 {
+#page-mod-survey-view .mform .fitem .indent-7 {
     margin-left:35%;
 }
 
-#page-mod-survey-view .mform .fitem .felement .indent-8 {
+#page-mod-survey-view .mform .fitem .indent-8 {
     margin-left:40%;
 }
 
-#page-mod-survey-view .mform .fitem .felement .indent-9 {
+#page-mod-survey-view .mform .fitem .indent-9 {
     margin-left:45%;
 }

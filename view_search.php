@@ -73,7 +73,7 @@ $formparams->cmid = $cm->id;
 $formparams->survey = $survey;
 $formparams->canaccessadvanceditems = $searchman->canaccessadvanceditems; // Help selecting the fields to show
 $formparams->formpage = $formpage;
-$searchform = new survey_searchform($formurl, $formparams);
+$searchform = new survey_searchform($formurl, $formparams, 'post', '', array('id' => 'remoteusersearch'));
 // end of: prepare params for the form
 // -----------------------------
 
