@@ -695,8 +695,8 @@ class mod_survey_userformmanager {
         global $DB;
 
         // if no items are available, stop the intervention here
-        $whereparams = array('surveyid' => $this->survey->id);
-        $whereclause = 'surveyid = :surveyid AND hide = 0';
+        $whereparams = array('surveyid' => $this->survey->id, 'formpage' => $this->formpage);
+        $whereclause = 'surveyid = :surveyid AND hide = 0 AND formpage = :formpage';
         if (!$this->canaccessadvanceditems) {
             $whereclause .= ' AND advanced = 0';
         }
@@ -992,6 +992,7 @@ class mod_survey_userformmanager {
         if ($this->canmanageallsubmissions) {
             return true;
         }
+
         $submission = $DB->get_record('survey_submission', array('id' => $this->submissionid), '*', IGNORE_MISSING);
 
         $allowed = true;

@@ -260,13 +260,13 @@ EOS;
             $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
             $elementlabel = $elementnumber.$this->leftlabel;
 
-            $content = '';
-            $content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
-            $content .= $this->get_content();
-            $content .= html_writer::end_tag('div');
+            // $content = '';
+            // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
+            // $content .= $this->get_content();
+            // $content .= html_writer::end_tag('div');
             // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
 
-            $mform->addElement('static', $this->itemname, $elementlabel, $content);
+            $mform->addElement('static', $this->itemname, $elementlabel, $content, array('class' => 'indent-'.$this->indent));
         }
     }
 

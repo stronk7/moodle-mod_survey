@@ -50,43 +50,42 @@ class survey_searchform extends moodleform {
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
             /*************** position ***************/
-            if ($position = $item->get_position()) {
-                $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
-                if ($position == SURVEY_POSITIONTOP) {
+            $position = $item->get_position();
+            $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
+            if ($position == SURVEY_POSITIONTOP) {
 
-                    // not working hack to simulate the missing style for static mform element
-                    // $content = '';
-                    // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$item->get_indent()));
-                    // $content .= $item->get_content();
-                    // $content .= html_writer::end_tag('div');
-                    // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
+                // not working hack to simulate the missing style for static mform element
+                // $content = '';
+                // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$item->get_indent()));
+                // $content .= $item->get_content();
+                // $content .= html_writer::end_tag('div');
+                // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
 
-                    // $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content(), array('class' => 'indent-'.$item->get_indent()));
-                    $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content());
-                }
-                if ($position == SURVEY_POSITIONTOPLEFT) {
-                    $questioncontent = $item->get_content();
-                    if ($elementnumber) {
-                        // I want to change "4.2:<p>Do you live in NY?</p>" to "<p>4.2: Do you live in NY?</p>"
-                        if (preg_match('/^<p>(.*)$/', $questioncontent, $match)) {
-                            // print_object($match);
-                            $questioncontent = '<p>'.$elementnumber.' '.$match[1];
-                        }
+                $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content(), array('class' => 'indent-'.$item->get_indent()));
+                // $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content());
+            }
+            if ($position == SURVEY_POSITIONTOPLEFT) {
+                $questioncontent = $item->get_content();
+                if ($elementnumber) {
+                    // I want to change "4.2:<p>Do you live in NY?</p>" to "<p>4.2: Do you live in NY?</p>"
+                    if (preg_match('/^<p>(.*)$/', $questioncontent, $match)) {
+                        // print_object($match);
+                        $questioncontent = '<p>'.$elementnumber.' '.$match[1];
                     }
-                    $content = '';
-                    $content .= html_writer::start_tag('fieldset', array('class' => 'hidden'));
-                    $content .= html_writer::start_tag('div');
-                    $content .= html_writer::start_tag('div', array('class' => 'fitem'));
-                    $content .= html_writer::start_tag('div', array('class' => 'fstatic fullwidth'));
-                    // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
-                    $content .= $questioncontent;
-                    // $content .= html_writer::end_tag('div');
-                    $content .= html_writer::end_tag('div');
-                    $content .= html_writer::end_tag('div');
-                    $content .= html_writer::end_tag('div');
-                    $content .= html_writer::end_tag('fieldset');
-                    $mform->addElement('html', $content);
                 }
+                $content = '';
+                $content .= html_writer::start_tag('fieldset', array('class' => 'hidden'));
+                $content .= html_writer::start_tag('div');
+                $content .= html_writer::start_tag('div', array('class' => 'fitem'));
+                $content .= html_writer::start_tag('div', array('class' => 'fstatic fullwidth'));
+                // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$this->indent));
+                $content .= $questioncontent;
+                // $content .= html_writer::end_tag('div');
+                $content .= html_writer::end_tag('div');
+                $content .= html_writer::end_tag('div');
+                $content .= html_writer::end_tag('div');
+                $content .= html_writer::end_tag('fieldset');
+                $mform->addElement('html', $content);
             }
 
             /*************** element ***************/
@@ -101,8 +100,8 @@ class survey_searchform extends moodleform {
                 // $content .= html_writer::end_tag('div');
                 // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
 
-                // $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo, array('class' => 'indent-'.$item->get_indent()));
-                $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo);
+                $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo, array('class' => 'indent-'.$item->get_indent()));
+                // $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo);
             }
         }
         $itemseeds->close();

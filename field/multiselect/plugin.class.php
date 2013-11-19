@@ -345,7 +345,7 @@ EOS;
 
         $labels = $this->item_get_labels_array('options');
 
-        $select = $mform->addElement('select', $this->itemname, $elementlabel, $labels, array('size' => $this->heightinrows));
+        $select = $mform->addElement('select', $this->itemname, $elementlabel, $labels, array('size' => $this->heightinrows, 'class' => 'indent-'.$this->indent));
         $select->setMultiple(true);
 
         if (!$searchform) {

@@ -129,8 +129,8 @@ class survey_submissionform extends moodleform {
                         // $content .= html_writer::end_tag('div');
                         // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
 
-                        // $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content(), array('class' => 'indent-'.$item->get_indent()));
-                        $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content());
+                        $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content(), array('class' => 'indent-'.$item->get_indent()));
+                        // $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content());
                     }
                     if ($position == SURVEY_POSITIONTOPLEFT) {
                         $questioncontent = $item->get_content();
@@ -168,8 +168,8 @@ class survey_submissionform extends moodleform {
                         // $content .= html_writer::end_tag('div');
                         // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
 
-                        // $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo, array('class' => 'indent-'.$item->get_indent()));
-                        $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo);
+                        $mform->addElement('static', $item->get_itemname().'_note', get_string('note', 'survey'), $fullinfo, array('class' => 'indent-'.$item->get_indent()));
+                        // $mform->addElement('static', $item->get_itemname().'_note', get_string('note', 'survey'), $fullinfo);
                     }
 
                     if (!$survey->newpageforchild) {

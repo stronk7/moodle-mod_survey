@@ -207,11 +207,11 @@
 }
 /* END OF: move horizontal checkbox and radio label closer to corresponding checkboes */
 
-#page-mod-survey-view .mform .fitem .felement div p {
+#page-mod-survey-view .mform .fitem .fullwidth p {
     margin:0;
 }
 
-#page-mod-survey-view .mform .fitem .fullwidth p {
+#page-mod-survey-view .mform .fitem .felement div p {
     margin:0;
 }
 
@@ -230,10 +230,6 @@
 #page-mod-survey-view .mform fieldset.hidden {
     margin: 0;
     padding: 0;
-}
-
-#page-mod-survey-view .mform .fullwidth p {
-    margin:0;
 }
 
 #page-mod-survey-view .mform .fitem .indent-1 {

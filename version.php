@@ -15,10 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Defines the version of survey
- *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
+ * Version information
  *
  * @package   mod_survey
  * @copyright 2013 kordan <kordan@mclink.it>

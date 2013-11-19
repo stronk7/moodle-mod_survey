@@ -432,8 +432,8 @@ EOS;
             $mform->setType($this->itemname, PARAM_RAW);
             if (!$this->hiddenfield) {
                 // class doesn't work for this mform element
-                // $mform->addElement('static', 'dummyfieldname', $elementlabel, $label, array('class' => 'indent-'.$this->indent));
-                $mform->addElement('static', $this->itemname.'_static', $elementlabel, $label);
+                $mform->addElement('static', $this->itemname, $elementlabel, $label, array('class' => 'indent-'.$this->indent));
+                // $mform->addElement('static', $this->itemname.'_static', $elementlabel, $label);
             }
         } else {
             // $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent));

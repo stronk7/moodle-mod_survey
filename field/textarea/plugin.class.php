@@ -358,12 +358,12 @@ EOS;
         if (!empty($this->useeditor)) {
             $fieldname = $this->itemname.'_editor';
             $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES);
-            $mform->addElement('editor', $fieldname, $elementlabel, null, $editoroptions);
+            $mform->addElement('editor', $fieldname, $elementlabel, array('class' => 'indent-'.$this->indent), $editoroptions);
             $mform->setType($fieldname, PARAM_CLEANHTML);
         } else {
             $fieldname = $this->itemname;
             $textareaoptions = array('maxfiles' => 0, 'maxbytes' => 0, 'trusttext' => false);
-            $mform->addElement('textarea', $fieldname, $elementlabel, array('wrap' => 'virtual', 'rows' => $this->arearows, 'cols' => $this->areacols, 'class' => 'smalltext'));
+            $mform->addElement('textarea', $fieldname, $elementlabel, array('wrap' => 'virtual', 'rows' => $this->arearows, 'cols' => $this->areacols, 'class' => 'indent-'.$this->indent));
             $mform->setType($fieldname, PARAM_TEXT);
         }
 
