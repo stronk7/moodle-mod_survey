@@ -202,6 +202,10 @@
     margin-right: 0px;
 }
 
+#page-mod-survey-view .mform fieldset .felement div {
+    /* margin-bottom:-1.3em; */ /* too dirty */
+}
+
 #page-mod-survey-view .mform .fitem .felement label {
     margin-right: 1em;
 }

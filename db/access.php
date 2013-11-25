@@ -135,11 +135,11 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
 
     SUB-TAB == SURVEY_UTEMPLATES_BUILD
         $elementurl = new moodle_url('/mod/survey/utemplates_create.php', $localparamurl);
-        mod/survey:createusertemplates
+        mod/survey:saveusertemplates @ CONTEXT_COURSE
 
     SUB-TAB == SURVEY_UTEMPLATES_IMPORT
         $elementurl = new moodle_url('/mod/survey/utemplates_import.php', $localparamurl);
-        mod/survey:uploadusertemplates
+        mod/survey:importusertemplates
 
     SUB-TAB == SURVEY_UTEMPLATES_APPLY
         $elementurl = new moodle_url('/mod/survey/utemplates_apply.php', $localparamurl);
@@ -150,7 +150,7 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
 // -----------------------------------------------------------------------------
     SUB-TAB == SURVEY_MTEMPLATES_BUILD
         $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $localparamurl);
-        mod/survey:createmastertemplate
+        mod/survey:savemastertemplate
 
     SUB-TAB == SURVEY_MTEMPLATES_APPLY
         $elementurl = new moodle_url('/mod/survey/mtemplates_apply.php', $localparamurl);
@@ -382,16 +382,6 @@ $capabilities = array(
         )
     ),
 
-    'moodle/category:assignutemplatestocat' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
     'mod/survey:deleteusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
@@ -412,17 +402,17 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:createusertemplates' => array(
+    'mod/survey:saveusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
+        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
         )
     ),
 
-    'mod/survey:uploadusertemplates' => array(
+    'mod/survey:importusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -442,7 +432,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:createmastertemplate' => array(
+    'mod/survey:savemastertemplate' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

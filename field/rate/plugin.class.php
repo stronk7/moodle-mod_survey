@@ -427,8 +427,8 @@ EOS;
             }
         }
 
-        $MDL41767isfixed = false;
-        if ($MDL41767isfixed) {
+        $MDL41767wasfixed = false;
+        if ($MDL41767wasfixed) {
             $elementlabel = implode('<br />', $options);
 
             if ($this->style == SURVEYFIELD_RATE_USERADIO) {
@@ -494,7 +494,7 @@ EOS;
             // $mform->_required[] = $this->itemname.'_group';
             $mform->_required[] = $this->itemname.'_extrarow';
         } else {
-            if ($MDL41767isfixed) {
+            if ($MDL41767wasfixed) {
                 $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
             } else {
                 $mform->addElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));

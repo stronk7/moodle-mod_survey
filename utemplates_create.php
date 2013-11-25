@@ -56,7 +56,7 @@ $action = SURVEY_NOACTION;
 $confirm = SURVEY_UNCONFIRMED;
 
 $context = context_module::instance($cm->id);
-require_capability('mod/survey:createusertemplates', $context);
+require_capability('mod/survey:saveusertemplates', $context);
 
 // -----------------------------
 // calculations

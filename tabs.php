@@ -38,7 +38,7 @@ $cansubmit = has_capability('mod/survey:submit', $context, null, true);
 $canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
 $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $context, null, true);
 
-$cancreatemastertemplate = has_capability('mod/survey:createmastertemplate', $context, null, true);
+$cansavemastertemplate = has_capability('mod/survey:savemastertemplate', $context, null, true);
 $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $context, null, true);
 
 $whereparams = array('surveyid' => $survey->id);
@@ -92,7 +92,7 @@ if (!$survey->template) {
 // -----------------------------------------------------------------------------
 if (!$survey->template) {
     if ($currenttab == SURVEY_TABMTEMPLATES) {
-        if ($cancreatemastertemplate || ((!$hassubmissions || $riskyediting) && $canapplymastertemplate)) {
+        if ($cansavemastertemplate || ((!$hassubmissions || $riskyediting) && $canapplymastertemplate)) {
             $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $paramurl);
             $row[] = new tabobject(SURVEY_TAB4NAME, $elementurl->out(), SURVEY_TAB4NAME);
         }
@@ -221,8 +221,8 @@ switch ($currenttab) {
         break;
     case SURVEY_TABUTEMPLATES:
         // permissions
-        $cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
-        $canuploadusertemplates = has_capability('mod/survey:uploadusertemplates', $context, null, true);
+        $cansaveusertemplates = has_capability('mod/survey:saveusertemplates', $context, null, true);
+        $canimportusertemplates = has_capability('mod/survey:importusertemplates', $context, null, true);
         $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
 
         if ($survey->template) {
@@ -239,13 +239,13 @@ switch ($currenttab) {
             $strlabel = get_string('tabutemplatepage1', 'survey');
             $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
 
-            if ($cancreateusertemplates) { // create
+            if ($cansaveusertemplates) { // create
                 $elementurl = new moodle_url('/mod/survey/utemplates_create.php', $paramurl);
                 $strlabel = get_string('tabutemplatepage2', 'survey');
                 $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
             }
 
-            if ($canuploadusertemplates) { // upload
+            if ($canimportusertemplates) { // import
                 $elementurl = new moodle_url('/mod/survey/utemplates_import.php', $paramurl);
                 $strlabel = get_string('tabutemplatepage3', 'survey');
                 $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
@@ -271,7 +271,7 @@ switch ($currenttab) {
         $activetwo = array($tabname);
 
         $row = array();
-        if ($cancreatemastertemplate) { // create
+        if ($cansavemastertemplate) { // create
             $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $paramurl);
             $strlabel = get_string('tabmtemplatepage1', 'survey');
             $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);

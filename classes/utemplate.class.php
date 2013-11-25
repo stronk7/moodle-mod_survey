@@ -559,33 +559,50 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
     public function get_sharinglevel_options() {
         global $DB, $COURSE, $USER, $SITE;
 
-        $context = context_coursecat::instance($COURSE->category);
-        $canmanagecat = has_capability('moodle/category:manage', $context);
-        $canassigntocategotylevel = has_capability('moodle/category:assignutemplatestocat', $context);
+        $modulecontext = context_module::instance($this->cm->id);
 
         $options = array();
         $options[CONTEXT_USER.'_'.$USER->id] = get_string('user').': '.fullname($USER);
+        // $options[CONTEXT_MODULE.'_'.$this->cm->id] = get_string('module', 'survey').': '.$this->survey->name;
 
-        $options[CONTEXT_MODULE.'_'.$this->cm->id] = get_string('module', 'survey').': '.$this->survey->name;
-
-        if ($COURSE->id != $SITE->id) { // I am not in homepage
-            $options[CONTEXT_COURSE.'_'.$COURSE->id] = get_string('course').': '.$COURSE->shortname;
-
-            if ($canmanagecat && $canassigntocategotylevel) { // is more than a teacher, is an admin
-                $categorystr = get_string('category').': ';
-                $category = $DB->get_record('course_categories', array('id' => $COURSE->category), 'id, name');
-                $options[CONTEXT_COURSECAT.'_'.$COURSE->category] = $categorystr.$category->name;
-
-                while (!empty($category->parent)) {
-                    $category = $DB->get_record('course_categories', array('id' => $category->parent), 'id, name');
-                    $options[CONTEXT_COURSECAT.'_'.$category->id] = $categorystr.$category->name;
-                }
+        $parentcontexts = $modulecontext->get_parent_contexts();
+        foreach ($parentcontexts as $context) {
+            if (has_capability('mod/survey:saveusertemplates', $context)) {
+                $options[$context->contextlevel.'_'.$context->instanceid] = $context->get_context_name();
             }
         }
 
-        if ($canmanagecat && $canassigntocategotylevel) {
+        $context = context_system::instance();
+        if (has_capability('mod/survey:saveusertemplates', $context)) {
             $options[CONTEXT_SYSTEM.'_0'] = get_string('site');
         }
+
+        // $context = context_coursecat::instance($COURSE->category);
+        // $canmanagecat = has_capability('moodle/category:manage', $context);
+        // $cansavetocategotylevel = has_capability('mod/survey:saveusertemplates', $context);
+        //
+        // $options = array();
+        // $options[CONTEXT_USER.'_'.$USER->id] = get_string('user').': '.fullname($USER);
+        //
+        // $options[CONTEXT_MODULE.'_'.$this->cm->id] = get_string('module', 'survey').': '.$this->survey->name;
+        //
+        // if ($COURSE->id != $SITE->id) { // I am not in homepage
+        //     $options[CONTEXT_COURSE.'_'.$COURSE->id] = get_string('course').': '.$COURSE->shortname;
+        //
+        //     if ($canmanagecat && $cansavetocategotylevel) { // is more than a teacher, is an admin
+        //         $categorystr = get_string('category').': ';
+        //         $category = $DB->get_record('course_categories', array('id' => $COURSE->category), 'id, name');
+        //         $options[CONTEXT_COURSECAT.'_'.$COURSE->category] = $categorystr.$category->name;
+        //
+        //         while (!empty($category->parent)) {
+        //             $category = $DB->get_record('course_categories', array('id' => $category->parent), 'id, name');
+        //             $options[CONTEXT_COURSECAT.'_'.$category->id] = $categorystr.$category->name;
+        //         }
+        //     }
+        // }
+        // if ($canmanagecat && $cansavetocategotylevel) {
+        //     $options[CONTEXT_SYSTEM.'_0'] = get_string('site');
+        // }
 
         return $options;
     }

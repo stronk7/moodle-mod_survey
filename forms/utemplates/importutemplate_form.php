@@ -89,10 +89,10 @@ class survey_importutemplateform extends moodleform {
             $errors['importfile_filemanager'] = get_string('missingfile', 'survey');
         }
 
-        $uploadedfiles = array();
+        $importedfiles = array();
         foreach ($draftfiles as $file) {
             $xmlfilename = $file->get_filename();
-            $uploadedfiles[] = $xmlfilename;
+            $importedfiles[] = $xmlfilename;
             try {
                 $xmlfileid = $file->get_id();
                 $xml = $utemplateman->get_utemplate_content($xmlfileid);
@@ -120,7 +120,7 @@ class survey_importutemplateform extends moodleform {
 
         foreach ($componentfiles as $xmlfile) {
             $filename = $xmlfile->get_filename();
-            if (in_array($filename, $uploadedfiles)) {
+            if (in_array($filename, $importedfiles)) {
                 if (isset($data['overwrite'])) {
                     $xmlfile->delete();
                 } else {

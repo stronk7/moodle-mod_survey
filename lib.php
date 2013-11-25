@@ -760,11 +760,11 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
     $canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
 
     $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $context, null, true);
-    $cancreateusertemplates = has_capability('mod/survey:createusertemplates', $context, null, true);
-    $canuploadusertemplates = has_capability('mod/survey:uploadusertemplates', $context, null, true);
+    $cansaveusertemplates = has_capability('mod/survey:saveusertemplates', $context, null, true);
+    $canimportusertemplates = has_capability('mod/survey:importusertemplates', $context, null, true);
     $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
 
-    $cancreatemastertemplate = has_capability('mod/survey:createmastertemplate', $context, null, true);
+    $cansavemastertemplate = has_capability('mod/survey:savemastertemplate', $context, null, true);
     $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $context, null, true);
 
     $canaccessreports = has_capability('mod/survey:accessreports', $context, null, true);
@@ -808,10 +808,10 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
 
         // CHILDREN
         $navnode->add(get_string('tabutemplatepage1', 'survey'), new moodle_url('/mod/survey/utemplates_manage.php', $paramurl), navigation_node::TYPE_SETTING);
-        if ($cancreateusertemplates) {
+        if ($cansaveusertemplates) {
             $navnode->add(get_string('tabutemplatepage2', 'survey'), new moodle_url('/mod/survey/utemplates_create.php', $paramurl), navigation_node::TYPE_SETTING);
         }
-        if ($canuploadusertemplates) {
+        if ($canimportusertemplates) {
             $navnode->add(get_string('tabutemplatepage3', 'survey'), new moodle_url('/mod/survey/utemplates_import.php', $paramurl), navigation_node::TYPE_SETTING);
         }
         if ( (!$hassubmissions || $riskyediting) && $canapplyusertemplates ) {
@@ -828,7 +828,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
         $navnode = $surveynode->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/mtemplates_create.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
         // CHILDREN
-        if ($cancreatemastertemplate) {
+        if ($cansavemastertemplate) {
             $navnode->add(get_string('tabmtemplatepage1', 'survey'), new moodle_url('/mod/survey/mtemplates_create.php', $paramurl), navigation_node::TYPE_SETTING);
         }
         if ( (!$hassubmissions || $riskyediting) && $canapplymastertemplate ) {

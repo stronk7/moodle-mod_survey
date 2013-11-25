@@ -50,7 +50,7 @@ require_course_login($course, true, $cm);
 add_to_log($course->id, 'survey', 'view', "mtemplates.php?id=$cm->id", $survey->name, $cm->id);
 
 $context = context_module::instance($cm->id);
-require_capability('mod/survey:createmastertemplate', $context);
+require_capability('mod/survey:savemastertemplate', $context);
 
 // -----------------------------
 // calculations
