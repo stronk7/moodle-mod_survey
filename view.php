@@ -49,6 +49,7 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 
+$cover = optional_param('cvp', 1, PARAM_INT); // by default user asks for the cover page
 $formpage = optional_param('formpage' , 0, PARAM_INT); // form page number
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $submissionid = optional_param('submissionid', 0, PARAM_INT);
@@ -74,7 +75,7 @@ $hassubmitbutton = $hassubmitbutton && ($userpageman->currentpage != SURVEY_ITEM
 
 // -----------------------------
 // define $user_form return url
-$paramurl = array('id' => $cm->id, 'act' => $action);
+$paramurl = array('id' => $cm->id, 'cvp' => 0, 'act' => $action);
 $formurl = new moodle_url('view.php', $paramurl);
 // end of: define $user_form return url
 // -----------------------------
@@ -166,6 +167,11 @@ echo $OUTPUT->header();
 $currenttab = $userpageman->currenttab; // needed by tabs.php
 $currentpage = $userpageman->currentpage; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
+
+if ($cover) {
+    $userpageman->display_cover();
+    die;
+}
 
 // -----------------------------
 // if survey is without items, alert and stop

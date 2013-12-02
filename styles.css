@@ -79,6 +79,15 @@
     white-space:nowrap;
 }
 
+#page-mod-survey-items_manage table#manageitems .actions img.icon,
+#page-mod-survey-items_manage table#sortitems .actions img.icon {
+    height: 16px;
+    width: 16px;
+    margin-left: 0.45em;
+    vertical-align: text-bottom;
+    padding-right:0;
+}
+
 #page-mod-survey-items_manage table#manageitems img.movetarget,
 #page-mod-survey-items_manage table#sortitems img.movetarget {
     height:16px;

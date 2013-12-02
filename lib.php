@@ -282,9 +282,6 @@ function survey_update_instance($survey) {
                 $survey->id, $editoroptions, $survey->thankshtml_editor['text']);
         $survey->thankshtmlformat = $survey->thankshtml_editor['format'];
     }
-    // echo '$survey->readaccess = '.$survey->readaccess.'<br />';
-    // echo '$survey->editaccess = '.$survey->editaccess.'<br />';
-    // echo '$survey->deleteaccess = '.$survey->deleteaccess.'<br />';
 
     return $DB->update_record('survey', $survey);
 }
@@ -840,6 +837,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
      * SURVEY REPORTS
      */
     if ($surveyreportlist = get_plugin_list('surveyreport')) {
+        $canaccessownreports = has_capability('mod/survey:accessownreports', $context, null, true);
         $icon = new pix_icon('i/report', '', 'moodle', array('class' => 'icon'));
         $reportnode = $surveynode->add(get_string('report'), null, navigation_node::TYPE_CONTAINER);
         $paramurl = array('s' => $PAGE->cm->instance);
@@ -848,21 +846,17 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
             $classname = 'report_'.$pluginname;
             $restricttemplates = $classname::restrict_templates();
             if ((!$restricttemplates) || in_array($survey->template, $restricttemplates)) {
-                if (!$addreportlink = $canaccessreports) {
-                    $canaccessownreports = has_capability('mod/survey:accessownreports', $context, null, true);
-                    $addreportlink = ($classname::has_student_report() && $canaccessownreports);
-                }
-                if ($addreportlink) {
-                    $url = new moodle_url($CFG->wwwroot.'/mod/survey/report/'.$pluginname.'/view.php', $paramurl);
+                if ($canaccessreports || ($classname::has_student_report() && $canaccessownreports)) {
                     if ($childreports = $classname::get_childreports($canaccessreports)) {
                         $childnode = $reportnode->add(get_string('pluginname', 'surveyreport_'.$pluginname),
                                                       null, navigation_node::TYPE_CONTAINER);
                         foreach ($childreports as $childname => $childparams) {
                             $childparams['s'] = $PAGE->cm->instance;
-                            $url = new moodle_url($CFG->wwwroot.'/mod/survey/report/'.$pluginname.'/view.php', $childparams);
+                            $url = new moodle_url('/mod/survey/report/'.$pluginname.'/view.php', $childparams);
                             $childnode->add($childname, $url, navigation_node::TYPE_SETTING, null, null, $icon);
                         }
                     } else {
+                        $url = new moodle_url('/mod/survey/report/'.$pluginname.'/view.php', $paramurl);
                         $reportnode->add(get_string('pluginname', 'surveyreport_'.$pluginname),
                                          $url, navigation_node::TYPE_SETTING, null, null, $icon);
                     }
@@ -888,11 +882,8 @@ function survey_extend_navigation(navigation_node $navref, stdClass $course, std
     // $context = context_system::instance();
     $context = context_module::instance($cm->id);
 
-    $cansubmit = has_capability('mod/survey:submit', $context, null, true);
     $cansearch = has_capability('mod/survey:searchsubmissions', $context, null, true);
     $canexportdata = has_capability('mod/survey:exportdata', $context, null, true);
-
-    $hassubmissions = survey_count_submissions($cm->instance);
 
     // $currentgroup = groups_get_activity_group($cm);
     // $groupmode = groups_get_activity_groupmode($cm);
@@ -900,24 +891,14 @@ function survey_extend_navigation(navigation_node $navref, stdClass $course, std
     /*
      * SURVEY_TABSUBMISSIONS
      */
-    // PARENT
+    // CHILDREN ONLY
     $paramurl = array('s' => $cm->instance);
-    if ($cansubmit) {
-        $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_CONTAINER);
-    } else {
-        $navnode = $navref->add(SURVEY_TAB1NAME,  new moodle_url('/mod/survey/view_manage.php', $paramurl), navigation_node::TYPE_CONTAINER);
-    }
-
-    // CHILDREN
-    if ($cansubmit) {
-        $navnode->add(get_string('tabsubmissionspage2', 'survey'), new moodle_url('/mod/survey/view.php', $paramurl), navigation_node::TYPE_SETTING);
-    }
-    $navnode->add(get_string('tabsubmissionspage3', 'survey'), new moodle_url('/mod/survey/view_manage.php', $paramurl), navigation_node::TYPE_SETTING);
+    $navref->add(get_string('tabsubmissionspage2', 'survey'), new moodle_url('/mod/survey/view_manage.php', $paramurl), navigation_node::TYPE_SETTING);
     if ($cansearch) {
-        $navnode->add(get_string('tabsubmissionspage6', 'survey'), new moodle_url('/mod/survey/view_search.php', $paramurl), navigation_node::TYPE_SETTING);
+        $navref->add(get_string('tabsubmissionspage5', 'survey'), new moodle_url('/mod/survey/view_search.php', $paramurl), navigation_node::TYPE_SETTING);
     }
     if ($canexportdata) {
-        $navnode->add(get_string('tabsubmissionspage8', 'survey'), new moodle_url('/mod/survey/view_export.php', $paramurl), navigation_node::TYPE_SETTING);
+        $navref->add(get_string('tabsubmissionspage7', 'survey'), new moodle_url('/mod/survey/view_export.php', $paramurl), navigation_node::TYPE_SETTING);
     }
 }
 

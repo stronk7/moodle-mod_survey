@@ -453,6 +453,7 @@ class mod_survey_submissionmanager {
 
                 // actions
                 $paramurl['submissionid'] = $submission->submissionid;
+                $paramurl['cvp'] = 0;
                 if ($this->canmanageallsubmissions || $this->caneditgroupsubmissions) { // edit
                     $paramurl['act'] = SURVEY_EDITRESPONSE;
                     if ($submission->status == SURVEY_STATUSCLOSED) {
@@ -468,39 +469,44 @@ class mod_survey_submissionmanager {
                         $icontitle = $edittitle;
                         $iconpath = 't/edit';
                     }
-                    $basepath = new moodle_url('view.php', $paramurl);
-                    $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
-                    $icons .= '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
+
+                    $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                        new pix_icon($iconpath, $icontitle, 'moodle', array('title' => $icontitle)),
+                        null, array('title' => $icontitle));
                 } else { // read only
                     // I don't have canmanageallsubmissions && $this->caneditgroupsubmissions
                     // but if I meet an "in progress" submission of mine...
                     if (($submission->status == SURVEY_STATUSINPROGRESS) && ($submission->userid == $USER->id)) {
                         $paramurl['act'] = SURVEY_EDITRESPONSE;
                         $icontitle = $edittitle;
-                        $basepath = new moodle_url('view.php', $paramurl);
-                        $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
-                        $icons .= '<img src="'.$OUTPUT->pix_url('t/edit').'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
+
+                        $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                            new pix_icon('t/edit', $icontitle, 'moodle', array('title' => $icontitle)),
+                            null, array('title' => $icontitle));
                     } else { // submission is closed
                         $paramurl['act'] = SURVEY_READONLYRESPONSE;
                         $icontitle = $restrictedaccess;
-                        $basepath = new moodle_url('view.php', $paramurl);
-                        $icons = '<a class="editing_update" title="'.$icontitle.'" href="'.$basepath.'">';
-                        $icons .= '<img src="'.$OUTPUT->pix_url('readonly', 'survey').'" class="iconsmall" alt="'.$icontitle.'" title="'.$icontitle.'" /></a>';
+
+                        $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                            new pix_icon('readonly', $icontitle, 'survey', array('title' => $icontitle)),
+                            null, array('title' => $icontitle));
                     }
                 }
 
                 if ($this->canmanageallsubmissions || $this->candeletegroupsubmissions) { // delete
                     $paramurl['act'] = SURVEY_DELETERESPONSE;
-                    $basepath = new moodle_url('view_manage.php', $paramurl);
-                    $icons .= '&nbsp;<a class="editing_update" title="'.$deletetitle.'" href="'.$basepath.'">';
-                    $icons .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$deletetitle.'" title="'.$deletetitle.'" /></a>';
+
+                    $icons .= $OUTPUT->action_icon(new moodle_url('view_manage.php', $paramurl),
+                        new pix_icon('t/delete', $deletetitle, 'moodle', array('title' => $deletetitle)),
+                        null, array('title' => $deletetitle));
                 }
 
                 // if I am here I am sure I can see this submission
                 $paramurl['act'] = SURVEY_RESPONSETOPDF;
-                $basepath = new moodle_url('view_manage.php', $paramurl);
-                $icons .= '&nbsp;<a class="editing_update" title="'.$downloadpdftitle.'" href="'.$basepath.'">';
-                $icons .= '<img src="'.$OUTPUT->pix_url('i/export').'" class="iconsmall" alt="'.$downloadpdftitle.'" title="'.$downloadpdftitle.'" /></a>';
+
+                $icons .= $OUTPUT->action_icon(new moodle_url('view_manage.php', $paramurl),
+                    new pix_icon('i/export', $downloadpdftitle, 'moodle', array('title' => $downloadpdftitle)),
+                    null, array('title' => $downloadpdftitle));
 
                 $tablerow[] = $icons;
 

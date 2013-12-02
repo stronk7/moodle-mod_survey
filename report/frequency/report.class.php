@@ -139,13 +139,13 @@ class report_frequency extends mod_survey_reportbase {
 
         $whereparams['itemid'] = $itemid;
 
-        $this->answers = $DB->get_recordset_sql($sql, $whereparams, $this->outputtable->get_sql_sort());
+        $answers = $DB->get_recordset_sql($sql, $whereparams, $this->outputtable->get_sql_sort());
 
         $dummyitem = survey_get_item($itemid);
 
         $decimalseparator = get_string('decsep', 'langconfig');
         $counted = 0;
-        foreach ($this->answers as $answer) {
+        foreach ($answers as $answer) {
             $tablerow = array();
 
             // answer
@@ -166,23 +166,23 @@ class report_frequency extends mod_survey_reportbase {
         }
 
         // each item may be unanswered because it was not allowed by its ancestors
-        if ($counted < $submissionscount) {
-            $tablerow = array();
+        // if ($counted < $submissionscount) {
+        //     $tablerow = array();
+        //
+        //     // answer
+        //     $tablerow[] = get_string('answernotpresent', 'surveyreport_frequency');
+        //
+        //     // absolute
+        //     $tablerow[] = ($submissionscount - $counted);
+        //
+        //     // percentage
+        //     $tablerow[] = number_format(100*($submissionscount - $counted)/$submissionscount, 2, $decimalseparator, ' ').'%';
+        //
+        //     // add row to the table
+        //     $this->outputtable->add_data($tablerow);
+        // }
 
-            // answer
-            $tablerow[] = get_string('answernotpresent', 'surveyreport_frequency');
-
-            // absolute
-            $tablerow[] = ($submissionscount - $counted);
-
-            // percentage
-            $tablerow[] = number_format(100*($submissionscount - $counted)/$submissionscount, 2, $decimalseparator, ' ').'%';
-
-            // add row to the table
-            $this->outputtable->add_data($tablerow);
-        }
-
-        $this->answers->close();
+        $answers->close();
     }
 
     /*
@@ -195,7 +195,9 @@ class report_frequency extends mod_survey_reportbase {
 
         echo $OUTPUT->heading(get_string('pluginname', 'surveyreport_count'));
         $this->outputtable->print_html();
-        $this->print_graph($url);
+        if ($this->outputtable->started_output) {
+            $this->print_graph($url);
+        }
     }
 
     /*

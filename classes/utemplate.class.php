@@ -422,20 +422,20 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
                 if ($this->candeleteutemplates) {
                     if ($xmlfile->get_userid() == $USER->id) { // only the owner can delete his/her template
                         $paramurl['act'] = SURVEY_DELETEUTEMPLATE;
-                        $basepath = new moodle_url('utemplates_manage.php', $paramurl);
 
-                        $icons .= '<a class="editing_update" title="'.$deletetitle.'" href="'.$basepath.'">';
-                        $icons .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$deletetitle.'" title="'.$deletetitle.'" /></a>&nbsp;';
+                        $icons .= $OUTPUT->action_icon(new moodle_url('utemplates_manage.php', $paramurl),
+                            new pix_icon('t/delete', $deletetitle, 'moodle', array('title' => $deletetitle)),
+                            null, array('title' => $deletetitle));
                     }
                 }
 
                 // *************************************** SURVEY_EXPORTUTEMPLATE
                 if ($this->candownloadutemplates) {
                     $paramurl['act'] = SURVEY_EXPORTUTEMPLATE;
-                    $basepath = new moodle_url('utemplates_manage.php', $paramurl);
 
-                    $icons .= '<a class="editing_update" title="'.$exporttitle.'" href="'.$basepath.'">';
-                    $icons .= '<img src="'.$OUTPUT->pix_url('i/export').'" class="iconsmall" alt="'.$exporttitle.'" title="'.$exporttitle.'" /></a>';
+                    $icons .= $OUTPUT->action_icon(new moodle_url('utemplates_manage.php', $paramurl),
+                        new pix_icon('i/export', $exporttitle, 'moodle', array('title' => $exporttitle)),
+                        null, array('title' => $exporttitle));
                 }
 
                 $tablerow[] = $icons;
@@ -576,33 +576,6 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
         if (has_capability('mod/survey:saveusertemplates', $context)) {
             $options[CONTEXT_SYSTEM.'_0'] = get_string('site');
         }
-
-        // $context = context_coursecat::instance($COURSE->category);
-        // $canmanagecat = has_capability('moodle/category:manage', $context);
-        // $cansavetocategotylevel = has_capability('mod/survey:saveusertemplates', $context);
-        //
-        // $options = array();
-        // $options[CONTEXT_USER.'_'.$USER->id] = get_string('user').': '.fullname($USER);
-        //
-        // $options[CONTEXT_MODULE.'_'.$this->cm->id] = get_string('module', 'survey').': '.$this->survey->name;
-        //
-        // if ($COURSE->id != $SITE->id) { // I am not in homepage
-        //     $options[CONTEXT_COURSE.'_'.$COURSE->id] = get_string('course').': '.$COURSE->shortname;
-        //
-        //     if ($canmanagecat && $cansavetocategotylevel) { // is more than a teacher, is an admin
-        //         $categorystr = get_string('category').': ';
-        //         $category = $DB->get_record('course_categories', array('id' => $COURSE->category), 'id, name');
-        //         $options[CONTEXT_COURSECAT.'_'.$COURSE->category] = $categorystr.$category->name;
-        //
-        //         while (!empty($category->parent)) {
-        //             $category = $DB->get_record('course_categories', array('id' => $category->parent), 'id, name');
-        //             $options[CONTEXT_COURSECAT.'_'.$category->id] = $categorystr.$category->name;
-        //         }
-        //     }
-        // }
-        // if ($canmanagecat && $cansavetocategotylevel) {
-        //     $options[CONTEXT_SYSTEM.'_0'] = get_string('site');
-        // }
 
         return $options;
     }

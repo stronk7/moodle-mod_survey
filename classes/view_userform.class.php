@@ -100,7 +100,7 @@ class mod_survey_userformmanager {
     /*
      * $canmanageitems
      */
-    public $canmanageitems = false;
+    // public $canmanageitems = false;
 
     /*
      * $cansubmit
@@ -125,11 +125,9 @@ class mod_survey_userformmanager {
         $this->action = $action;
         $this->set_page_from_action();
 
-        $this->canmanageitems = has_capability('mod/survey:manageitems', $this->context, null, true);
+        // $this->canmanageitems = has_capability('mod/survey:manageitems', $this->context, null, true);
         $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
-
         $this->cansubmit = has_capability('mod/survey:submit', $this->context, null, true);
-
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
 
         // assign pages to items
@@ -1048,5 +1046,166 @@ class mod_survey_userformmanager {
         }
         $surveyuserdata->close();
         $this->submissionid = $submissionid;
+    }
+
+    /*
+     * display_cover
+     *
+     * @param $allpages
+     * @return
+     */
+    public function display_cover() {
+        global $OUTPUT, $CFG, $COURSE;
+
+        $canaccessreports = has_capability('mod/survey:accessreports', $this->context, null, true);;
+        $canaccessownreports = has_capability('mod/survey:accessownreports', $this->context, null, true);
+        $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $this->context, null, true);
+        $cansaveusertemplate = has_capability('mod/survey:saveusertemplates', context_course::instance($COURSE->id), null, true);
+        $canimportusertemplates = has_capability('mod/survey:importusertemplates', $this->context, null, true);
+        $cansavemastertemplate = has_capability('mod/survey:savemastertemplate', $this->context, null, true);
+        $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $this->context, null, true);
+
+        $messages = array();
+        $timenow = time();
+
+        echo $OUTPUT->heading(get_string('coverpage_welcome', 'survey', $this->survey->name));
+        if ($this->survey->intro) {
+            $intro = file_rewrite_pluginfile_urls($this->survey->intro, 'pluginfile.php', $this->context->id, 'mod_survey', 'intro', null);
+            echo $OUTPUT->box($intro, 'generalbox description', 'intro');
+        }
+
+        // general info
+        if ($this->survey->timeopen) { // opening time:
+            $key = ($this->survey->timeopen > $timenow) ? 'willopen' : 'opened';
+            $messages[] = get_string($key, 'survey').': '.$this->survey->timeopen;
+        }
+
+        if ($this->survey->timeclose) { // closing time:
+            $key = ($this->survey->timeopen > $timenow) ? 'willclose' : 'closed';
+            $messages[] = get_string($key, 'survey').': '.$this->survey->timeclose;
+        }
+
+        if ($this->cansubmit) {
+            // maxentries:
+            $maxentries = ($this->survey->maxentries) ? $this->survey->maxentries : get_string('unlimited', 'survey');
+            $messages[] = get_string('maxentries', 'survey').': '.$maxentries;
+
+            // your closed attempt number:
+            $countclosed = $this->user_closed_submissions(SURVEY_STATUSCLOSED);
+            $next = $countclosed;
+            $messages[] = get_string('closedsubmissions', 'survey', $countclosed);
+
+            // your in progress attempt number:
+            $inprogress = $this->user_closed_submissions(SURVEY_STATUSINPROGRESS);
+            $next += $inprogress;
+            $messages[] = get_string('inprogresssubmissions', 'survey', $inprogress);
+
+            $next++;
+            if (($this->survey->maxentries == 0) || ($next < $this->survey->maxentries)) {
+                $messages[] = get_string('yournextattempt', 'survey', $next);
+            }
+        }
+
+        $this->display_messages($messages);
+        $messages = array();
+        // end of: general info
+
+        // report
+        $surveyreportlist = get_plugin_list('surveyreport');
+        $paramurlbase = array('id' => $this->cm->id);
+        foreach ($surveyreportlist as $pluginname => $pluginpath) {
+            require_once($CFG->dirroot.'/mod/survey/report/'.$pluginname.'/report.class.php');
+            $classname = 'report_'.$pluginname;
+            $restricttemplates = $classname::restrict_templates();
+            if ((!$restricttemplates) || in_array($this->survey->template, $restricttemplates)) {
+                if ($canaccessreports || ($classname::has_student_report() && $canaccessownreports)) {
+                    if ($childreports = $classname::get_childreports($canaccessreports)) {
+                        foreach ($childreports as $childname => $childparams) {
+                            $childparams['s'] = $PAGE->cm->instance;
+                            $url = new moodle_url('/mod/survey/report/'.$pluginname.'/view.php', $childparams);
+                            $a = new stdClass();
+                            $a->href = $url->out();
+                            $a->reportname = get_string('pluginname', 'surveyreport_'.$pluginname).': '.$childname;
+                            $messages[] = get_string('runreport', 'survey', $a);
+                        }
+                    } else {
+                        $url = new moodle_url('/mod/survey/report/'.$pluginname.'/view.php', $paramurlbase);
+                        $a = new stdClass();
+                        $a->href = $url->out();
+                        $a->reportname = get_string('pluginname', 'surveyreport_'.$pluginname);
+                        $messages[] = get_string('runreport', 'survey', $a);
+                    }
+                }
+            }
+        }
+
+        $this->display_messages($messages);
+        $messages = array();
+        // end of: report
+
+        // user templates
+        if ($canmanageusertemplates) {
+            $url = new moodle_url('/mod/survey/utemplates_manage.php', $paramurlbase);
+            $messages[] = get_string('manageusertemplates', 'survey', $url->out());
+        }
+
+        if ($cansaveusertemplate) {
+            $url = new moodle_url('/mod/survey/utemplates_create.php', $paramurlbase);
+            $messages[] = get_string('saveusertemplates', 'survey', $url->out());
+        }
+
+        if ($canimportusertemplates) {
+            $url = new moodle_url('/mod/survey/utemplates_import.php', $paramurlbase);
+            $messages[] = get_string('importusertemplates', 'survey', $url->out());
+        }
+
+        $this->display_messages($messages);
+        $messages = array();
+        // end of: user templates
+
+        // master templates
+        if ($cansavemastertemplate || $this->applymastertemplate) {
+            $url = new moodle_url('/mod/survey/mtemplates_create.php', $paramurlbase);
+            $messages[] = get_string('applymastertemplates', 'survey', $url->out());
+        }
+
+        $this->display_messages($messages);
+        $messages = array();
+        // end of: master templates
+
+        // the button to add one more survey
+        if ($this->cansubmit) {
+            if (($this->survey->maxentries == 0) || ($next < $this->survey->maxentries)) {
+                $url = new moodle_url('/mod/survey/view.php', array('id' => $this->cm->id, 'cvp' => 0));
+                echo $OUTPUT->single_button($url, get_string('addonemore', 'survey'), 'get');
+            } else {
+                $message = get_string('nomorerecordsallowed', 'survey', $this->survey->maxentries);
+                echo $OUTPUT->container($message, 'centerpara');
+            }
+        } else {
+            $message = get_string('cannotsubmit', 'survey');
+            echo $OUTPUT->container($message, 'mdl-left');
+        }
+        // end of: the button to add one more survey
+
+        echo $OUTPUT->footer();
+    }
+
+
+    /*
+     * display_messages
+     *
+     * @return
+     */
+    public function display_messages($messages) {
+        global $OUTPUT;
+
+        if (count($messages)) {
+            echo $OUTPUT->box_start('box generalbox description', 'intro');
+            foreach ($messages as $message) {
+                echo $OUTPUT->container($message, 'mdl-left');
+            }
+            echo $OUTPUT->box_end();
+        }
     }
 }

@@ -130,50 +130,55 @@ switch ($currenttab) {
 
         $row = array();
 
-        if ($canview) { // attempt
+         // attempt cover page
+         if ($canview) {
             $elementurl = new moodle_url('/mod/survey/view.php', $paramurl);
-            $strlabel = get_string('tabsubmissionspage2', 'survey');
+            if (!isset($cover) || ($cover == 1)) {
+                $strlabel = get_string('tabsubmissionspage1cover', 'survey');
+            } else {
+                $strlabel = get_string('tabsubmissionspage1', 'survey');
+            }
             $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
         }
 
         // manage data
         if ($canmanagesubmissions) {
             $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
-            $strlabel = get_string('tabsubmissionspage3', 'survey');
+            $strlabel = get_string('tabsubmissionspage2', 'survey');
             $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
         }
 
         if ($currentpage == SURVEY_SUBMISSION_EDIT) { // edit
             $localparamurl = array('id' => $cm->id, 'act' => SURVEY_EDITRESPONSE);
             $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
-            $strlabel = get_string('tabsubmissionspage4', 'survey'); // edit
+            $strlabel = get_string('tabsubmissionspage3', 'survey'); // edit
             $row[] = new tabobject('idpage4', $elementurl->out(), $strlabel);
         }
 
         if ($currentpage == SURVEY_SUBMISSION_READONLY) { // read only
             $localparamurl = array('id' => $cm->id, 'act' => SURVEY_READONLYRESPONSE);
             $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
-            $strlabel = get_string('tabsubmissionspage5', 'survey'); // read only
+            $strlabel = get_string('tabsubmissionspage4', 'survey'); // read only
             $row[] = new tabobject('idpage5', $elementurl->out(), $strlabel);
         }
 
         if ($cansearch) { // search
             $elementurl = new moodle_url('/mod/survey/view_search.php', $paramurl);
-            $strlabel = get_string('tabsubmissionspage6', 'survey');
+            $strlabel = get_string('tabsubmissionspage5', 'survey');
             $row[] = new tabobject('idpage6', $elementurl->out(), $strlabel);
         }
 
         if ($currentpage == SURVEY_SUBMISSION_REPORT) { // report
             if (!empty($canaccessreports)) {
                 $elementurl = new moodle_url('/mod/survey/view_report.php', $paramurl);
-                $strlabel = get_string('tabsubmissionspage7', 'survey');
+                $strlabel = get_string('tabsubmissionspage6', 'survey');
                 $row[] = new tabobject('idpage7', $elementurl->out(), $strlabel);
             }
         }
 
         if ($canexportdata) { // export
             $elementurl = new moodle_url('/mod/survey/view_export.php', $paramurl);
-            $strlabel = get_string('tabsubmissionspage8', 'survey');
+            $strlabel = get_string('tabsubmissionspage7', 'survey');
             $row[] = new tabobject('idpage8', $elementurl->out(), $strlabel);
         }
 

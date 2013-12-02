@@ -187,10 +187,6 @@ class mod_survey_mod_form extends moodleform_mod {
 
         parent::data_preprocessing($defaults);
 
-        if (isset($defaults['readaccess'])) { // if one has been set, then all of them have been set
-            $defaults['accessrights'] = $defaults['readaccess'].'.'.$defaults['editaccess'].'.'.$defaults['deleteaccess'];
-        }
-
         if ($this->current->instance) {
             // manage userstyle filemanager
             $filename = 'userstyle';

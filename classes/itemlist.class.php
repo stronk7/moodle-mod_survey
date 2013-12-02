@@ -320,10 +320,10 @@ class mod_survey_itemlist {
         if (($this->action == SURVEY_CHANGEORDERASK) && (!$this->parentid)) {
             $drawmoveherebox = true;
             $paramurl = $paramurlmove + array('lib' => 0); // lib == just after this sortindex (lib == last item before)
-            $basepath = new moodle_url('items_manage.php', $paramurl);
 
-            $icons = '<a class="editing_update" title="'.$moveheretitle.'" href="'.$basepath.'">';
-            $icons .= '<img src="'.$OUTPUT->pix_url('movehere').'" class="movetarget" alt="'.$moveheretitle.'" title="'.$moveheretitle.'" /></a>&nbsp;';
+            $icons = $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                new pix_icon('movehere', $moveheretitle, 'moodle', array('title' => $moveheretitle)),
+                null, array('title' => $moveheretitle));
 
             $tablerow = array();
             $tablerow[] = $icons;
@@ -344,6 +344,7 @@ class mod_survey_itemlist {
             $paramurlbase['itemid'] = $item->get_itemid();
             $paramurlbase['type'] = $item->get_type();
             $paramurlbase['plugin'] = $item->get_plugin();
+            $paramurlbase['sesskey'] = sesskey();
             // end of $paramurlbase definition
             // -----------------------------
 
@@ -356,8 +357,9 @@ class mod_survey_itemlist {
 
             // *************************************** plugin
             $plugintitle = get_string('userfriendlypluginname', 'survey'.$item->get_type().'_'.$item->get_plugin());
-            $content = '<img src="'.$OUTPUT->pix_url('icon', 'survey'.$item->get_type().'_'.$item->get_plugin()).
-                    '" class="icon" alt="'.$plugintitle.'" title="'.$plugintitle.'" />';
+            $content = $OUTPUT->pix_icon('icon', $plugintitle, 'survey'.$item->get_type().'_'.$item->get_plugin(),
+                    array('title' => $plugintitle, 'class' => 'iconsmall'));
+
             $tablerow[] = $content;
 
             // *************************************** sortindex
@@ -369,7 +371,8 @@ class mod_survey_itemlist {
                 $message = get_string('parentid_alt', 'survey');
                 $parentsortindex = $DB->get_field('survey_item', 'sortindex', array('id' => $item->get_parentid()));
                 $content = $parentsortindex;
-                $content .= '&nbsp;<img src="'.$OUTPUT->pix_url('link', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+                $content .= $OUTPUT->pix_icon('link', $message, 'survey',
+                        array('title' => $message, 'class' => 'iconsmall'));
                 $content .= $this->condition_from_multiline($item->get_parentcontent());
             } else {
                 $content = '';
@@ -414,53 +417,50 @@ class mod_survey_itemlist {
             $currenthide = $item->get_hide();
             if ($currenthide) {
                 $message = get_string('hidden', 'survey');
-                $icons = '<img src="'.$OUTPUT->pix_url('absent', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+                $icons = $OUTPUT->pix_icon('absent', $message, 'survey', array('title' => $message, 'class' => 'iconsmall'));
 
                 // $message = get_string('hidden', 'survey');
-                $icons .= '<img src="'.$OUTPUT->pix_url('absent', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
+                $icons .= $OUTPUT->pix_icon('absent', $message, 'survey', array('title' => $message, 'class' => 'iconsmall'));
             } else {
                 // first icon: advanced vs generally available
                 if (!$item->get_advanced()) {
                     $message = get_string('available', 'survey');
                     if ($item->get_form_requires('advanced')) {
                         $paramurl = $paramurlbase + array('act' => SURVEY_MAKELIMITED);
-                        $basepath = new moodle_url('items_manage.php', $paramurl);
 
-                        $icons = '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
-                        $icons .= '<img src="'.$OUTPUT->pix_url('all', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
+                        $icons = $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                            new pix_icon('all', $message, 'survey', array('title' => $message)),
+                            null, array('title' => $edittitle));
                     } else {
-                        $icons = '<img src="'.$OUTPUT->pix_url('all', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+                        $icons = $OUTPUT->pix_icon('all', $message, 'survey', array('title' => $message, 'class' => 'iconsmall'));
                     }
                 } else {
                     $message = get_string('needrole', 'survey');
-
                     $paramurl = $paramurlbase + array('act' => SURVEY_MAKEFORALL);
-                    $basepath = new moodle_url('items_manage.php', $paramurl);
 
-                    $icons = '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
-                    $icons .= '<img src="'.$OUTPUT->pix_url('limited', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
+                    $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                        new pix_icon('limited', $message, 'survey', array('title' => $message)),
+                        null, array('title' => $edittitle));
                 }
 
                 // second icon: insearchform vs not insearchform
                 if ($item->get_insearchform()) {
                     $message = get_string('belongtosearchform', 'survey');
-
                     $paramurl = $paramurlbase + array('act' => SURVEY_OUTOFSEARCH);
-                    $basepath = new moodle_url('items_manage.php', $paramurl);
 
-                    $icons .= '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
-                    $icons .= '<img src="'.$OUTPUT->pix_url('insearch', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
+                    $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                        new pix_icon('insearch', $message, 'survey', array('title' => $message)),
+                        null, array('title' => $edittitle));
                 } else {
                     $message = get_string('notinsearchform', 'survey');
                     if ($item->get_form_requires('insearchform')) {
-
                         $paramurl = $paramurlbase + array('act' => SURVEY_ADDTOSEARCH);
-                        $basepath = new moodle_url('items_manage.php', $paramurl);
 
-                        $icons .= '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
-                        $icons .= '<img src="'.$OUTPUT->pix_url('absent', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>';
+                        $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                            new pix_icon('absent', $message, 'survey', array('title' => $message)),
+                            null, array('title' => $edittitle));
                     } else {
-                        $icons .= '<img src="'.$OUTPUT->pix_url('absent', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />';
+                        $icons .= $OUTPUT->pix_icon('absent', $message, 'survey', array('title' => $message, 'class' => 'iconsmall'));
                     }
                 }
             }
@@ -477,10 +477,10 @@ class mod_survey_itemlist {
                     $paramurl = $paramurl + array('act' => SURVEY_HIDEITEM);
                     $message = $hidetitle;
                 }
-                $basepath = new moodle_url('items_manage.php', $paramurl);
 
-                $icons .= '<a class="editing_update" title="'.$message.'" href="'.$basepath.'">';
-                $icons .= '<img src="'.$OUTPUT->pix_url($icopath).'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
+                $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                    new pix_icon($icopath, $message, 'moodle', array('title' => $message)),
+                    null, array('title' => $message));
             }
             $tablerow[] = $icons;
 
@@ -490,10 +490,10 @@ class mod_survey_itemlist {
                 $icons = '';
                 // *************************************** SURVEY_EDITITEM
                 $paramurl = $paramurlbase + array('act' => SURVEY_EDITITEM);
-                $basepath = new moodle_url('items_setup.php', $paramurl);
 
-                $icons .= '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
-                $icons .= '<img src="'.$OUTPUT->pix_url('t/edit').'" class="iconsmall" alt="'.$edittitle.'" title="'.$edittitle.'" /></a>&nbsp;';
+                $icons .= $OUTPUT->action_icon(new moodle_url('items_setup.php', $paramurl),
+                    new pix_icon('t/edit', $edittitle, 'moodle', array('title' => $edittitle)),
+                    null, array('title' => $edittitle));
 
                 // *************************************** SURVEY_CHANGEORDERASK
                 if (!empty($drawmovearrow)) {
@@ -502,19 +502,19 @@ class mod_survey_itemlist {
                     if (!empty($currentparentid)) {
                         $paramurl = $paramurl + array('pid' => $currentparentid);
                     }
-                    $basepath = new moodle_url('items_manage.php', $paramurl);
 
-                    $icons .= '<a class="editing_update" title="'.$changetitle.'" href="'.$basepath.'">';
-                    $icons .= '<img src="'.$OUTPUT->pix_url('t/move').'" class="iconsmall" alt="'.$changetitle.'" title="'.$changetitle.'" /></a>&nbsp;';
+                    $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                        new pix_icon('t/move', $edittitle, 'moodle', array('title' => $edittitle)),
+                        null, array('title' => $edittitle));
                 }
 
                 // *************************************** SURVEY_DELETEITEM
                 if (!$this->hassubmissions || $riskyediting) {
                     $paramurl = $paramurlbase + array('act' => SURVEY_DELETEITEM);
-                    $basepath = new moodle_url('items_manage.php', $paramurl);
 
-                    $icons .= '<a class="editing_update" title="'.$deletetitle.'" href="'.$basepath.'">';
-                    $icons .= '<img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.$deletetitle.'" title="'.$deletetitle.'" /></a>&nbsp;';
+                    $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                        new pix_icon('t/delete', $deletetitle, 'moodle', array('title' => $deletetitle)),
+                        null, array('title' => $deletetitle));
                 }
 
                 // *************************************** SURVEY_REQUIRED ON/OFF
@@ -538,11 +538,11 @@ class mod_survey_itemlist {
                     }
 
                     if ($icopath == 'greenlock') {
-                        $icons .= '<img src="'.$OUTPUT->pix_url($icopath, 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+                        $icons .= $OUTPUT->pix_icon($icopath, $message, 'survey', array('title' => $message, 'class' => 'icon'));
                     } else {
-                        $basepath = new moodle_url('items_manage.php', $paramurl);
-                        $icons .= '<a class="editing_update" title="'.$message.'" href="'.$basepath.'">';
-                        $icons .= '<img src="'.$OUTPUT->pix_url($icopath, 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" /></a>&nbsp;';
+                        $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                            new pix_icon($icopath, $message, 'survey', array('title' => $message)),
+                            null, array('title' => $message));
                     }
                 }
 
@@ -554,17 +554,19 @@ class mod_survey_itemlist {
                     if ($item->get_indent() > 0) {
                         $indentvalue = $item->get_indent() - 1;
                         $paramurl['ind'] = $indentvalue;
-                        $basepath = new moodle_url('items_manage.php', $paramurl);
-                        $icons .= '<a class="editing_update" title="'.$indenttitle.'" href="'.$basepath.'">';
-                        $icons .= '<img src="'.$OUTPUT->pix_url('t/left').'" class="iconsmall" alt="'.$indenttitle.'" title="'.$indenttitle.'" /></a>';
+
+                        $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                            new pix_icon('t/left', $indenttitle, 'moodle', array('title' => $indenttitle)),
+                            null, array('title' => $indenttitle));
                     }
-                    $icons .= '['.$item->get_indent().']';
+                    $icons .= '&nbsp;['.$item->get_indent().']';
                     if ($item->get_indent() < 9) {
                         $indentvalue = $item->get_indent() + 1;
                         $paramurl['ind'] = $indentvalue;
-                        $basepath = new moodle_url('items_manage.php', $paramurl);
-                        $icons .= '<a class="editing_update" title="'.$indenttitle.'" href="'.$basepath.'">';
-                        $icons .= '<img src="'.$OUTPUT->pix_url('t/right').'" class="iconsmall" alt="'.$indenttitle.'" title="'.$indenttitle.'" /></a>&nbsp;';
+
+                        $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                            new pix_icon('t/right', $indenttitle, 'moodle', array('title' => $indenttitle)),
+                            null, array('title' => $indenttitle));
                     }
                 }
             } else {
@@ -598,8 +600,9 @@ class mod_survey_itemlist {
                     $paramurl = $paramurlmove + array('lib' => $item->get_sortindex());
                     $basepath = new moodle_url('items_manage.php', $paramurl);
 
-                    $icons = '<a class="editing_update" title="'.$moveheretitle.'" href="'.$basepath.'">';
-                    $icons .= '<img src="'.$OUTPUT->pix_url('movehere').'" class="movetarget" alt="'.$moveheretitle.'" title="'.$moveheretitle.'" /></a>&nbsp;';
+                    $icons = $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                        new pix_icon('movehere', $moveheretitle, 'moodle', array('title' => $moveheretitle)),
+                        null, array('title' => $moveheretitle));
 
                     $tablerow = array();
                     $tablerow[] = $icons;
@@ -1233,8 +1236,8 @@ class mod_survey_itemlist {
 
             // *************************************** plugin
             $plugintitle = get_string('pluginname', 'survey'.$item->get_type().'_'.$item->get_plugin());
-            $content = '<img src="'.$OUTPUT->pix_url('icon', 'survey'.$item->get_type().'_'.$item->get_plugin()).
-                    '" class="icon" alt="'.$plugintitle.'" title="'.$plugintitle.'" />';
+            $content = $OUTPUT->pix_icon('icon', $plugintitle, 'survey'.$item->get_type().'_'.$item->get_plugin(),
+                    array('title' => $plugintitle, 'class' => 'iconsmall'));
             $tablerow[] = $content;
 
             // *************************************** content
@@ -1251,7 +1254,8 @@ class mod_survey_itemlist {
             if ($item->get_parentid()) {
                 $message = get_string('parentid_alt', 'survey');
                 $content = $parentitem->get_sortindex();
-                $content .= '&nbsp;<img src="'.$OUTPUT->pix_url('link', 'survey').'" class="iconsmall" alt="'.$message.'" title="'.$message.'" />&nbsp;';
+                $content .= $OUTPUT->pix_icon('link', $message, 'survey',
+                        array('title' => $message, 'class' => 'iconsmall'));
                 $content .= $this->condition_from_multiline($item->get_parentcontent());
             } else {
                 $content = '';
@@ -1300,8 +1304,9 @@ class mod_survey_itemlist {
             $paramurl = $paramurlbase + array('act' => SURVEY_EDITITEM);
             $basepath = new moodle_url('items_setup.php', $paramurl);
 
-            $icons = '<a class="editing_update" title="'.$edittitle.'" href="'.$basepath.'">';
-            $icons .= '<img src="'.$OUTPUT->pix_url('t/edit').'" class="iconsmall" alt="'.$edittitle.'" title="'.$edittitle.'" /></a>&nbsp;';
+            $icons = $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                new pix_icon('t/edit', $edittitle, 'moodle', array('title' => $edittitle)),
+                null, array('title' => $edittitle));
 
             $tablerow[] = $icons;
 
@@ -1399,7 +1404,8 @@ class mod_survey_itemlist {
 
         $plugintitle = get_string('userfriendlypluginname', 'survey'.$this->type.'_'.$this->plugin);
 
-        $message = '<img src="'.$OUTPUT->pix_url('icon', 'survey'.$this->type.'_'.$this->plugin).'" class="icon" alt="'.$plugintitle.'" title="'.$plugintitle.'" />';
+        $message = $OUTPUT->pix_icon('icon', $plugintitle, 'survey'.$item->get_type().'_'.$item->get_plugin(),
+                array('title' => $plugintitle, 'class' => 'iconsmall'));
         $message .= get_string($this->type, 'survey').': '.$plugintitle;
 
         echo $OUTPUT->box($message);

@@ -12,6 +12,6 @@ button is needed. (thanks to JR)
 -> *** Crucial known issue that is not fixable in my opinion. I apply a master template. I make a survey with it. Tomorrow I update the master template with a newer version. This new version has one more item in the middle. Surveys build with the old release of the plugin will stop working fine as they will find in the right position string of a different template.
 -> possible better solution: use the first 32 chars of the question escaped
 -> is the autofill field saved to userdata even if it is not shown?
--> responses equipped with images are reported without images in PDF
 -> allow upperbound date/datetime == to now
 -> the option "not answered" is missing in the search form even if a "Answer not provided" may be found
+-> require_sesskey();

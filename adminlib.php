@@ -148,7 +148,7 @@ class survey_plugin_manager {
         return $OUTPUT->action_icon(new moodle_url($this->pageurl,
                 array('action' => $action, 'plugin' => $plugintype, 'sesskey' => sesskey())),
                 new pix_icon($icon, $alt, 'moodle', array('title' => $alt)),
-                null, array('title' => $alt)).' ';
+                null, array('title' => $alt));
     }
 
     /*
@@ -160,6 +160,7 @@ class survey_plugin_manager {
         global $OUTPUT, $CFG, $DB;
 
         require_once($CFG->libdir.'/tablelib.php');
+        require_once($CFG->dirroot.'/mod/survey/lib.php');
 
         // Set up the table.
         $this->view_header();
@@ -217,8 +218,9 @@ class survey_plugin_manager {
             $row = array();
 
             // Pluginname.
-            $icon = '<img src="'.$OUTPUT->pix_url('icon', $this->subtype.'_'.$plugin).
-                    '" class="icon" alt="'.$plugin.'" title="'.$plugin.'" />&nbsp;';
+            $icon = $OUTPUT->pix_icon('icon', $plugin, $this->subtype.'_'.$plugin,
+                array('title' => $plugin, 'class' => 'icon'));
+
             $row[] = $icon.get_string('pluginname', $this->subtype.'_'.$plugin);
 
             // Version.
