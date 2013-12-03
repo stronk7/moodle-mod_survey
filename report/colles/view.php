@@ -50,6 +50,10 @@ $group = optional_param('group', 0, PARAM_INT);  // Group ID
 $area = optional_param('area', false, PARAM_INT);  // Student ID
 $qid = optional_param('qid', 0, PARAM_INT);  // 0..3 the question in the area
 
+require_course_login($course, true, $cm);
+
+$context = context_module::instance($cm->id);
+
 $paramurl = array('type' => $type, 's' => $survey->id);
 if (!empty($group)) {
     $paramurl['group'] = $group;
@@ -67,9 +71,6 @@ $PAGE->set_url($url);
 $url = new moodle_url('/mod/survey/report/colles/view.php', array('type' => $type, 's' => $survey->id));
 navigation_node::override_active_url($url);
 
-$context = context_module::instance($cm->id);
-
-require_course_login($course, true, $cm);
 if ($type == 'summary') {
     require_capability('mod/survey:accessownreports', $context);
 } else {

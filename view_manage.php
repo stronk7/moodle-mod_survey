@@ -53,6 +53,10 @@ $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
 $searchfieldsget = optional_param('searchquery', '', PARAM_RAW);
 
+if ($action != SURVEY_NOACTION) {
+    require_sesskey();
+}
+
 // -----------------------------
 // calculations
 // -----------------------------

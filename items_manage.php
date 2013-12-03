@@ -61,6 +61,9 @@ $parentid = optional_param('pid', 0, PARAM_INT);
 $userfeedback = optional_param('ufd', SURVEY_NOFEEDBACK, PARAM_INT);
 $saveasnew = optional_param('saveasnew', null, PARAM_TEXT);
 
+if ($action != SURVEY_NOACTION) {
+    require_sesskey();
+}
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:manageitems', $context);
 

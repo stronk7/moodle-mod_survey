@@ -47,6 +47,7 @@ if (!empty($id)) {
 }
 
 require_course_login($course, true, $cm);
+
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:accessreports', $context);
 

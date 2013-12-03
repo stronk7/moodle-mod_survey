@@ -53,6 +53,10 @@ $plugin = optional_param('plugin', null, PARAM_TEXT);
 $itemid = optional_param('itemid', 0, PARAM_INT);
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 
+if ($action != SURVEY_NOACTION) {
+    require_sesskey();
+}
+
 // params never passed but needed by called class
 $itemtomove = 0;
 $userfeedback = SURVEY_NOFEEDBACK;
@@ -126,7 +130,7 @@ if ($fromform = $itemform->get_data()) {
 // -----------------------------
 // output starts here
 // -----------------------------
-$PAGE->set_url('/mod/survey/item_setup.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/survey/items_setup.php', array('id' => $cm->id));
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
 

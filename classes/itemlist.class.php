@@ -438,7 +438,7 @@ class mod_survey_itemlist {
                     $message = get_string('needrole', 'survey');
                     $paramurl = $paramurlbase + array('act' => SURVEY_MAKEFORALL);
 
-                    $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+                    $icons = $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
                         new pix_icon('limited', $message, 'survey', array('title' => $message)),
                         null, array('title' => $edittitle));
                 }

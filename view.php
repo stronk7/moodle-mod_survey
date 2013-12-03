@@ -54,6 +54,10 @@ $formpage = optional_param('formpage' , 0, PARAM_INT); // form page number
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $submissionid = optional_param('submissionid', 0, PARAM_INT);
 
+if ($action != SURVEY_NOACTION) {
+    require_sesskey();
+}
+
 // -----------------------------
 // calculations
 // -----------------------------

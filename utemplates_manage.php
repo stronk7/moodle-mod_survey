@@ -52,6 +52,10 @@ $utemplateid = optional_param('fid', 0, PARAM_INT);
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
 $confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
 
+if ($action != SURVEY_NOACTION) {
+    require_sesskey();
+}
+
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:manageusertemplates', $context);
 
