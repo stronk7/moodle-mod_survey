@@ -134,24 +134,6 @@ class survey_plugin_manager {
     }
 
     /*
-     * Util function for writing an action icon link
-     *
-     * @param string $action URL parameter to include in the link
-     * @param string $plugintype URL parameter to include in the link
-     * @param string $icon The key to the icon to use (e.g. 't/up')
-     * @param string $alt The string description of the link used as the title and alt text
-     * @return string The icon/link
-     */
-    private function format_icon_link($action, $plugintype, $icon, $alt) {
-        global $OUTPUT;
-
-        return $OUTPUT->action_icon(new moodle_url($this->pageurl,
-                array('action' => $action, 'plugin' => $plugintype, 'sesskey' => sesskey())),
-                new pix_icon($icon, $alt, 'moodle', array('title' => $alt)),
-                null, array('title' => $alt));
-    }
-
-    /*
      * Write the HTML for the submission plugins table.
      *
      * @return None
@@ -236,18 +218,28 @@ class survey_plugin_manager {
             // Enable/disable.
             $visible = !get_config($this->subtype.'_'.$plugin, 'disabled');
             if ($visible) {
-                $row[] = $this->format_icon_link('hide', $plugin, 't/hide', get_string('disable'));
+                $title = get_string('disable');
+                $row[] = $OUTPUT->action_icon(new moodle_url($this->pageurl,
+                    array('action' => 'hide', 'plugin' => $plugin, 'sesskey' => sesskey())),
+                    new pix_icon('t/hide', $title, 'moodle', array('title' => $title)),
+                    null, array('title' => $title));
             } else {
-                $row[] = $this->format_icon_link('show', $plugin, 't/show', get_string('enable'));
+                $title = get_string('enable');
+                $row[] = $OUTPUT->action_icon(new moodle_url($this->pageurl,
+                    array('action' => 'show', 'plugin' => $plugin, 'sesskey' => sesskey())),
+                    new pix_icon('t/show', $title, 'moodle', array('title' => $title)),
+                    null, array('title' => $title));
             }
 
             // Delete.
             if (isset($counts[$plugin])) {
                 $row[] = '&nbsp;';
             } else {
-                $row[] = $this->format_icon_link('delete', $plugin, 't/delete', get_string('delete'));
-                // $paramurl = array('subtype' => $this->subtype, 'action' => 'delete', 'plugin' => $plugin, 'sesskey' => sesskey());
-                // $row[] = html_writer::link(new moodle_url('/mod/survey/adminmanageplugins.php', $paramurl), new lang_string('delete'));
+                $title = get_string('delete');
+                $row[] = $OUTPUT->action_icon(new moodle_url($this->pageurl,
+                    array('action' => 'delete', 'plugin' => $plugin, 'sesskey' => sesskey())),
+                    new pix_icon('t/delete', $title, 'moodle', array('title' => $title)),
+                    null, array('title' => $title));
 
             }
             $exists = file_exists($CFG->dirroot.'/mod/survey/'.$shortsubtype.'/'.$plugin.'/settings.php');
