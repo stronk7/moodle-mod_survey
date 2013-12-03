@@ -358,7 +358,7 @@ class mod_survey_itemlist {
             // *************************************** plugin
             $plugintitle = get_string('userfriendlypluginname', 'survey'.$item->get_type().'_'.$item->get_plugin());
             $content = $OUTPUT->pix_icon('icon', $plugintitle, 'survey'.$item->get_type().'_'.$item->get_plugin(),
-                    array('title' => $plugintitle, 'class' => 'iconsmall'));
+                    array('title' => $plugintitle, 'class' => 'icon'));
 
             $tablerow[] = $content;
 
@@ -1404,8 +1404,8 @@ class mod_survey_itemlist {
 
         $plugintitle = get_string('userfriendlypluginname', 'survey'.$this->type.'_'.$this->plugin);
 
-        $message = $OUTPUT->pix_icon('icon', $plugintitle, 'survey'.$item->get_type().'_'.$item->get_plugin(),
-                array('title' => $plugintitle, 'class' => 'iconsmall'));
+        $message = $OUTPUT->pix_icon('icon', $plugintitle, 'survey'.$this->type.'_'.$this->plugin,
+                array('title' => $plugintitle, 'class' => 'icon'));
         $message .= get_string($this->type, 'survey').': '.$plugintitle;
 
         echo $OUTPUT->box($message);

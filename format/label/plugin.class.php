@@ -319,4 +319,19 @@ EOS;
     public function userform_mform_element_is_group() {
         return false;
     }
+
+    /*
+     * get_indent
+     *
+     * @param
+     * @return
+     */
+    public function get_indent() {
+        if ($this->fullwidth) {
+            return false;
+        } else {
+            return $this->indent;
+        }
+    }
+
 }
