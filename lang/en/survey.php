@@ -306,7 +306,7 @@ $string['restrictedaccess'] = 'View only allowed access';
 $string['revieworpause'] = ', review or pause';
 $string['riskyeditdeadline_help'] = 'Allow users permitted to manage survey elements to force modifications of this survey even once answered';
 $string['riskyeditdeadline'] = 'Deadline of risky modification session';
-$string['runreport'] = '<a href="{$a->href}">Run {$a->reportname} report now</a>';
+$string['runreport'] = '<a href="{$a->href}">Run {$a->reportname} report</a>';
 $string['saveasnew'] = 'Save as new';
 $string['saveresume_help'] = 'Allow to save a survey in order to resume data entry and submit you survey next time';
 $string['saveresume'] = 'Allow Save/Resume';

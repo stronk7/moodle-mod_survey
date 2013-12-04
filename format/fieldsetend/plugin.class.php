@@ -210,7 +210,10 @@ EOS;
          * yes, we are.
          */
         if (false) {
-            $mform->addElement('static', $this->itemname, '', '', array('class' => 'hidefull')); // <-- class does not work for labels. See: MDL-28194
+            // workaround suggested by Marina Glancy in MDL-42946
+            $label = html_writer::tag('span', '&nbsp;', array('class' => 'hidefull'));
+
+            $mform->addElement('static', $this->itemname, '', $label);
             $mform->closeHeaderBefore($this->itemname);
         } else {
             $cm = $PAGE->cm;

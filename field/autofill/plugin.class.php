@@ -427,17 +427,16 @@ EOS;
                 $referencearray[] = constant('SURVEYFIELD_AUTOFILL_CONTENTELEMENT'.sprintf('%02d', $i));
             }
 
-            $label = $this->userform_calculate_content();
-            $mform->addElement('hidden', $this->itemname, $label);
+            $mform->addElement('hidden', $this->itemname, $this->userform_get_content());
             $mform->setType($this->itemname, PARAM_RAW);
+
             if (!$this->hiddenfield) {
-                // class doesn't work for this mform element
-                $mform->addElement('static', $this->itemname, $elementlabel, $label, array('class' => 'indent-'.$this->indent));
-                // $mform->addElement('static', $this->itemname.'_static', $elementlabel, $label);
+                // workaround suggested by Marina Glancy in MDL-42946
+                $label = html_writer::tag('span', $this->userform_get_content(), array('class' => 'indent-'.$this->indent));
+                $mform->addElement('static', $this->itemname.'_static', $elementlabel, $label);
             }
         } else {
-            // $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent));
-            $mform->addElement('text', $this->itemname, $elementlabel);
+            $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent));
         }
     }
 
@@ -556,12 +555,12 @@ EOS;
     }
 
     /*
-     * userform_calculate_content
+     * userform_get_content
      *
      * @param $item
      * @return
      */
-    public function userform_calculate_content() {
+    public function userform_get_content() {
         global $USER, $COURSE, $survey;
 
         $label = '';

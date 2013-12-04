@@ -53,16 +53,10 @@ class survey_searchform extends moodleform {
             $position = $item->get_position();
             $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
             if ($position == SURVEY_POSITIONTOP) {
+                // workaround suggested by Marina Glancy in MDL-42946
+                $content = html_writer::tag('span', $item->get_content(), array('class' => 'indent-'.$item->get_indent()));
 
-                // not working hack to simulate the missing style for static mform element
-                // $content = '';
-                // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$item->get_indent()));
-                // $content .= $item->get_content();
-                // $content .= html_writer::end_tag('div');
-                // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
-
-                $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content(), array('class' => 'indent-'.$item->get_indent()));
-                // $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $item->get_content());
+                $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $content);
             }
             if ($position == SURVEY_POSITIONTOPLEFT) {
                 $questioncontent = $item->get_content();
@@ -93,15 +87,10 @@ class survey_searchform extends moodleform {
 
             /***************  note  ****************/
             if ($fullinfo = $item->userform_get_full_info(true)) {
-                // not working hack to simulate the missing style for static mform element
-                // $content = '';
-                // $content .= html_writer::start_tag('div', array('class' => 'indent-'.$item->get_indent()));
-                // $content .= $fullinfo;
-                // $content .= html_writer::end_tag('div');
-                // echo '<textarea rows="10" cols="100">'.$output.'</textarea>';
+                // workaround suggested by Marina Glancy in MDL-42946
+                $content = html_writer::tag('span', $fullinfo, array('class' => 'indent-'.$item->get_indent()));
 
-                $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo, array('class' => 'indent-'.$item->get_indent()));
-                // $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $fullinfo);
+                $mform->addElement('static', $item->get_itemname().'_info', get_string('note', 'survey'), $content);
             }
         }
         $itemseeds->close();
