@@ -109,7 +109,7 @@ class mod_survey_itemlist {
     /*
      * Class constructor
      */
-    public function __construct($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
+    public function __construct($cm, $context, $survey, $type, $plugin, $itemid, $action, $view, $itemtomove,
                                 $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew) {
         $this->cm = $cm;
         $this->context = $context;
@@ -125,6 +125,7 @@ class mod_survey_itemlist {
         }
         $this->itemid = $itemid;
         $this->action = $action;
+        $this->view = $view;
         $this->itemtomove = $itemtomove; // itm == Item To Move (sortindex of the item to move)
         $this->lastitembefore = $lastitembefore; // lib == Last Item Before the place where the moving item has to go
         $this->confirm = $confirm;
@@ -162,8 +163,6 @@ class mod_survey_itemlist {
         switch ($this->action) {
             case SURVEY_NOACTION:
                 break;
-            case SURVEY_EDITITEM:
-                break;
             case SURVEY_HIDEITEM:
                 $this->manage_item_hide();
                 break;
@@ -172,10 +171,6 @@ class mod_survey_itemlist {
                 break;
             case SURVEY_DELETEITEM:
                 $this->manage_item_deletion();
-                break;
-            case SURVEY_CHANGEORDERASK:
-                // it was required to move the item $this->itemid
-                // no action is foreseen, only page reload
                 break;
             case SURVEY_DROPMULTILANG:
                 $this->manage_item_dropmultilang();
@@ -280,7 +275,7 @@ class mod_survey_itemlist {
 
         // general properties for the whole table
         // $table->set_attribute('cellpadding', '5');
-        if ($this->action == SURVEY_CHANGEORDERASK) {
+        if ($this->view == SURVEY_CHANGEORDERASK) {
             $table->set_attribute('id', 'sortitems');
         } else {
             $table->set_attribute('id', 'manageitems');
@@ -317,9 +312,11 @@ class mod_survey_itemlist {
         $drawmovearrow = (count($itemseeds) > 1);
 
         // this is the very first position, so if the item has a parent, no "moveherebox" must appear
-        if (($this->action == SURVEY_CHANGEORDERASK) && (!$this->parentid)) {
+        if (($this->view == SURVEY_CHANGEORDERASK) && (!$this->parentid)) {
             $drawmoveherebox = true;
-            $paramurl = $paramurlmove + array('lib' => 0); // lib == just after this sortindex (lib == last item before)
+            $paramurl = $paramurlmove;
+            $paramurl['lib'] = 0; // lib == just after this sortindex (lib == last item before)
+            $paramurl['sesskey'] = sesskey();
 
             $icons = $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
                 new pix_icon('movehere', $moveheretitle, 'moodle', array('title' => $moveheretitle)),
@@ -344,28 +341,27 @@ class mod_survey_itemlist {
             $paramurlbase['itemid'] = $item->get_itemid();
             $paramurlbase['type'] = $item->get_type();
             $paramurlbase['plugin'] = $item->get_plugin();
-            $paramurlbase['sesskey'] = sesskey();
             // end of $paramurlbase definition
             // -----------------------------
 
             $tablerow = array();
 
-            if (($this->action == SURVEY_CHANGEORDERASK) && ($item->get_itemid() == $this->itemid)) {
+            if (($this->view == SURVEY_CHANGEORDERASK) && ($item->get_itemid() == $this->itemid)) {
                 // do not draw the item you are going to move
                 continue;
             }
 
-            // *************************************** plugin
+            // plugin
             $plugintitle = get_string('userfriendlypluginname', 'survey'.$item->get_type().'_'.$item->get_plugin());
             $content = $OUTPUT->pix_icon('icon', $plugintitle, 'survey'.$item->get_type().'_'.$item->get_plugin(),
                     array('title' => $plugintitle, 'class' => 'icon'));
 
             $tablerow[] = $content;
 
-            // *************************************** sortindex
+            // sortindex
             $tablerow[] = $item->get_sortindex();
 
-            // *************************************** parentid
+            // parentid
             if ($item->get_parentid()) {
                 // if (!empty($content)) $content .= ' ';
                 $message = get_string('parentid_alt', 'survey');
@@ -379,21 +375,21 @@ class mod_survey_itemlist {
             }
             $tablerow[] = $content;
 
-            // *************************************** customnumber
+            // customnumber
             if (($item->get_type() == SURVEY_TYPEFIELD) || ($item->get_plugin() == 'label')) {
                 $tablerow[] = $item->get_customnumber();
             } else {
                 $tablerow[] = '';
             }
 
-            // *************************************** content
+            // content
             $item->set_contentformat(FORMAT_HTML);
             $item->set_contenttrust(1);
 
             $output = $item->get_content();
             $tablerow[] = $output;
 
-            // *************************************** variable
+            // variable
             if ($item->get_type() == SURVEY_TYPEFIELD) {
                 if ($variable = $item->get_variable()) {
                     $content = $variable;
@@ -405,7 +401,7 @@ class mod_survey_itemlist {
             }
             $tablerow[] = $content;
 
-            // *************************************** page
+            // page
             if ($item->item_uses_form_page()) {
                 $content = $item->get_formpage();
             } else {
@@ -413,7 +409,7 @@ class mod_survey_itemlist {
             }
             $tablerow[] = $content;
 
-            // *************************************** availability
+            // availability
             $currenthide = $item->get_hide();
             if ($currenthide) {
                 $message = get_string('hidden', 'survey');
@@ -426,7 +422,9 @@ class mod_survey_itemlist {
                 if (!$item->get_advanced()) {
                     $message = get_string('available', 'survey');
                     if ($item->get_form_requires('advanced')) {
-                        $paramurl = $paramurlbase + array('act' => SURVEY_MAKELIMITED);
+                        $paramurl = $paramurlbase;
+                        $paramurl['act'] = SURVEY_MAKELIMITED;
+                        $paramurl['sesskey'] = sesskey();
 
                         $icons = $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
                             new pix_icon('all', $message, 'survey', array('title' => $message)),
@@ -436,7 +434,9 @@ class mod_survey_itemlist {
                     }
                 } else {
                     $message = get_string('needrole', 'survey');
-                    $paramurl = $paramurlbase + array('act' => SURVEY_MAKEFORALL);
+                    $paramurl = $paramurlbase;
+                    $paramurl['act'] = SURVEY_MAKEFORALL;
+                    $paramurl['sesskey'] = sesskey();
 
                     $icons = $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
                         new pix_icon('limited', $message, 'survey', array('title' => $message)),
@@ -446,7 +446,9 @@ class mod_survey_itemlist {
                 // second icon: insearchform vs not insearchform
                 if ($item->get_insearchform()) {
                     $message = get_string('belongtosearchform', 'survey');
-                    $paramurl = $paramurlbase + array('act' => SURVEY_OUTOFSEARCH);
+                    $paramurl = $paramurlbase;
+                    $paramurl['act'] = SURVEY_OUTOFSEARCH;
+                    $paramurl['sesskey'] = sesskey();
 
                     $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
                         new pix_icon('insearch', $message, 'survey', array('title' => $message)),
@@ -454,7 +456,9 @@ class mod_survey_itemlist {
                 } else {
                     $message = get_string('notinsearchform', 'survey');
                     if ($item->get_form_requires('insearchform')) {
-                        $paramurl = $paramurlbase + array('act' => SURVEY_ADDTOSEARCH);
+                        $paramurl = $paramurlbase;
+                        $paramurl['act'] = SURVEY_ADDTOSEARCH;
+                        $paramurl['sesskey'] = sesskey();
 
                         $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
                             new pix_icon('absent', $message, 'survey', array('title' => $message)),
@@ -468,13 +472,14 @@ class mod_survey_itemlist {
             // third icon: hide vs show
             if (!$this->hassubmissions || $riskyediting) {
                 $paramurl = $paramurlbase;
+                $paramurl['sesskey'] = sesskey();
                 if (!empty($currenthide)) {
                     $icopath = 't/show';
-                    $paramurl = $paramurl + array('act' => SURVEY_SHOWITEM);
+                    $paramurl['act'] = SURVEY_SHOWITEM;
                     $message = $showtitle;
                 } else {
                     $icopath = 't/hide';
-                    $paramurl = $paramurl + array('act' => SURVEY_HIDEITEM);
+                    $paramurl['act'] = SURVEY_HIDEITEM;
                     $message = $hidetitle;
                 }
 
@@ -484,23 +489,28 @@ class mod_survey_itemlist {
             }
             $tablerow[] = $icons;
 
-            // *************************************** actions
-            if ($this->action != SURVEY_CHANGEORDERASK) {
+            // actions
+            if ($this->view != SURVEY_CHANGEORDERASK) {
 
                 $icons = '';
-                // *************************************** SURVEY_EDITITEM
-                $paramurl = $paramurlbase + array('act' => SURVEY_EDITITEM);
+                // SURVEY_EDITITEM
+                $paramurl = $paramurlbase;
+                $paramurl['view'] = SURVEY_EDITITEM;
+                $paramurl['sesskey'] = sesskey();
 
                 $icons .= $OUTPUT->action_icon(new moodle_url('items_setup.php', $paramurl),
                     new pix_icon('t/edit', $edittitle, 'moodle', array('title' => $edittitle)),
                     null, array('title' => $edittitle));
 
-                // *************************************** SURVEY_CHANGEORDERASK
+                // SURVEY_CHANGEORDERASK
                 if (!empty($drawmovearrow)) {
-                    $paramurl = $paramurlbase + array('act' => SURVEY_CHANGEORDERASK, 'itm' => $item->get_sortindex());
+                    $paramurl = $paramurlbase;
+                    $paramurl['view'] = SURVEY_CHANGEORDERASK;
+                    $paramurl['itm'] = $item->get_sortindex();
+
                     $currentparentid = $item->get_parentid();
                     if (!empty($currentparentid)) {
-                        $paramurl = $paramurl + array('pid' => $currentparentid);
+                        $paramurl['pid'] = $currentparentid;
                     }
 
                     $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
@@ -508,28 +518,31 @@ class mod_survey_itemlist {
                         null, array('title' => $edittitle));
                 }
 
-                // *************************************** SURVEY_DELETEITEM
+                // SURVEY_DELETEITEM
                 if (!$this->hassubmissions || $riskyediting) {
-                    $paramurl = $paramurlbase + array('act' => SURVEY_DELETEITEM);
+                    $paramurl = $paramurlbase;
+                    $paramurl['act'] = SURVEY_DELETEITEM;
+                    $paramurl['sesskey'] = sesskey();
 
                     $icons .= $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
                         new pix_icon('t/delete', $deletetitle, 'moodle', array('title' => $deletetitle)),
                         null, array('title' => $deletetitle));
                 }
 
-                // *************************************** SURVEY_REQUIRED ON/OFF
+                // SURVEY_REQUIRED ON/OFF
                 $currentrequired = $item->get_required();
                 if ($currentrequired !== false) { // it may not be set as in page_break, autofill or some more
                     $paramurl = $paramurlbase;
+                    $paramurl['sesskey'] = sesskey();
 
                     if ($item->get_required()) {
                         $icopath = 'red';
-                        $paramurl = $paramurl + array('act' => SURVEY_REQUIREDOFF);
+                        $paramurl['act'] = SURVEY_REQUIREDOFF;
                         $message = $optionaltitle;
                     } else {
                         if ($item->item_mandatory_is_allowed()) {
                             $icopath = 'green';
-                            $paramurl = $paramurl + array('act' => SURVEY_REQUIREDON);
+                            $paramurl['act'] = SURVEY_REQUIREDON;
                             $message = $requiredtitle;
                         } else {
                             $icopath = 'greenlock';
@@ -546,10 +559,12 @@ class mod_survey_itemlist {
                     }
                 }
 
-                // *************************************** SURVEY_CHANGEINDENT
+                // SURVEY_CHANGEINDENT
                 $currentindent = $item->get_indent();
                 if ($currentindent !== false) { // it may not be set as in page_break, autofill and some more
-                    $paramurl = $paramurlbase + array('act' => SURVEY_CHANGEINDENT);
+                    $paramurl = $paramurlbase;
+                    $paramurl['act'] = SURVEY_CHANGEINDENT;
+                    $paramurl['sesskey'] = sesskey();
 
                     if ($item->get_indent() > 0) {
                         $indentvalue = $item->get_indent() - 1;
@@ -579,7 +594,7 @@ class mod_survey_itemlist {
             $table->add_data($tablerow, $addedclass);
 
             // print_object($item);
-            if ($this->action == SURVEY_CHANGEORDERASK) {
+            if ($this->view == SURVEY_CHANGEORDERASK) {
                 // It was asked to move the item with:
                 // $this->itemid e $this->parentid
                 if ($this->parentid) { // <-- this is the parentid of the item that I am going to move
@@ -597,8 +612,9 @@ class mod_survey_itemlist {
                 }
 
                 if (!empty($drawmoveherebox)) {
-                    $paramurl = $paramurlmove + array('lib' => $item->get_sortindex());
-                    $basepath = new moodle_url('items_manage.php', $paramurl);
+                    $paramurl = $paramurlmove;
+                    $paramurl['lib'] = $item->get_sortindex();
+                    $paramurl['sesskey'] = sesskey();
 
                     $icons = $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
                         new pix_icon('movehere', $moveheretitle, 'moodle', array('title' => $moveheretitle)),
@@ -701,11 +717,16 @@ class mod_survey_itemlist {
 
                 $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_HIDEITEM);
 
-                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'plugin' => $this->plugin, 'type' => $this->type);
+                $optionsyes = $optionbase;
+                $optionsyes['cnf'] = SURVEY_CONFIRMED_YES;
+                $optionsyes['itemid'] = $this->itemid;
+                $optionsyes['plugin'] = $this->plugin;
+                $optionsyes['type'] = $this->type;
                 $urlyes = new moodle_url('items_manage.php', $optionsyes);
                 $buttonyes = new single_button($urlyes, get_string('confirmitemstohide', 'survey'));
 
-                $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
+                $optionsno = $optionbase;
+                $optionsno['cnf'] = SURVEY_CONFIRMED_NO;
                 $urlno = new moodle_url('items_manage.php', $optionsno);
                 $buttonno = new single_button($urlno, get_string('no'));
 
@@ -761,11 +782,16 @@ class mod_survey_itemlist {
 
                 $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_SHOWITEM, 'itemid' => $this->itemid);
 
-                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'plugin' => $this->plugin, 'type' => $this->type);
+                $optionsyes = $optionbase;
+                $optionsyes['cnf'] = SURVEY_CONFIRMED_YES;
+                $optionsyes['itemid'] = $this->itemid;
+                $optionsyes['plugin'] = $this->plugin;
+                $optionsyes['type'] = $this->type;
                 $urlyes = new moodle_url('items_manage.php', $optionsyes);
                 $buttonyes = new single_button($urlyes, get_string('confirmitemstoshow', 'survey'));
 
-                $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
+                $optionsno = $optionbase;
+                $optionsno['cnf'] = SURVEY_CONFIRMED_NO;
                 $urlno = new moodle_url('items_manage.php', $optionsno);
                 $buttonno = new single_button($urlno, get_string('no'));
 
@@ -827,11 +853,16 @@ class mod_survey_itemlist {
 
                 $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_MAKELIMITED);
 
-                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'plugin' => $this->plugin, 'type' => $this->type);
+                $optionsyes = $optionbase;
+                $optionsyes['cnf'] = SURVEY_CONFIRMED_YES;
+                $optionsyes['itemid'] = $this->itemid;
+                $optionsyes['plugin'] = $this->plugin;
+                $optionsyes['type'] = $this->type;
                 $urlyes = new moodle_url('items_manage.php', $optionsyes);
                 $buttonyes = new single_button($urlyes, get_string('confirmitemstoadvanced', 'survey'));
 
-                $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
+                $optionsno = $optionbase;
+                $optionsno['cnf'] = SURVEY_CONFIRMED_NO;
                 $urlno = new moodle_url('items_manage.php', $optionsno);
                 $buttonno = new single_button($urlno, get_string('no'));
 
@@ -887,11 +918,16 @@ class mod_survey_itemlist {
 
                 $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_MAKEFORALL, 'itemid' => $this->itemid);
 
-                $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'plugin' => $this->plugin, 'type' => $this->type);
+                $optionsyes = $optionbase;
+                $optionsyes['cnf'] = SURVEY_CONFIRMED_YES;
+                $optionsyes['itemid'] = $this->itemid;
+                $optionsyes['plugin'] = $this->plugin;
+                $optionsyes['type'] = $this->type;
                 $urlyes = new moodle_url('items_manage.php', $optionsyes);
                 $buttonyes = new single_button($urlyes, get_string('confirmitemstostandard', 'survey'));
 
-                $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
+                $optionsno = $optionbase;
+                $optionsno['cnf'] = SURVEY_CONFIRMED_NO;
                 $urlno = new moodle_url('items_manage.php', $optionsno);
                 $buttonno = new single_button($urlno, get_string('no'));
 
@@ -951,11 +987,16 @@ class mod_survey_itemlist {
 
             $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_DELETEITEM);
 
-            $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'itemid' => $this->itemid, 'plugin' => $this->plugin, 'type' => $this->type);
+            $optionsyes = $optionbase;
+            $optionsyes['cnf'] = SURVEY_CONFIRMED_YES;
+            $optionsyes['itemid'] = $this->itemid;
+            $optionsyes['plugin'] = $this->plugin;
+            $optionsyes['type'] = $this->type;
             $urlyes = new moodle_url('items_manage.php', $optionsyes);
             $buttonyes = new single_button($urlyes, $labelyes);
 
-            $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
+            $optionsno = $optionbase;
+            $optionsno['cnf'] = SURVEY_CONFIRMED_NO;
             $urlno = new moodle_url('items_manage.php', $optionsno);
             $buttonno = new single_button($urlno, get_string('no'));
 
@@ -1031,11 +1072,13 @@ class mod_survey_itemlist {
 
             $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_DROPMULTILANG);
 
-            $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES);
+            $optionsyes = $optionbase;
+            $optionsyes['cnf'] = SURVEY_CONFIRMED_YES;
             $urlyes = new moodle_url('items_manage.php', $optionsyes);
             $buttonyes = new single_button($urlyes, get_string('yes'));
 
-            $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
+            $optionsno = $optionbase;
+            $optionsno['cnf'] = SURVEY_CONFIRMED_NO;
             $urlno = new moodle_url('items_manage.php', $optionsno);
             $buttonno = new single_button($urlno, get_string('no'));
 
@@ -1084,12 +1127,11 @@ class mod_survey_itemlist {
                     $record->template = null;
                     $DB->update_record('survey', $record);
 
-                    $paramurl = array('id' => $this->cm->id);
-                    $returnurl = new moodle_url('items_manage.php', $paramurl);
+                    $returnurl = new moodle_url('items_manage.php', array('id' => $this->cm->id));
                     redirect($returnurl);
                     break;
                 case SURVEY_CONFIRMED_NO:
-                    $paramurl = array('id' => $this->cm->id, 'act' => SURVEY_PREVIEWSURVEY);
+                    $paramurl = array('id' => $this->cm->id, 'view' => SURVEY_PREVIEWSURVEY);
                     $returnurl = new moodle_url('view.php', $paramurl);
                     redirect($returnurl);
                     break;
@@ -1208,7 +1250,7 @@ class mod_survey_itemlist {
         // $table->set_attribute('width', '90%');
         $table->setup();
 
-        /*****************************************************************************/
+
         $edittitle = get_string('edit');
         $okstring = get_string('ok');
 
@@ -1234,23 +1276,23 @@ class mod_survey_itemlist {
 
             $tablerow = array();
 
-            // *************************************** plugin
+            // plugin
             $plugintitle = get_string('pluginname', 'survey'.$item->get_type().'_'.$item->get_plugin());
             $content = $OUTPUT->pix_icon('icon', $plugintitle, 'survey'.$item->get_type().'_'.$item->get_plugin(),
                     array('title' => $plugintitle, 'class' => 'iconsmall'));
             $tablerow[] = $content;
 
-            // *************************************** content
+            // content
             $item->set_contentformat(FORMAT_HTML);
             $item->set_contenttrust(1);
 
             $output = $item->get_content();
             $tablerow[] = $output;
 
-            // *************************************** sortindex
+            // sortindex
             $tablerow[] = $item->get_sortindex();
 
-            // *************************************** parentid
+            // parentid
             if ($item->get_parentid()) {
                 $message = get_string('parentid_alt', 'survey');
                 $content = $parentitem->get_sortindex();
@@ -1262,14 +1304,14 @@ class mod_survey_itemlist {
             }
             $tablerow[] = $content;
 
-            // *************************************** parentconstraints
+            // parentconstraints
             if ($item->get_parentid()) {
                 $tablerow[] = $parentitem->item_list_constraints();
             } else {
                 $tablerow[] = '-';
             }
 
-            // *************************************** status
+            // status
             if ($item->get_parentid()) {
                 $status = $parentitem->parent_validate_child_constraints($item->parentvalue);
                 if ($status === true) {
@@ -1289,7 +1331,7 @@ class mod_survey_itemlist {
                 $tablerow[] = '-';
             }
 
-            // *************************************** actions
+            // actions
             // -----------------------------
             // $paramurlbase definition
             $paramurlbase = array();
@@ -1300,11 +1342,11 @@ class mod_survey_itemlist {
             // end of $paramurlbase definition
             // -----------------------------
 
-            // *************************************** SURVEY_EDITITEM
-            $paramurl = $paramurlbase + array('act' => SURVEY_EDITITEM);
-            $basepath = new moodle_url('items_setup.php', $paramurl);
+            // SURVEY_EDITITEM
+            $paramurl = $paramurlbase;
+            $paramurl['view'] = SURVEY_EDITITEM;
 
-            $icons = $OUTPUT->action_icon(new moodle_url('items_manage.php', $paramurl),
+            $icons = $OUTPUT->action_icon(new moodle_url('items_setup.php', $paramurl),
                 new pix_icon('t/edit', $edittitle, 'moodle', array('title' => $edittitle)),
                 null, array('title' => $edittitle));
 

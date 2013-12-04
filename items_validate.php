@@ -55,6 +55,7 @@ $itemid = 0;
 $itemtomove = 0;
 $userfeedback = SURVEY_NOFEEDBACK;
 $action = SURVEY_NOACTION;
+$view = SURVEY_SERVESURVEY;
 $lastitembefore = 0;
 $confirm = SURVEY_UNCONFIRMED;
 $nextindent = 0;
@@ -67,7 +68,7 @@ require_capability('mod/survey:setupitems', $context);
 // -----------------------------
 // calculations
 // -----------------------------
-$itemlistman = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
+$itemlistman = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $view, $itemtomove,
                                            $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
 
 // -----------------------------

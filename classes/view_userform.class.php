@@ -73,9 +73,9 @@ class mod_survey_userformmanager {
     public $firstpageleft = 0;
 
     /*
-     * $action
+     * $view
      */
-    public $action = SURVEY_NOACTION;
+    public $view = SURVEY_SERVESURVEY;
 
     /*
      * $currentpage: The tab of the module where the page will be shown
@@ -115,15 +115,15 @@ class mod_survey_userformmanager {
     /*
      * Class constructor
      */
-    public function __construct($cm, $survey, $submissionid, $formpage, $action) {
+    public function __construct($cm, $survey, $submissionid, $formpage, $view) {
         global $DB;
 
         $this->cm = $cm;
         $this->context = context_module::instance($cm->id);
         $this->survey = $survey;
         $this->submissionid = $submissionid;
-        $this->action = $action;
-        $this->set_page_from_action();
+        $this->view = $view;
+        $this->set_page_from_view();
 
         // $this->canmanageitems = has_capability('mod/survey:manageitems', $this->context, null, true);
         $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
@@ -242,13 +242,13 @@ class mod_survey_userformmanager {
     }
 
     /*
-     * set_page_from_action
+     * set_page_from_view
      *
      * @param
      * @return
      */
-    public function set_page_from_action() {
-        switch ($this->action) {
+    public function set_page_from_view() {
+        switch ($this->view) {
             case SURVEY_NOACTION:
                 $this->currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
                 $this->currentpage = SURVEY_SUBMISSION_ATTEMPT; // needed by tabs.php
@@ -266,7 +266,7 @@ class mod_survey_userformmanager {
                 $this->currentpage = SURVEY_SUBMISSION_READONLY; // needed by tabs.php
                 break;
             default:
-                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $action = '.$action);
+                debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->view = '.$this->view);
         }
     }
 
@@ -995,7 +995,7 @@ class mod_survey_userformmanager {
 
         $allowed = true;
         $mygroups = survey_get_my_groups($this->cm);
-        switch ($this->action) {
+        switch ($this->view) {
             case SURVEY_NOACTION:
                 $allowed = has_capability('mod/survey:view', $this->context);
                 break;

@@ -51,17 +51,13 @@ add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, 
 
 $cover = optional_param('cvp', 1, PARAM_INT); // by default user asks for the cover page
 $formpage = optional_param('formpage' , 0, PARAM_INT); // form page number
-$action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
+$view = optional_param('view', SURVEY_SERVESURVEY, PARAM_INT);
 $submissionid = optional_param('submissionid', 0, PARAM_INT);
-
-if ($action != SURVEY_NOACTION) {
-    require_sesskey();
-}
 
 // -----------------------------
 // calculations
 // -----------------------------
-$userpageman = new mod_survey_userformmanager($cm, $survey, $submissionid, $formpage, $action);
+$userpageman = new mod_survey_userformmanager($cm, $survey, $submissionid, $formpage, $view);
 $userpageman->prevent_direct_user_input();
 $userpageman->survey_add_custom_css();
 
@@ -79,7 +75,7 @@ $hassubmitbutton = $hassubmitbutton && ($userpageman->currentpage != SURVEY_ITEM
 
 // -----------------------------
 // define $user_form return url
-$paramurl = array('id' => $cm->id, 'cvp' => 0, 'act' => $action);
+$paramurl = array('id' => $cm->id, 'cvp' => 0, 'view' => $view);
 $formurl = new moodle_url('view.php', $paramurl);
 // end of: define $user_form return url
 // -----------------------------
@@ -99,7 +95,7 @@ $formparams->cansubmit = $userpageman->cansubmit;
 // end of: prepare params for the form
 // -----------------------------
 
-if ($action == SURVEY_READONLYRESPONSE) {
+if ($view == SURVEY_READONLYRESPONSE) {
     $userpageform = new survey_submissionform($formurl, $formparams, 'post', '', array('id' => 'remoteuserentry'), false);
 } else {
     $userpageform = new survey_submissionform($formurl, $formparams, 'post', '', array('id' => 'remoteuserentry'));
@@ -159,7 +155,7 @@ $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->shortname);
 
 // make bold the navigation menu/link that refers to me
-$url = new moodle_url('/mod/survey/view.php', array('s' => $survey->id, 'act' => $action));
+$url = new moodle_url('/mod/survey/view.php', array('s' => $survey->id));
 navigation_node::override_active_url($url);
 
 // other things you may want to set - remove if not needed

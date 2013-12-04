@@ -53,6 +53,7 @@ $type = optional_param('type', null, PARAM_TEXT);
 $plugin = optional_param('plugin', null, PARAM_TEXT);
 $itemid = optional_param('itemid', 0, PARAM_INT);
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
+$view = optional_param('view', SURVEY_SERVESURVEY, PARAM_INT);
 $itemtomove = optional_param('itm', 0, PARAM_INT);
 $lastitembefore = optional_param('lib', 0, PARAM_INT);
 $confirm = optional_param('cnf', SURVEY_UNCONFIRMED, PARAM_INT);
@@ -109,7 +110,7 @@ if (!$itemcount) {
     if ($mtemplateman->formdata = $applymtemplate->get_data()) {
         $mtemplateman->apply_template(SURVEY_MASTERTEMPLATE);
 
-        $redirecturl = new moodle_url('view.php', array('id' => $cm->id, 'act' => SURVEY_PREVIEWSURVEY));
+        $redirecturl = new moodle_url('view.php', array('id' => $cm->id, 'view' => SURVEY_PREVIEWSURVEY));
         redirect($redirecturl);
     }
     // end of: manage form submission
@@ -120,7 +121,7 @@ if (!$itemcount) {
 
 // -----------------------------
 // the form showing the drop down menu with the list of items
-$itemlistman = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
+$itemlistman = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $view, $itemtomove,
                                             $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
 // I need to execute this method before the page load because it modifies TAB elements
 $itemlistman->drop_multilang();

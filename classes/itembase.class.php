@@ -348,6 +348,7 @@ class mod_survey_itembase {
                 if ($oldhide != $record->hide) {
                     $survey = $DB->get_record('survey', array('id' => $cm->instance), '*', MUST_EXIST);
                     $action = ($oldhide) ? SURVEY_SHOWITEM : SURVEY_HIDEITEM;
+                    $view = 0;
                     $itemtomove = 0;
                     $lastitembefore = 0;
                     $confirm = SURVEY_CONFIRMED_YES;
@@ -356,7 +357,7 @@ class mod_survey_itembase {
                     $userfeedback = 0;
                     $saveasnew  = 0;
                     $itemlistman = new mod_survey_itemlist($cm, $context, $survey, $record->type, $record->plugin,
-                                           $record->itemid, $action, $itemtomove, $lastitembefore,
+                                           $record->itemid, $action, $view, $itemtomove, $lastitembefore,
                                            $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
                 }
 
@@ -381,6 +382,7 @@ class mod_survey_itembase {
                 if ($oldadvanced != $record->advanced) {
                     $survey = $DB->get_record('survey', array('id' => $cm->instance), '*', MUST_EXIST);
                     $action = ($oldadvanced) ? SURVEY_MAKEFORALL : SURVEY_MAKELIMITED;
+                    $view = 0;
                     $itemtomove = 0;
                     $lastitembefore = 0;
                     $confirm = SURVEY_CONFIRMED_YES;
@@ -389,7 +391,7 @@ class mod_survey_itembase {
                     $userfeedback = 0;
                     $saveasnew  = 0;
                     $itemlistman = new mod_survey_itemlist($cm, $context, $survey, $record->type, $record->plugin,
-                                           $record->itemid, $action, $itemtomove, $lastitembefore,
+                                           $record->itemid, $action, $view, $itemtomove, $lastitembefore,
                                            $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
                 }
                 // limit/unlimit access part 2

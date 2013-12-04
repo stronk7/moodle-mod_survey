@@ -52,6 +52,7 @@ $type = optional_param('type', null, PARAM_TEXT);
 $plugin = optional_param('plugin', null, PARAM_TEXT);
 $itemid = optional_param('itemid', 0, PARAM_INT);
 $action = optional_param('act', SURVEY_NOACTION, PARAM_INT);
+$view = optional_param('view', SURVEY_SERVESURVEY, PARAM_INT);
 
 if ($action != SURVEY_NOACTION) {
     require_sesskey();
@@ -72,7 +73,7 @@ require_capability('mod/survey:additems', $context);
 // -----------------------------
 // calculations
 // -----------------------------
-$itemlistman = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $itemtomove,
+$itemlistman = new mod_survey_itemlist($cm, $context, $survey, $type, $plugin, $itemid, $action, $view, $itemtomove,
                                            $lastitembefore, $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
 $itemlistman->prevent_direct_user_input();
 

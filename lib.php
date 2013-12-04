@@ -84,34 +84,36 @@ define('SURVEY_TYPEFORMAT', 'format');
     define('SURVEY_NOACTION'          , '0');
 
     // ITEM MANAGEMENT section
-    define('SURVEY_EDITITEM'          , '1');
-    define('SURVEY_CHANGEORDERASK'    , '2');
-    define('SURVEY_CHANGEORDER'       , '3');
-    define('SURVEY_HIDEITEM'          , '4');
-    define('SURVEY_SHOWITEM'          , '5');
-    define('SURVEY_DELETEITEM'        , '6');
-    define('SURVEY_DROPMULTILANG'     , '7');
-    define('SURVEY_REQUIREDOFF'       , '8');
-    define('SURVEY_REQUIREDON'        , '9');
-    define('SURVEY_CHANGEINDENT'      , '10');
-    define('SURVEY_ADDTOSEARCH'       , '11');
-    define('SURVEY_OUTOFSEARCH'       , '12');
-    define('SURVEY_MAKEFORALL'        , '13');
-    define('SURVEY_MAKELIMITED'       , '14');
+    define('SURVEY_CHANGEORDER'       , '1');
+    define('SURVEY_HIDEITEM'          , '2');
+    define('SURVEY_SHOWITEM'          , '3');
+    define('SURVEY_DELETEITEM'        , '4');
+    define('SURVEY_DROPMULTILANG'     , '5');
+    define('SURVEY_REQUIREDOFF'       , '6');
+    define('SURVEY_REQUIREDON'        , '7');
+    define('SURVEY_CHANGEINDENT'      , '8');
+    define('SURVEY_ADDTOSEARCH'       , '9');
+    define('SURVEY_OUTOFSEARCH'       , '10');
+    define('SURVEY_MAKEFORALL'        , '11');
+    define('SURVEY_MAKELIMITED'       , '12');
 
     // RESPONSES section
-    define('SURVEY_EDITRESPONSE'      , '15');
-    define('SURVEY_READONLYRESPONSE'  , '16');
-    define('SURVEY_DELETERESPONSE'    , '17');
-    define('SURVEY_DELETEALLRESPONSES', '18');
-    define('SURVEY_RESPONSETOPDF'     , '19');
-
-    // SURVEY section
-    define('SURVEY_PREVIEWSURVEY'     , '20');
+    define('SURVEY_DELETERESPONSE'    , '13');
+    define('SURVEY_DELETEALLRESPONSES', '14');
+    define('SURVEY_RESPONSETOPDF'     , '15');
 
     // UTEMPLATE section
-    define('SURVEY_DELETEUTEMPLATE'   , '21');
-    define('SURVEY_EXPORTUTEMPLATE'   , '22');
+    define('SURVEY_DELETEUTEMPLATE'   , '16');
+    define('SURVEY_EXPORTUTEMPLATE'   , '17');
+
+// VIEW
+define('SURVEY_SERVESURVEY'     , '0');
+define('SURVEY_PREVIEWSURVEY'   , '1');
+define('SURVEY_EDITRESPONSE'    , '2');
+define('SURVEY_READONLYRESPONSE', '3');
+
+define('SURVEY_EDITITEM'        , '4');
+define('SURVEY_CHANGEORDERASK'  , '5');
 
 // OVERFLOW
 define('SURVEY_LEFT_OVERFLOW' , -10);
@@ -783,7 +785,7 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
 
     // CHILDREN
     if ($canpreview) {
-        $localparamurl = array('s' => $cm->instance, 'act' => SURVEY_PREVIEWSURVEY);
+        $localparamurl = array('s' => $cm->instance, 'view' => SURVEY_PREVIEWSURVEY);
         $navnode->add(get_string('tabitemspage1', 'survey'), new moodle_url('/mod/survey/view.php', $localparamurl), navigation_node::TYPE_SETTING);
     }
     if ($canmanageitems) {

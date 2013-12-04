@@ -522,11 +522,14 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
             $message = get_string('askdeleteonetemplate', 'survey', $a);
             $optionsbase = array('s' => $this->survey->id, 'act' => SURVEY_DELETEUTEMPLATE);
 
-            $optionsyes = $optionsbase + array('cnf' => SURVEY_CONFIRMED_YES, 'fid' => $this->utemplateid);
+            $optionsyes = $optionsbase;
+            $optionsyes['cnf'] = SURVEY_CONFIRMED_YES;
+            $optionsyes['fid'] = $this->utemplateid;
             $urlyes = new moodle_url('utemplates_manage.php', $optionsyes);
             $buttonyes = new single_button($urlyes, get_string('yes'));
 
-            $optionsno = $optionsbase + array('cnf' => SURVEY_CONFIRMED_NO);
+            $optionsno = $optionsbase;
+            $optionsno['cnf'] = SURVEY_CONFIRMED_NO;
             $urlno = new moodle_url('utemplates_manage.php', $optionsno);
             $buttonno = new single_button($urlno, get_string('no'));
 

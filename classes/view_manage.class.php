@@ -124,8 +124,6 @@ class mod_survey_submissionmanager {
     public function manage_actions() {
         switch ($this->action) {
             case SURVEY_NOACTION:
-            case SURVEY_EDITRESPONSE:
-            case SURVEY_READONLYRESPONSE:
                 break;
             case SURVEY_DELETERESPONSE:
                 $this->manage_submission_deletion();
@@ -171,11 +169,14 @@ class mod_survey_submissionmanager {
 
             $optionbase = array('id' => $this->cm->id, 'act' => SURVEY_DELETERESPONSE);
 
-            $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES, 'submissionid' => $this->submissionid);
+            $optionsyes = $optionbase;
+            $optionsyes['cnf'] = SURVEY_CONFIRMED_YES;
+            $optionsyes['submissionid'] = $this->submissionid;
             $urlyes = new moodle_url('view_manage.php', $optionsyes);
             $buttonyes = new single_button($urlyes, get_string('confirmsurveydeletion', 'survey'));
 
-            $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
+            $optionsno = $optionbase;
+            $optionsno['cnf'] = SURVEY_CONFIRMED_NO;
             $urlno = new moodle_url('view_manage.php', $optionsno);
             $buttonno = new single_button($urlno, get_string('no'));
 
@@ -214,11 +215,13 @@ class mod_survey_submissionmanager {
 
             $optionbase = array('s' => $this->survey->id, 'surveyid' => $this->survey->id, 'act' => SURVEY_DELETEALLRESPONSES);
 
-            $optionsyes = $optionbase + array('cnf' => SURVEY_CONFIRMED_YES);
+            $optionsyes = $optionbase;
+            $optionsyes['cnf'] = SURVEY_CONFIRMED_YES;
             $urlyes = new moodle_url('view_manage.php', $optionsyes);
             $buttonyes = new single_button($urlyes, get_string('confirmallsurveysdeletion', 'survey'));
 
-            $optionsno = $optionbase + array('cnf' => SURVEY_CONFIRMED_NO);
+            $optionsno = $optionbase;
+            $optionsno['cnf'] = SURVEY_CONFIRMED_NO;
             $urlno = new moodle_url('view_manage.php', $optionsno);
             $buttonno = new single_button($urlno, get_string('no'));
 
@@ -399,7 +402,6 @@ class mod_survey_submissionmanager {
         // $table->set_attribute('width', '90%');
         $table->setup();
 
-        /*****************************************************************************/
         $status = array(SURVEY_STATUSINPROGRESS => get_string('statusinprogress', 'survey'),
                         SURVEY_STATUSCLOSED => get_string('statusclosed', 'survey'));
         $downloadpdftitle = get_string('downloadpdf', 'survey');
@@ -409,9 +411,8 @@ class mod_survey_submissionmanager {
         $restrictedaccess = get_string('restrictedaccess', 'survey');
         $duplicatetitle = get_string('duplicate');
 
-        $paramurl = array();
-        $paramurl['id'] = $this->cm->id;
-        $basepath = new moodle_url('view.php', $paramurl);
+        $paramurlbase = array('id' => $this->cm->id);
+        $basepath = new moodle_url('view.php', $paramurlbase);
 
         list($sql, $whereparams) = $this->get_manage_sql($table);
 
@@ -419,12 +420,10 @@ class mod_survey_submissionmanager {
 
         if ($submissions->valid()) {
             if ($this->canmanageallsubmissions) {
-                $paramurl = array();
-                $paramurl['s'] = $this->survey->id;
+                $paramurl = $paramurlbase;
                 $paramurl['act'] = SURVEY_DELETEALLRESPONSES;
                 $url = new moodle_url('/mod/survey/view_manage.php', $paramurl);
-                $caption = get_string('deleteallsubmissions', 'survey');
-                echo $OUTPUT->single_button($url, $caption, 'get');
+                echo $OUTPUT->single_button($url, get_string('deleteallsubmissions', 'survey'), 'get');
             }
 
             foreach ($submissions as $submission) {
@@ -452,10 +451,12 @@ class mod_survey_submissionmanager {
                 }
 
                 // actions
+                $paramurl = $paramurlbase;
                 $paramurl['submissionid'] = $submission->submissionid;
                 $paramurl['cvp'] = 0;
-                if ($this->canmanageallsubmissions || $this->caneditgroupsubmissions) { // edit
-                    $paramurl['act'] = SURVEY_EDITRESPONSE;
+                // edit
+                if ($this->canmanageallsubmissions || $this->caneditgroupsubmissions) {
+                    $paramurl['view'] = SURVEY_EDITRESPONSE;
                     if ($submission->status == SURVEY_STATUSCLOSED) {
                         if ($this->survey->history) {
                             $icontitle = $duplicatetitle;
@@ -477,14 +478,14 @@ class mod_survey_submissionmanager {
                     // I don't have canmanageallsubmissions && $this->caneditgroupsubmissions
                     // but if I meet an "in progress" submission of mine...
                     if (($submission->status == SURVEY_STATUSINPROGRESS) && ($submission->userid == $USER->id)) {
-                        $paramurl['act'] = SURVEY_EDITRESPONSE;
+                        $paramurl['view'] = SURVEY_EDITRESPONSE;
                         $icontitle = $edittitle;
 
                         $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
                             new pix_icon('t/edit', $icontitle, 'moodle', array('title' => $icontitle)),
                             null, array('title' => $icontitle));
                     } else { // submission is closed
-                        $paramurl['act'] = SURVEY_READONLYRESPONSE;
+                        $paramurl['view'] = SURVEY_READONLYRESPONSE;
                         $icontitle = $restrictedaccess;
 
                         $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
@@ -493,8 +494,10 @@ class mod_survey_submissionmanager {
                     }
                 }
 
-                if ($this->canmanageallsubmissions || $this->candeletegroupsubmissions) { // delete
+                // delete
+                if ($this->canmanageallsubmissions || $this->candeletegroupsubmissions) {
                     $paramurl['act'] = SURVEY_DELETERESPONSE;
+                    $paramurl['sesskey'] = sesskey();
 
                     $icons .= $OUTPUT->action_icon(new moodle_url('view_manage.php', $paramurl),
                         new pix_icon('t/delete', $deletetitle, 'moodle', array('title' => $deletetitle)),
@@ -545,12 +548,6 @@ class mod_survey_submissionmanager {
         $allowed = true;
         $mygroups = survey_get_my_groups($this->cm);
         switch ($this->action) {
-            case SURVEY_READONLYRESPONSE:
-                $allowed = $this->canseegroupsubmissions;
-                break;
-            case SURVEY_EDITRESPONSE:
-                $allowed = $this->caneditgroupsubmissions;
-                break;
             case SURVEY_DELETERESPONSE:
                 $allowed = $this->candeletegroupsubmissions;
                 break;
@@ -559,6 +556,16 @@ class mod_survey_submissionmanager {
                 break;
             case SURVEY_DELETEALLRESPONSES:
                 $allowed = has_capability('mod/survey:deleteallsubmissions', $this->context);
+                break;
+            default:
+                $allowed = false;
+        }
+        switch ($this->view) {
+            case SURVEY_READONLYRESPONSE:
+                $allowed = $this->canseegroupsubmissions;
+                break;
+            case SURVEY_EDITRESPONSE:
+                $allowed = $this->caneditgroupsubmissions;
                 break;
             default:
                 $allowed = false;

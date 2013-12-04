@@ -149,14 +149,14 @@ switch ($currenttab) {
         }
 
         if ($currentpage == SURVEY_SUBMISSION_EDIT) { // edit
-            $localparamurl = array('id' => $cm->id, 'act' => SURVEY_EDITRESPONSE);
+            $localparamurl = array('id' => $cm->id, 'view' => SURVEY_EDITRESPONSE);
             $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
             $strlabel = get_string('tabsubmissionspage3', 'survey'); // edit
             $row[] = new tabobject('idpage4', $elementurl->out(), $strlabel);
         }
 
         if ($currentpage == SURVEY_SUBMISSION_READONLY) { // read only
-            $localparamurl = array('id' => $cm->id, 'act' => SURVEY_READONLYRESPONSE);
+            $localparamurl = array('id' => $cm->id, 'view' => SURVEY_READONLYRESPONSE);
             $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
             $strlabel = get_string('tabsubmissionspage4', 'survey'); // read only
             $row[] = new tabobject('idpage5', $elementurl->out(), $strlabel);
@@ -195,7 +195,7 @@ switch ($currenttab) {
 
         $row = array();
         if ($canpreview) { // preview
-            $localparamurl = array('id' => $cm->id, 'act' => SURVEY_PREVIEWSURVEY);
+            $localparamurl = array('id' => $cm->id, 'cvp' => 0, 'view' => SURVEY_PREVIEWSURVEY);
             $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
             $strlabel = get_string('tabitemspage1', 'survey');
             $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
