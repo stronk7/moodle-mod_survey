@@ -215,6 +215,7 @@ class mod_survey_exportmanager {
             $mygroups = survey_get_my_groups($this->cm);
 
             $oldrichsubmissionid = 0;
+            $strnever = get_string('never');
 
             foreach ($richsubmissions as $richsubmission) {
                 if ($oldrichsubmissionid == $richsubmission->submissionid) {
@@ -237,7 +238,11 @@ class mod_survey_exportmanager {
                     $recordtoexport += $placeholders;
 
                     $recordtoexport['timecreated'] = userdate($richsubmission->timecreated);
-                    $recordtoexport['timemodified'] = userdate($richsubmission->timemodified);
+                    if ($richsubmission->timemodified) {
+                        $recordtoexport['timemodified'] = userdate($richsubmission->timemodified);
+                    } else {
+                        $recordtoexport['timemodified'] = $strnever;
+                    }
                     $recordtoexport[$richsubmission->itemid] = $this->decode_content($richsubmission);
                 }
             }
