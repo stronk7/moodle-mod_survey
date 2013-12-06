@@ -1110,6 +1110,21 @@ class mod_survey_userformmanager {
         $messages = array();
         // end of: general info
 
+        // the button to add one more survey
+        if ($this->cansubmit) {
+            if (($this->survey->maxentries == 0) || ($next < $this->survey->maxentries)) {
+                $url = new moodle_url('/mod/survey/view.php', array('id' => $this->cm->id, 'cvp' => 0));
+                echo $OUTPUT->single_button($url, get_string('addonemore', 'survey'), 'get');
+            } else {
+                $message = get_string('nomorerecordsallowed', 'survey', $this->survey->maxentries);
+                echo $OUTPUT->container($message, 'centerpara');
+            }
+        } else {
+            $message = get_string('cannotsubmit', 'survey');
+            echo $OUTPUT->container($message, 'mdl-left');
+        }
+        // end of: the button to add one more survey
+
         // report
         $surveyreportlist = get_plugin_list('surveyreport');
         $paramurlbase = array('id' => $this->cm->id);
@@ -1164,29 +1179,19 @@ class mod_survey_userformmanager {
         // end of: user templates
 
         // master templates
-        if ($cansavemastertemplate || $this->applymastertemplate) {
+        if ($cansavemastertemplate) {
             $url = new moodle_url('/mod/survey/mtemplates_create.php', $paramurlbase);
+            $messages[] = get_string('savemastertemplates', 'survey', $url->out());
+        }
+
+        if ($canapplymastertemplate) {
+            $url = new moodle_url('/mod/survey/mtemplates_apply.php', $paramurlbase);
             $messages[] = get_string('applymastertemplates', 'survey', $url->out());
         }
 
         $this->display_messages($messages);
         $messages = array();
         // end of: master templates
-
-        // the button to add one more survey
-        if ($this->cansubmit) {
-            if (($this->survey->maxentries == 0) || ($next < $this->survey->maxentries)) {
-                $url = new moodle_url('/mod/survey/view.php', array('id' => $this->cm->id, 'cvp' => 0));
-                echo $OUTPUT->single_button($url, get_string('addonemore', 'survey'), 'get');
-            } else {
-                $message = get_string('nomorerecordsallowed', 'survey', $this->survey->maxentries);
-                echo $OUTPUT->container($message, 'centerpara');
-            }
-        } else {
-            $message = get_string('cannotsubmit', 'survey');
-            echo $OUTPUT->container($message, 'mdl-left');
-        }
-        // end of: the button to add one more survey
 
         echo $OUTPUT->footer();
     }

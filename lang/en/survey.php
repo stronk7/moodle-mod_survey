@@ -308,6 +308,7 @@ $string['riskyeditdeadline_help'] = 'Allow users permitted to manage survey elem
 $string['riskyeditdeadline'] = 'Deadline of risky modification session';
 $string['runreport'] = '<a href="{$a->href}">Run {$a->reportname} report</a>';
 $string['saveasnew'] = 'Save as new';
+$string['savemastertemplates'] = '<a href="{$a}">Save master templates</a>';
 $string['saveresume_help'] = 'Allow to save a survey in order to resume data entry and submit you survey next time';
 $string['saveresume'] = 'Allow Save/Resume';
 $string['saveusertemplates'] = '<a href="{$a}">Save user templates</a>';
