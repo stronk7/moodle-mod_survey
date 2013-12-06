@@ -496,7 +496,6 @@ class mod_survey_itemlist {
                 // SURVEY_EDITITEM
                 $paramurl = $paramurlbase;
                 $paramurl['view'] = SURVEY_EDITITEM;
-                $paramurl['sesskey'] = sesskey();
 
                 $icons .= $OUTPUT->action_icon(new moodle_url('items_setup.php', $paramurl),
                     new pix_icon('t/edit', $edittitle, 'moodle', array('title' => $edittitle)),

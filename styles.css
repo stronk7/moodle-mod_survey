@@ -186,21 +186,21 @@
 }
 
 /* BEGIN OF: selectors for the static field explaining the format needed by each plugin in parentcontent field */
-#page-mod-survey-item_setup .pluginname {
+#page-mod-survey-items_setup .pluginname {
     left:0;
     width:25%;
     float:left;
     /*border:1px green solid;*/
 }
 
-#page-mod-survey-item_setup .inputformat {
+#page-mod-survey-items_setup .inputformat {
     position:relative:
     padding-left:26%;
     margin-left:26%;
     /*border:1px blue solid;*/
 }
 
-#page-mod-survey-item_setup .felement.fstatic ul {
+#page-mod-survey-items_setup .felement.fstatic ul {
     line-height:1.2em;
 }
 /* END OF: selectors for the static field explaining the format needed by each plugin in parentcontent field */
