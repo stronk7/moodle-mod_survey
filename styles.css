@@ -185,6 +185,18 @@
     display:inline;
 }
 
+#page-mod-survey-view fieldset.infofieldsset {
+    border: 1px solid #DDDDDD;
+    margin: 0 1em 1em 1em;
+    padding: 0.5em 1em;
+}
+
+#page-mod-survey-view legend.infolegend {
+    padding: 0 0.35em;
+    font-weight: bold;
+    margin: 0 0.5em;
+}
+
 /* BEGIN OF: selectors for the static field explaining the format needed by each plugin in parentcontent field */
 #page-mod-survey-items_setup .pluginname {
     left:0;

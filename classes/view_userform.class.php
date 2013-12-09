@@ -1106,7 +1106,7 @@ class mod_survey_userformmanager {
             }
         }
 
-        $this->display_messages($messages);
+        $this->display_messages($messages, get_string('attemptinfo', 'survey'));
         $messages = array();
         // end of: general info
 
@@ -1154,7 +1154,7 @@ class mod_survey_userformmanager {
             }
         }
 
-        $this->display_messages($messages);
+        $this->display_messages($messages, get_string('reportsection', 'survey'));
         $messages = array();
         // end of: report
 
@@ -1174,7 +1174,7 @@ class mod_survey_userformmanager {
             $messages[] = get_string('importusertemplates', 'survey', $url->out());
         }
 
-        $this->display_messages($messages);
+        $this->display_messages($messages, get_string('utemplatessection', 'survey'));
         $messages = array();
         // end of: user templates
 
@@ -1189,7 +1189,7 @@ class mod_survey_userformmanager {
             $messages[] = get_string('applymastertemplates', 'survey', $url->out());
         }
 
-        $this->display_messages($messages);
+        $this->display_messages($messages, get_string('mtemplatessection', 'survey'));
         $messages = array();
         // end of: master templates
 
@@ -1202,15 +1202,20 @@ class mod_survey_userformmanager {
      *
      * @return
      */
-    public function display_messages($messages) {
+    public function display_messages($messages, $strlegend) {
         global $OUTPUT;
 
         if (count($messages)) {
-            echo $OUTPUT->box_start('box generalbox description', 'intro');
+            // echo $OUTPUT->box_start('box generalbox description', 'intro');
+            echo html_writer::start_tag('fieldset', array('class' => 'infofieldsset'));
+            echo html_writer::start_tag('legend', array('class' => 'infolegend'));
+            echo $strlegend;
+            echo html_writer::end_tag('legend');
             foreach ($messages as $message) {
                 echo $OUTPUT->container($message, 'mdl-left');
             }
-            echo $OUTPUT->box_end();
+            echo html_writer::end_tag('fieldset');
+            // echo $OUTPUT->box_end();
         }
     }
 }
