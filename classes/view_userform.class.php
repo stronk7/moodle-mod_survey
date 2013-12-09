@@ -1076,13 +1076,13 @@ class mod_survey_userformmanager {
 
         // general info
         if ($this->survey->timeopen) { // opening time:
-            $key = ($this->survey->timeopen > $timenow) ? 'willopen' : 'opened';
-            $messages[] = get_string($key, 'survey').': '.$this->survey->timeopen;
+            $key = ($this->survey->timeopen > $timenow) ? 'willopenat' : 'openedat';
+            $messages[] = get_string($key, 'survey').': '.userdate($this->survey->timeopen);
         }
 
         if ($this->survey->timeclose) { // closing time:
-            $key = ($this->survey->timeopen > $timenow) ? 'willclose' : 'closed';
-            $messages[] = get_string($key, 'survey').': '.$this->survey->timeclose;
+            $key = ($this->survey->timeopen > $timenow) ? 'willcloseat' : 'closedat';
+            $messages[] = get_string($key, 'survey').': '.userdate($this->survey->timeclose);
         }
 
         if ($this->cansubmit) {

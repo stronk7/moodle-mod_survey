@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/survey/db" VERSION="20090908" COMMENT="XMLDB file for Moodle mod/survey"
+<XMLDB PATH="mod/survey/db" VERSION="20131209" COMMENT="XMLDB file for Moodle mod/survey"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -30,11 +30,9 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="surveyid" TYPE="foreign" FIELDS="surveyid" REFTABLE="survey" REFFIELDS="id"/>
+        <KEY NAME="itemid" TYPE="foreign-unique" FIELDS="itemid" REFTABLE="survey_item" REFFIELDS="id"/>
       </KEYS>
-      <INDEXES>
-        <INDEX NAME="surveyid" UNIQUE="false" FIELDS="surveyid"/>
-        <INDEX NAME="itemid"   UNIQUE="true"  FIELDS="itemid"/>
-      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
