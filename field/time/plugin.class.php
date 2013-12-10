@@ -266,7 +266,7 @@ class surveyfield_time extends mod_survey_itembase {
      * @return
      */
     public function item_time_to_unix_time($hour, $minute) {
-        return (gmmktime($hour, $minute, 0, 1, 1, SURVEYFIELD_TIME_YEAROFFSET)); // This is GMT
+        return (gmmktime($hour, $minute, 0, SURVEYFIELD_TIME_MONTHOFFSET, SURVEYFIELD_TIME_DAYOFFSET, SURVEYFIELD_TIME_YEAROFFSET)); // This is GMT
     }
 
     /*

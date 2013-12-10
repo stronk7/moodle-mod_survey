@@ -25,6 +25,8 @@ defined('MOODLE_INTERNAL') || die();
 
 // Some constants
 define('SURVEYFIELD_TIME_YEAROFFSET', 1970);
+define('SURVEYFIELD_TIME_DAYOFFSET', 1);
+define('SURVEYFIELD_TIME_MONTHOFFSET', 1);
 define('SURVEYFIELD_TIME_FORMAT', '[hh:mm]');
 
 /*

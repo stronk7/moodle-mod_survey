@@ -17,9 +17,11 @@ button is needed. (thanks to JR)
 
 
 
-1) While looking for DB columns in the DB I found all the install.xml strangely formatted. And also, built with some old version of the editor (we are PREV/NEXT free since some months ago).
-2) Some indexes in those files should be defined as foreign keys. DANIELE fixed this.
-3) Creating some items I discovered that they content was being stored into item->content (missing format) instead of survey_textarea
+
+
+1) ELOY to review the whole structure looks ok. Ignore formatting. While looking for DB columns in the DB I found all the install.xml strangely formatted. And also, built with some old version of the editor (we are PREV/NEXT free since some months ago). Custom formatting continues there. It’s not the end of the world, so keeping it for now.
+2) ELOY: reviewing 1) will also review this. Some indexes in those files should be defined as foreign keys.
+3) DANIELE to provide a huge example with all branching/options exposed: Creating some items I discovered that they content was being stored into item->content (missing format) instead of survey_textarea
 4) The field/format subplugin duality... is tricky. Perhaps it would be better to make all them fileds (with/without accepting responses).
 5) Still it seems to be something strange when handling fileareas. I just grepped by get_area_files and found a bunch of them new/strange for me. ELOY has to review this!
 6) Comments in italian.
@@ -32,10 +34,11 @@ MDL-28194: I am in trouble assigning syles to some mform element.  MDL-31796: 
 > more yet, if there are groups... then everything (listing, reports, graphs)  > must be by group.
 things like the "phantom tabs" (sorry for the expression, lol, just joking) or the way "attempts" are performed... are substandard (to name it in some way).
 10) A read me about what's missing (backup, migration from old, usability review and discussion)
- 11) A commit (decided by you) where you want me to cut history. Can be current commit of anything else if you want to preserve your latest commits for any reason.
- 12) A BIG WARNING saying that it must not be used in production sites with existing old surveys because they will be erased completely (beacuse of 1).  README.md (so it will display nicely in github) ?
- 13) Delete any other todo and similar.
+11) A commit (decided by you) where you want me to cut history. Can be current commit of anything else if you want to preserve your latest commits for any reason.
+12) A BIG WARNING saying that it must not be used in production sites with existing old surveys because they will be erased completely (beacuse of 1).  README.md (so it will display nicely in github) ?
+13) Delete any other todo and similar.
 14) start using the tracker for issues, lol.
  15) start using proper commit messages with tracker issues always  (headbang)  we can do that toady, np, here. what do you think?
 16) Add support for generators
 17) Attempts / responses. How should we name those things?
+

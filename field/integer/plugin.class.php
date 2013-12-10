@@ -499,6 +499,8 @@ EOS;
 
             $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_integer', $a);
         } else {
+            $fillinginstruction = '';
+
             if ($haslowerbound) {
                 $a = $lowerbound;
                 $fillinginstruction = get_string('restriction_lower', 'surveyfield_integer', $a);

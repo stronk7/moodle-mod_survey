@@ -64,9 +64,13 @@ $userpageman->survey_add_custom_css();
 // redirect if no items were created and you are supposed to create them
 if ($userpageman->canaccessadvanceditems) {
     if (!$userpageman->count_input_items()) {
-        $paramurl = array('id' => $cm->id);
-        $returnurl = new moodle_url('items_manage.php', $paramurl);
-        redirect($returnurl);
+        if ($formpage == 1) {
+            $paramurl = array('id' => $cm->id);
+            $returnurl = new moodle_url('items_manage.php', $paramurl);
+            redirect($returnurl);
+        } else {
+            throw new Exception('Can\'t find items to display in page '.$formpage);
+        }
     }
 }
 
@@ -131,7 +135,7 @@ if ($userpageman->formdata = $userpageform->get_data()) {
 
     if ($prevbutton) {
         // $userpageman->formdata->formpage in the worst case becomes equal to 1 such as left $overflow (-1)
-        $userpageman->next_not_empty_page(false, $userpageman->formpage);
+        $userpageman->next_not_empty_page(false, $userpageman->formpage, $userpageman->currentpage);
         $paramurl['formpage'] = $userpageman->firstpageleft;
         redirect(new moodle_url('view.php', $paramurl)); // -> go to the first non empty previous page of the form
     }
@@ -139,7 +143,7 @@ if ($userpageman->formdata = $userpageform->get_data()) {
     $nextbutton = (isset($userpageman->formdata->nextbutton) && ($userpageman->formdata->nextbutton));
     if ($nextbutton) {
         // $userpageman->formdata->formpage in the worst case could become $firstpageleft such as right $overflow (-2)
-        $userpageman->next_not_empty_page(true, $userpageman->formpage);
+        $userpageman->next_not_empty_page(true, $userpageman->formpage, $userpageman->currentpage);
         $paramurl['formpage'] = $userpageman->firstpageright;
         redirect(new moodle_url('view.php', $paramurl)); // -> go to the first non empty next page of the form
     }
