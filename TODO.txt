@@ -14,3 +14,28 @@ button is needed. (thanks to JR)
 -> is the autofill field saved to userdata even if it is not shown?
 -> allow upperbound date/datetime == to now
 -> the option "not answered" is missing in the search form even if a "Answer not provided" may be found
+
+
+
+1) While looking for DB columns in the DB I found all the install.xml strangely formatted. And also, built with some old version of the editor (we are PREV/NEXT free since some months ago).
+2) Some indexes in those files should be defined as foreign keys. DANIELE fixed this.
+3) Creating some items I discovered that they content was being stored into item->content (missing format) instead of survey_textarea
+4) The field/format subplugin duality... is tricky. Perhaps it would be better to make all them fileds (with/without accepting responses).
+5) Still it seems to be something strange when handling fileareas. I just grepped by get_area_files and found a bunch of them new/strange for me. ELOY has to review this!
+6) Comments in italian.
+7) Done: The way an "attempt" is started (especially when the student has already filled a previous one is strange. DANIELE fixed this.
+8) Some settings, like the max/min year sound strange in the module.
+9) More coming, for sure.
+MDL-28194: I am in trouble assigning syles to some mform element.  MDL-31796: $mform->disabledIf doesn't work for 'filemanager' mform elements.  MDL-34815: Disabled mform items need to be skipped during validation (and more).
+> Also. I'd recommend taking rid of the filearea constants. They don't help  > much. And it seems that there are more than the currently used ones. Using  > literals is ok.
+> ah, one more detail. It just came to my mind now. When looking for user  > attempts... it's correct (i think) to show the pager and the alphabet  > (abcdef...) but only if the user is teacher or so (some capability). Normal  > students are only able to see OWN attempts, correct? The alphabet does not  > have any sense there.
+> more yet, if there are groups... then everything (listing, reports, graphs)  > must be by group.
+things like the "phantom tabs" (sorry for the expression, lol, just joking) or the way "attempts" are performed... are substandard (to name it in some way).
+10) A read me about what's missing (backup, migration from old, usability review and discussion)
+ 11) A commit (decided by you) where you want me to cut history. Can be current commit of anything else if you want to preserve your latest commits for any reason.
+ 12) A BIG WARNING saying that it must not be used in production sites with existing old surveys because they will be erased completely (beacuse of 1).  README.md (so it will display nicely in github) ?
+ 13) Delete any other todo and similar.
+14) start using the tracker for issues, lol.
+ 15) start using proper commit messages with tracker issues always  (headbang)  we can do that toady, np, here. what do you think?
+16) Add support for generators
+17) Attempts / responses. How should we name those things?

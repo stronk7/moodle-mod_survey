@@ -1076,12 +1076,12 @@ class mod_survey_userformmanager {
 
         // general info
         if ($this->survey->timeopen) { // opening time:
-            $key = ($this->survey->timeopen > $timenow) ? 'willopenat' : 'openedat';
+            $key = ($this->survey->timeopen > $timenow) ? 'willopen' : 'opened';
             $messages[] = get_string($key, 'survey').': '.userdate($this->survey->timeopen);
         }
 
         if ($this->survey->timeclose) { // closing time:
-            $key = ($this->survey->timeopen > $timenow) ? 'willcloseat' : 'closedat';
+            $key = ($this->survey->timeclose > $timenow) ? 'willclose' : 'closed';
             $messages[] = get_string($key, 'survey').': '.userdate($this->survey->timeclose);
         }
 
@@ -1111,17 +1111,23 @@ class mod_survey_userformmanager {
         // end of: general info
 
         // the button to add one more survey
-        if ($this->cansubmit) {
-            if (($this->survey->maxentries == 0) || ($next < $this->survey->maxentries)) {
-                $url = new moodle_url('/mod/survey/view.php', array('id' => $this->cm->id, 'cvp' => 0));
-                echo $OUTPUT->single_button($url, get_string('addonemore', 'survey'), 'get');
-            } else {
+        $displaybutton = true;
+        $displaybutton = $displaybutton && $this->cansubmit;
+        if ($this->survey->maxentries == 0) {
+            $displaybutton = $displaybutton && ($this->survey->timeclose > $timenow);
+        }
+        $displaybutton = $displaybutton && (($this->survey->maxentries == 0) || ($next < $this->survey->maxentries));
+        if ($displaybutton) {
+            $url = new moodle_url('/mod/survey/view.php', array('id' => $this->cm->id, 'cvp' => 0));
+            echo $OUTPUT->single_button($url, get_string('addonemore', 'survey'), 'get');
+        } else {
+            if (($this->survey->maxentries > 0) && ($next >= $this->survey->maxentries)) {
                 $message = get_string('nomorerecordsallowed', 'survey', $this->survey->maxentries);
                 echo $OUTPUT->container($message, 'centerpara');
+            } else {
+                $message = get_string('cannotsubmit', 'survey');
+                echo $OUTPUT->container($message, 'centerpara');
             }
-        } else {
-            $message = get_string('cannotsubmit', 'survey');
-            echo $OUTPUT->container($message, 'mdl-left');
         }
         // end of: the button to add one more survey
 
