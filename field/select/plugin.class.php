@@ -333,20 +333,6 @@ class surveyfield_select extends mod_survey_itembase {
     }
 
     /*
-     * parent_encode_content_to_value
-     * This method is used by items handled as parent
-     * starting from the user input, this method stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     *
-     * @param $parentcontent
-     * @return
-     */
-    public function parent_encode_content_to_value($parentcontent) {
-        return $parentcontent;
-    }
-
-    /*
      * item_get_plugin_schema
      * Return the xml schema for survey_<<plugin>> table.
      *
@@ -535,17 +521,17 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from childparentvalue defines syntax for disabledIf
+     * from childparentcontent defines syntax for disabledIf
      *
-     * @param: $childparentvalue
+     * @param: $childparentcontent
      * @return
      */
-    public function userform_get_parent_disabilitation_info($childparentvalue) {
+    public function userform_get_parent_disabilitation_info($childparentcontent) {
         $disabilitationinfo = array();
 
         $labels = $this->item_get_labels_array('options');
 
-        $index = array_search($childparentvalue, $labels);
+        $index = array_search($childparentcontent, $labels);
         if ($index !== false) {
             $mformelementinfo = new stdClass();
             $mformelementinfo->parentname = $this->itemname;
@@ -562,7 +548,7 @@ EOS;
             $mformelementinfo = new stdClass();
             $mformelementinfo->parentname = $this->itemname.'_text';
             $mformelementinfo->operator = 'neq';
-            $mformelementinfo->content = $childparentvalue;
+            $mformelementinfo->content = $childparentcontent;
             $disabilitationinfo[] = $mformelementinfo;
         }
 
@@ -594,15 +580,15 @@ EOS;
         $where = array('submissionid' => $submissionid, 'itemid' => $this->itemid);
         $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
 
-        $childparentvalue = $childitemrecord->parentvalue;
+        $childparentcontent = $childitemrecord->parentcontent;
 
         $values = $this->item_get_labels_array('options');
-        $index = array_search($childparentvalue, $values);
+        $index = array_search($childparentcontent, $values);
 
         if ($index !== false) {
             $status = ($givenanswer == $index);
         } else { // other
-            $status = ($givenanswer == $childparentvalue);
+            $status = ($givenanswer == $childparentcontent);
         }
 
         return $status;

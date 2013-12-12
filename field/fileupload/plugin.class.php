@@ -91,9 +91,9 @@ class surveyfield_fileupload extends mod_survey_itembase {
     public $maxbytes = '1024';
 
     /*
-     * $filetypes = list of allowed file extension
+     * $allowedtypes = list of allowed file extension
      */
-    public $filetypes = array('*');
+    public $allowedtypes = array('*');
 
     /*
      * $flag = features describing the object
@@ -266,7 +266,8 @@ EOS;
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
-        $filetypes = array_map('trim', explode(',', $this->filetypes));
+        $filetypes = array_map('trim', explode(',', $this->allowedtypes));
+
         $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
         $mform->addElement('filemanager', $fieldname, $elementlabel, null, $attachmentoptions);
 

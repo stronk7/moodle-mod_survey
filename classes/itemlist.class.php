@@ -1312,7 +1312,7 @@ class mod_survey_itemlist {
 
             // status
             if ($item->get_parentid()) {
-                $status = $parentitem->parent_validate_child_constraints($item->parentvalue);
+                $status = $parentitem->parent_validate_child_constraints($item->parentcontent);
                 if ($status === true) {
                     $tablerow[] = $okstring;
                 } else {

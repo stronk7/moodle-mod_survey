@@ -422,6 +422,7 @@ class mod_survey_submissionmanager {
             if ($this->canmanageallsubmissions) {
                 $paramurl = $paramurlbase;
                 $paramurl['act'] = SURVEY_DELETEALLRESPONSES;
+                $paramurl['sesskey'] = sesskey();
                 $url = new moodle_url('/mod/survey/view_manage.php', $paramurl);
                 echo $OUTPUT->single_button($url, get_string('deleteallsubmissions', 'survey'), 'get');
             }

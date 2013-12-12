@@ -87,6 +87,7 @@ class surveyformat_pagebreak extends mod_survey_itembase {
         $this->formrequires['advanced'] = false;
         $this->formrequires['indent'] = false;
         $this->formrequires['hideinstructions'] = false;
+        $this->formrequires['parentid'] = false;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);

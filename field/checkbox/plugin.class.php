@@ -270,23 +270,6 @@ class surveyfield_checkbox extends mod_survey_itembase {
     }
 
     /*
-     * parent_encode_content_to_value
-     * This method is used by items handled as parent
-     * starting from the user input, this method stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     *
-     * @param $parentcontent
-     * @return
-     */
-    public function parent_encode_content_to_value($parentcontent) {
-        $arraycontent = survey_textarea_to_array($parentcontent);
-        $parentcontent = implode("\n", $arraycontent);
-
-        return $parentcontent;
-    }
-
-    /*
      * item_get_multilang_fields
      *
      * @param
@@ -477,17 +460,17 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from childparentvalue defines syntax for disabledIf
+     * from childparentcontent defines syntax for disabledIf
      *
-     * @param: $childparentvalue
+     * @param: $childparentcontent
      * @return
      */
-    public function userform_get_parent_disabilitation_info($childparentvalue) {
+    public function userform_get_parent_disabilitation_info($childparentcontent) {
         $disabilitationinfo = array();
 
-        // I need to know the names of mfrom element corresponding to the content of $childparentvalue
+        // I need to know the names of mfrom element corresponding to the content of $childparentcontent
         $labels = $this->item_get_labels_array('options');
-        $request = survey_textarea_to_array($childparentvalue);
+        $request = survey_textarea_to_array($childparentcontent);
 
         foreach ($labels as $k => $label) {
             $mformelementinfo = new stdClass();
@@ -515,6 +498,15 @@ EOS;
             $mformelementinfo->operator = 'neq';
             $mformelementinfo->content = reset($request);
             $disabilitationinfo[] = $mformelementinfo;
+        } else {
+            // even if no more request are found,
+            // I have to add one more $disabilitationinfo if $this->other is not empty
+            if ($this->labelother) {
+                $mformelementinfo = new stdClass();
+                $mformelementinfo->parentname = $this->itemname.'_other';
+                $mformelementinfo->content = 'checked';
+                $disabilitationinfo[] = $mformelementinfo;
+            }
         }
 
         return $disabilitationinfo;
@@ -547,7 +539,7 @@ EOS;
 
         $values = $this->item_get_labels_array('options');
 
-        $constraints = explode("\n", $childitemrecord->parentvalue);
+        $constraints = survey_textarea_to_array($childitemrecord->parentcontent);
         $elementscount = count(explode(SURVEY_DBMULTIVALUESEPARATOR, $givenanswer));
         if (!$this->labelother) {
             $key = array_fill(0, $elementscount, 0);

@@ -375,20 +375,6 @@ EOS;
         return $status;
     }
 
-    /*
-     * parent_encode_content_to_value
-     * This method is used by items handled as parent
-     * starting from the user input, this method stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     *
-     * @param $parentcontent
-     * @return
-     */
-    public function parent_encode_content_to_value($parentcontent) {
-        return $parentcontent;
-    }
-
     // MARK userform
 
     /*
@@ -510,18 +496,18 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from childparentvalue defines syntax for disabledIf
+     * from childparentcontent defines syntax for disabledIf
      *
-     * @param: $childparentvalue
+     * @param: $childparentcontent
      * @return
      */
-    public function userform_get_parent_disabilitation_info($childparentvalue) {
+    public function userform_get_parent_disabilitation_info($childparentcontent) {
         $disabilitationinfo = array();
 
         $mformelementinfo = new stdClass();
         $mformelementinfo->parentname = $this->itemname;
         $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $childparentvalue;
+        $mformelementinfo->content = $childparentcontent;
         $disabilitationinfo[] = $mformelementinfo;
 
         return $disabilitationinfo;

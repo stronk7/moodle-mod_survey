@@ -122,6 +122,20 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013110601, 'survey');
     }
 
+    if ($oldversion < 2013121101) {
+
+        // Define field parentvalue to be dropped from survey_item.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('parentvalue');
+
+        // Conditionally launch drop field parentcontent.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013121101, 'survey');
+    }
 
     return true;
 }

@@ -1075,6 +1075,7 @@ class mod_survey_userformmanager {
         $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $this->context, null, true);
         $cansaveusertemplate = has_capability('mod/survey:saveusertemplates', context_course::instance($COURSE->id), null, true);
         $canimportusertemplates = has_capability('mod/survey:importusertemplates', $this->context, null, true);
+        $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $this->context, null, true);
         $cansavemastertemplate = has_capability('mod/survey:savemastertemplate', $this->context, null, true);
         $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $this->context, null, true);
 
@@ -1201,6 +1202,11 @@ class mod_survey_userformmanager {
         if ($canimportusertemplates) {
             $url = new moodle_url('/mod/survey/utemplates_import.php', $paramurlbase);
             $messages[] = get_string('importusertemplates', 'survey', $url->out());
+        }
+
+        if ($canapplyusertemplates) {
+            $url = new moodle_url('/mod/survey/utemplates_apply.php', $paramurlbase);
+            $messages[] = get_string('applyusertemplates', 'survey', $url->out());
         }
 
         $this->display_messages($messages, get_string('utemplatessection', 'survey'));

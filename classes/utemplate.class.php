@@ -417,12 +417,12 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
                 $paramurl['fid'] = $dummysort[$row]['xmlfileid'];
                 $row++;
 
+                $paramurl['sesskey'] = sesskey();
                 $icons = '';
                 // *************************************** SURVEY_DELETEUTEMPLATE
                 if ($this->candeleteutemplates) {
                     if ($xmlfile->get_userid() == $USER->id) { // only the owner can delete his/her template
                         $paramurl['act'] = SURVEY_DELETEUTEMPLATE;
-                        $paramurl['sesskey'] = sesskey();
 
                         $icons .= $OUTPUT->action_icon(new moodle_url('utemplates_manage.php', $paramurl),
                             new pix_icon('t/delete', $deletetitle, 'moodle', array('title' => $deletetitle)),
@@ -433,7 +433,6 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
                 // *************************************** SURVEY_EXPORTUTEMPLATE
                 if ($this->candownloadutemplates) {
                     $paramurl['act'] = SURVEY_EXPORTUTEMPLATE;
-                    $paramurl['sesskey'] = sesskey();
 
                     $icons .= $OUTPUT->action_icon(new moodle_url('utemplates_manage.php', $paramurl),
                         new pix_icon('i/export', $exporttitle, 'moodle', array('title' => $exporttitle)),
