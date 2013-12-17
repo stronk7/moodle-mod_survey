@@ -64,7 +64,7 @@ $userpageman->survey_add_custom_css();
 // redirect if no items were created and you are supposed to create them
 if ($userpageman->canaccessadvanceditems) {
     if (!$userpageman->count_input_items()) {
-        if ($formpage == 1) {
+        if (($formpage == 0) || ($formpage == 1)) {
             $paramurl = array('id' => $cm->id);
             $returnurl = new moodle_url('items_manage.php', $paramurl);
             redirect($returnurl);
