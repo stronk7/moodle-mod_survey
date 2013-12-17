@@ -55,4 +55,4 @@ $string['hiddenfield'] = 'Make hidden';
 $string['hiddenfield_help'] = 'This option allow you to hide or show this autofill element from the survey form. Selecting this checkbox the element will be added to the form as hidden field so the user will not see it.';
 $string['cannotcheck'] = 'Please check it by yourself.';
 $string['submission'] = 'Response';
-$string['latevalue'] = 'Content will be added at submission time';
+$string['latevalue'] = 'Content will be added at response save time';

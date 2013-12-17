@@ -100,20 +100,22 @@ define('SURVEY_TYPEFORMAT', 'format');
     // RESPONSES section
     define('SURVEY_DELETERESPONSE'    , '13');
     define('SURVEY_DELETEALLRESPONSES', '14');
-    define('SURVEY_RESPONSETOPDF'     , '15');
 
     // UTEMPLATE section
     define('SURVEY_DELETEUTEMPLATE'   , '16');
     define('SURVEY_EXPORTUTEMPLATE'   , '17');
 
 // VIEW
-define('SURVEY_SERVESURVEY'     , '0');
-define('SURVEY_PREVIEWSURVEY'   , '1');
-define('SURVEY_EDITRESPONSE'    , '2');
-define('SURVEY_READONLYRESPONSE', '3');
+    // ITEM MANAGEMENT section
+    define('SURVEY_SERVESURVEY'     , '0');
+    define('SURVEY_PREVIEWSURVEY'   , '1');
+    define('SURVEY_EDITRESPONSE'    , '2');
+    define('SURVEY_READONLYRESPONSE', '3');
+    define('SURVEY_EDITITEM'        , '4');
+    define('SURVEY_CHANGEORDERASK'  , '5');
 
-define('SURVEY_EDITITEM'        , '4');
-define('SURVEY_CHANGEORDERASK'  , '5');
+    // RESPONSES section
+    define('SURVEY_RESPONSETOPDF'   , '6');
 
 // OVERFLOW
 define('SURVEY_LEFT_OVERFLOW' , -10);

@@ -211,7 +211,7 @@ class mod_survey_templatebase {
                 }
 
                 if (strlen($val)) {
-                    $xmlfield = $xmltable->addChild($field, $val);
+                    $xmlfield = $xmltable->addChild($field, htmlspecialchars($val));
                     // } else {
                     // it is empty, do not evaluate: jump
                 }

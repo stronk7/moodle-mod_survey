@@ -369,7 +369,6 @@ class surveyfield_recurrence extends mod_survey_itembase {
 
     /*
      * item_get_friendlyformat
-     * returns true if the useform mform element for this item id is a group and false if not
      *
      * @param
      * @return
@@ -481,8 +480,8 @@ EOS;
 
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                 // -> I do not want JS form validation if the page is submitted through the "previous" button
-                // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
-                // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+                // -> I do not want JS field validation even if this item is required BUT disabled. See: MDL-34815
+                // simply add a dummy star to the item and the footer note about mandatory fields
                 $starplace = ($this->position != SURVEY_POSITIONLEFT) ? $this->itemname.'_extrarow' : $this->itemname.'_group';
                 $mform->_required[] = $starplace;
             } else {
@@ -706,13 +705,15 @@ EOS;
     }
 
     /*
-     * userform_mform_element_is_group
-     * returns true if the useform mform element for this item id is a group and false if not
+     * userform_get_root_elements_name
+     * returns an array with the names of the mform element added using $mform->addElement or $mform->addGroup
      *
      * @param
      * @return
      */
-    public function userform_mform_element_is_group() {
-        return true;
+    public function userform_get_root_elements_name() {
+        $elementnames = array($this->itemname.'_group');
+
+        return $elementnames;
     }
 }

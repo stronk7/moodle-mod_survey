@@ -204,6 +204,7 @@ class surveyfield_autofill extends mod_survey_itembase {
         // list of fields I do not want to have in the item definition form
         $this->formrequires['required'] = false;         // <-- it will be set to 0 at save time
         $this->formrequires['hideinstructions'] = false;
+        $this->formrequires['parentid'] = false;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
@@ -422,10 +423,10 @@ EOS;
         $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
         if (!$searchform) {
-            $referencearray = array(''); // <-- take care, the first element is already on board
-            for ($i = 1; $i <= SURVEYFIELD_AUTOFILL_CONTENTELEMENT_COUNT; $i++) {
-                $referencearray[] = constant('SURVEYFIELD_AUTOFILL_CONTENTELEMENT'.sprintf('%02d', $i));
-            }
+            // $referencearray = array(''); // <-- take care, the first element is already on board
+            // for ($i = 1; $i <= SURVEYFIELD_AUTOFILL_CONTENTELEMENT_COUNT; $i++) {
+            //     $referencearray[] = constant('SURVEYFIELD_AUTOFILL_CONTENTELEMENT'.sprintf('%02d', $i));
+            // }
 
             $mform->addElement('hidden', $this->itemname, $this->userform_get_content());
             $mform->setType($this->itemname, PARAM_RAW);
@@ -543,18 +544,6 @@ EOS;
     }
 
     /*
-     * userform_mform_element_is_group
-     * returns true if the useform mform element for this item id is a group and false if not
-     *
-     * @param
-     * @return
-     */
-    public function userform_mform_element_is_group() {
-        // $this->flag->canbeparent = false
-        // this method is never called
-    }
-
-    /*
      * userform_get_content
      *
      * @param $item
@@ -614,4 +603,20 @@ EOS;
         return $label;
     }
 
+    /*
+     * userform_get_root_elements_name
+     * returns an array with the names of the mform element added using $mform->addElement or $mform->addGroup
+     *
+     * @param
+     * @return
+     */
+    public function userform_get_root_elements_name() {
+        $elementnames = array();
+        $elementnames[] = $this->itemname;
+        if (!$this->hiddenfield) {
+            $elementnames[] = $this->itemname.'_static';
+        }
+
+        return $elementnames;
+    }
 }

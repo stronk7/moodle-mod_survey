@@ -305,20 +305,6 @@ class surveyfield_integer extends mod_survey_itembase {
     }
 
     /*
-     * parent_encode_content_to_value
-     * This method is used by items handled as parent
-     * starting from the user input, this method stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     *
-     * @param $parentcontent
-     * @return
-     */
-    public function parent_encode_content_to_value($parentcontent) {
-        return $parentcontent;
-    }
-
-    /*
      * item_get_plugin_schema
      * Return the xml schema for survey_<<plugin>> table.
      *
@@ -397,10 +383,10 @@ EOS;
             if ($this->required) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                 // -> I do not want JS form validation if the page is submitted through the "previous" button
-                // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
-                // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+                // -> I do not want JS field validation even if this item is required BUT disabled. See: MDL-34815
+                // simply add a dummy star to the item and the footer note about mandatory fields
                 $starplace = ($this->position != SURVEY_POSITIONLEFT) ? $this->itemname.'_extrarow' : $this->itemname;
-                $mform->_required[] = $starplace; // add the star for mandatory fields at the end of the page with server side validation too
+                $mform->_required[] = $starplace;
             }
         }
 
@@ -499,6 +485,8 @@ EOS;
 
             $fillinginstruction = get_string('restriction_lowerupper', 'surveyfield_integer', $a);
         } else {
+            $fillinginstruction = '';
+
             if ($haslowerbound) {
                 $a = $lowerbound;
                 $fillinginstruction = get_string('restriction_lower', 'surveyfield_integer', $a);
@@ -515,18 +503,18 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from childparentvalue defines syntax for disabledIf
+     * from childparentcontent defines syntax for disabledIf
      *
-     * @param: $childparentvalue
+     * @param: $childparentcontent
      * @return
      */
-    public function userform_get_parent_disabilitation_info($childparentvalue) {
+    public function userform_get_parent_disabilitation_info($childparentcontent) {
         $disabilitationinfo = array();
 
         $mformelementinfo = new stdClass();
         $mformelementinfo->parentname = $this->itemname;
         $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $childparentvalue;
+        $mformelementinfo->content = $childparentcontent;
         $disabilitationinfo[] = $mformelementinfo;
 
         return $disabilitationinfo;
@@ -571,13 +559,15 @@ EOS;
     }
 
     /*
-     * userform_mform_element_is_group
-     * returns true if the useform mform element for this item id is a group and false if not
+     * userform_get_root_elements_name
+     * returns an array with the names of the mform element added using $mform->addElement or $mform->addGroup
      *
      * @param
      * @return
      */
-    public function userform_mform_element_is_group() {
-        return false;
+    public function userform_get_root_elements_name() {
+        $elementnames = array($this->itemname);
+
+        return $elementnames;
     }
 }

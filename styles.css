@@ -62,6 +62,16 @@
     text-align:center;
 }
 
+#page-mod-survey-items_manage table#manageitems .parentitem .smallicon,
+#page-mod-survey-items_manage table#manageitems .availability .smallicon,
+#page-mod-survey-items_manage table#manageitems .parentitem .smallicon,
+#page-mod-survey-items_manage table#sortitems .availability .smallicon,
+#page-mod-survey-items_validate table#validaterelations .parentitem .smallicon {
+    vertical-align: text-bottom;
+    margin: 0 0.3em 0 0.3em;
+}
+
+
 #page-mod-survey-items_manage table#manageitems .content,
 #page-mod-survey-items_manage table#sortitems .content {
     padding:0.5em;
@@ -240,7 +250,7 @@
     margin:0;
 }
 
-#page-mod-survey-view .mform .fitem .felement .longfield {
+#page-mod-survey-items_setup .mform .fitem .felement .longfield {
     width:25em;
 }
 

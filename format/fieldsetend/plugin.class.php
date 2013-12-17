@@ -190,60 +190,11 @@ EOS;
 
         // this plugin has $this->flag->issearchable = false; so it will never be part of a search form
 
-        /* I hate the first solution with all my soul because it leave an empty row in the user form page
-         * but, as opposite solution, I have to:
-         * -> add global $DB, $USER, $PAGE;
-         * -> get $cm = $PAGE->cm;
-         * -> get $context = context_module::instance($cm->id);
-         * -> get has_capability('mod/survey:accessadvanceditems', $context, null, true);
-         * -> make the query to get the ID of the next item (remember that next item depends from your permissions to see advanced items)
-         * -> instanciate $item class
-         * -> ask if $item uses a special position
-         * -> ask $item->userform_mform_element_is_group()
-         * finally write the simple:
-         *     $mform->closeHeaderBefore($nextitem->itemname.'_extrarow');
-         * or
-         *     $mform->closeHeaderBefore($nextitem->itemname);
-         * or
-         *     $mform->closeHeaderBefore($nextitem->itemname.'_group');
-         * ALL OF THIS TO CLOSE A FIELDSET? CRAZY!!!
-         * yes, we are.
-         */
-        if (false) {
-            // workaround suggested by Marina Glancy in MDL-42946
-            $label = html_writer::tag('span', '&nbsp;', array('class' => 'hidefull'));
+        // workaround suggested by Marina Glancy in MDL-42946
+        $label = html_writer::tag('span', '&nbsp;', array('style' => 'display:none;'));
 
-            $mform->addElement('static', $this->itemname, '', $label);
-            $mform->closeHeaderBefore($this->itemname);
-        } else {
-            $cm = $PAGE->cm;
-            $canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
-            $sql = 'SELECT id, type, plugin
-                FROM {survey_item}
-                WHERE surveyid = :surveyid
-                    AND sortindex > :sortindex
-                    AND hide = 0
-                    AND plugin <> "pagebreak"';
-            if (!$canaccessadvanceditems) {
-                $sql .= ' AND advanced = 0';
-            }
-            $sql .= ' ORDER BY sortindex
-                LIMIT 1';
-
-            $whereparams = array('surveyid' => $cm->instance, 'sortindex' => $this->sortindex);
-            if ($itemseed = $DB->get_record_sql($sql, $whereparams, IGNORE_MISSING)) { // The element really exists
-                $nextitem = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
-                if (isset($nextitem->position) && ($nextitem->position != SURVEY_POSITIONLEFT)) {
-                    $mform->closeHeaderBefore($nextitem->itemname.'_extrarow');
-                } else {
-                    if ($nextitem->userform_mform_element_is_group()) {
-                        $mform->closeHeaderBefore($nextitem->itemname.'_group');
-                    } else {
-                        $mform->closeHeaderBefore($nextitem->itemname);
-                    }
-                }
-            }
-        }
+        $mform->addElement('static', $this->itemname, '', $label);
+        $mform->closeHeaderBefore($this->itemname);
     }
 
     /*
@@ -286,13 +237,13 @@ EOS;
     }
 
     /*
-     * userform_mform_element_is_group
-     * returns true if the useform mform element for this item id is a group and false if not
+     * userform_get_root_elements_name
+     * returns an array with the names of the mform element added using $mform->addElement or $mform->addGroup
      *
      * @param
      * @return
      */
-    public function userform_mform_element_is_group() {
-        return false;
+    public function userform_get_root_elements_name() {
+        return array();
     }
 }

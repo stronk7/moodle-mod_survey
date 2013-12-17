@@ -227,7 +227,6 @@ class surveyfield_checkbox extends mod_survey_itembase {
 
     /*
      * item_get_friendlyformat
-     * returns true if the useform mform element for this item id is a group and false if not
      *
      * @param
      * @return
@@ -267,23 +266,6 @@ class surveyfield_checkbox extends mod_survey_itembase {
         }
 
         return $status;
-    }
-
-    /*
-     * parent_encode_content_to_value
-     * This method is used by items handled as parent
-     * starting from the user input, this method stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     *
-     * @param $parentcontent
-     * @return
-     */
-    public function parent_encode_content_to_value($parentcontent) {
-        $arraycontent = survey_textarea_to_array($parentcontent);
-        $parentcontent = implode("\n", $arraycontent);
-
-        return $parentcontent;
     }
 
     /*
@@ -413,7 +395,7 @@ EOS;
         /* this last item is needed because:
          * the JS validation MAY BE missing even if the field is required
          * (JS validation is never added because I do not want it when the "previous" button is pressed and when an item is disabled even if mandatory)
-         * so the check for the non empty field is performed in the validation routine.
+         * so the check for the not empty field is performed in the validation routine.
          * The validation routine is executed ONLY ON ITEM that are really submitted.
          * For checkboxes, nothing is submitted if no box is checked
          * so, if the user neglects the mandatory checkboxes item AT ALL, it is not submitted and, as conseguence, not validated.
@@ -430,8 +412,8 @@ EOS;
             if ($this->required) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                 // -> I do not want JS form validation if the page is submitted through the "previous" button
-                // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
-                // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+                // -> I do not want JS field validation even if this item is required BUT disabled. See: MDL-34815
+                // simply add a dummy star to the item and the footer note about mandatory fields
                 $starplace = ($this->position != SURVEY_POSITIONLEFT) ? $this->itemname.'_extrarow' : $this->itemname.'_group';
                 $mform->_required[] = $starplace;
             }
@@ -477,17 +459,17 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from childparentvalue defines syntax for disabledIf
+     * from childparentcontent defines syntax for disabledIf
      *
-     * @param: $childparentvalue
+     * @param: $childparentcontent
      * @return
      */
-    public function userform_get_parent_disabilitation_info($childparentvalue) {
+    public function userform_get_parent_disabilitation_info($childparentcontent) {
         $disabilitationinfo = array();
 
-        // I need to know the names of mfrom element corresponding to the content of $childparentvalue
+        // I need to know the names of mfrom element corresponding to the content of $childparentcontent
         $labels = $this->item_get_labels_array('options');
-        $request = survey_textarea_to_array($childparentvalue);
+        $request = survey_textarea_to_array($childparentcontent);
 
         foreach ($labels as $k => $label) {
             $mformelementinfo = new stdClass();
@@ -515,6 +497,15 @@ EOS;
             $mformelementinfo->operator = 'neq';
             $mformelementinfo->content = reset($request);
             $disabilitationinfo[] = $mformelementinfo;
+        } else {
+            // even if no more request are found,
+            // I have to add one more $disabilitationinfo if $this->other is not empty
+            if ($this->labelother) {
+                $mformelementinfo = new stdClass();
+                $mformelementinfo->parentname = $this->itemname.'_other';
+                $mformelementinfo->content = 'checked';
+                $disabilitationinfo[] = $mformelementinfo;
+            }
         }
 
         return $disabilitationinfo;
@@ -547,7 +538,7 @@ EOS;
 
         $values = $this->item_get_labels_array('options');
 
-        $constraints = explode("\n", $childitemrecord->parentvalue);
+        $constraints = survey_textarea_to_array($childitemrecord->parentcontent);
         $elementscount = count(explode(SURVEY_DBMULTIVALUESEPARATOR, $givenanswer));
         if (!$this->labelother) {
             $key = array_fill(0, $elementscount, 0);
@@ -755,13 +746,17 @@ EOS;
     }
 
     /*
-     * userform_mform_element_is_group
-     * returns true if the useform mform element for this item id is a group and false if not
+     * userform_get_root_elements_name
+     * returns an array with the names of the mform element added using $mform->addElement or $mform->addGroup
      *
      * @param
      * @return
      */
-    public function userform_mform_element_is_group() {
-        return true;
+    public function userform_get_root_elements_name() {
+        $elementnames = array();
+        $elementnames[] = $this->itemname.'_group';
+        $elementnames[] = SURVEY_NEGLECTPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid.'_placeholder';
+
+        return $elementnames;
     }
 }

@@ -66,9 +66,9 @@ class survey_pluginform extends mod_survey_itembaseform {
         $mform->setType($fieldname, PARAM_INT);
 
         // ----------------------------------------
-        // newitem::filetypes
+        // newitem::allowedtypes
         // ----------------------------------------
-        $fieldname = 'filetypes';
+        $fieldname = 'allowedtypes';
         $mform->addElement('text', $fieldname, get_string($fieldname, 'surveyfield_fileupload'));
         $mform->setDefault($fieldname, '*');
         $mform->addHelpButton($fieldname, $fieldname, 'surveyfield_fileupload');
@@ -83,20 +83,22 @@ class survey_pluginform extends mod_survey_itembaseform {
 
         $errors = parent::validation($data, $files);
 
-        $filetypes = array_map('trim', explode(',', $data['filetypes']));
-        foreach ($filetypes as $filetype) {
+        $allowedtypes = array_map('trim', explode(',', $data['allowedtypes']));
+        foreach ($allowedtypes as $filetype) {
             if (!$filetype) {
-                $errors['filetypes'] = get_string('extensionisempty', 'surveyfield_fileupload');
+                $errors['allowedtypes'] = get_string('extensionisempty', 'surveyfield_fileupload');
                 break;
             }
-            if ($filetype[0] != '.') {
-                $errors['filetypes'] = get_string('extensionmissingdot', 'surveyfield_fileupload');
-                break;
-            }
-            $testtype = str_replace('.', '', $filetype);
-            if (strlen($testtype) != strlen($filetype) - 1) {
-                $errors['filetypes'] = get_string('extensiononlyonedot', 'surveyfield_fileupload');
-                break;
+            if ($filetype != '*') {
+                if ($filetype[0] != '.') {
+                    $errors['allowedtypes'] = get_string('extensionmissingdot', 'surveyfield_fileupload');
+                    break;
+                }
+                $testtype = str_replace('.', '', $filetype, $count);
+                if ($count > 1) {
+                    $errors['allowedtypes'] = get_string('extensiononlyonedot', 'surveyfield_fileupload');
+                    break;
+                }
             }
         }
         return $errors;

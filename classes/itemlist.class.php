@@ -308,7 +308,11 @@ class mod_survey_itemlist {
         // -----------------------------
 
         $where = array('surveyid' => $this->survey->id);
-        $itemseeds = $DB->get_records('survey_item', $where, $table->get_sql_sort(), '*, id as itemid');
+        if ($this->view == SURVEY_CHANGEORDERASK) { // if you are reordering, force ordering to...
+            $itemseeds = $DB->get_records('survey_item', $where, 'sortindex ASC', '*, id as itemid');
+        } else {
+            $itemseeds = $DB->get_records('survey_item', $where, $table->get_sql_sort(), '*, id as itemid');
+        }
         $drawmovearrow = (count($itemseeds) > 1);
 
         // this is the very first position, so if the item has a parent, no "moveherebox" must appear
@@ -368,7 +372,7 @@ class mod_survey_itemlist {
                 $parentsortindex = $DB->get_field('survey_item', 'sortindex', array('id' => $item->get_parentid()));
                 $content = $parentsortindex;
                 $content .= $OUTPUT->pix_icon('link', $message, 'survey',
-                        array('title' => $message, 'class' => 'iconsmall'));
+                        array('title' => $message, 'class' => 'smallicon'));
                 $content .= $this->condition_from_multiline($item->get_parentcontent());
             } else {
                 $content = '';
@@ -413,10 +417,10 @@ class mod_survey_itemlist {
             $currenthide = $item->get_hide();
             if ($currenthide) {
                 $message = get_string('hidden', 'survey');
-                $icons = $OUTPUT->pix_icon('absent', $message, 'survey', array('title' => $message, 'class' => 'iconsmall'));
+                $icons = $OUTPUT->pix_icon('absent', $message, 'survey', array('title' => $message, 'class' => 'smallicon'));
 
                 // $message = get_string('hidden', 'survey');
-                $icons .= $OUTPUT->pix_icon('absent', $message, 'survey', array('title' => $message, 'class' => 'iconsmall'));
+                $icons .= $OUTPUT->pix_icon('absent', $message, 'survey', array('title' => $message, 'class' => 'smallicon'));
             } else {
                 // first icon: advanced vs generally available
                 if (!$item->get_advanced()) {
@@ -430,7 +434,7 @@ class mod_survey_itemlist {
                             new pix_icon('all', $message, 'survey', array('title' => $message)),
                             null, array('title' => $edittitle));
                     } else {
-                        $icons = $OUTPUT->pix_icon('all', $message, 'survey', array('title' => $message, 'class' => 'iconsmall'));
+                        $icons = $OUTPUT->pix_icon('all', $message, 'survey', array('title' => $message, 'class' => 'smallicon'));
                     }
                 } else {
                     $message = get_string('needrole', 'survey');
@@ -464,7 +468,7 @@ class mod_survey_itemlist {
                             new pix_icon('absent', $message, 'survey', array('title' => $message)),
                             null, array('title' => $edittitle));
                     } else {
-                        $icons .= $OUTPUT->pix_icon('absent', $message, 'survey', array('title' => $message, 'class' => 'iconsmall'));
+                        $icons .= $OUTPUT->pix_icon('absent', $message, 'survey', array('title' => $message, 'class' => 'smallicon'));
                     }
                 }
             }
@@ -1278,7 +1282,7 @@ class mod_survey_itemlist {
             // plugin
             $plugintitle = get_string('pluginname', 'survey'.$item->get_type().'_'.$item->get_plugin());
             $content = $OUTPUT->pix_icon('icon', $plugintitle, 'survey'.$item->get_type().'_'.$item->get_plugin(),
-                    array('title' => $plugintitle, 'class' => 'iconsmall'));
+                    array('title' => $plugintitle, 'class' => 'smallicon'));
             $tablerow[] = $content;
 
             // content
@@ -1296,7 +1300,7 @@ class mod_survey_itemlist {
                 $message = get_string('parentid_alt', 'survey');
                 $content = $parentitem->get_sortindex();
                 $content .= $OUTPUT->pix_icon('link', $message, 'survey',
-                        array('title' => $message, 'class' => 'iconsmall'));
+                        array('title' => $message, 'class' => 'smallicon'));
                 $content .= $this->condition_from_multiline($item->get_parentcontent());
             } else {
                 $content = '';
@@ -1312,7 +1316,7 @@ class mod_survey_itemlist {
 
             // status
             if ($item->get_parentid()) {
-                $status = $parentitem->parent_validate_child_constraints($item->parentvalue);
+                $status = $parentitem->parent_validate_child_constraints($item->parentcontent);
                 if ($status === true) {
                     $tablerow[] = $okstring;
                 } else {

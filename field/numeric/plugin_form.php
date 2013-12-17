@@ -174,14 +174,14 @@ class survey_pluginform extends mod_survey_itembaseform {
                         }
                     }
                 } else {
-                    if ($lowerbound) {
+                    if (isset($lowerbound)) {
                         // if defaultvalue is < $this->lowerbound, shouts
                         if ($defaultvalue < $lowerbound) {
                             $errors['defaultvalue'] = get_string('default_outofrange', 'surveyfield_numeric');
                         }
                     }
 
-                    if ($upperbound) {
+                    if (isset($upperbound)) {
                         // if defaultvalue is > $this->upperbound, shouts
                         if ($defaultvalue > $upperbound) {
                             $errors['defaultvalue'] = get_string('default_outofrange', 'surveyfield_numeric');

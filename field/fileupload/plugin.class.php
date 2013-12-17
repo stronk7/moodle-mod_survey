@@ -91,9 +91,9 @@ class surveyfield_fileupload extends mod_survey_itembase {
     public $maxbytes = '1024';
 
     /*
-     * $filetypes = list of allowed file extension
+     * $allowedtypes = list of allowed file extension
      */
-    public $filetypes = array('*');
+    public $allowedtypes = array('*');
 
     /*
      * $flag = features describing the object
@@ -236,7 +236,7 @@ class surveyfield_fileupload extends mod_survey_itembase {
 
                 <xs:element type="xs:int" name="maxfiles"/>
                 <xs:element type="xs:int" name="maxbytes"/>
-                <xs:element type="xs:string" name="filetypes"/>
+                <xs:element type="xs:string" name="allowedtypes"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -266,15 +266,16 @@ EOS;
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
-        $filetypes = array_map('trim', explode(',', $this->filetypes));
+        $filetypes = array_map('trim', explode(',', $this->allowedtypes));
+
         $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
         $mform->addElement('filemanager', $fieldname, $elementlabel, null, $attachmentoptions);
 
         if ($this->required) {
             // even if the item is required I CAN NOT ADD ANY RULE HERE because:
             // -> I do not want JS form validation if the page is submitted through the "previous" button
-            // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
-            // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
+            // -> I do not want JS field validation even if this item is required BUT disabled. See: MDL-34815
+            // simply add a dummy star to the item and the footer note about mandatory fields
             $starplace = ($this->position != SURVEY_POSITIONLEFT) ? $this->itemname.'_extrarow' : $this->itemname;
             $mform->_required[] = $starplace;
         }
@@ -309,9 +310,9 @@ EOS;
      */
     public function userform_get_filling_instructions() {
 
-        if ($this->filetypes != '*') {
+        if ($this->allowedtypes != '*') {
             // $filetypelist = preg_replace('/([a-zA-Z0-9]+,)([^\s])/', "$1 $2", $this->filetypes);
-            $filetypelist = preg_replace('~,(?! )~', ', ', $this->filetypes); // Credits to Sam Marshall
+            $filetypelist = preg_replace('~,(?! )~', ', ', $this->allowedtypes); // Credits to Sam Marshall
 
             $fillinginstruction = get_string('allowedtypes', 'surveyfield_fileupload').$filetypelist;
         } else {
@@ -390,13 +391,15 @@ EOS;
     }
 
     /*
-     * userform_mform_element_is_group
-     * returns true if the useform mform element for this item id is a group and false if not
+     * userform_get_root_elements_name
+     * returns an array with the names of the mform element added using $mform->addElement or $mform->addGroup
      *
      * @param
      * @return
      */
-    public function userform_mform_element_is_group() {
-        return false;
+    public function userform_get_root_elements_name() {
+        $elementnames = array($this->itemname.'_filemanager');
+
+        return $elementnames;
     }
 }

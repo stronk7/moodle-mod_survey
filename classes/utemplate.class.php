@@ -417,6 +417,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
                 $paramurl['fid'] = $dummysort[$row]['xmlfileid'];
                 $row++;
 
+                $paramurl['sesskey'] = sesskey();
                 $icons = '';
                 // *************************************** SURVEY_DELETEUTEMPLATE
                 if ($this->candeleteutemplates) {

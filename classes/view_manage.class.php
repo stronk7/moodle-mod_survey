@@ -57,6 +57,11 @@ class mod_survey_submissionmanager {
     public $action = SURVEY_NOACTION;
 
     /*
+     * $view
+     */
+    public $view = 0;
+
+    /*
      * $confirm
      */
     public $confirm = false;
@@ -99,13 +104,14 @@ class mod_survey_submissionmanager {
     /*
      * Class constructor
      */
-    public function __construct($cm, $survey, $submissionid, $action, $confirm, $searchfieldsget) {
+    public function __construct($cm, $survey, $submissionid, $action, $view, $confirm, $searchfieldsget) {
         $this->cm = $cm;
         $this->context = context_module::instance($cm->id);
         $this->survey = $survey;
         $this->submissionid = $submissionid;
         $this->action = $action;
         $this->confirm = $confirm;
+        $this->view = $view;
         $this->searchfields_get = $searchfieldsget;
         $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
         $this->canmanagesubmissions = has_capability('mod/survey:managesubmissions', $this->context, null, true);
@@ -422,6 +428,7 @@ class mod_survey_submissionmanager {
             if ($this->canmanageallsubmissions) {
                 $paramurl = $paramurlbase;
                 $paramurl['act'] = SURVEY_DELETEALLRESPONSES;
+                $paramurl['sesskey'] = sesskey();
                 $url = new moodle_url('/mod/survey/view_manage.php', $paramurl);
                 echo $OUTPUT->single_button($url, get_string('deleteallsubmissions', 'survey'), 'get');
             }
@@ -495,6 +502,9 @@ class mod_survey_submissionmanager {
                 }
 
                 // delete
+                $paramurl = $paramurlbase;
+                $paramurl['submissionid'] = $submission->submissionid;
+                $paramurl['cvp'] = 0;
                 if ($this->canmanageallsubmissions || $this->candeletegroupsubmissions) {
                     $paramurl['act'] = SURVEY_DELETERESPONSE;
                     $paramurl['sesskey'] = sesskey();
@@ -505,7 +515,10 @@ class mod_survey_submissionmanager {
                 }
 
                 // if I am here I am sure I can see this submission
-                $paramurl['act'] = SURVEY_RESPONSETOPDF;
+                $paramurl = $paramurlbase;
+                $paramurl['submissionid'] = $submission->submissionid;
+                $paramurl['cvp'] = 0;
+                $paramurl['view'] = SURVEY_RESPONSETOPDF;
 
                 $icons .= $OUTPUT->action_icon(new moodle_url('view_manage.php', $paramurl),
                     new pix_icon('i/export', $downloadpdftitle, 'moodle', array('title' => $downloadpdftitle)),
@@ -551,9 +564,6 @@ class mod_survey_submissionmanager {
             case SURVEY_DELETERESPONSE:
                 $allowed = $this->candeletegroupsubmissions;
                 break;
-            case SURVEY_RESPONSETOPDF:
-                $allowed = has_capability('mod/survey:submissiontopdf', $this->context);
-                break;
             case SURVEY_DELETEALLRESPONSES:
                 $allowed = has_capability('mod/survey:deleteallsubmissions', $this->context);
                 break;
@@ -566,6 +576,9 @@ class mod_survey_submissionmanager {
                 break;
             case SURVEY_EDITRESPONSE:
                 $allowed = $this->caneditgroupsubmissions;
+                break;
+            case SURVEY_RESPONSETOPDF:
+                $allowed = has_capability('mod/survey:submissiontopdf', $this->context);
                 break;
             default:
                 $allowed = false;
@@ -584,7 +597,7 @@ class mod_survey_submissionmanager {
     public function submission_to_pdf() {
         global $CFG, $DB;
 
-        if ($this->action != SURVEY_RESPONSETOPDF) {
+        if ($this->view != SURVEY_RESPONSETOPDF) {
             return;
         }
 

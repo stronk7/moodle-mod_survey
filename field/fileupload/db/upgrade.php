@@ -59,5 +59,18 @@ function xmldb_surveyfield_fileupload_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013103101, 'surveyfield', 'fileupload');
     }
 
+    if ($oldversion < 2013121201) {
+
+        // Rename field filetypes on table surveyfield_fileupload to allowedtypes.
+        $table = new xmldb_table('surveyfield_fileupload');
+        $field = new xmldb_field('filetypes', XMLDB_TYPE_CHAR, '32', null, null, null, null, 'maxbytes');
+
+        // Launch rename field filetypes.
+        $dbman->rename_field($table, $field, 'allowedtypes');
+
+        // Survey savepoint reached.
+        upgrade_plugin_savepoint(true, 2013121201, 'surveyfield', 'fileupload');
+    }
+
     return true;
 }

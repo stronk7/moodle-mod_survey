@@ -102,11 +102,6 @@ class mod_survey_itembase {
     public $parentcontent = '';
 
     /*
-     * $parentvalue = the "well written" constrain given by parentid (1594832670)
-     */
-    public $parentvalue = '';
-
-    /*
      * $timecreated = the creation time of this item
      */
     public $timecreated = 0;
@@ -223,16 +218,8 @@ class mod_survey_itembase {
             }
         }
 
-        // encode $fromform->parentcontent to $item->parentvalue on the basis of the parentplugin specified in $record->parentid
-        if (isset($record->parentid) && $record->parentid) { // I am sure parentcontent is here too
-            $parentplugin = $DB->get_field('survey_item', 'plugin', array('id' => $record->parentid));
-            require_once($CFG->dirroot.'/mod/survey/field/'.$parentplugin.'/plugin.class.php');
-            $itemclass = 'surveyfield_'.$parentplugin;
-            $parentitem = new $itemclass($record->parentid);
-
+        if (isset($record->parentcontent)) {
             $record->parentcontent = trim($record->parentcontent, " \t\n\r");
-
-            $record->parentvalue = $parentitem->parent_encode_content_to_value($record->parentcontent);
         }
 
         // $this->userfeedback
@@ -594,7 +581,7 @@ class mod_survey_itembase {
     }
 
     /*
-     * item_get_values_array
+     * item_get_labels_array
      * translates the class property $this->{$field} in the array array[$value] = $label
      *
      * @param $field
@@ -718,7 +705,6 @@ class mod_survey_itembase {
 
         $schema .= '                <xs:element type="xs:int" name="parentid" minOccurs="0"/>'."\n";
         $schema .= '                <xs:element type="xs:string" name="parentcontent" minOccurs="0"/>'."\n";
-        $schema .= '                <xs:element type="xs:string" name="parentvalue" minOccurs="0"/>'."\n";
 
         // $schema .= '                <xs:element type="xs:int" name="timecreated"/>'."\n";
         // $schema .= '                <xs:element type="xs:int" name="timemodified"/>'."\n";
@@ -1039,20 +1025,6 @@ class mod_survey_itembase {
         // nothing to do!
     }
 
-    /*
-     * parent_encode_content_to_value
-     * This method is used by items handled as parent
-     * starting from the user input, this method stores to the db the value as it is stored during survey submission
-     * this method manages the $parentcontent of its child item, not its own $parentcontent
-     * (take care: here we are not submitting a survey but we are submitting an item)
-     *
-     * @param $parentcontent
-     * @return
-     */
-    public function parent_encode_content_to_value($parentcontent) {
-        // whether not overridden by specific class method, return true
-        return true; // nothing to do!
-    }
 
     /*
      * item_get_multilang_fields
@@ -1149,7 +1121,7 @@ class mod_survey_itembase {
         $where = array('submissionid' => $submissionid, 'itemid' => $this->itemid);
         $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
 
-        return ($givenanswer === $childitemrecord->parentvalue);
+        return ($givenanswer === $childitemrecord->parentcontent);
     }
 
     /*
@@ -1189,11 +1161,7 @@ class mod_survey_itembase {
             return;
         }
 
-        if ($this->userform_mform_element_is_group()) {
-            $fieldname = $this->itemname.'_group';
-        } else {
-            $fieldname = $this->itemname;
-        }
+        $fieldnames = $this->userform_get_root_elements_name();
 
         $parentrestrictions = array();
 
@@ -1227,11 +1195,11 @@ class mod_survey_itembase {
         // $parentrecord is an associative array
         // The array key is the ID of the parent item, the corresponding value is the constrain that $this has to be submitted to
 
+        $displaydebuginfo = false;
         foreach ($parentrestrictions as $parentid => $childconstrain) {
             $parentitem = survey_get_item($parentid);
             $disabilitationinfo = $parentitem->userform_get_parent_disabilitation_info($childconstrain);
 
-            $displaydebuginfo = false;
             if ($displaydebuginfo) {
                 foreach ($disabilitationinfo as $parentinfo) {
                     if (is_array($parentinfo->content)) {
@@ -1239,22 +1207,26 @@ class mod_survey_itembase {
                     } else {
                         $contentdisplayed = '\''.$parentinfo->content.'\'';
                     }
-                    if (isset($parentinfo->operator)) {
-                        echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.
-                                $paretinfo->parentname.'\', \''.$parentinfo->operator.'\', '.$contentdisplayed.');</span><br />';
-                    } else {
-                        echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.
-                                $parentinfo->parentname.'\', '.$contentdisplayed.');</span><br />';
+                    foreach ($fieldnames as $fieldname) {
+                        if (isset($parentinfo->operator)) {
+                            echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.
+                                    $parentinfo->parentname.'\', \''.$parentinfo->operator.'\', '.$contentdisplayed.');</span><br />';
+                        } else {
+                            echo '<span style="color:green;">$mform->disabledIf(\''.$fieldname.'\', \''.
+                                    $parentinfo->parentname.'\', '.$contentdisplayed.');</span><br />';
+                        }
                     }
                 }
             }
 
             // write disableIf
             foreach ($disabilitationinfo as $parentinfo) {
-                if (isset($parentinfo->operator)) {
-                    $mform->disabledIf($fieldname, $parentinfo->parentname, $parentinfo->operator, $parentinfo->content);
-                } else {
-                    $mform->disabledIf($fieldname, $parentinfo->parentname, $parentinfo->content);
+                foreach ($fieldnames as $fieldname) {
+                    if (isset($parentinfo->operator)) {
+                        $mform->disabledIf($fieldname, $parentinfo->parentname, $parentinfo->operator, $parentinfo->content);
+                    } else {
+                        $mform->disabledIf($fieldname, $parentinfo->parentname, $parentinfo->content);
+                    }
                 }
             }
             // $mform->disabledIf('survey_field_select_2491', 'survey_field_multiselect_2490[]', 'neq', array(0,4));

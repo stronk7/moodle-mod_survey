@@ -156,12 +156,26 @@ class mod_survey_userformmanager {
      * @param $startingpage
      * @return
      */
-    public function next_not_empty_page($forward, $startingpage) {
-        // depending on user provided answer, in the previous or next page there may be no questions to display
-        // get the first page WITH questions
-        // this method write the page number of the first non empty page (according to user answers) in $this->firstpageright
-        // or the page number of the last non empty page (according to user answers) in $this->firstpageleft
-        // returns $nextpage or 0 if no more empty pages are found in the specified direction
+    public function next_not_empty_page($forward, $startingpage, $currentpage) {
+        // depending on user provided answer, in the previous or next page there may be no items to display
+        // get the first page WITH items
+        //
+        // this method writes:
+        // if $forward == true:
+        //     the page number of the first non empty page (according to user answers) in $this->firstpageright
+        //     returns $nextpage or SURVEY_RIGHT_OVERFLOW if no more empty pages are found on the right
+        // if $forward == false:
+        //     the page number of the bigger non empty page lower than $startingpage (according to user answers) in $this->firstpageleft
+        //     returns $nextpage or SURVEY_LEFT_OVERFLOW if no more empty pages are found on the left
+
+        if ($currentpage == SURVEY_ITEMS_PREVIEW) { // I do not care relation, I am in "preview mode"
+            if ($forward) {
+                $this->firstpageright = ++$startingpage;
+            } else {
+                $this->firstpageleft = --$startingpage;
+            }
+            return;
+        }
 
         $condition1 = ($startingpage == SURVEY_RIGHT_OVERFLOW) && ($forward);
         $condition2 = ($startingpage == SURVEY_LEFT_OVERFLOW) && (!$forward);
@@ -692,7 +706,6 @@ class mod_survey_userformmanager {
     public function count_input_items() {
         global $DB;
 
-        // if no items are available, stop the intervention here
         $whereparams = array('surveyid' => $this->survey->id, 'formpage' => $this->formpage);
         $whereclause = 'surveyid = :surveyid AND hide = 0 AND formpage = :formpage';
         if (!$this->canaccessadvanceditems) {
@@ -1062,8 +1075,11 @@ class mod_survey_userformmanager {
         $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $this->context, null, true);
         $cansaveusertemplate = has_capability('mod/survey:saveusertemplates', context_course::instance($COURSE->id), null, true);
         $canimportusertemplates = has_capability('mod/survey:importusertemplates', $this->context, null, true);
+        $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $this->context, null, true);
         $cansavemastertemplate = has_capability('mod/survey:savemastertemplate', $this->context, null, true);
         $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $this->context, null, true);
+        $riskyediting = ($this->survey->riskyeditdeadline > time());
+        $hassubmissions = survey_count_submissions($this->survey->id);
 
         $messages = array();
         $timenow = time();
@@ -1113,19 +1129,29 @@ class mod_survey_userformmanager {
         // the button to add one more survey
         $displaybutton = true;
         $displaybutton = $displaybutton && $this->cansubmit;
-        if ($this->survey->maxentries == 0) {
+        if ($this->survey->timeopen) {
+            $displaybutton = $displaybutton && ($this->survey->timeopen < $timenow);
+        }
+        if ($this->survey->timeclose) {
             $displaybutton = $displaybutton && ($this->survey->timeclose > $timenow);
         }
         $displaybutton = $displaybutton && (($this->survey->maxentries == 0) || ($next < $this->survey->maxentries));
+
         if ($displaybutton) {
             $url = new moodle_url('/mod/survey/view.php', array('id' => $this->cm->id, 'cvp' => 0));
             echo $OUTPUT->single_button($url, get_string('addonemore', 'survey'), 'get');
         } else {
-            if (($this->survey->maxentries > 0) && ($next >= $this->survey->maxentries)) {
-                $message = get_string('nomorerecordsallowed', 'survey', $this->survey->maxentries);
+            if (!$this->cansubmit) {
+                $message = get_string('canneversubmit', 'survey');
                 echo $OUTPUT->container($message, 'centerpara');
-            } else {
-                $message = get_string('cannotsubmit', 'survey');
+            } else if (($this->survey->timeopen) && ($this->survey->timeopen >= $timenow)) {
+                $message = get_string('cannotsubmittooearly', 'survey', userdate($this->survey->timeopen));
+                echo $OUTPUT->container($message, 'centerpara');
+            } else if (($this->survey->timeclose) && ($this->survey->timeclose <= $timenow)) {
+                $message = get_string('cannotsubmittoolate', 'survey', userdate($this->survey->timeclose));
+                echo $OUTPUT->container($message, 'centerpara');
+            } else if (($this->survey->maxentries > 0) && ($next >= $this->survey->maxentries)) {
+                $message = get_string('nomoresubmissionsallowed', 'survey', $this->survey->maxentries);
                 echo $OUTPUT->container($message, 'centerpara');
             }
         }
@@ -1178,6 +1204,11 @@ class mod_survey_userformmanager {
         if ($canimportusertemplates) {
             $url = new moodle_url('/mod/survey/utemplates_import.php', $paramurlbase);
             $messages[] = get_string('importusertemplates', 'survey', $url->out());
+        }
+
+        if ($canapplyusertemplates && (!$hassubmissions || $riskyediting)) {
+            $url = new moodle_url('/mod/survey/utemplates_apply.php', $paramurlbase);
+            $messages[] = get_string('applyusertemplates', 'survey', $url->out());
         }
 
         $this->display_messages($messages, get_string('utemplatessection', 'survey'));

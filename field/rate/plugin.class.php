@@ -130,6 +130,12 @@ class surveyfield_rate extends mod_survey_itembase {
      */
     public static $canbeparent = false;
 
+    /*
+     * $MDL41767wasfixed
+     * temporary property adapting the code to the status of MDL-41767
+     */
+    public $MDL41767wasfixed = false;
+
     // -----------------------------
 
     /*
@@ -329,7 +335,6 @@ class surveyfield_rate extends mod_survey_itembase {
 
     /*
      * item_get_friendlyformat
-     * returns true if the useform mform element for this item id is a group and false if not
      *
      * @param
      * @return
@@ -427,8 +432,7 @@ EOS;
             }
         }
 
-        $MDL41767wasfixed = false;
-        if ($MDL41767wasfixed) {
+        if ($this->MDL41767wasfixed) {
             $elementlabel = implode('<br />', $options);
 
             if ($this->style == SURVEYFIELD_RATE_USERADIO) {
@@ -453,7 +457,9 @@ EOS;
                 }
 
                 $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
-            } else { // SURVEYFIELD_RATE_USESELECT
+            }
+
+            if ($this->style == SURVEYFIELD_RATE_USESELECT) {
                 $elementgroup = array();
                 foreach ($options as $k => $option) {
                     $uniquename = $this->itemname.'_'.$k;
@@ -470,14 +476,18 @@ EOS;
         } else {
             if ($this->style == SURVEYFIELD_RATE_USERADIO) {
                 foreach ($options as $k => $option) {
+                    $class = array('class' => 'indent-'.$this->indent);
                     $uniquename = $this->itemname.'_'.$k;
                     $elementgroup = array();
                     foreach ($rates as $j => $rate) {
-                        $elementgroup[] = $mform->createElement('radio', $uniquename, '', $rate, $j);
+                        $elementgroup[] = $mform->createElement('radio', $uniquename, '', $rate, $j, $class);
+                        $class = '';
                     }
                     $mform->addGroup($elementgroup, $uniquename.'_group', $option, ' ', false);
                 }
-            } else { // SURVEYFIELD_RATE_USESELECT
+            }
+
+            if ($this->style == SURVEYFIELD_RATE_USESELECT) {
                 foreach ($options as $k => $option) {
                     $uniquename = $this->itemname.'_'.$k;
                     $mform->addElement('select', $uniquename, $option, $rates, array('class' => 'indent-'.$this->indent));
@@ -489,15 +499,16 @@ EOS;
         if ($this->required) {
             // even if the item is required I CAN NOT ADD ANY RULE HERE because:
             // -> I do not want JS form validation if the page is submitted through the "previous" button
-            // -> I do not want JS field validation even if this item is required BUT disabled. THIS IS A MOODLE ISSUE. See: MDL-34815
-            // $mform->_required[] = $this->itemname.'_group'; only adds the star to the item and the footer note about mandatory fields
-            // $mform->_required[] = $this->itemname.'_group';
+            // -> I do not want JS field validation even if this item is required BUT disabled. See: MDL-34815
+            // simply add a dummy star to the item and the footer note about mandatory fields
             $mform->_required[] = $this->itemname.'_extrarow';
         } else {
-            if ($MDL41767wasfixed) {
+            $mform->addElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
+
+            // disable if $this->itemname.'_noanswer' is selected
+            if ($this->MDL41767wasfixed) {
                 $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
             } else {
-                $mform->addElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
                 $optionindex = 0;
                 foreach ($options as $option) {
                     if ($this->style == SURVEYFIELD_RATE_USERADIO) {
@@ -727,13 +738,35 @@ EOS;
     }
 
     /*
-     * userform_mform_element_is_group
-     * returns true if the useform mform element for this item id is a group and false if not
+     * userform_get_root_elements_name
+     * returns an array with the names of the mform element added using $mform->addElement or $mform->addGroup
      *
      * @param
      * @return
      */
-    public function userform_mform_element_is_group() {
-        return true;
+    public function userform_get_root_elements_name() {
+        $elementnames = array();
+
+        if ($this->MDL41767wasfixed) {
+            $elementnames[] = $this->itemname.'_group';
+        } else {
+            $options = survey_textarea_to_array($this->options);
+            if ($this->style == SURVEYFIELD_RATE_USERADIO) {
+                foreach ($options as $k => $option) {
+                    $elementnames[] = $this->itemname.'_'.$k.'_group';
+                }
+            }
+
+            if ($this->style == SURVEYFIELD_RATE_USESELECT) {
+                foreach ($options as $k => $option) {
+                    $elementnames[] = $this->itemname.'_'.$k;
+                }
+            }
+        }
+        if (!$this->required) {
+            $elementnames[] = $this->itemname.'_noanswer';
+        }
+
+        return $elementnames;
     }
 }

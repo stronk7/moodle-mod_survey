@@ -87,6 +87,7 @@ class surveyformat_pagebreak extends mod_survey_itembase {
         $this->formrequires['advanced'] = false;
         $this->formrequires['indent'] = false;
         $this->formrequires['hideinstructions'] = false;
+        $this->formrequires['parentid'] = false;
 
         if (!empty($itemid)) {
             $this->item_load($itemid);
@@ -244,13 +245,13 @@ EOS;
     }
 
     /*
-     * userform_mform_element_is_group
-     * returns true if the useform mform element for this item id is a group and false if not
+     * userform_get_root_elements_name
+     * returns an array with the names of the mform element added using $mform->addElement or $mform->addGroup
      *
      * @param
      * @return
      */
-    public function userform_mform_element_is_group() {
-        return false;
+    public function userform_get_root_elements_name() {
+        return array();
     }
 }

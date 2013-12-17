@@ -90,28 +90,32 @@ class survey_submissionform extends moodleform {
 
             $context = context_module::instance($cmid);
             foreach ($itemseeds as $itemseed) {
-                if ($itemseed->parentid) {
-                    // get it now AND NEVER MORE
-                    $parentitem = survey_get_item($itemseed->parentid);
+                if ($tabpage == SURVEY_ITEMS_PREVIEW) {
+                    $itemaschildisallowed = true;
                 } else {
-                    $parentitem = null;
-                }
-
-                // is the current item allowed to be displayed in this page?
-                if ($itemseed->parentid) {
-                    // if parentitem is in a previous page, have a check
-                    // otherwise
-                    // display the current item
-                    if ($parentitem->get_formpage() < $formpage) {
-                        require_once($CFG->dirroot.'/mod/survey/'.$itemseed->type.'/'.$itemseed->plugin.'/plugin.class.php');
-
-                        $itemaschildisallowed = $parentitem->userform_child_item_allowed_static($submissionid, $itemseed);
+                    if ($itemseed->parentid) {
+                        // get it now AND NEVER MORE
+                        $parentitem = survey_get_item($itemseed->parentid);
                     } else {
+                        $parentitem = null;
+                    }
+
+                    // is the current item allowed to be displayed in this page?
+                    if ($itemseed->parentid) {
+                        // if parentitem is in a previous page, have a check
+                        // otherwise
+                        // display the current item
+                        if ($parentitem->get_formpage() < $formpage) {
+                            require_once($CFG->dirroot.'/mod/survey/'.$itemseed->type.'/'.$itemseed->plugin.'/plugin.class.php');
+
+                            $itemaschildisallowed = $parentitem->userform_child_item_allowed_static($submissionid, $itemseed);
+                        } else {
+                            $itemaschildisallowed = true;
+                        }
+                    } else {
+                        // current item has no parent: display it
                         $itemaschildisallowed = true;
                     }
-                } else {
-                    // current item has no parent: display it
-                    $itemaschildisallowed = true;
                 }
 
                 if ($itemaschildisallowed) {
