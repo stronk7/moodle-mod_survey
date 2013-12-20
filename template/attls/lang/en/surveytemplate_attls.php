@@ -53,7 +53,7 @@ $string['radiobutton_content_19'] = '<p>I can obtain insight into opinions that 
 $string['radiobutton_content_20'] = '<p>When I encounter people whose opinions seem alien to me, I make a deliberate effort to \'extend\' myself into that person, to try to see how they could have those opinions.</p>';
 $string['radiobutton_content_21'] = '<p>I spend time figuring out what\'s \'wrong\' with things. For example, I\'ll look for something in a literary interpretation that isn\'t argued well enough.</p>';
 
-$string['item_parentcontent_01'] = '';
+$string['item_parentvalue_01'] = '';
 
 $string['radiobutton_options_01'] = '1::Strongly disagree'."\n".'2::Somewhat disagree'."\n".'3::Neither agree nor disagree'."\n".'4::Somewhat agree'."\n".'5::Strongly agree';
 $string['radiobutton_labelother_01'] = '';

@@ -34,7 +34,7 @@ require_once($CFG->dirroot.'/mod/survey/lib.php');
  * @param $itemid, $type, $plugin
  * @return
  */
-function survey_get_item($itemid, $type='', $plugin='') {
+function survey_get_item($itemid, $type='', $plugin='', $evaluateparentcontent=true) {
     global $CFG, $DB;
 
     if (empty($type) || empty($plugin)) {
@@ -45,7 +45,7 @@ function survey_get_item($itemid, $type='', $plugin='') {
 
     require_once($CFG->dirroot.'/mod/survey/'.$type.'/'.$plugin.'/plugin.class.php');
     $classname = 'survey'.$type.'_'.$plugin;
-    $item = new $classname($itemid);
+    $item = new $classname($itemid, $evaluateparentcontent);
 
     return $item;
 }

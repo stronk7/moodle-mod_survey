@@ -114,7 +114,7 @@ class surveyfield_fileupload extends mod_survey_itembase {
      *
      * @param int $itemid. Optional survey_item ID
      */
-    public function __construct($itemid=0) {
+    public function __construct($itemid=0, $evaluateparentcontent) {
         global $PAGE;
 
         $cm = $PAGE->cm;
@@ -135,7 +135,7 @@ class surveyfield_fileupload extends mod_survey_itembase {
         $this->formrequires['insearchform'] = false;
 
         if (!empty($itemid)) {
-            $this->item_load($itemid);
+            $this->item_load($itemid, $evaluateparentcontent);
         }
     }
 
@@ -145,9 +145,9 @@ class surveyfield_fileupload extends mod_survey_itembase {
      * @param $itemid
      * @return
      */
-    public function item_load($itemid) {
+    public function item_load($itemid, $evaluateparentcontent) {
         // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
-        parent::item_load($itemid);
+        parent::item_load($itemid, $evaluateparentcontent);
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
@@ -354,16 +354,18 @@ EOS;
     public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($fromdb) { // $fromdb may be boolean false for not existing data
-            $fieldname = $this->itemname.'_filemanager';
-
-            // $prefill->id = $fromdb->submissionid;
-            $draftitemid = 0;
-            $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
-            file_prepare_draft_area($draftitemid, $this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOAD_FILEAREA, $fromdb->id, $attachmentoptions);
-
-            $prefill[$fieldname] = $draftitemid;
+        if (!$fromdb) { // $fromdb may be boolean false for not existing data
+            return $prefill;
         }
+
+        $fieldname = $this->itemname.'_filemanager';
+
+        // $prefill->id = $fromdb->submissionid;
+        $draftitemid = 0;
+        $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
+        file_prepare_draft_area($draftitemid, $this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOAD_FILEAREA, $fromdb->id, $attachmentoptions);
+
+        $prefill[$fieldname] = $draftitemid;
 
         return $prefill;
     }

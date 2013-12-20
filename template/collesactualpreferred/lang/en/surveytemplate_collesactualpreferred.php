@@ -128,7 +128,7 @@ $string['textarea_content_52'] = '<p>Do you have any other comments?</p>';
 // common strings
 // --------------
 $string['item_content_beginlabel'] = '<p>In this online unit...</p>';
-$string['item_parentcontent_01'] = '';
+$string['item_parentvalue_01'] = '';
 
 $string['label_leftlabel_01'] = '';
 

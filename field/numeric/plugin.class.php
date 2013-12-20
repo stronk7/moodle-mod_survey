@@ -134,7 +134,7 @@ class surveyfield_numeric extends mod_survey_itembase {
      *
      * @param int $itemid. Optional survey_item ID
      */
-    public function __construct($itemid=0) {
+    public function __construct($itemid=0, $evaluateparentcontent) {
         global $PAGE;
 
         $cm = $PAGE->cm;
@@ -156,7 +156,7 @@ class surveyfield_numeric extends mod_survey_itembase {
         // EMPTY LIST
 
         if (!empty($itemid)) {
-            $this->item_load($itemid);
+            $this->item_load($itemid, $evaluateparentcontent);
         }
     }
 
@@ -166,9 +166,9 @@ class surveyfield_numeric extends mod_survey_itembase {
      * @param $itemid
      * @return
      */
-    public function item_load($itemid) {
+    public function item_load($itemid, $evaluateparentcontent) {
         // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
-        parent::item_load($itemid);
+        parent::item_load($itemid, $evaluateparentcontent);
 
         // float numbers need more attention because I can write them using , or .
         if (strlen($this->defaultvalue)) {
@@ -285,14 +285,14 @@ class surveyfield_numeric extends mod_survey_itembase {
 
     /*
      * item_atomize_number
-     * starting from parentcontent, this function returns it splitted into an array
+     * starting from justanumber, this function returns it splitted into an array
      *
-     * @param $parentcontent
+     * @param $justanumber
      * @return
      */
-    public function item_atomize_number($parentcontent) {
+    public function item_atomize_number($justanumber) {
         $pattern = '~^\s*(-?)([0-9]+)'.get_string('decsep', 'langconfig').'?([0-9]*)\s*$~';
-        preg_match($pattern, $parentcontent, $matches);
+        preg_match($pattern, $justanumber, $matches);
 
         return $matches;
     }
@@ -607,11 +607,13 @@ EOS;
     public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($fromdb) { // $fromdb may be boolean false for not existing data
-            if (isset($fromdb->content)) {
-                $prefill[$this->itemname] = number_format((double)$fromdb->content, $this->decimals, $this->decimalseparator, '');
-            }
-        } // else use item defaults
+        if (!$fromdb) { // $fromdb may be boolean false for not existing data
+            return $prefill;
+        }
+
+        if (isset($fromdb->content)) {
+            $prefill[$this->itemname] = number_format((double)$fromdb->content, $this->decimals, $this->decimalseparator, '');
+        }
 
         return $prefill;
     }

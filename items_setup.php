@@ -83,7 +83,7 @@ require_once($CFG->dirroot.'/mod/survey/'.$itemlistman->type.'/'.$itemlistman->p
 // -----------------------------
 // get item
 $itemclass = 'survey'.$itemlistman->type.'_'.$itemlistman->plugin;
-$item = new $itemclass($itemlistman->itemid);
+$item = new $itemclass($itemlistman->itemid, true);
 
 $item->item_set_editor();
 // end of: get item
@@ -149,6 +149,7 @@ if ($itemlistman->hassubmissions) {
     echo $OUTPUT->notification(get_string('hassubmissions_alert', 'survey'));
 }
 $itemlistman->item_welcome();
+
 $itemform->set_data($item);
 $itemform->display();
 

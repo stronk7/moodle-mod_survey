@@ -32,10 +32,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_survey_itembase {
 
-    /***********************************************************************************/
-    /* BEGIN OF FIELDS OF SURVEY_ITEMS CLASS */
-    /***********************************************************************************/
-
     /*
      * unique itemid of the surveyitem in survey_item table
      */
@@ -97,9 +93,9 @@ class mod_survey_itembase {
     public $parentid = 0;
 
     /*
-     * $parentcontent = the constrain given by item parentid as entered by the survey creator (25/4/1860)
+     * $parentvalue = the answer the parent item has to have in order to show this item as child
      */
-    public $parentcontent = '';
+    public $parentvalue = '';
 
     /*
      * $timecreated = the creation time of this item
@@ -143,9 +139,6 @@ class mod_survey_itembase {
         'insearchform' => true,
         'parentid' => true
     );
-    /***********************************************************************************/
-    /* END OF FIELDS OF SURVEY_ITEMS */
-    /***********************************************************************************/
 
     /*
      * item_load
@@ -153,7 +146,7 @@ class mod_survey_itembase {
      * @param integer $itemid
      * @return
      */
-    public function item_load($itemid) {
+    public function item_load($itemid, $evaluateparentcontent) {
         global $DB;
 
         if (!$itemid) {
@@ -171,6 +164,10 @@ class mod_survey_itembase {
             }
             unset($this->id); // I do not care it. I already heave: itemid and pluginid
             $this->itemname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
+            if ($evaluateparentcontent && $this->parentid) {
+                $parentitem = survey_get_item($this->parentid, null, null, false);
+                $this->parentcontent = $parentitem->item_decode_parentvalue($this->parentvalue);
+            }
         } else {
             debugging('Something was wrong at line '.__LINE__.' of file '.__FILE__.'!<br />I can not find the survey item ID = '.$itemid.' using:<br />'.$sql);
         }
@@ -204,6 +201,11 @@ class mod_survey_itembase {
 
         $tablename = 'survey'.$this->type.'_'.$this->plugin;
 
+        // truncate extranote if longer than maximum allowed (255 characters)
+        if (isset($record->extranote) && (strlen($record->extranote) > 255)) {
+            $record->extranote = substr($record->extranote, 0, 255);
+        }
+
         // do not forget surveyid
         $record->surveyid = $cm->instance;
         $record->timemodified = $timenow;
@@ -218,8 +220,14 @@ class mod_survey_itembase {
             }
         }
 
-        if (isset($record->parentcontent)) {
-            $record->parentcontent = trim($record->parentcontent, " \t\n\r");
+        // survey can be multilang
+        // so I can not save labels to parentvalue as they may change
+        // because of this, even if the user writes, for instance, "bread\nmilk" to parentvalue
+        // I have to encode it to key(break);key(milk)
+        if (isset($record->parentid) && $record->parentid) {
+            $parentitem = survey_get_item($record->parentid);
+            $record->parentvalue = $parentitem->item_encode_parentcontent($record->parentcontent);
+            unset($record->parentcontent);
         }
 
         // $this->userfeedback
@@ -679,6 +687,19 @@ class mod_survey_itembase {
     }
 
     /*
+     * item_get_multilang_fields
+     *
+     * @param
+     * @return
+     */
+    public function item_get_multilang_fields() {
+        $fieldlist = array();
+        $fieldlist[$this->plugin] = array('content');
+
+        return $fieldlist;
+    }
+
+    /*
      * item_get_plugin_schema
      * Return the xml schema for survey_<<plugin>> table.
      *
@@ -704,7 +725,7 @@ class mod_survey_itembase {
         // $schema .= '                <xs:element type="xs:int" name="formpage"/>'."\n";
 
         $schema .= '                <xs:element type="xs:int" name="parentid" minOccurs="0"/>'."\n";
-        $schema .= '                <xs:element type="xs:string" name="parentcontent" minOccurs="0"/>'."\n";
+        $schema .= '                <xs:element type="xs:string" name="parentvalue" minOccurs="0"/>'."\n";
 
         // $schema .= '                <xs:element type="xs:int" name="timecreated"/>'."\n";
         // $schema .= '                <xs:element type="xs:int" name="timemodified"/>'."\n";
@@ -863,13 +884,29 @@ class mod_survey_itembase {
     }
 
     /*
-     * get_parentcontent
+     * get_parentvalue
      *
      * @param
      * @return
      */
-    public function get_parentcontent() {
-        return $this->parentcontent;
+    public function get_parentcontent($separator="\n") {
+        if ($separator != "\n") {
+            $parentcontent = explode("\n", $this->parentcontent);
+            $parentcontent = implode($separator, $parentcontent);
+            return $parentcontent;
+        } else {
+            return $this->parentcontent;
+        }
+    }
+
+    /*
+     * get_parentvalue
+     *
+     * @param
+     * @return
+     */
+    public function get_parentvalue() {
+        return $this->parentvalue;
     }
 
     /*
@@ -1020,25 +1057,11 @@ class mod_survey_itembase {
      * @param $childvalue
      * @return status of child relation
      */
-    public function parent_validate_child_constraints($childvalue) {
+    public function parent_validate_child_constraints($childparentvalue) {
         // whether not overridden by specific class method...
         // nothing to do!
     }
 
-
-    /*
-     * item_get_multilang_fields
-     *
-     * @param
-     * @return
-     */
-    public function item_get_multilang_fields() {
-        $fieldlist = array();
-        $fieldlist['item'] = array('parentcontent');
-        $fieldlist[$this->plugin] = array('content');
-
-        return $fieldlist;
-    }
 
     // MARK userform
 
@@ -1098,17 +1121,15 @@ class mod_survey_itembase {
 
     /*
      * userform_child_item_allowed_static
-     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
-     * ----------------------------------------------------------------------
-     * this function is called at submit time if (and only if) parent item and child item live in different form page
-     * this function is supposed to classify disabled element as unexpected in order to drop their reported value
-     * ----------------------------------------------------------------------
-     * Am I getting submitted data from $fromform or from table 'survey_userdata'?
-     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
-     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
-     * ----------------------------------------------------------------------
+     * this method is called if (and only if) parent item and child item DON'T live in the same form page
+     * this method has two purposes:
+     * - skip the iitem from the current page of $userpageform
+     * - get if a page has items
      *
-     * @param: $submissionid, $childitemrecord
+     * as parentitem declare whether my child item is allowed to in the page that is going to be displayed
+     *
+     * @param int $submissionid:
+     * @param array $childitemrecord:
      * @return $status: true: the item is welcome; false: the item must be dropped out
      */
     public function userform_child_item_allowed_static($submissionid, $childitemrecord) {
@@ -1121,26 +1142,7 @@ class mod_survey_itembase {
         $where = array('submissionid' => $submissionid, 'itemid' => $this->itemid);
         $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
 
-        return ($givenanswer === $childitemrecord->parentcontent);
-    }
-
-    /*
-     * userform_child_item_allowed_dynamic
-     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
-     * ----------------------------------------------------------------------
-     * this function is called at submit time if (and only if) parent item and child item live in the same form page
-     * this function is supposed to classify disabled element as unexpected in order to drop their reported value
-     * ----------------------------------------------------------------------
-     * Am I geting submitted data from $fromform or from table 'survey_userdata'?
-     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
-     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
-     * ----------------------------------------------------------------------
-     *
-     * @param: $childparentcontent, $data
-     * @return
-     */
-    public function userform_child_item_allowed_dynamic($childparentcontent, $data) {
-        return ($data[$this->itemname] == $childparentcontent);
+        return ($givenanswer === $childitemrecord->parentvalue);
     }
 
     /*
@@ -1170,7 +1172,7 @@ class mod_survey_itembase {
         // at the beginning, $currentitem is me
         $currentitem = new stdClass();
         $currentitem->parentid = $this->get_parentid();
-        $currentitem->parentcontent = $this->get_parentcontent();
+        $currentitem->parentvalue = $this->get_parentvalue();
         $mypage = $this->get_formpage(); // once and forever
         do {
             /*
@@ -1178,12 +1180,12 @@ class mod_survey_itembase {
              * Even if (!$survey->newpageforchild) I can have all my ancestors into previous pages by adding pagebreaks manually
              * Because of this, I need to chech page numbers
              */
-            $parentitem = $DB->get_record('survey_item', array('id' => $currentitem->parentid), 'parentid, parentcontent, formpage');
+            $parentitem = $DB->get_record('survey_item', array('id' => $currentitem->parentid), 'parentid, parentvalue, formpage');
             $parentpage = $parentitem->formpage;
             if ($parentpage == $mypage) {
                 $parentid = $currentitem->parentid;
-                $parentcontent = $currentitem->parentcontent;
-                $parentrestrictions[$parentid] = $parentcontent; // The element with ID == $parentid requires, as constain, $parentcontent
+                $parentvalue = $currentitem->parentvalue;
+                $parentrestrictions[$parentid] = $parentvalue; // The element with ID == $parentid requires, as constain, $parentvalue
             } else {
                 // my parent is in a page before mine
                 // no need to investigate more for older ancestors
@@ -1196,9 +1198,9 @@ class mod_survey_itembase {
         // The array key is the ID of the parent item, the corresponding value is the constrain that $this has to be submitted to
 
         $displaydebuginfo = false;
-        foreach ($parentrestrictions as $parentid => $childconstrain) {
+        foreach ($parentrestrictions as $parentid => $childparentvalue) {
             $parentitem = survey_get_item($parentid);
-            $disabilitationinfo = $parentitem->userform_get_parent_disabilitation_info($childconstrain);
+            $disabilitationinfo = $parentitem->userform_get_parent_disabilitation_info($childparentvalue);
 
             if ($displaydebuginfo) {
                 foreach ($disabilitationinfo as $parentinfo) {

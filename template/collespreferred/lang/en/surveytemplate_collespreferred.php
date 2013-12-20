@@ -89,7 +89,7 @@ $string['textarea_content_28'] = '<p>Do you have any other comments?</p>';
 // --------------
 // common strings
 // --------------
-$string['item_parentcontent_01'] = '';
+$string['item_parentvalue_01'] = '';
 
 $string['label_leftlabel_01'] = '';
 

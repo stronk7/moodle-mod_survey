@@ -8,7 +8,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>1</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_label>
       <content>label_content_01</content>
@@ -26,7 +26,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>2</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_fieldset>
       <content>fieldset_content_01</content>
@@ -40,7 +40,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>3</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_02</content>
@@ -64,7 +64,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>4</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_03</content>
@@ -88,7 +88,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>5</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_04</content>
@@ -112,7 +112,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>6</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_05</content>
@@ -136,7 +136,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>7</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_06</content>
@@ -160,7 +160,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>8</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_07</content>
@@ -184,7 +184,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>9</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_08</content>
@@ -208,7 +208,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>10</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_09</content>
@@ -232,7 +232,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>11</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_10</content>
@@ -256,7 +256,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>12</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_11</content>
@@ -280,7 +280,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>13</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_12</content>
@@ -304,7 +304,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>14</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_13</content>
@@ -328,7 +328,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>15</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_14</content>
@@ -352,7 +352,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>16</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_15</content>
@@ -376,7 +376,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>17</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_16</content>
@@ -400,7 +400,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>18</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_17</content>
@@ -424,7 +424,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>19</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_18</content>
@@ -448,7 +448,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>20</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_19</content>
@@ -472,7 +472,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>21</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_20</content>
@@ -496,7 +496,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>22</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_radiobutton>
       <content>radiobutton_content_21</content>

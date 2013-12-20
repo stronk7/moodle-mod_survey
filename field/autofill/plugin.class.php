@@ -184,7 +184,7 @@ class surveyfield_autofill extends mod_survey_itembase {
      *
      * @param int $itemid. Optional survey_item ID
      */
-    public function __construct($itemid=0) {
+    public function __construct($itemid=0, $evaluateparentcontent) {
         global $PAGE;
 
         $cm = $PAGE->cm;
@@ -207,7 +207,7 @@ class surveyfield_autofill extends mod_survey_itembase {
         $this->formrequires['parentid'] = false;
 
         if (!empty($itemid)) {
-            $this->item_load($itemid);
+            $this->item_load($itemid, $evaluateparentcontent);
         }
     }
 
@@ -217,9 +217,9 @@ class surveyfield_autofill extends mod_survey_itembase {
      * @param $itemid
      * @return
      */
-    public function item_load($itemid) {
+    public function item_load($itemid, $evaluateparentcontent) {
         // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
-        parent::item_load($itemid);
+        parent::item_load($itemid, $evaluateparentcontent);
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
@@ -536,9 +536,11 @@ EOS;
     public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($fromdb) { // $fromdb may be boolean false for not existing data
-            $prefill[$this->itemname] = $fromdb->content;
-        } // else use item defaults
+        if (!$fromdb) { // $fromdb may be boolean false for not existing data
+            return $prefill;
+        }
+
+        $prefill[$this->itemname] = $fromdb->content;
 
         return $prefill;
     }

@@ -137,5 +137,18 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013121101, 'survey');
     }
 
+    if ($oldversion < 2013121801) {
+
+        // Rename field parentcontent on table survey_item to parentvalue.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('parentcontent', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'parentid');
+
+        // Launch rename field parentcontent.
+        $dbman->rename_field($table, $field, 'parentvalue');
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2013121801, 'survey');
+    }
+
     return true;
 }

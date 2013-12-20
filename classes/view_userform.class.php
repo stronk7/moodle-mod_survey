@@ -107,7 +107,7 @@ class mod_survey_userformmanager {
      */
     public $cansubmit = false;
 
-    /********************** this will be provided later
+    /*
      * $formdata: the form content as submitted by the user
      */
     public $formdata = null;
@@ -243,7 +243,7 @@ class mod_survey_userformmanager {
             require_once($CFG->dirroot.'/mod/survey/field/'.$parentplugin.'/plugin.class.php');
 
             $itemclass = 'surveyfield_'.$parentplugin;
-            $parentitem = new $itemclass($itemseed->parentid);
+            $parentitem = new $itemclass($itemseed->parentid, false);
 
             if ($parentitem->userform_child_item_allowed_static($this->submissionid, $itemseed)) {
                 // if (userform_child_item_allowed_static($this->submissionid, $itemseed)) {
@@ -964,7 +964,7 @@ class mod_survey_userformmanager {
 
             if ($parentinsamepage) { // if parent is in this same page
                 // tell parentitem what child needs in order to be displayed and compare it with what was answered to parentitem ($dirtydata)
-                $expectedvalue = $parentitem->userform_child_item_allowed_dynamic($childitem->parentcontent, $dirtydata);
+                $expectedvalue = $parentitem->userform_child_item_allowed_dynamic($childitem->parentvalue, $dirtydata);
                 // parentitem, knowing itself, compare what is needed and provide an answer
 
                 if (!$expectedvalue) {

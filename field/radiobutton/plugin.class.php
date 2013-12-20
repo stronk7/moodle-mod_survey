@@ -129,7 +129,7 @@ class surveyfield_radiobutton extends mod_survey_itembase {
      *
      * @param int $itemid. Optional survey_item ID
      */
-    public function __construct($itemid=0) {
+    public function __construct($itemid=0, $evaluateparentcontent) {
         global $PAGE;
 
         $cm = $PAGE->cm;
@@ -150,7 +150,7 @@ class surveyfield_radiobutton extends mod_survey_itembase {
         $this->formrequires['hideinstructions'] = false;
 
         if (!empty($itemid)) {
-            $this->item_load($itemid);
+            $this->item_load($itemid, $evaluateparentcontent);
         }
     }
 
@@ -160,9 +160,9 @@ class surveyfield_radiobutton extends mod_survey_itembase {
      * @param $itemid
      * @return
      */
-    public function item_load($itemid) {
+    public function item_load($itemid, $evaluateparentcontent) {
         // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
-        parent::item_load($itemid);
+        parent::item_load($itemid, $evaluateparentcontent);
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
@@ -273,6 +273,37 @@ class surveyfield_radiobutton extends mod_survey_itembase {
     }
 
     /*
+     * item_encode_parentcontent
+     *
+     * @param $childparentcontent
+     * return childparentvalue
+     */
+    public function item_encode_parentcontent($childparentcontent) {
+        $labels = $this->item_get_labels_array('options');
+
+        $index = array_search($childparentcontent, $labels);
+        if ($index !== false) {
+            return $index;
+        } else {
+            return $childparentcontent;
+        }
+    }
+
+    /*
+     * item_decode_parentvalue
+     *
+     * @param $childparentvalue
+     * return $childparentcontent
+     */
+    public function item_decode_parentvalue($childparentvalue) {
+        $labels = $this->item_get_labels_array('options');
+
+        $childparentcontent[] = $labels[$childparentvalue];
+
+        return $labels[$childparentvalue];
+    }
+
+    /*
      * item_list_constraints
      *
      * @param
@@ -314,26 +345,6 @@ class surveyfield_radiobutton extends mod_survey_itembase {
         $fieldlist['radiobutton'] = array('content', 'options', 'labelother', 'defaultvalue');
 
         return $fieldlist;
-    }
-
-    // MARK parent
-
-    /*
-     * parent_validate_child_constraints
-     *
-     * @param
-     * @return status of child relation
-     */
-    public function parent_validate_child_constraints($childvalue) {
-        $labels = $this->item_get_labels_array('options');
-
-        if (empty($this->labelother)) {
-            $status = (array_search($childvalue, $labels) !== false) ? true : false;
-        } else {
-            $status = true;
-        }
-
-        return $status;
     }
 
     /*
@@ -381,6 +392,43 @@ class surveyfield_radiobutton extends mod_survey_itembase {
 EOS;
 
         return $schema;
+    }
+
+    // MARK parent
+
+    /*
+     * parent_validate_child_constraints
+     *
+     * @param $childparentvalue
+     * @return status of child relation
+     */
+    public function parent_validate_child_constraints($childparentvalue) {
+        // I have here $childparentvalue that was calculated at child save time
+        // I can not be sure the parent item (this item) was not changed in a second time
+        // I have to consider two following scenarios:
+        // - a) $childparentvalue is a label: $this->labelother has to exist here
+        // - b) $childparentvalue is an index: it has to be a numeric key lower equal than the count of elements of the parent item (this item)
+        // from the parent item point of view:
+        // 1) if $this->labelother exists here, $childparentvalue does not have to meet any condition: nothing is to check
+        // 2) if $this->labelother does not exists here, $childparentvalue has to follow constrictions listed in b)
+
+        // case 1:
+        if ($this->labelother) {
+            return true;
+        }
+
+        // case 2:
+        // $childparentvalue has to be a numeric key
+        $testnumber = (int)$childparentvalue;
+        if ( ($testnumber == 0) && ($childparentvalue != '0') ) {
+            // $childparentvalue is not a numeric key
+            return false;
+        }
+
+        if (is_numeric((int)$childparentvalue)) {
+            $labelcount = count($this->item_get_labels_array('options'));
+            return ($testnumber <= $labelcount);
+        }
     }
 
     // MARK userform
@@ -526,34 +574,38 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from childparentcontent defines syntax for disabledIf
+     * from childparentvalue defines syntax for disabledIf
      *
-     * @param: $childparentcontent
+     * @param: $childparentvalue
      * @return
      */
-    public function userform_get_parent_disabilitation_info($childparentcontent) {
+    public function userform_get_parent_disabilitation_info($childparentvalue) {
         $disabilitationinfo = array();
 
-        $labels = $this->item_get_labels_array('options');
+        $testnumber = (int)$childparentvalue;
+        if ( ($testnumber == 0) && ($childparentvalue != '0') ) {
+            // $childparentvalue is not a numeric key
+            if ($this->labelother) {
+                $mformelementinfo = new stdClass();
+                $mformelementinfo->parentname = $this->itemname;
+                $mformelementinfo->operator = 'neq';
+                $mformelementinfo->content = 'other';
+                $disabilitationinfo[] = $mformelementinfo;
 
-        $index = array_search($childparentcontent, $labels);
-        if ($index !== false) {
-            $mformelementinfo = new stdClass();
-            $mformelementinfo->parentname = $this->itemname;
-            $mformelementinfo->operator = 'neq';
-            $mformelementinfo->content = $index;
-            $disabilitationinfo[] = $mformelementinfo;
+                $mformelementinfo = new stdClass();
+                $mformelementinfo->parentname = $this->itemname.'_text';
+                $mformelementinfo->operator = 'neq';
+                $mformelementinfo->content = $childparentvalue;
+                $disabilitationinfo[] = $mformelementinfo;
+            } else {
+                debugging('Probably $childparentvalue is not correct: '.$childparentvalue);
+            }
         } else {
+            // $childparentvalue is a numeric key
             $mformelementinfo = new stdClass();
             $mformelementinfo->parentname = $this->itemname;
             $mformelementinfo->operator = 'neq';
-            $mformelementinfo->content = 'other';
-            $disabilitationinfo[] = $mformelementinfo;
-
-            $mformelementinfo = new stdClass();
-            $mformelementinfo->parentname = $this->itemname.'_text';
-            $mformelementinfo->operator = 'neq';
-            $mformelementinfo->content = $childparentcontent;
+            $mformelementinfo->content = $testnumber;
             $disabilitationinfo[] = $mformelementinfo;
         }
 
@@ -561,70 +613,31 @@ EOS;
     }
 
     /*
-     * userform_child_item_allowed_static
-     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
-     * ----------------------------------------------------------------------
-     * this function is called at submit time if (and only if) parent item and child item live in different form page
-     * this function is supposed to classify disabled element as unexpected in order to drop their reported value
-     * ----------------------------------------------------------------------
-     * Am I getting submitted data from $fromform or from table 'survey_userdata'?
-     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
-     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
-     * ----------------------------------------------------------------------
-     *
-     * @param: $submissionid, $childitemrecord
-     * @return $status: true: the item is welcome; false: the item must be dropped out
-     */
-    public function userform_child_item_allowed_static($submissionid, $childitemrecord) {
-        global $DB;
-
-        if (!$childitemrecord->parentid) {
-            return true;
-        }
-
-        $where = array('submissionid' => $submissionid, 'itemid' => $this->itemid);
-        $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
-
-        $childparentcontent = $childitemrecord->parentcontent;
-
-        $values = $this->item_get_labels_array('options');
-        $index = array_search($childparentcontent, $values);
-
-        if ($index !== false) {
-            $status = ($givenanswer == $index);
-        } else {
-            $status = ($givenanswer == $childparentcontent);
-        }
-
-        return $status;
-    }
-
-    /*
      * userform_child_item_allowed_dynamic
-     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
-     * ----------------------------------------------------------------------
-     * this function is called at submit time if (and only if) parent item and child item live in the same form page
-     * this function is supposed to classify disabled element as unexpected in order to drop their reported value
-     * ----------------------------------------------------------------------
-     * Am I getting submitted data from $fromform or from table 'survey_userdata'?
-     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
-     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
-     * ----------------------------------------------------------------------
+     * this method is called if (and only if) parent item and child item live in the same form page
+     * this method has two purposes:
+     * - stop userpageform item validation
+     * - drop unexpected returned values from $userpageform->formdata
      *
-     * @param: $childparentcontent, $data
-     * @return $status: true: the item is welcome; false: the item must be dropped out
+     * as parentitem declare whether my child item is allowed to return a value (is enabled) or is not (is disabled)
+     *
+     * @param string $childparentvalue:
+     * @param array $data:
+     * @return boolean: true: if the item is welcome; false: if the item must be dropped out
      */
-    public function userform_child_item_allowed_dynamic($childparentcontent, $data) {
-        $labels = $this->item_get_labels_array('options');
-        $index = array_search($childparentcontent, $labels);
-        if ($index !== false) {
-            $status = ($data[$this->itemname] == $index);
-        } else {
-            $status = ($data[$this->itemname] == 'other');
-            $status = $status && ($data[$this->itemname.'_text'] == $childparentcontent);
-        }
+    public function userform_child_item_allowed_dynamic($childparentvalue, $data) {
+        // 1) I am a radiobutton item
+        // 2) in $data I can ONLY find $this->itemname, $this->itemname.'_text'
 
-        return $status;
+        // I need to verify (checkbox per checkbox) if they hold the same value the user entered
+        $labels = $this->item_get_labels_array('options');
+        $request = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue); // 2 OR shark
+
+        if ( ($this->labelother) && ($data[$this->itemname] == count($labels)) ) {
+            return ($data[$this->itemname.'_text'] = $childparentvalue);
+        } else {
+            return ($data[$this->itemname] = $childparentvalue);
+        }
     }
 
     /*
@@ -667,28 +680,30 @@ EOS;
     public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($fromdb) { // $fromdb may be boolean false for not existing data
-            if (isset($fromdb->content)) {
-                $labels = $this->item_get_labels_array('options');
-                if (array_key_exists($fromdb->content, $labels)) {
-                    $prefill[$this->itemname] = $fromdb->content;
-                } else {
-                    if ($fromdb->content == SURVEY_NOANSWERVALUE) {
-                        $prefill[$this->itemname] = SURVEY_NOANSWERVALUE;
-                    } else {
-                        // it is, for sure, the content of _text
-                        $prefill[$this->itemname] = 'other';
-                        $prefill[$this->itemname.'_text'] = $fromdb->content;
-                    }
-                }
+        if (!$fromdb) { // $fromdb may be boolean false for not existing data
+            return $prefill;
+        }
+
+        if (isset($fromdb->content)) {
+            $labels = $this->item_get_labels_array('options');
+            if (array_key_exists($fromdb->content, $labels)) {
+                $prefill[$this->itemname] = $fromdb->content;
             } else {
-                // nothing was set
-                // do not accept defaults but overwrite them
-                // but... if this is a group of radio buttons, how can it be empty($fromdb->content)?
-                // Because user selected "Not answering" or question was disabled
-                $prefill[$this->itemname] = '';
+                if ($fromdb->content == SURVEY_NOANSWERVALUE) {
+                    $prefill[$this->itemname] = SURVEY_NOANSWERVALUE;
+                } else {
+                    // it is, for sure, the content of _text
+                    $prefill[$this->itemname] = 'other';
+                    $prefill[$this->itemname.'_text'] = $fromdb->content;
+                }
             }
-        } // else use item defaults
+        } else {
+            // nothing was set
+            // do not accept defaults but overwrite them
+            // but... if this is a group of radio buttons, how can it be empty($fromdb->content)?
+            // Because user selected "Not answering" or question was disabled
+            $prefill[$this->itemname] = '';
+        }
 
         return $prefill;
     }

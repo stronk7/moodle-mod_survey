@@ -124,7 +124,7 @@ class surveyfield_checkbox extends mod_survey_itembase {
      *
      * @param int $itemid. Optional survey_item ID
      */
-    public function __construct($itemid=0) {
+    public function __construct($itemid=0, $evaluateparentcontent) {
         global $PAGE;
 
         $cm = $PAGE->cm;
@@ -145,7 +145,7 @@ class surveyfield_checkbox extends mod_survey_itembase {
         $this->formrequires['hideinstructions'] = false;
 
         if (!empty($itemid)) {
-            $this->item_load($itemid);
+            $this->item_load($itemid, $evaluateparentcontent);
         }
     }
 
@@ -155,9 +155,9 @@ class surveyfield_checkbox extends mod_survey_itembase {
      * @param $itemid
      * @return
      */
-    public function item_load($itemid) {
+    public function item_load($itemid, $evaluateparentcontent) {
         // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
-        parent::item_load($itemid);
+        parent::item_load($itemid, $evaluateparentcontent);
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
@@ -205,6 +205,61 @@ class surveyfield_checkbox extends mod_survey_itembase {
     }
 
     /*
+     * item_encode_parentcontent
+     *
+     * @param $childparentcontent
+     * return childparentvalue
+     */
+    public function item_encode_parentcontent($childparentcontent) {
+        $parentcontent = survey_textarea_to_array($childparentcontent);
+        $labels = $this->item_get_labels_array('options');
+
+        $childparentvalue = array();
+        foreach ($labels as $k => $label) {
+            $key = array_search($label, $parentcontent);
+            if ($key !== false) {
+                $childparentvalue[] = 1;
+                unset($parentcontent[$key]);
+            } else {
+                $childparentvalue[] = 0;
+            }
+        }
+
+        if (count($parentcontent)) {
+            $childparentvalue['other'] = 1;
+            $childparentvalue['text'] = $parentcontent[0];
+        } else {
+            $childparentvalue['text'] = '';
+        }
+
+        return implode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
+    }
+
+    /*
+     * item_decode_parentvalue
+     *
+     * @param $childparentvalue
+     * return $childparentcontent
+     */
+    public function item_decode_parentvalue($childparentvalue) {
+        $labels = $this->item_get_labels_array('options');
+        $parentvalue = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
+        $childparentcontent = array();
+        foreach ($parentvalue as $k => $value) {
+            if ($value == 1) {
+                $childparentcontent[] = $labels[$k];
+            }
+        }
+
+        $lastvalue = end($parentvalue);
+        if ($lastvalue) {
+            $childparentcontent[] = $lastvalue;
+        }
+
+        return implode("\n", $childparentcontent);
+    }
+
+    /*
      * item_list_constraints
      *
      * @param
@@ -240,32 +295,40 @@ class surveyfield_checkbox extends mod_survey_itembase {
     /*
      * parent_validate_child_constraints
      *
-     * @param
+     * @param $childparentvalue
      * @return status of child relation
      */
-    public function parent_validate_child_constraints($childvalue) {
-        $childlabels = survey_textarea_to_array($childvalue);
+    public function parent_validate_child_constraints($childparentvalue) {
+        // I have here $childparentvalue that was calculated at child save time
+        // I can not be sure the parent item (this item) was not changed in a second time
+        // I need to check for:
+        // - count of elements
+        // - presence of $this->labelother
 
-        $labels = $this->item_get_labels_array('options');
-
-        $errcount = 0;
-        foreach ($childlabels as $childlabel) {
-            if (array_search($childlabel, $labels) === false) {
-                $errcount++;
-            }
-        }
-        switch ($errcount) {
-            case 0:
-                $status = true;
-                break;
-            case 1:
-                $status = !empty($this->labelother);
-                break;
-            default:
-                $status = false;
+        $childparentvalues = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
+        $parentoptionscount = count($childparentvalues);
+        $labelcount = count($this->item_get_labels_array('options'));
+        if ($this->labelother) {
+            $labelcount++;
         }
 
-        return $status;
+        if ($parentoptionscount != $labelcount) {
+            return false;
+        }
+
+        // the count is equal: good
+        // now I have to consider two following scenarios:
+        // 1) the parent item (this item) may have n label + $this->labelother && the child may have n keys without a label
+        // 2) the parent item (this item) may have n label without $this->labelother && the child may have (n-1) keys + a label
+
+        // case 1: whatever is written as last key of $childparentvalues is compatible with $this->labelother, so nothing to check
+        if ($this->labelother) {
+            return true;
+        }
+
+        // case 2:
+        $lastkey = end($childparentvalues);
+        return ($lastkey == $labelcount);
     }
 
     /*
@@ -396,7 +459,7 @@ EOS;
          * the JS validation MAY BE missing even if the field is required
          * (JS validation is never added because I do not want it when the "previous" button is pressed and when an item is disabled even if mandatory)
          * so the check for the not empty field is performed in the validation routine.
-         * The validation routine is executed ONLY ON ITEM that are really submitted.
+         * The validation routine is executed ONLY ON ITEM that are actually submitted.
          * For checkboxes, nothing is submitted if no box is checked
          * so, if the user neglects the mandatory checkboxes item AT ALL, it is not submitted and, as conseguence, not validated.
          * TO ALWAYS SUBMIT A CHECKNBOXES SET I add a dummy hidden item.
@@ -459,44 +522,54 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from childparentcontent defines syntax for disabledIf
+     * from childparentvalue defines syntax for disabledIf
      *
-     * @param: $childparentcontent
+     * @param: $childparentvalue
      * @return
      */
-    public function userform_get_parent_disabilitation_info($childparentcontent) {
+    public function userform_get_parent_disabilitation_info($childparentvalue) {
         $disabilitationinfo = array();
 
-        // I need to know the names of mfrom element corresponding to the content of $childparentcontent
         $labels = $this->item_get_labels_array('options');
-        $request = survey_textarea_to_array($childparentcontent);
+        $request = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue); // 1;1;0;
 
         foreach ($labels as $k => $label) {
             $mformelementinfo = new stdClass();
 
             $mformelementinfo->parentname = $this->itemname.'_'.$k;
-            $constrainindex = array_search($label, $request);
-            if ($constrainindex !== false) { // 0 or a different index
-                unset($request[$constrainindex]);
+            if ($request[$k] == 1) {
                 $mformelementinfo->content = 'notchecked';
             } else {
                 $mformelementinfo->content = 'checked';
             }
+            unset($request[$k]);
             $disabilitationinfo[] = $mformelementinfo;
         }
 
         // if among $request ​​there is one that is not among $valueLabel
         if (count($request)) { // if I STILL have $request
-            $mformelementinfo = new stdClass();
-            $mformelementinfo->parentname = $this->itemname.'_other';
-            $mformelementinfo->content = 'notchecked';
-            $disabilitationinfo[] = $mformelementinfo;
+            if ($this->labelother) {
+                $lastlabel = reset($request);
+                if ($lastlabel) {
+                    $mformelementinfo = new stdClass();
+                    $mformelementinfo->parentname = $this->itemname.'_other';
+                    $mformelementinfo->content = 'notchecked';
+                    $disabilitationinfo[] = $mformelementinfo;
 
-            $mformelementinfo = new stdClass();
-            $mformelementinfo->parentname = $this->itemname.'_text';
-            $mformelementinfo->operator = 'neq';
-            $mformelementinfo->content = reset($request);
-            $disabilitationinfo[] = $mformelementinfo;
+                    $mformelementinfo = new stdClass();
+                    $mformelementinfo->parentname = $this->itemname.'_text';
+                    $mformelementinfo->operator = 'neq';
+                    $mformelementinfo->content = reset($request);
+                    $disabilitationinfo[] = $mformelementinfo;
+                } else {
+                    $mformelementinfo = new stdClass();
+                    $mformelementinfo->parentname = $this->itemname.'_other';
+                    $mformelementinfo->content = 'checked';
+                    $disabilitationinfo[] = $mformelementinfo;
+                }
+            } else {
+                debugging('Probably $childparentvalue is not correct: '.$childparentvalue);
+            }
         } else {
             // even if no more request are found,
             // I have to add one more $disabilitationinfo if $this->other is not empty
@@ -512,80 +585,29 @@ EOS;
     }
 
     /*
-     * userform_child_item_allowed_static
-     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
-     * ----------------------------------------------------------------------
-     * this function is called at submit time if (and only if) parent item and child item live in different form page
-     * this function is supposed to classify disabled element as unexpected in order to drop their reported value
-     * ----------------------------------------------------------------------
-     * Am I getting submitted data from $fromform or from table 'survey_userdata'?
-     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
-     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
-     * ----------------------------------------------------------------------
-     *
-     * @param: $submissionid, $childitemrecord
-     * @return $status: true: the item is welcome; false: the item must be dropped out
-     */
-    public function userform_child_item_allowed_static($submissionid, $childitemrecord) {
-        global $DB;
-
-        if (!$childitemrecord->parentid) {
-            return true;
-        }
-
-        $where = array('submissionid' => $submissionid, 'itemid' => $this->itemid);
-        $givenanswer = $DB->get_field('survey_userdata', 'content', $where);
-
-        $values = $this->item_get_labels_array('options');
-
-        $constraints = survey_textarea_to_array($childitemrecord->parentcontent);
-        $elementscount = count(explode(SURVEY_DBMULTIVALUESEPARATOR, $givenanswer));
-        if (!$this->labelother) {
-            $key = array_fill(0, $elementscount, 0);
-        } else {
-            $key = array_fill(0, $elementscount-1, 0);
-            $key[] = '';
-        }
-
-        foreach ($constraints as $constraint) {
-            $index = array_search($constraint, $values);
-            if ($index !== false) {
-                $key[$index] = 1;
-            } else {
-                // it is the 'other' option
-                // put $constraint in the last position
-                $key[$elementscount-1] = $constraint;
-            }
-        }
-
-        $required = implode(SURVEY_DBMULTIVALUESEPARATOR, $key);
-
-        return ($givenanswer === $required);
-    }
-
-    /*
      * userform_child_item_allowed_dynamic
-     * as parentitem defines whether a child item is supposed to be enabled in the form so needs validation
-     * ----------------------------------------------------------------------
-     * this function is called at submit time if (and only if) parent item and child item live in the same form page
-     * this function is supposed to classify disabled element as unexpected in order to drop their reported value
-     * ----------------------------------------------------------------------
-     * Am I getting submitted data from $fromform or from table 'survey_userdata'?
-     *     - if I get it from $fromform or from $data[] I need to use userform_child_item_allowed_dynamic
-     *     - if I get it from table 'survey_userdata'   I need to use userform_child_item_allowed_static
-     * ----------------------------------------------------------------------
+     * this method is called if (and only if) parent item and child item live in the same form page
+     * this method has two purposes:
+     * - stop userpageform item validation
+     * - drop unexpected returned values from $userpageform->formdata
      *
-     * @param: $parentcontent, $parentsubmitted
-     * @return $status: true: the item is welcome; false: the item must be dropped out
+     * as parentitem declare whether my child item is allowed to return a value (is enabled) or is not (is disabled)
+     *
+     * @param string $childparentvalue:
+     * @param array $data:
+     * @return boolean: true: if the item is welcome; false: if the item must be dropped out
      */
-    public function userform_child_item_allowed_dynamic($childparentcontent, $data) {
+    public function userform_child_item_allowed_dynamic($childparentvalue, $data) {
+        // 1) I am a checkbox item
+        // 2) in $data I can ONLY find $this->itemname, $this->itemname.'_other', $this->itemname.'_text'
+
         // I need to verify (checkbox per checkbox) if they hold the same value the user entered
         $labels = $this->item_get_labels_array('options');
-        $request = survey_textarea_to_array($childparentcontent);
+        $request = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue); // 2;3;shark
 
         $status = true;
         foreach ($labels as $k => $label) {
-            $index = array_search($label, $request);
+            $index = array_search($k, $request);
             if ($index !== false) {
                 $status = $status && (isset($data[$this->itemname.'_'.$k]));
             } else {
@@ -646,6 +668,10 @@ EOS;
      */
     public function userform_set_prefill($fromdb) {
         $prefill = array();
+
+        if (!$fromdb) { // $fromdb may be boolean false for not existing data
+            return $prefill;
+        }
 
         if (isset($fromdb->content)) { // I made some selection
             // count of answers is == count of checkboxes

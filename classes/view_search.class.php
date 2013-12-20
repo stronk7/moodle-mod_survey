@@ -46,7 +46,7 @@ class mod_survey_searchmanager {
      */
     public $canaccessadvanceditems = false;
 
-    /********************** this will be provided later
+    /*
      * $formdata: the form content as submitted by the user
      */
     public $formdata = null;

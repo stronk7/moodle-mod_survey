@@ -58,7 +58,7 @@ class surveyformat_fieldset extends mod_survey_itembase {
      *
      * @param int $itemid. Optional survey_item ID
      */
-    public function __construct($itemid=0) {
+    public function __construct($itemid=0, $evaluateparentcontent) {
         global $PAGE;
 
         $cm = $PAGE->cm;
@@ -85,7 +85,7 @@ class surveyformat_fieldset extends mod_survey_itembase {
         $this->formrequires['hideinstructions'] = false;
 
         if (!empty($itemid)) {
-            $this->item_load($itemid);
+            $this->item_load($itemid, $evaluateparentcontent);
         }
     }
 
@@ -95,9 +95,9 @@ class surveyformat_fieldset extends mod_survey_itembase {
      * @param $itemid
      * @return
      */
-    public function item_load($itemid) {
+    public function item_load($itemid, $evaluateparentcontent) {
         // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
-        parent::item_load($itemid);
+        parent::item_load($itemid, $evaluateparentcontent);
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
@@ -217,6 +217,7 @@ EOS;
      */
     public function userform_set_prefill($fromdb) {
         $prefill = array();
+
         return $prefill;
     }
 

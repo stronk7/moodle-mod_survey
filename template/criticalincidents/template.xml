@@ -8,7 +8,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>1</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_label>
       <content>label_content_01</content>
@@ -26,7 +26,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>2</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_textarea>
       <content>textarea_content_02</content>
@@ -50,7 +50,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>3</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_textarea>
       <content>textarea_content_03</content>
@@ -74,7 +74,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>4</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_textarea>
       <content>textarea_content_04</content>
@@ -98,7 +98,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>5</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_textarea>
       <content>textarea_content_05</content>
@@ -122,7 +122,7 @@
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>6</sortindex>
-      <parentcontent>item_parentcontent_01</parentcontent>
+      <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
     <survey_textarea>
       <content>textarea_content_06</content>

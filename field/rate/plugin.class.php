@@ -145,7 +145,7 @@ class surveyfield_rate extends mod_survey_itembase {
      *
      * @param int $itemid. Optional survey_item ID
      */
-    public function __construct($itemid=0) {
+    public function __construct($itemid=0, $evaluateparentcontent) {
         global $PAGE;
 
         $cm = $PAGE->cm;
@@ -168,7 +168,7 @@ class surveyfield_rate extends mod_survey_itembase {
         $this->formrequires['position'] = SURVEY_POSITIONLEFT;
 
         if (!empty($itemid)) {
-            $this->item_load($itemid);
+            $this->item_load($itemid, $evaluateparentcontent);
         }
     }
 
@@ -178,9 +178,9 @@ class surveyfield_rate extends mod_survey_itembase {
      * @param $itemid
      * @return
      */
-    public function item_load($itemid) {
+    public function item_load($itemid, $evaluateparentcontent) {
         // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
-        parent::item_load($itemid);
+        parent::item_load($itemid, $evaluateparentcontent);
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
@@ -663,20 +663,23 @@ EOS;
         // [survey_field_rate_157_noanswer] => 0
 
         $prefill = array();
-        if ($fromdb) { // $fromdb may be boolean false for not existing data
-            if (isset($fromdb->content)) {
-                if ($fromdb->content == SURVEY_NOANSWERVALUE) {
-                    $prefill[$this->itemname.'_noanswer'] = 1;
-                } else {
-                    $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $fromdb->content);
 
-                    foreach ($answers as $optionindex => $value) {
-                        $uniquename = $this->itemname.'_'.$optionindex;
-                        $prefill[$uniquename] = $answers[$optionindex];
-                    }
+        if (!$fromdb) { // $fromdb may be boolean false for not existing data
+            return $prefill;
+        }
+
+        if (isset($fromdb->content)) {
+            if ($fromdb->content == SURVEY_NOANSWERVALUE) {
+                $prefill[$this->itemname.'_noanswer'] = 1;
+            } else {
+                $answers = explode(SURVEY_DBMULTIVALUESEPARATOR, $fromdb->content);
+
+                foreach ($answers as $optionindex => $value) {
+                    $uniquename = $this->itemname.'_'.$optionindex;
+                    $prefill[$uniquename] = $answers[$optionindex];
                 }
             }
-        } // else use item defaults
+        }
 
         return $prefill;
     }

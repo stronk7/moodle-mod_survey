@@ -49,7 +49,7 @@ class survey_searchform extends moodleform {
         foreach ($itemseeds as $itemseed) {
             $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
-            /*************** position ***************/
+            // position
             $position = $item->get_position();
             $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
             if ($position == SURVEY_POSITIONTOP) {
@@ -82,10 +82,10 @@ class survey_searchform extends moodleform {
                 $mform->addElement('html', $content);
             }
 
-            /*************** element ***************/
+            // element
             $item->userform_mform_element($mform, true);
 
-            /***************  note  ****************/
+            // note
             if ($fullinfo = $item->userform_get_full_info(true)) {
                 // workaround suggested by Marina Glancy in MDL-42946
                 $content = html_writer::tag('span', $fullinfo, array('class' => 'indent-'.$item->get_indent()));
@@ -95,7 +95,6 @@ class survey_searchform extends moodleform {
         }
         $itemseeds->close();
 
-        // ----------------------------------------
         // buttons
         // $this->add_action_buttons(true, get_string('search'));
         $buttonarray = array();

@@ -362,9 +362,9 @@ class mod_survey_itembaseform extends moodleform {
         // mform issue (never rose up)
         // I have a parent-child couple of items.
         // After the relation was been done, the parent was made hidden.
-        // Now I eit the child.
+        // Now I edit the child.
         // The parentid drop down menu should:
-        //     -> have the item, corresponding to the parentid of the current item, disabled
+        //     -> have the mform item, corresponding to the parentid of the current item, disabled
         //     -> have that item selected
         // In this tricky case, parentid is not set at all.
         // I fix this issue by assigning "manually" the parentid

@@ -119,7 +119,7 @@ class surveyfield_boolean extends mod_survey_itembase {
      *
      * @param int $itemid. Optional survey_item ID
      */
-    public function __construct($itemid=0) {
+    public function __construct($itemid=0, $evaluateparentcontent) {
         global $PAGE;
 
         $cm = $PAGE->cm;
@@ -140,7 +140,7 @@ class surveyfield_boolean extends mod_survey_itembase {
         $this->formrequires['hideinstructions'] = false;
 
         if (!empty($itemid)) {
-            $this->item_load($itemid);
+            $this->item_load($itemid, $evaluateparentcontent);
         }
     }
 
@@ -150,9 +150,9 @@ class surveyfield_boolean extends mod_survey_itembase {
      * @param $itemid
      * @return
      */
-    public function item_load($itemid) {
+    public function item_load($itemid, $evaluateparentcontent) {
         // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
-        parent::item_load($itemid);
+        parent::item_load($itemid, $evaluateparentcontent);
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
@@ -253,6 +253,49 @@ class surveyfield_boolean extends mod_survey_itembase {
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $record->defaultoption = '.$record->defaultoption);
         }
+    }
+
+    /*
+     * item_encode_parentcontent
+     *
+     * @param $childparentcontent
+     * return childparentvalue
+     */
+    public function item_encode_parentcontent($childparentcontent) {
+        $childparentvalue = $childparentcontent;
+
+        return $childparentvalue;
+    }
+
+    /*
+     * item_decode_parentvalue
+     *
+     * @param $childparentvalue
+     * return $childparentcontent
+     */
+    public function item_decode_parentvalue($childparentvalue) {
+        $childparentcontent = $childparentvalue;
+
+        return $childparentcontent;
+    }
+
+    /*
+     * userform_child_item_allowed_dynamic
+     * this method is called if (and only if) parent item and child item live in the same form page
+     * this method has two purposes:
+     * - stop userpageform item validation
+     * - drop unexpected returned values from $userpageform->formdata
+     *
+     * as parentitem declare whether my child item is allowed to return a value (is enabled) or is not (is disabled)
+     *
+     * @param string $childparentvalue:
+     * @param array $data:
+     * @return boolean: true: if the item is welcome; false: if the item must be dropped out
+     */
+    public function userform_child_item_allowed_dynamic($childparentvalue, $data) {
+        // 1) I am a boolean item
+        // 2) in $data I can ONLY find $this->itemname
+        return ($data[$this->itemname] == $childparentvalue);
     }
 
     /*
@@ -365,11 +408,11 @@ EOS;
     /*
      * parent_validate_child_constraints
      *
-     * @param
+     * @param $childparentvalue
      * @return status of child relation
      */
-    public function parent_validate_child_constraints($childvalue) {
-        $status = (($childvalue == 0) || ($childvalue == 1));
+    public function parent_validate_child_constraints($childparentvalue) {
+        $status = (($childparentvalue == 0) || ($childparentvalue == 1));
 
         return $status;
     }
@@ -495,18 +538,18 @@ EOS;
 
     /*
      * userform_get_parent_disabilitation_info
-     * from childparentcontent defines syntax for disabledIf
+     * from childparentvalue defines syntax for disabledIf
      *
-     * @param: $childparentcontent
+     * @param: $childparentvalue
      * @return
      */
-    public function userform_get_parent_disabilitation_info($childparentcontent) {
+    public function userform_get_parent_disabilitation_info($childparentvalue) {
         $disabilitationinfo = array();
 
         $mformelementinfo = new stdClass();
         $mformelementinfo->parentname = $this->itemname;
         $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $childparentcontent;
+        $mformelementinfo->content = $childparentvalue;
         $disabilitationinfo[] = $mformelementinfo;
 
         return $disabilitationinfo;
@@ -541,9 +584,11 @@ EOS;
     public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($fromdb) { // $fromdb may be boolean false for not existing data
-            $prefill[$this->itemname] = $fromdb->content;
-        } // else use item defaults
+        if (!$fromdb) { // $fromdb may be boolean false for not existing data
+            return $prefill;
+        }
+
+        $prefill[$this->itemname] = $fromdb->content;
 
         return $prefill;
     }

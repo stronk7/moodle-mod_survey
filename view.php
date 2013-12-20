@@ -68,8 +68,6 @@ if ($userpageman->canaccessadvanceditems) {
             $paramurl = array('id' => $cm->id);
             $returnurl = new moodle_url('items_manage.php', $paramurl);
             redirect($returnurl);
-        } else {
-            throw new Exception('Can\'t find items to display in page '.$formpage);
         }
     }
 }

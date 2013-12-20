@@ -129,7 +129,7 @@ class surveyfield_textarea extends mod_survey_itembase {
      *
      * @param int $itemid. Optional survey_item ID
      */
-    public function __construct($itemid=0) {
+    public function __construct($itemid=0, $evaluateparentcontent) {
         global $PAGE;
 
         $cm = $PAGE->cm;
@@ -150,7 +150,7 @@ class surveyfield_textarea extends mod_survey_itembase {
         $this->formrequires['insearchform'] = false;
 
         if (!empty($itemid)) {
-            $this->item_load($itemid);
+            $this->item_load($itemid, $evaluateparentcontent);
         }
     }
 
@@ -160,9 +160,9 @@ class surveyfield_textarea extends mod_survey_itembase {
      * @param $itemid
      * @return
      */
-    public function item_load($itemid) {
+    public function item_load($itemid, $evaluateparentcontent) {
         // Do parent item loading stuff here (mod_survey_itembase::item_load($itemid)))
-        parent::item_load($itemid);
+        parent::item_load($itemid, $evaluateparentcontent);
 
         // multilang load support for builtin survey
         // whether executed, the 'content' field is ALWAYS handled
@@ -486,19 +486,21 @@ EOS;
     public function userform_set_prefill($fromdb) {
         $prefill = array();
 
-        if ($fromdb) { // $fromdb may be boolean false for not existing data
-            if (isset($fromdb->content)) {
-                if (!empty($this->useeditor)) {
-                    $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'context' => $this->context);
-                    $fromdb->contentformat = FORMAT_HTML;
-                    $fromdb = file_prepare_standard_editor($fromdb, 'content', $editoroptions, $this->context, 'mod_survey', SURVEYFIELD_TEXTAREA_FILEAREA, $fromdb->id);
+        if (!$fromdb) { // $fromdb may be boolean false for not existing data
+            return $prefill;
+        }
 
-                    $prefill[$this->itemname.'_editor'] = $fromdb->content_editor;
-                } else {
-                    $prefill[$this->itemname] = $fromdb->content;
-                }
+        if (isset($fromdb->content)) {
+            if (!empty($this->useeditor)) {
+                $editoroptions = array('trusttext' => true, 'subdirs' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'context' => $this->context);
+                $fromdb->contentformat = FORMAT_HTML;
+                $fromdb = file_prepare_standard_editor($fromdb, 'content', $editoroptions, $this->context, 'mod_survey', SURVEYFIELD_TEXTAREA_FILEAREA, $fromdb->id);
+
+                $prefill[$this->itemname.'_editor'] = $fromdb->content_editor;
+            } else {
+                $prefill[$this->itemname] = $fromdb->content;
             }
-        } // else use item defaults
+        }
 
         return $prefill;
     }

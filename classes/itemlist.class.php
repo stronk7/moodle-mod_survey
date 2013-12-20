@@ -284,7 +284,7 @@ class mod_survey_itemlist {
         // $table->set_attribute('width', '90%');
         $table->setup();
 
-        /*****************************************************************************/
+        // -----------------------------
         $edittitle = get_string('edit');
         $requiredtitle = get_string('switchrequired', 'survey');
         $optionaltitle = get_string('switchoptional', 'survey');
@@ -373,7 +373,7 @@ class mod_survey_itemlist {
                 $content = $parentsortindex;
                 $content .= $OUTPUT->pix_icon('link', $message, 'survey',
                         array('title' => $message, 'class' => 'smallicon'));
-                $content .= $this->condition_from_multiline($item->get_parentcontent());
+                $content .= $item->get_parentcontent('; ');
             } else {
                 $content = '';
             }
@@ -1206,9 +1206,10 @@ class mod_survey_itemlist {
 
         $tablecolumns = array();
         $tablecolumns[] = 'plugin';
-        $tablecolumns[] = 'content';
         $tablecolumns[] = 'sortindex';
         $tablecolumns[] = 'parentitem';
+        $tablecolumns[] = 'customnumber';
+        $tablecolumns[] = 'content';
         $tablecolumns[] = 'parentconstraints';
         $tablecolumns[] = 'status';
         $tablecolumns[] = 'actions';
@@ -1216,9 +1217,10 @@ class mod_survey_itemlist {
 
         $tableheaders = array();
         $tableheaders[] = get_string('plugin', 'survey');
-        $tableheaders[] = get_string('content', 'survey');
         $tableheaders[] = get_string('sortindex', 'survey');
         $tableheaders[] = get_string('parentid_header', 'survey');
+        $tableheaders[] = get_string('customnumber_header', 'survey');
+        $tableheaders[] = get_string('content', 'survey');
         $tableheaders[] = get_string('parentconstraints', 'survey');
         $tableheaders[] = get_string('relation_status', 'survey');
         $tableheaders[] = get_string('actions');
@@ -1236,6 +1238,7 @@ class mod_survey_itemlist {
         $table->column_class('content', 'content');
         $table->column_class('sortindex', 'sortindex');
         $table->column_class('parentitem', 'parentitem');
+        $table->column_class('customnumber', 'customnumber');
         $table->column_class('parentconstraints', 'parentconstraints');
         $table->column_class('status', 'status');
         $table->column_class('actions', 'actions');
@@ -1285,13 +1288,6 @@ class mod_survey_itemlist {
                     array('title' => $plugintitle, 'class' => 'smallicon'));
             $tablerow[] = $content;
 
-            // content
-            $item->set_contentformat(FORMAT_HTML);
-            $item->set_contenttrust(1);
-
-            $output = $item->get_content();
-            $tablerow[] = $output;
-
             // sortindex
             $tablerow[] = $item->get_sortindex();
 
@@ -1301,11 +1297,25 @@ class mod_survey_itemlist {
                 $content = $parentitem->get_sortindex();
                 $content .= $OUTPUT->pix_icon('link', $message, 'survey',
                         array('title' => $message, 'class' => 'smallicon'));
-                $content .= $this->condition_from_multiline($item->get_parentcontent());
+                $content .= $item->get_parentcontent('; ');
             } else {
                 $content = '';
             }
             $tablerow[] = $content;
+
+            // customnumber
+            if (($item->get_type() == SURVEY_TYPEFIELD) || ($item->get_plugin() == 'label')) {
+                $tablerow[] = $item->get_customnumber();
+            } else {
+                $tablerow[] = '';
+            }
+
+            // content
+            $item->set_contentformat(FORMAT_HTML);
+            $item->set_contenttrust(1);
+
+            $output = $item->get_content();
+            $tablerow[] = $output;
 
             // parentconstraints
             if ($item->get_parentid()) {
@@ -1316,15 +1326,15 @@ class mod_survey_itemlist {
 
             // status
             if ($item->get_parentid()) {
-                $status = $parentitem->parent_validate_child_constraints($item->parentcontent);
+                $status = $parentitem->parent_validate_child_constraints($item->parentvalue);
                 if ($status === true) {
                     $tablerow[] = $okstring;
                 } else {
                     if ($status === false) {
                         if (empty($currenthide)) {
-                            $tablerow[] = '<span class="errormessage">'.get_string('wrongrelation', 'survey', $item->get_parentcontent()).'</span>';
+                            $tablerow[] = '<span class="errormessage">'.get_string('wrongrelation', 'survey', $item->get_parentvalue()).'</span>';
                         } else {
-                            $tablerow[] = get_string('wrongrelation', 'survey', $item->get_parentcontent());
+                            $tablerow[] = get_string('wrongrelation', 'survey', $item->get_parentvalue());
                         }
                     } else {
                         $tablerow[] = $status;
@@ -1363,19 +1373,6 @@ class mod_survey_itemlist {
         $table->set_attribute('align', 'center');
         $table->summary = get_string('itemlist', 'survey');
         $table->print_html();
-    }
-
-    /*
-     * condition_from_multiline
-     *
-     * @param &$libcontent, $values, $tablename, $currentplugin
-     * @return
-     */
-    public function condition_from_multiline($parentcontent) {
-        $constarains = str_replace("\r", '', $parentcontent);
-        $constarains = explode("\n", $constarains);
-
-        return implode(' & ', $constarains);
     }
 
     /*

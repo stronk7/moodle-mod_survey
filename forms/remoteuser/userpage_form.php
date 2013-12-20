@@ -79,8 +79,6 @@ class survey_submissionform extends moodleform {
             // $canaccessadvanceditems, $searchform=false, $type=false, $formpage
             list($sql, $whereparams) = survey_fetch_items_seeds($survey->id, $canaccessadvanceditems, false, false, $formpage);
             $itemseeds = $DB->get_recordset_sql($sql, $whereparams);
-            // I do not need to be sure items are found because I already know this
-            // In attempt.php if items are not found I display a message and execution is stopped
 
             if (!$itemseeds->valid()) {
                 // no items are in this page
@@ -93,15 +91,11 @@ class survey_submissionform extends moodleform {
                 if ($tabpage == SURVEY_ITEMS_PREVIEW) {
                     $itemaschildisallowed = true;
                 } else {
+                    // is the current item allowed to be displayed in this page?
                     if ($itemseed->parentid) {
                         // get it now AND NEVER MORE
                         $parentitem = survey_get_item($itemseed->parentid);
-                    } else {
-                        $parentitem = null;
-                    }
 
-                    // is the current item allowed to be displayed in this page?
-                    if ($itemseed->parentid) {
                         // if parentitem is in a previous page, have a check
                         // otherwise
                         // display the current item
@@ -114,6 +108,7 @@ class survey_submissionform extends moodleform {
                         }
                     } else {
                         // current item has no parent: display it
+                        $parentitem = null;
                         $itemaschildisallowed = true;
                     }
                 }
@@ -121,7 +116,7 @@ class survey_submissionform extends moodleform {
                 if ($itemaschildisallowed) {
                     $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
-                    /*************** position ***************/
+                    // position
                     $position = $item->get_position();
                     $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
                     if ($position == SURVEY_POSITIONTOP) {
@@ -154,10 +149,10 @@ class survey_submissionform extends moodleform {
                         $mform->addElement('html', $content);
                     }
 
-                    /*************** element ***************/
+                    // element
                     $item->userform_mform_element($mform, false);
 
-                    /***************  note  ****************/
+                    // note
                     if ($fullinfo = $item->userform_get_full_info(false)) {
                         // workaround suggested by Marina Glancy in MDL-42946
                         $content = html_writer::tag('span', $fullinfo, array('class' => 'indent-'.$item->get_indent()));
@@ -278,13 +273,10 @@ class survey_submissionform extends moodleform {
                     } else {
                         // call its parent
                         $parentitem = survey_get_item($parentitemid);
-                        // tell parent that his child has parentcontent = 12/4/1968
+                        // tell parent that his child has parentvalue = 1;3
                         if ($parentitem->get_formpage() == $item->get_formpage()) {
-                            $itemisenabled = $parentitem->userform_child_item_allowed_dynamic($item->get_parentcontent(), $data);
+                            $itemisenabled = $parentitem->userform_child_item_allowed_dynamic($item->get_parentvalue(), $data);
                         } else {
-                            // If ($parentitem is in a previous page) && ($item is displayed because it was found) {
-                            //     $item IS ENABLED FOR SURE
-                            // }
                             $itemisenabled = true;
                         }
                         // parent item, knowing how itself exactly is, compare what is needed and provide an answer

@@ -33,6 +33,6 @@ $string['textarea_content_04'] = '<p>What action from anyone in the forums did y
 $string['textarea_content_05'] = '<p>What action from anyone in the forums did you find most puzzling or confusing?</p>';
 $string['textarea_content_06'] = '<p>What event surprised you most?</p>';
 
-$string['item_parentcontent_01'] = '';
+$string['item_parentvalue_01'] = '';
 
 $string['label_leftlabel_01'] = '';
