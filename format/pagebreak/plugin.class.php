@@ -192,9 +192,6 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -208,13 +205,13 @@ EOS;
     /*
      * userform_mform_validation
      *
-     * @param $data, &$errors
+     * @param $data
+     * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
         // nothing to do here
     }
 

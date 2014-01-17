@@ -104,6 +104,34 @@ class survey_searchform extends moodleform {
         $mform->closeHeaderBefore('buttonar');
     }
 
-    // function validation($data, $files) {
-    // }
+    function validation($data, $files) {
+        // $cmid = $this->_customdata->cmid;
+        $survey = $this->_customdata->survey;
+        // $canaccessadvanceditems = $this->_customdata->canaccessadvanceditems;
+
+        $errors = array();
+
+        // TODO: verify item per item whether they provide a coherent requests
+        $regexp = '~('.SURVEY_ITEMPREFIX.'|'.SURVEY_PLACEHOLDERPREFIX.')_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
+        $olditemid = 0;
+        foreach ($data as $itemname => $v) {
+            if (preg_match($regexp, $itemname, $matches)) {
+                $type = $matches[2]; // item type
+                $plugin = $matches[3]; // item plugin
+                $itemid = $matches[4]; // item id
+                // $option = $matches[5]; // _text or _noanswer or...
+
+                if ($itemid == $olditemid) {
+                    continue;
+                }
+
+                $olditemid = $itemid;
+
+                $item = survey_get_item($itemid, $type, $plugin);
+                $item->userform_mform_validation($data, $errors, $survey, true);
+            }
+        }
+
+        return $errors;
+    }
 }

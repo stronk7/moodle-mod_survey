@@ -78,14 +78,14 @@ class mod_survey_userformmanager {
     public $view = SURVEY_SERVESURVEY;
 
     /*
-     * $currentpage: The tab of the module where the page will be shown
+     * $moduletab: The tab of the module where the page will be shown
      */
-    public $currenttab = '';
+    public $moduletab = '';
 
     /*
-     * $currentpage: this is the page of the module. Nothing to share with $formpage
+     * $modulepage: this is the page of the module. Nothing to share with $formpage
      */
-    public $currentpage = '';
+    public $modulepage = '';
 
     /*
      * $canmanageallsubmissions
@@ -139,7 +139,7 @@ class mod_survey_userformmanager {
         if ($this->canaccessadvanceditems) {
             $this->firstpageright = 1;
         } else {
-            $this->next_not_empty_page(true, 0); // this calculates $this->firstformpage
+            $this->next_not_empty_page(true, 0, $view); // this calculates $this->firstformpage
         }
 
         if ($formpage == 0) { // you are viewing the survey for the first time
@@ -156,7 +156,7 @@ class mod_survey_userformmanager {
      * @param $startingpage
      * @return
      */
-    public function next_not_empty_page($forward, $startingpage, $currentpage) {
+    public function next_not_empty_page($forward, $startingpage, $modulepage) {
         // depending on user provided answer, in the previous or next page there may be no items to display
         // get the first page WITH items
         //
@@ -168,7 +168,7 @@ class mod_survey_userformmanager {
         //     the page number of the bigger non empty page lower than $startingpage (according to user answers) in $this->firstpageleft
         //     returns $nextpage or SURVEY_LEFT_OVERFLOW if no more empty pages are found on the left
 
-        if ($currentpage == SURVEY_ITEMS_PREVIEW) { // I do not care relation, I am in "preview mode"
+        if ($modulepage == SURVEY_ITEMS_PREVIEW) { // I do not care relation, I am in "preview mode"
             if ($forward) {
                 $this->firstpageright = ++$startingpage;
             } else {
@@ -264,20 +264,20 @@ class mod_survey_userformmanager {
     public function set_page_from_view() {
         switch ($this->view) {
             case SURVEY_NOACTION:
-                $this->currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
-                $this->currentpage = SURVEY_SUBMISSION_ATTEMPT; // needed by tabs.php
+                $this->moduletab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+                $this->modulepage = SURVEY_SUBMISSION_ATTEMPT; // needed by tabs.php
                 break;
             case SURVEY_PREVIEWSURVEY:
-                $this->currenttab = SURVEY_TABITEMS; // needed by tabs.php
-                $this->currentpage = SURVEY_ITEMS_PREVIEW; // needed by tabs.php
+                $this->moduletab = SURVEY_TABITEMS; // needed by tabs.php
+                $this->modulepage = SURVEY_ITEMS_PREVIEW; // needed by tabs.php
                 break;
             case SURVEY_EDITRESPONSE:
-                $this->currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
-                $this->currentpage = SURVEY_SUBMISSION_EDIT; // needed by tabs.php
+                $this->moduletab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+                $this->modulepage = SURVEY_SUBMISSION_EDIT; // needed by tabs.php
                 break;
             case SURVEY_READONLYRESPONSE:
-                $this->currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
-                $this->currentpage = SURVEY_SUBMISSION_READONLY; // needed by tabs.php
+                $this->moduletab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+                $this->modulepage = SURVEY_SUBMISSION_READONLY; // needed by tabs.php
                 break;
             default:
                 debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->view = '.$this->view);
@@ -379,7 +379,7 @@ class mod_survey_userformmanager {
      *            [type] => field
      *            [plugin] => age
      *            [itemid] => 148
-     *            [extra] => Array (
+     *            [contentperelement] => Array (
      *                [year] => 5
      *                [month] => 9
      *            )
@@ -390,7 +390,7 @@ class mod_survey_userformmanager {
      *            [type] => field
      *            [plugin] => boolean
      *            [itemid] => 149
-     *            [extra] => Array (
+     *            [contentperelement] => Array (
      *                [noanswer] => 1
      *            )
      *        )
@@ -400,62 +400,73 @@ class mod_survey_userformmanager {
      *            [type] => field
      *            [plugin] => character
      *            [itemid] => 150
-     *            [extra] => Array (
+     *            [contentperelement] => Array (
      *                [mainelement] => horse
      *            )
      *        )
      *        [151] => stdClass Object (
      *            [surveyid] => 1
-     *            [submissionid] => 60
+     *            [submissionid] => 63
      *            [type] => field
      *            [plugin] => fileupload
      *            [itemid] => 151
-     *            [extra] => Array (
+     *            [contentperelement] => Array (
      *                [filemanager] => 667420320
+     *            )
+     *        )
+     *        [185] => stdClass Object (
+     *            [surveyid] => 1
+     *            [submissionid] => 63
+     *            [type] => field
+     *            [plugin] => checkbox
+     *            [itemid] => 185
+     *            [contentperelement] => Array (
+     *                [0] => 1
+     *                [1] => 0
+     *                [2] => 1
+     *                [3] => 0
+     *                [noanswer] => 0
+     *            )
+     *        )
+     *        [186] => stdClass Object (
+     *            [surveyid] => 1
+     *            [submissionid] => 63
+     *            [type] => field
+     *            [plugin] => checkbox
+     *            [itemid] => 186
+     *            [contentperelement] => Array (
+     *                [0] => 1
+     *                [1] => 1
+     *                [2] => 0
+     *                [3] => 0
+     *                [other] => 1
+     *                [text] => Apple juice
+     *                [noanswer] => 1
      *            )
      *        )
      * 2. once $infoperitem is onboard...
      *    I update or I create the corresponding record
      *    asking to the parent class to manage its own data
-     *    passing it $iteminfo->extra
+     *    passing it $iteminfo->contentperelement
      */
     public function save_user_data() {
         global $DB;
 
+        // at each submission I need to save one 'survey_submission' and some 'survey_userdata'
+
         // -----------------------------
-        // begin by saving survey_submission first
-        $this->save_survey_submission();
+        // let's start by saving one record in survey_submission
         // in this method I also assign $this->submissionid and $this->status
-        // end of: begin by saving survey_submission first
+        $this->save_survey_submission();
+        // end of: let's start by saving one record in survey_submission
         // -----------------------------
 
         // save now all the answers provided by the user
-        $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
+        $regexp = '~('.SURVEY_ITEMPREFIX.'|'.SURVEY_PLACEHOLDERPREFIX.')_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
 
         $infoperitem = array();
         foreach ($this->formdata as $itemname => $content) {
-            // var_dump($matches);
-            // $matches = array{
-            //   0 => string 'survey_field_radiobutton_1452' (length=27)
-            //   1 => string 'field' (length=5)
-            //   2 => string 'radiobutton' (length=11)
-            //   3 => string '1452' (length=4)
-            // }
-            // $matches = array{
-            //   0 => string 'survey_field_radiobutton_1452_check' (length=33)
-            //   1 => string 'field' (length=5)
-            //   2 => string 'radiobutton' (length=11)
-            //   3 => string '1452' (length=4)
-            //   4 => string 'check' (length=5)
-            // }
-            // $matches = array{}
-            //   0 => string 'survey_field_checkbox_1452_73' (length=30)
-            //   1 => string 'field' (length=5)
-            //   2 => string 'checkbox' (length=8)
-            //   3 => string '1452' (length=4)
-            //   4 => string '73' (length=2)
-            if (!preg_match($regexp, $itemname, $matches)) { // HERE I ONLY ALLOW ITEMS WITH NAME STARTING WITH SURVEY_ITEMPREFIX
-                                                             // ITEMS STARTING WITH SURVEY_NEGLECTPREFIX ARE DISCARDED HERE
+            if (!preg_match($regexp, $itemname, $matches)) {
                 // button or something not relevant
                 switch ($itemname) {
                     case 's': // <-- s is the survey id
@@ -470,19 +481,50 @@ class mod_survey_userformmanager {
                 continue; // to next foreach
             }
 
-            $itemid = $matches[3]; // itemid of the mform element (or of the group of mform elements referring to the same item)
+            // var_dump($matches);
+            // $matches = array{
+            //   0 => string 'survey_field_radiobutton_1452' (length=27)
+            //   1 => string 'survey' (length=6)
+            //   2 => string 'field' (length=5)
+            //   3 => string 'radiobutton' (length=11)
+            //   4 => string '1452' (length=4)
+            // }
+            // $matches = array{
+            //   0 => string 'survey_field_radiobutton_1452_check' (length=33)
+            //   1 => string 'survey' (length=6)
+            //   2 => string 'field' (length=5)
+            //   3 => string 'radiobutton' (length=11)
+            //   4 => string '1452' (length=4)
+            //   5 => string 'check' (length=5)
+            // }
+            // $matches = array{}
+            //   0 => string 'survey_field_checkbox_1452_73' (length=30)
+            //   1 => string 'survey' (length=6)
+            //   2 => string 'field' (length=5)
+            //   3 => string 'checkbox' (length=8)
+            //   4 => string '1452' (length=4)
+            //   5 => string '73' (length=2)
+            // $matches = array{}
+            //   0 => string 'placeholder_field_multiselect_199_placeholder' (length=45)
+            //   1 => string 'placeholder' (length=11)
+            //   2 => string 'field' (length=5)
+            //   3 => string 'multiselect' (length=11)
+            //   4 => string '199' (length=3)
+            //   5 => string 'placeholder' (length=11)
+
+            $itemid = $matches[4]; // itemid of the mform element (or of the group of mform elements referring to the same item)
             if (!isset($infoperitem[$itemid])) {
                 $infoperitem[$itemid] = new stdClass();
                 $infoperitem[$itemid]->surveyid = $surveyid;
                 $infoperitem[$itemid]->submissionid = $this->submissionid;
-                $infoperitem[$itemid]->type = $matches[1];
-                $infoperitem[$itemid]->plugin = $matches[2];
+                $infoperitem[$itemid]->type = $matches[2];
+                $infoperitem[$itemid]->plugin = $matches[3];
                 $infoperitem[$itemid]->itemid = $itemid;
             }
-            if (isset($matches[4])) {
-                $infoperitem[$itemid]->extra[$matches[4]] = $content;
+            if (!isset($matches[5])) {
+                $infoperitem[$itemid]->contentperelement['mainelement'] = $content;
             } else {
-                $infoperitem[$itemid]->extra['mainelement'] = $content;
+                $infoperitem[$itemid]->contentperelement[$matches[5]] = $content;
             }
         }
 
@@ -492,11 +534,11 @@ class mod_survey_userformmanager {
         // } else {
         //     echo 'Nothing has been found<br />';
         // }
+        // die;
 
         // once $infoperitem is onboard...
         //    I update/create the corresponding record
-        //    asking to parent class to manage its informations
-        //    I Pass to the parent class the $iteminfo->extra
+        //    asking to each item class to manage its informations
 
         foreach ($infoperitem as $iteminfo) {
             if (!$userdatarec = $DB->get_record('survey_userdata', array('submissionid' => $iteminfo->submissionid, 'itemid' => $iteminfo->itemid))) {
@@ -505,7 +547,7 @@ class mod_survey_userformmanager {
                 $userdatarec->surveyid = $iteminfo->surveyid;
                 $userdatarec->submissionid = $iteminfo->submissionid;
                 $userdatarec->itemid = $iteminfo->itemid;
-                $userdatarec->content = 'dummy_content';
+                $userdatarec->content = '__my_dummy_content@@';
                 $userdatarec->contentformat = null;
 
                 $id = $DB->insert_record('survey_userdata', $userdatarec);
@@ -517,12 +559,12 @@ class mod_survey_userformmanager {
 
             // in this method I update $userdatarec->content
             // I do not really save to database
-            $item->userform_save_preprocessing($iteminfo->extra, $userdatarec);
+            $item->userform_save_preprocessing($iteminfo->contentperelement, $userdatarec, false);
 
-            if ($userdatarec->content != 'dummy_content') {
+            if ($userdatarec->content != '__my_dummy_content@@') {
                 $DB->update_record('survey_userdata', $userdatarec);
             } else {
-                print_error('Wrong $userdatarec! \'dummy_content\' has not been replaced.');
+                print_error('Wrong $userdatarec! \'__my_dummy_content@@\' has not been replaced.');
             }
         }
     }
@@ -609,7 +651,7 @@ class mod_survey_userformmanager {
         // course context used locally to get groups
         $context = context_course::instance($COURSE->id);
 
-        $mygroups = survey_get_my_groups($this->cm);
+        $mygroups = groups_get_my_groups();
         if (count($mygroups)) {
             if ($this->survey->notifyrole) {
                 $roles = explode(',', $this->survey->notifyrole);
@@ -1001,32 +1043,44 @@ class mod_survey_userformmanager {
         global $DB, $USER;
 
         if ($this->canmanageallsubmissions) {
-            return true;
+            return;
+        }
+        if (!empty($this->submissionid)) {
+            if (!$submission = $DB->get_record('survey_submission', array('id' => $this->submissionid), '*', IGNORE_MISSING)) {
+                print_error('incorrectaccessdetected', 'survey');
+            }
         }
 
-        $submission = $DB->get_record('survey_submission', array('id' => $this->submissionid), '*', IGNORE_MISSING);
-
         $allowed = true;
-        $mygroups = survey_get_my_groups($this->cm);
+        $mygroups = groups_get_my_groups();
         switch ($this->view) {
-            case SURVEY_NOACTION:
-                $allowed = has_capability('mod/survey:view', $this->context);
+            case SURVEY_SERVESURVEY:
+                $allowed = has_capability('mod/survey:submit', $this->context);
                 break;
             case SURVEY_PREVIEWSURVEY:
-                $condition1 = ($submission);
-                $condition2 = has_capability('mod/survey:preview', $this->context);
-                $allowed = $condition1 && $condition2;
+                $allowed = has_capability('mod/survey:preview', $this->context);
                 break;
             case SURVEY_EDITRESPONSE:
-                $condition1 = ($submission);
-                $condition2 = $this->caneditgroupsubmissions;
-                $condition3 = ($submission->userid == $USER->id) && ($submission->status == SURVEY_STATUSINPROGRESS);
-                $allowed = $condition1 && ($condition2 || $condition3);
+                if ($USER->id == $submission->userid) {
+                    $allowed = has_capability('mod/survey:editownsubmissions', $this->context);
+                } else {
+                    $allowed = false;
+                }
+                if (!$allowed) {
+                    $allowed = has_capability('mod/survey:editgroupsubmissions', $this->context);
+                }
+                if (!$allowed) {
+                    $allowed = has_capability('mod/survey:editallsubmissions', $this->context);
+                }
                 break;
             case SURVEY_READONLYRESPONSE:
-                $condition1 = ($submission);
-                $condition2 = $this->canseegroupsubmissions;
-                $allowed = $condition1 && $condition2;
+                $allowed = ($USER->id == $submission->userid);
+                if (!$allowed) {
+                    $allowed = has_capability('mod/survey:seegroupsubmissions', $this->context);
+                }
+                if (!$allowed) {
+                    $allowed = has_capability('mod/survey:seeallsubmissions', $this->context);
+                }
                 break;
             default:
                 $allowed = false;
@@ -1076,13 +1130,25 @@ class mod_survey_userformmanager {
         $cansaveusertemplate = has_capability('mod/survey:saveusertemplates', context_course::instance($COURSE->id), null, true);
         $canimportusertemplates = has_capability('mod/survey:importusertemplates', $this->context, null, true);
         $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $this->context, null, true);
-        $cansavemastertemplate = has_capability('mod/survey:savemastertemplate', $this->context, null, true);
-        $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $this->context, null, true);
+        $cansavemastertemplates = has_capability('mod/survey:savemastertemplates', $this->context, null, true);
+        $canapplymastertemplates = has_capability('mod/survey:applymastertemplates', $this->context, null, true);
         $riskyediting = ($this->survey->riskyeditdeadline > time());
         $hassubmissions = survey_count_submissions($this->survey->id);
 
         $messages = array();
         $timenow = time();
+
+        // is the button to add one more survey going to be displayed?
+        $displaybutton = true;
+        $displaybutton = $displaybutton && $this->cansubmit;
+        if ($this->survey->timeopen) {
+            $displaybutton = $displaybutton && ($this->survey->timeopen < $timenow);
+        }
+        if ($this->survey->timeclose) {
+            $displaybutton = $displaybutton && ($this->survey->timeclose > $timenow);
+        }
+        $displaybutton = $displaybutton && (($this->survey->maxentries == 0) || ($next < $this->survey->maxentries));
+        // End of: is the button to add one more survey going to be displayed?
 
         echo $OUTPUT->heading(get_string('coverpage_welcome', 'survey', $this->survey->name));
         if ($this->survey->intro) {
@@ -1117,7 +1183,7 @@ class mod_survey_userformmanager {
             $messages[] = get_string('inprogresssubmissions', 'survey', $inprogress);
 
             $next++;
-            if (($this->survey->maxentries == 0) || ($next < $this->survey->maxentries)) {
+            if ($displaybutton) {
                 $messages[] = get_string('yournextattempt', 'survey', $next);
             }
         }
@@ -1125,17 +1191,6 @@ class mod_survey_userformmanager {
         $this->display_messages($messages, get_string('attemptinfo', 'survey'));
         $messages = array();
         // end of: general info
-
-        // the button to add one more survey
-        $displaybutton = true;
-        $displaybutton = $displaybutton && $this->cansubmit;
-        if ($this->survey->timeopen) {
-            $displaybutton = $displaybutton && ($this->survey->timeopen < $timenow);
-        }
-        if ($this->survey->timeclose) {
-            $displaybutton = $displaybutton && ($this->survey->timeclose > $timenow);
-        }
-        $displaybutton = $displaybutton && (($this->survey->maxentries == 0) || ($next < $this->survey->maxentries));
 
         if ($displaybutton) {
             $url = new moodle_url('/mod/survey/view.php', array('id' => $this->cm->id, 'cvp' => 0));
@@ -1216,12 +1271,12 @@ class mod_survey_userformmanager {
         // end of: user templates
 
         // master templates
-        if ($cansavemastertemplate) {
+        if ($cansavemastertemplates) {
             $url = new moodle_url('/mod/survey/mtemplates_create.php', $paramurlbase);
             $messages[] = get_string('savemastertemplates', 'survey', $url->out());
         }
 
-        if ($canapplymastertemplate) {
+        if ($canapplymastertemplates) {
             $url = new moodle_url('/mod/survey/mtemplates_apply.php', $paramurlbase);
             $messages[] = get_string('applymastertemplates', 'survey', $url->out());
         }

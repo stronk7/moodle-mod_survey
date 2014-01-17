@@ -143,8 +143,8 @@ navigation_node::override_active_url($url);
 
 echo $OUTPUT->header();
 
-$currenttab = SURVEY_TABITEMS; // needed by tabs.php
-$currentpage = SURVEY_ITEMS_MANAGE; // needed by tabs.php
+$moduletab = SURVEY_TABITEMS; // needed by tabs.php
+$modulepage = SURVEY_ITEMS_MANAGE; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $itemlistman->manage_actions();

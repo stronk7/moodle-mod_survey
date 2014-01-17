@@ -399,9 +399,6 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -409,16 +406,20 @@ EOS;
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
+        // element values
         $integers = array();
-        if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
-            $integers[SURVEY_INVITATIONVALUE] = get_string('choosedots');
+        if (!$searchform) {
+            if ($this->defaultoption == SURVEY_INVITATIONDEFAULT) {
+                $integers[SURVEY_INVITATIONVALUE] = get_string('choosedots');
+            }
+        } else {
+            $integers[SURVEY_IGNOREME] = '';
         }
         $integers += array_combine(range($this->lowerbound, $this->upperbound), range($this->lowerbound, $this->upperbound));
-
-        if ( (!$this->required) || $searchform ) {
-            $checklabel = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-            $integers += array(SURVEY_NOANSWERVALUE => $checklabel);
+        if (!$this->required) {
+            $integers += array(SURVEY_NOANSWERVALUE => get_string('noanswer', 'survey'));
         }
+        // End of: element values
 
         $mform->addElement('select', $this->itemname, $elementlabel, $integers, array('class' => 'indent-'.$this->indent));
 
@@ -449,20 +450,24 @@ EOS;
                 $mform->setDefault($this->itemname, "$defaultinteger");
             }
         } else {
-            $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE);
+            $mform->setDefault($this->itemname, SURVEY_IGNOREME);
         }
     }
 
     /*
      * userform_mform_validation
      *
-     * @param $data, &$errors
+     * @param $data
+     * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
+        if ($searchform) {
+            return;
+        }
+
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
@@ -567,12 +572,14 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
      * @param $answer
      * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
         if (isset($answer['noanswer'])) {
             $olduserdata->content = SURVEY_NOANSWERVALUE;
         } else {

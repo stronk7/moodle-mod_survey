@@ -50,7 +50,7 @@ require_course_login($course, true, $cm);
 add_to_log($course->id, 'survey', 'view', "mtemplates.php?id=$cm->id", $survey->name, $cm->id);
 
 $context = context_module::instance($cm->id);
-require_capability('mod/survey:savemastertemplate', $context);
+require_capability('mod/survey:savemastertemplates', $context);
 
 // -----------------------------
 // calculations
@@ -101,8 +101,8 @@ navigation_node::override_active_url($url);
 
 echo $OUTPUT->header();
 
-$currenttab = SURVEY_TABMTEMPLATES; // needed by tabs.php
-$currentpage = SURVEY_MTEMPLATES_BUILD; // needed by tabs.php
+$moduletab = SURVEY_TABMTEMPLATES; // needed by tabs.php
+$modulepage = SURVEY_MTEMPLATES_BUILD; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 echo $OUTPUT->notification(get_string('currenttotemplate', 'survey'), 'generaltable generalbox boxaligncenter boxwidthwide');

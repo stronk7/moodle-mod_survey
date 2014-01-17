@@ -411,9 +411,6 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -552,15 +549,19 @@ EOS;
     /*
      * userform_mform_validation
      *
-     * @param $data, &$errors
+     * @param $data
+     * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
         // this plugin displays as a set of dropdown menu or radio buttons. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
+
+        if ($searchform) {
+            return;
+        }
 
         // if different rates were requested, it is time to verify this
         $options = survey_textarea_to_array($this->options);
@@ -630,12 +631,14 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
      * @param $answer
      * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
         if (isset($answer['noanswer'])) {
             $olduserdata->content = SURVEY_NOANSWERVALUE;
         } else {

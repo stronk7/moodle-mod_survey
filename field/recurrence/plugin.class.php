@@ -447,9 +447,6 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -459,38 +456,42 @@ EOS;
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
+        // element values
         $days = array();
         $months = array();
-        if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
-            $days[SURVEY_INVITATIONVALUE] = get_string('invitationday', 'surveyfield_recurrence');
-            $months[SURVEY_INVITATIONVALUE] = get_string('invitationmonth', 'surveyfield_recurrence');
+        if (!$searchform) {
+            if ($this->defaultoption == SURVEY_INVITATIONDEFAULT) {
+                $days[SURVEY_INVITATIONVALUE] = get_string('invitationday', 'surveyfield_recurrence');
+                $months[SURVEY_INVITATIONVALUE] = get_string('invitationmonth', 'surveyfield_recurrence');
+            }
+        } else {
+            $days[SURVEY_IGNOREME] = '';
+            $months[SURVEY_IGNOREME] = '';
         }
         $days += array_combine(range(1, 31), range(1, 31));
         for ($i=1; $i<=12; $i++) {
             $months[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), "%B", 0); // january, february, march...
         }
+        // End of: element values
 
+        // mform element
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('select', $this->itemname.'_day', '', $days, array('class' => 'indent-'.$this->indent));
         $elementgroup[] = $mform->createElement('select', $this->itemname.'_month', '', $months);
 
-        if (!$searchform) {
-            if ($this->required) {
-                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
+        if ($this->required) {
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
 
+            if (!$searchform) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                 // -> I do not want JS form validation if the page is submitted through the "previous" button
                 // -> I do not want JS field validation even if this item is required BUT disabled. See: MDL-34815
                 // simply add a dummy star to the item and the footer note about mandatory fields
                 $starplace = ($this->position != SURVEY_POSITIONLEFT) ? $this->itemname.'_extrarow' : $this->itemname.'_group';
                 $mform->_required[] = $starplace;
-            } else {
-                $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'));
-                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
-                $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
             }
         } else {
-            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('star', 'survey'));
+            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'));
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
             $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
         }
@@ -529,23 +530,25 @@ EOS;
                 $mform->setDefault($this->itemname.'_month', $recurrencearray['mon']);
             }
         } else {
-            $recurrencearray = $this->item_split_unix_time($this->lowerbound);
-            $mform->setDefault($this->itemname.'_day', $recurrencearray['mday']);
-            $mform->setDefault($this->itemname.'_month', $recurrencearray['mon']);
-            $mform->setDefault($this->itemname.'_noanswer', '1');
+            $mform->setDefault($this->itemname.'_day', SURVEY_IGNOREME);
+            $mform->setDefault($this->itemname.'_month', SURVEY_IGNOREME);
+            if (!$this->required) {
+                $mform->setDefault($this->itemname.'_noanswer', '0');
+            }
         }
+        // End of: default section
     }
 
     /*
      * userform_mform_validation
      *
-     * @param $data, &$errors
+     * @param $data
+     * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
@@ -555,14 +558,34 @@ EOS;
 
         $errorkey = $this->itemname.'_group';
 
-        if ( ($data[$this->itemname.'_day'] == SURVEY_INVITATIONVALUE) ||
-             ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) ) {
+        // verify the content of each drop down menu
+        if (!$searchform) {
+            $testpassed = true;
+            $testpassed = $testpassed && ($data[$this->itemname.'_day'] != SURVEY_INVITATIONVALUE);
+            $testpassed = $testpassed && ($data[$this->itemname.'_month'] != SURVEY_INVITATIONVALUE);
+        } else {
+            // both drop down menues are allowed to be == SURVEY_IGNOREME
+            // but not only 1
+            $testpassed = true;
+            if ($data[$this->itemname.'_day'] == SURVEY_IGNOREME) {
+                $testpassed = $testpassed && ($data[$this->itemname.'_month'] == SURVEY_IGNOREME);
+            } else {
+                $testpassed = $testpassed && ($data[$this->itemname.'_month'] != SURVEY_IGNOREME);
+            }
+        }
+        if (!$testpassed) {
             if ($this->required) {
                 $errors[$errorkey] = get_string('uerr_recurrencenotsetrequired', 'surveyfield_recurrence');
             } else {
                 $a = get_string('noanswer', 'survey');
                 $errors[$errorkey] = get_string('uerr_recurrencenotset', 'surveyfield_recurrence', $a);
             }
+            return;
+        }
+        // End of: verify the content of each drop down menu
+
+        if ($searchform) {
+            // stop here your investigation. I don't further validations.
             return;
         }
 
@@ -630,16 +653,26 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
      * @param $answer
      * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
-        if (isset($answer['noanswer'])) {
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
+        if (isset($answer['noanswer'])) { // this is correct for input and search form both
             $olduserdata->content = SURVEY_NOANSWERVALUE;
         } else {
-            $olduserdata->content = $this->item_recurrence_to_unix_time($answer['month'], $answer['day']);
+            if (!$searchform) {
+                $olduserdata->content = $this->item_recurrence_to_unix_time($answer['month'], $answer['day']);
+            } else {
+                if ($answer['month'] == SURVEY_IGNOREME) {
+                    $olduserdata->content = null;
+                } else {
+                $olduserdata->content = $this->item_recurrence_to_unix_time($answer['month'], $answer['day']);
+                }
+            }
         }
     }
 

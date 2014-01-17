@@ -38,8 +38,8 @@ $cansubmit = has_capability('mod/survey:submit', $context, null, true);
 $canmanageitems = has_capability('mod/survey:manageitems', $context, null, true);
 $canmanageusertemplates = has_capability('mod/survey:manageusertemplates', $context, null, true);
 
-$cansavemastertemplate = has_capability('mod/survey:savemastertemplate', $context, null, true);
-$canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $context, null, true);
+$cansavemastertemplates = has_capability('mod/survey:savemastertemplates', $context, null, true);
+$canapplymastertemplates = has_capability('mod/survey:applymastertemplates', $context, null, true);
 
 $whereparams = array('surveyid' => $survey->id);
 $countparents = $DB->count_records_select('survey_item', 'surveyid = :surveyid AND parentid <> 0', $whereparams);
@@ -79,7 +79,7 @@ if ($canmanageitems) {
 // TAB USER TEMPLATES
 // -----------------------------------------------------------------------------
 if (!$survey->template) {
-    if ($currenttab == SURVEY_TABUTEMPLATES) {
+    if ($moduletab == SURVEY_TABUTEMPLATES) {
         if ($canmanageusertemplates) {
             $elementurl = new moodle_url('/mod/survey/utemplates_create.php', $paramurl);
             $row[] = new tabobject(SURVEY_TAB3NAME, $elementurl->out(), SURVEY_TAB3NAME);
@@ -91,8 +91,8 @@ if (!$survey->template) {
 // TAB MASTER TEMPLATES
 // -----------------------------------------------------------------------------
 if (!$survey->template) {
-    if ($currenttab == SURVEY_TABMTEMPLATES) {
-        if ($cansavemastertemplate || ((!$hassubmissions || $riskyediting) && $canapplymastertemplate)) {
+    if ($moduletab == SURVEY_TABMTEMPLATES) {
+        if ($cansavemastertemplates || ((!$hassubmissions || $riskyediting) && $canapplymastertemplates)) {
             $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $paramurl);
             $row[] = new tabobject(SURVEY_TAB4NAME, $elementurl->out(), SURVEY_TAB4NAME);
         }
@@ -106,8 +106,8 @@ $tabs = array();
 $tabs[] = $row; // Array of tabs. Closes the tab row element definition
                 // next tabs element is going to define the pages row
 
-// echo '$currentpage = '.$currentpage.'<br />';
-$pageid = 'idpage'.$currentpage;
+// echo '$modulepage = '.$modulepage.'<br />';
+$pageid = 'idpage'.$modulepage;
 // $pageid is here because I leave open the door to override it during next switch
 
 /*
@@ -115,11 +115,10 @@ $pageid = 'idpage'.$currentpage;
  * PAGES
  * **********************************************
  */
-switch ($currenttab) {
+switch ($moduletab) {
     case SURVEY_TABSUBMISSIONS:
         // permissions
         $canview = has_capability('mod/survey:view', $context, null, true);
-        $canmanagesubmissions = has_capability('mod/survey:managesubmissions', $context, null, true);
         $cansearch = has_capability('mod/survey:searchsubmissions', $context, null, true);
         $canaccessreports = has_capability('mod/survey:accessreports', $context, null, true);
         $canexportdata = has_capability('mod/survey:exportdata', $context, null, true);
@@ -142,20 +141,20 @@ switch ($currenttab) {
         }
 
         // manage data
-        if ($canmanagesubmissions) {
+        if (!is_guest($context)) {
             $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
             $strlabel = get_string('tabsubmissionspage2', 'survey');
             $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
         }
 
-        if ($currentpage == SURVEY_SUBMISSION_EDIT) { // edit
+        if ($modulepage == SURVEY_SUBMISSION_EDIT) { // edit
             $localparamurl = array('id' => $cm->id, 'view' => SURVEY_EDITRESPONSE);
             $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
             $strlabel = get_string('tabsubmissionspage3', 'survey'); // edit
             $row[] = new tabobject('idpage4', $elementurl->out(), $strlabel);
         }
 
-        if ($currentpage == SURVEY_SUBMISSION_READONLY) { // read only
+        if ($modulepage == SURVEY_SUBMISSION_READONLY) { // read only
             $localparamurl = array('id' => $cm->id, 'view' => SURVEY_READONLYRESPONSE);
             $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
             $strlabel = get_string('tabsubmissionspage4', 'survey'); // read only
@@ -168,7 +167,7 @@ switch ($currenttab) {
             $row[] = new tabobject('idpage6', $elementurl->out(), $strlabel);
         }
 
-        if ($currentpage == SURVEY_SUBMISSION_REPORT) { // report
+        if ($modulepage == SURVEY_SUBMISSION_REPORT) { // report
             if (!empty($canaccessreports)) {
                 $elementurl = new moodle_url('/mod/survey/view_report.php', $paramurl);
                 $strlabel = get_string('tabsubmissionspage6', 'survey');
@@ -207,7 +206,7 @@ switch ($currenttab) {
             $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);
 
             if (!$survey->template) {
-                if ($currentpage == SURVEY_ITEMS_SETUP) { // setup
+                if ($modulepage == SURVEY_ITEMS_SETUP) { // setup
                     $elementurl = new moodle_url('/mod/survey/items_setup.php', $paramurl);
                     $strlabel = get_string('tabitemspage3', 'survey');
                     $row[] = new tabobject('idpage3', $elementurl->out(), $strlabel);
@@ -276,13 +275,13 @@ switch ($currenttab) {
         $activetwo = array($tabname);
 
         $row = array();
-        if ($cansavemastertemplate) { // create
+        if ($cansavemastertemplates) { // create
             $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $paramurl);
             $strlabel = get_string('tabmtemplatepage1', 'survey');
             $row[] = new tabobject('idpage1', $elementurl->out(), $strlabel);
         }
 
-        if ( (!$hassubmissions || $riskyediting) && $canapplymastertemplate ) { // if submissions were done, do not change the list of fields
+        if ( (!$hassubmissions || $riskyediting) && $canapplymastertemplates ) { // if submissions were done, do not change the list of fields
             $elementurl = new moodle_url('/mod/survey/mtemplates_apply.php', $paramurl); // apply
             $strlabel = get_string('tabmtemplatepage2', 'survey');
             $row[] = new tabobject('idpage2', $elementurl->out(), $strlabel);

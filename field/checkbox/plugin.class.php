@@ -290,47 +290,6 @@ class surveyfield_checkbox extends mod_survey_itembase {
         return SURVEYFIELD_CHECKBOX_RETURNLABELS;
     }
 
-    // MARK parent
-
-    /*
-     * parent_validate_child_constraints
-     *
-     * @param $childparentvalue
-     * @return status of child relation
-     */
-    public function parent_validate_child_constraints($childparentvalue) {
-        // I have here $childparentvalue that was calculated at child save time
-        // I can not be sure the parent item (this item) was not changed in a second time
-        // I need to check for:
-        // - count of elements
-        // - presence of $this->labelother
-
-        $childparentvalues = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
-        $parentoptionscount = count($childparentvalues);
-        $labelcount = count($this->item_get_labels_array('options'));
-        if ($this->labelother) {
-            $labelcount++;
-        }
-
-        if ($parentoptionscount != $labelcount) {
-            return false;
-        }
-
-        // the count is equal: good
-        // now I have to consider two following scenarios:
-        // 1) the parent item (this item) may have n label + $this->labelother && the child may have n keys without a label
-        // 2) the parent item (this item) may have n label without $this->labelother && the child may have (n-1) keys + a label
-
-        // case 1: whatever is written as last key of $childparentvalues is compatible with $this->labelother, so nothing to check
-        if ($this->labelother) {
-            return true;
-        }
-
-        // case 2:
-        $lastkey = end($childparentvalues);
-        return ($lastkey == $labelcount);
-    }
-
     /*
      * item_get_multilang_fields
      *
@@ -390,15 +349,53 @@ EOS;
         return $schema;
     }
 
+    // MARK parent
+
+    /*
+     * parent_validate_child_constraints
+     *
+     * @param $childparentvalue
+     * @return status of child relation
+     */
+    public function parent_validate_child_constraints($childparentvalue) {
+        // I have here $childparentvalue that was calculated at child save time
+        // I can not be sure the parent item (this item) was not changed in a second time
+        // I need to check for:
+        // - count of elements
+        // - presence of $this->labelother
+
+        $childparentvalues = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
+        $parentoptionscount = count($childparentvalues);
+        $labelcount = count($this->item_get_labels_array('options'));
+        if ($this->labelother) {
+            $labelcount++;
+        }
+
+        if ($parentoptionscount != $labelcount) {
+            return false;
+        }
+
+        // the count is equal: good
+        // now I have to consider two following scenarios:
+        // 1) the parent item (this item) may have n label + $this->labelother && the child may have n keys without a label
+        // 2) the parent item (this item) may have n label without $this->labelother && the child may have (n-1) keys + a label
+
+        // case 1: whatever is written as last key of $childparentvalues is compatible with $this->labelother, so nothing to check
+        if ($this->labelother) {
+            return true;
+        }
+
+        // case 2:
+        $lastkey = end($childparentvalues);
+        return ($lastkey == $labelcount);
+    }
+
     // MARK userform
 
     /*
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -409,13 +406,15 @@ EOS;
         $labels = $this->item_get_labels_array('options');
         $defaults = survey_textarea_to_array($this->defaultvalue);
 
+        $firstclass = array('class' => 'indent-'.$this->indent, 'group' => 1);
+        $class = ($this->adjustment == SURVEY_VERTICAL) ? $firstclass : array('group' => 1);
+
         $elementgroup = array();
         $i = 0;
-        $class = '';
         foreach ($labels as $value => $label) {
             $uniqueid = $this->itemname.'_'.$i;
-            $class = ( ($this->adjustment == SURVEY_VERTICAL) || (!$class) ) ? array('class' => 'indent-'.$this->indent) : '';
-            $elementgroup[] = $mform->createElement('checkbox', $uniqueid, '', $label, $class);
+            $maybeclass = (count($elementgroup)) ? $class : $firstclass;
+            $elementgroup[] = $mform->createElement('advcheckbox', $uniqueid, '', $label, $maybeclass, array('0', '1'));
 
             if (!$searchform) {
                 $index = in_array($label, $defaults);
@@ -428,8 +427,7 @@ EOS;
         if (!empty($this->labelother)) {
             list($othervalue, $otherlabel) = $this->item_get_other();
 
-            $class = ($this->adjustment == SURVEY_VERTICAL) ? array('class' => 'indent-'.$this->indent) : '';
-            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_other', '', $otherlabel, $class);
+            $elementgroup[] = $mform->createElement('advcheckbox', $this->itemname.'_other', '', $otherlabel, $class, array('0', '1'));
             $elementgroup[] = $mform->createElement('text', $this->itemname.'_text', '');
             $mform->setType($this->itemname.'_text', PARAM_RAW);
 
@@ -442,11 +440,23 @@ EOS;
             $mform->disabledIf($this->itemname.'_text', $this->itemname.'_other', 'notchecked');
         }
 
+        if (!$this->required) {
+            $elementgroup[] = $mform->createElement('advcheckbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), $class, array('0', '1'));
+        }
+
+        if ($searchform) {
+            unset($class['group']);
+            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_ignoreme', '', get_string('star', 'survey'), $class);
+        }
+
         if ($this->adjustment == SURVEY_VERTICAL) {
             if (!empty($this->labelother)) {
-                $separator = array_fill(0, count($elementgroup)-2, '<br />');
+                $separator = array_fill(0, count($elementgroup)-3, '<br />');
                 $separator[] = ' ';
                 $separator[] = '<br />';
+                if (!$this->required) {
+                    $separator[] = '<br />';
+                }
             } else {
                 $separator = '<br />';
             }
@@ -455,21 +465,14 @@ EOS;
         }
         $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
 
-        /* this last item is needed because:
-         * the JS validation MAY BE missing even if the field is required
-         * (JS validation is never added because I do not want it when the "previous" button is pressed and when an item is disabled even if mandatory)
-         * so the check for the not empty field is performed in the validation routine.
-         * The validation routine is executed ONLY ON ITEM that are actually submitted.
-         * For checkboxes, nothing is submitted if no box is checked
-         * so, if the user neglects the mandatory checkboxes item AT ALL, it is not submitted and, as conseguence, not validated.
-         * TO ALWAYS SUBMIT A CHECKNBOXES SET I add a dummy hidden item.
-         *
-         * TAKE CARE: I choose a name for this item that IS UNIQUE BUT is missing the SURVEY_ITEMPREFIX.'_'
-         *            In this way I am sure the item will never be saved in the database
-         */
-        $placeholderitemname = SURVEY_NEGLECTPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid.'_placeholder';
-        $mform->addElement('hidden', $placeholderitemname, SURVEYFIELD_CHECKBOX_PLACEHOLDER);
-        $mform->setType($placeholderitemname, PARAM_INT);
+        if (!$this->required) {
+            $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
+        }
+
+        if ($searchform) {
+            $mform->disabledIf($this->itemname.'_group', $this->itemname.'_ignoreme', 'checked');
+            $mform->setDefault($this->itemname.'_ignoreme', '1');
+        }
 
         if (!$searchform) {
             if ($this->required) {
@@ -486,13 +489,17 @@ EOS;
     /*
      * userform_mform_validation
      *
-     * @param $data, &$errors
+     * @param $data
+     * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
+        if ($searchform) {
+            return;
+        }
+
         if ($this->required) {
             $labels = $this->item_get_labels_array('options');
             $errorkey = $this->itemname.'_group';
@@ -629,32 +636,34 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
      * @param $answer
      * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
-
-        $return = array();
-        $values = $this->item_get_values_array('options');
-
-        foreach ($values as $k => $value) {
-            if (isset($answer["$k"])) {
-                $return[] = '1';
-            } else {
-                $return[] = '0';
-            }
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
+        if (isset($answer['ignoreme']) && ($answer['ignoreme'] == 1)) { // it ia an advcheckbox
+            $olduserdata->content = null;
+            return;
         }
+
+        if (isset($answer['noanswer']) && ($answer['noanswer'] == 1)) { // it ia an advcheckbox
+            $olduserdata->content = SURVEY_NOANSWERVALUE;
+            return;
+        }
+
+        $return = $answer;
         if (!empty($this->labelother)) {
             $return[] = isset($answer['other']) ? $answer['text'] : '';
+            unset($return['other']);
+            unset($return['text']);
         }
-
-        if (empty($return)) {
-            $olduserdata->content = null;
-        } else {
-            $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $return);
+        if (!$this->required) {
+            unset($return['noanswer']);
         }
+        $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $return);
     }
 
     /*
@@ -781,7 +790,6 @@ EOS;
     public function userform_get_root_elements_name() {
         $elementnames = array();
         $elementnames[] = $this->itemname.'_group';
-        $elementnames[] = SURVEY_NEGLECTPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid.'_placeholder';
 
         return $elementnames;
     }

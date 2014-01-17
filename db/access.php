@@ -73,24 +73,26 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
     SUB-TAB == SURVEY_SUBMISSION_MANAGE
         $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
         mod/survey:manageallsubmissions
-        mod/survey:seegroupsubmissions
-        mod/survey:editgroupsubmissions
-        mod/survey:deletegroupsubmissions
-        mod/survey:managesubmissions <-- Guest is not allowed to manage submissions because they are really anonymous
 
+        mod/survey:seeownsubmissions <-- It does not exist. It is laways allowed.
+        mod/survey:seegroupmatessubmissions
+        mod/survey:seeothergroupsubmissions
+        mod/survey:seeotherssubmissions
+
+        mod/survey:editownsubmissions
+        mod/survey:editgroupmatessubmissions
+        mod/survey:editothergroupsubmissions
+        mod/survey:editotherssubmissions
+
+        mod/survey:deleteownsubmissions
+        mod/survey:deletegroupmatessubmissions
+        mod/survey:deleteothergroupsubmissions
+        mod/survey:deleteotherssubmissions
+
+        mod/survey:submissiontopdf
     SUB-TAB == SURVEY_SUBMISSION_EDIT
     SUB-TAB == SURVEY_SUBMISSION_READONLY
         $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
-        mod/survey:readsubmissions   <-- USELESS I think.
-                                         Each user is allowed to manage submissions.
-                                         At worst none depending on general module advanced permissions.
-        mod/survey:editsubmissions   <-- USELESS I think.
-                                         Each user is allowed to manage submissions.
-                                         At worst none depending on general module advanced permissions.
-        mod/survey:deletesubmissions <-- USELESS I think.
-                                         Each user is allowed to manage submissions.
-                                         At worst none depending on general module advanced permissions.
-        mod/survey:submissiontopdf
 
     SUB-TAB == SURVEY_SUBMISSION_SEARCH
         $elementurl = new moodle_url('/mod/survey/view_search.php', $paramurl);
@@ -114,15 +116,9 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
 
     SUB-TAB == SURVEY_ITEMS_SETUP
         $elementurl = new moodle_url('/mod/survey/items_setup.php', $localparamurl);
-        mod/survey:setupitems        <-- USELESS I think.
-                                         Each user allowed to add items,
-                                         should be allowed to validate branching too.
 
     SUB-TAB == SURVEY_ITEMS_VALIDATE
         $elementurl = new moodle_url('/mod/survey/items_validate.php', $localparamurl);
-        mod/survey:validatebranching <-- USELESS I think.
-                                         Each user allowed to add items,
-                                         should be allowed to validate branching too.
 
 // -----------------------------------------------------------------------------
 // TAB USER TEMPLATES
@@ -150,11 +146,11 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
 // -----------------------------------------------------------------------------
     SUB-TAB == SURVEY_MTEMPLATES_BUILD
         $elementurl = new moodle_url('/mod/survey/mtemplates_create.php', $localparamurl);
-        mod/survey:savemastertemplate
+        mod/survey:savemastertemplates
 
     SUB-TAB == SURVEY_MTEMPLATES_APPLY
         $elementurl = new moodle_url('/mod/survey/mtemplates_apply.php', $localparamurl);
-        mod/survey:applymastertemplate
+        mod/survey:applymastertemplates
 
 */
 
@@ -227,45 +223,11 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:seegroupsubmissions' => array(
+    'mod/survey:seegroupmatessubmissions' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/survey:editgroupsubmissions' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/survey:deletegroupsubmissions' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/survey:managesubmissions' => array(
-        'riskbitmask' => RISK_XSS,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'frontpage' => CAP_ALLOW,
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
@@ -273,7 +235,106 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:deleteallsubmissions' => array(
+    'mod/survey:seeothergroupsubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:seeotherssubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:editownsubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:editgroupmatessubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:editothergroupsubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:editotherssubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:deleteownsubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:deletegroupmatessubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:deleteothergroupsubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/survey:deleteotherssubmissions' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -361,17 +422,6 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:setupitems' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
     'mod/survey:manageusertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
@@ -432,7 +482,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:savemastertemplate' => array(
+    'mod/survey:savemastertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -442,7 +492,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:applymastertemplate' => array(
+    'mod/survey:applymastertemplates' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

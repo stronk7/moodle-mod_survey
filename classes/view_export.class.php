@@ -93,7 +93,7 @@ class mod_survey_exportmanager {
     public function get_export_sql() {
         global $USER;
 
-        $mygroups = survey_get_my_groups($this->cm);
+        $mygroups = groups_get_my_groups();
 
         $sql = 'SELECT s.id as submissionid, s.status, s.timecreated, s.timemodified, ';
         if (empty($this->survey->anonymous)) {
@@ -212,7 +212,7 @@ class mod_survey_exportmanager {
             // var_dump($placeholders);
 
             // get user group (to filter survey to download)
-            $mygroups = survey_get_my_groups($this->cm);
+            $mygroups = groups_get_my_groups();
 
             $oldrichsubmissionid = 0;
             $strnever = get_string('never');

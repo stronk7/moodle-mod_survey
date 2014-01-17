@@ -342,9 +342,6 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -382,13 +379,17 @@ EOS;
     /*
      * userform_mform_validation
      *
-     * @param $data, &$errors
+     * @param $data
+     * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
+        if ($searchform) {
+            return;
+        }
+
         if (!empty($this->useeditor)) {
             $errorkey = $this->itemname.'_editor';
         } else {
@@ -455,12 +456,14 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
      * @param $answer
      * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
         if (!empty($this->useeditor)) {
             $olduserdata->{$this->itemname.'_editor'} = $answer['editor'];
 

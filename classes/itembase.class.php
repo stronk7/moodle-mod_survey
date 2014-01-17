@@ -351,7 +351,7 @@ class mod_survey_itembase {
                     $parentid = 0;
                     $userfeedback = 0;
                     $saveasnew  = 0;
-                    $itemlistman = new mod_survey_itemlist($cm, $context, $survey, $record->type, $record->plugin,
+                    $itemlistman = new mod_survey_itemlist($cm, $this->context, $survey, $record->type, $record->plugin,
                                            $record->itemid, $action, $view, $itemtomove, $lastitembefore,
                                            $confirm, $nextindent, $parentid, $userfeedback, $saveasnew);
                 }

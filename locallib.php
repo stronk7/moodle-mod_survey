@@ -77,20 +77,6 @@ function survey_textarea_to_array($textareacontent) {
 }
 
 /*
- * survey_get_my_groups
- * @param $cm
- * @return
- */
-function survey_get_my_groups($cm) {
-    if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {   // Separate groups are being used
-        $mygroupslist = groups_get_user_groups($cm->course); // this is 0 whether no groups are set
-        return $mygroupslist[0]; // [0] is for all groupings combined
-    } else {
-        return array();
-    }
-}
-
-/*
  * survey_need_group_filtering
  * this function answer the question: do I Need to filter group in my next task?
  * @param
@@ -99,7 +85,7 @@ function survey_get_my_groups($cm) {
 function survey_need_group_filtering($cm, $context) {
     // do I need to filter groups?
     $groupmode = groups_get_activity_groupmode($cm);
-    $mygroups = survey_get_my_groups($cm);
+    $mygroups = groups_get_my_groups();
 
     $filtergroups = true;
     $filtergroups = $filtergroups && ($groupmode == SEPARATEGROUPS);
@@ -123,4 +109,28 @@ function survey_fixlength($plainstring, $maxlength=60) {
     }
 
     return $plainstring;
+}
+
+/*
+ * survey_fixlength
+ * @param
+ * @return
+ */
+function survey_groupmates($userid=0) {
+    global $DB, $USER;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $sql = 'SELECT DISTINCT gm.id
+	    FROM {groups_members} gm
+		    JOIN {groups} g
+        WHERE g.id IN (SELECT g.id
+			            FROM {groups} g
+				            JOIN {groups_members} gm
+			            WHERE gm.userid = ?)
+        ORDER BY gm.userid ASC';
+
+    return $DB->get_records_sql($sql, array($userid));
 }

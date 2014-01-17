@@ -58,7 +58,9 @@ $submissionid = optional_param('submissionid', 0, PARAM_INT);
 // calculations
 // -----------------------------
 $userpageman = new mod_survey_userformmanager($cm, $survey, $submissionid, $formpage, $view);
-$userpageman->prevent_direct_user_input();
+if (empty($cover)) {
+    $userpageman->prevent_direct_user_input();
+}
 $userpageman->survey_add_custom_css();
 
 // redirect if no items were created and you are supposed to create them
@@ -72,8 +74,8 @@ if ($userpageman->canaccessadvanceditems) {
     }
 }
 
-$hassubmitbutton = ($userpageman->currentpage != SURVEY_SUBMISSION_READONLY);
-$hassubmitbutton = $hassubmitbutton && ($userpageman->currentpage != SURVEY_ITEMS_PREVIEW);
+$usercansubmit = ($userpageman->modulepage != SURVEY_SUBMISSION_READONLY);
+$usercansubmit = $usercansubmit && ($userpageman->modulepage != SURVEY_ITEMS_PREVIEW);
 
 // -----------------------------
 // define $user_form return url
@@ -92,7 +94,7 @@ $formparams->firstpageright = $userpageman->firstpageright;
 $formparams->maxassignedpage = $userpageman->maxassignedpage;
 $formparams->canaccessadvanceditems = $userpageman->canaccessadvanceditems; // Help selecting the fields to show
 $formparams->formpage = $userpageman->formpage;
-$formparams->tabpage = $userpageman->currentpage; // this is the page to get corresponding fields
+$formparams->tabpage = $userpageman->modulepage; // this is the page to get corresponding fields
 $formparams->cansubmit = $userpageman->cansubmit;
 // end of: prepare params for the form
 // -----------------------------
@@ -117,7 +119,7 @@ if ($userpageman->formdata = $userpageform->get_data()) {
     $pausebutton = (isset($userpageman->formdata->pausebutton) && ($userpageman->formdata->pausebutton));
 
     if (!$prevbutton && !$pausebutton) {
-        if ($userpageman->currentpage != SURVEY_ITEMS_PREVIEW) {
+        if ($userpageman->modulepage != SURVEY_ITEMS_PREVIEW) {
             $userpageman->save_user_data();
             $userpageman->notifyroles();
         }
@@ -133,7 +135,7 @@ if ($userpageman->formdata = $userpageform->get_data()) {
 
     if ($prevbutton) {
         // $userpageman->formdata->formpage in the worst case becomes equal to 1 such as left $overflow (-1)
-        $userpageman->next_not_empty_page(false, $userpageman->formpage, $userpageman->currentpage);
+        $userpageman->next_not_empty_page(false, $userpageman->formpage, $userpageman->modulepage);
         $paramurl['formpage'] = $userpageman->firstpageleft;
         redirect(new moodle_url('view.php', $paramurl)); // -> go to the first non empty previous page of the form
     }
@@ -141,7 +143,7 @@ if ($userpageman->formdata = $userpageform->get_data()) {
     $nextbutton = (isset($userpageman->formdata->nextbutton) && ($userpageman->formdata->nextbutton));
     if ($nextbutton) {
         // $userpageman->formdata->formpage in the worst case could become $firstpageleft such as right $overflow (-2)
-        $userpageman->next_not_empty_page(true, $userpageman->formpage, $userpageman->currentpage);
+        $userpageman->next_not_empty_page(true, $userpageman->formpage, $userpageman->modulepage);
         $paramurl['formpage'] = $userpageman->firstpageright;
         redirect(new moodle_url('view.php', $paramurl)); // -> go to the first non empty next page of the form
     }
@@ -166,8 +168,8 @@ navigation_node::override_active_url($url);
 
 echo $OUTPUT->header();
 
-$currenttab = $userpageman->currenttab; // needed by tabs.php
-$currentpage = $userpageman->currentpage; // needed by tabs.php
+$moduletab = $userpageman->moduletab; // needed by tabs.php
+$modulepage = $userpageman->modulepage; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 if ($cover) {
@@ -187,7 +189,7 @@ if (!$userpageman->canaccessadvanceditems) {
 
 // -----------------------------
 // is the user allowed to submit one more survey?
-if ($hassubmitbutton) {
+if ($usercansubmit) {
     if (!$userpageman->submissionid) { // I am going to create one more new submission
         if (!$userpageman->submissions_allowed()) {
             $userpageman->submissions_exceeded_stopexecution();
@@ -202,7 +204,7 @@ if ($hassubmitbutton) {
 
 // -----------------------------
 // manage the thanks page
-if ($hassubmitbutton) {
+if ($usercansubmit) {
     $userpageman->manage_thanks_page();
 }
 // end of: manage the thanks page
@@ -210,7 +212,7 @@ if ($hassubmitbutton) {
 
 // -----------------------------
 // display an alert to explain why buttons are missing
-if ($userpageman->currentpage == SURVEY_ITEMS_PREVIEW) {
+if ($userpageman->modulepage == SURVEY_ITEMS_PREVIEW) {
     $userpageman->message_preview_mode();
 }
 // end of: display an alert to explain why buttons are missing
@@ -225,12 +227,10 @@ $userpageman->display_page_x_of_y();
 // -----------------------------
 // calculate prefill for fields and prepare standard editors and filemanager
 // if sumission already exists
-if ($hassubmitbutton) {
-    if (!empty($submissionid)) {
-        $prefill = $userpageman->get_prefill_data();
-    }
+if (!empty($userpageman->submissionid)) {
+    $prefill = $userpageman->get_prefill_data();
 }
-// go to populate the hidden field of the form
+// populate the hidden field of the form
 $prefill['formpage'] = $userpageman->formpage;
 
 $userpageform->set_data($prefill);
@@ -240,7 +240,7 @@ $userpageform->display();
 
 // -----------------------------
 // display an alert to explain why buttons are missing
-if ($userpageman->currentpage == SURVEY_ITEMS_PREVIEW) {
+if ($userpageman->modulepage == SURVEY_ITEMS_PREVIEW) {
     $userpageman->message_preview_mode();
 }
 // end of: display an alert to explain why buttons are missing

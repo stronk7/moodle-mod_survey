@@ -81,17 +81,17 @@ $searchform = new survey_searchform($formurl, $formparams, 'post', '', array('id
 // manage form submission
 if ($searchform->is_cancelled()) {
     $paramurl = array('id' => $cm->id);
-    // TODO: remember to select submissions by groupsmates ONLY
     $returnurl = new moodle_url('view_manage.php', $paramurl);
     redirect($returnurl);
 }
 
-if ($searchman->formdata = $searchform->get_data()) { // $searchform, here, is the search form
+if ($searchman->formdata = $searchform->get_data()) {
     // in this routine I do not execute a real search
     // I only define the param searchquery for the url of SURVEY_SUBMISSION_MANAGE
     $paramurl = array('id' => $cm->id);
-    // TODO: remember to select submissions by groupsmates ONLY
-    $paramurl['searchquery'] = $searchman->get_searchparamurl();
+    if ($searchquery = $searchman->get_searchparamurl()) {
+        $paramurl['searchquery'] = $searchquery;
+    }
     $returnurl = new moodle_url('view_manage.php', $paramurl);
     redirect($returnurl);
 }
@@ -111,8 +111,8 @@ $PAGE->set_heading($course->shortname);
 
 echo $OUTPUT->header();
 
-$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
-$currentpage = SURVEY_SUBMISSION_SEARCH; // needed by tabs.php
+$moduletab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+$modulepage = SURVEY_SUBMISSION_SEARCH; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 if (!$searchman->count_search_items()) {

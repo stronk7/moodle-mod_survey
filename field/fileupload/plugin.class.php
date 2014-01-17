@@ -252,9 +252,6 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -284,13 +281,17 @@ EOS;
     /*
      * userform_mform_validation
      *
-     * @param $data, &$errors
+     * @param $data
+     * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
+        if ($searchform) {
+            return;
+        }
+
         if ($this->required) {
             $errorkey = $this->itemname.'_filemanager';
 
@@ -326,16 +327,18 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
      * @param $answer
      * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
         if (!empty($answer)) {
             $fieldname = $this->itemname.'_filemanager';
 
-            $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
+            $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->allowedtypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
             file_save_draft_area_files($answer['filemanager'], $this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOAD_FILEAREA, $olduserdata->id, $attachmentoptions);
 
             $olduserdata->content = ''; // nothing is expected here
@@ -362,7 +365,7 @@ EOS;
 
         // $prefill->id = $fromdb->submissionid;
         $draftitemid = 0;
-        $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->filetypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
+        $attachmentoptions = array('maxbytes' => $this->maxbytes, 'accepted_types' => $this->allowedtypes, 'subdirs' => false, 'maxfiles' => $this->maxfiles);
         file_prepare_draft_area($draftitemid, $this->context->id, 'surveyfield_fileupload', SURVEYFIELD_FILEUPLOAD_FILEAREA, $fromdb->id, $attachmentoptions);
 
         $prefill[$fieldname] = $draftitemid;

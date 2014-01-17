@@ -110,8 +110,8 @@ navigation_node::override_active_url($url);
 
 echo $OUTPUT->header();
 
-$currenttab = SURVEY_TABUTEMPLATES; // needed by tabs.php
-$currentpage = SURVEY_UTEMPLATES_BUILD; // needed by tabs.php
+$moduletab = SURVEY_TABUTEMPLATES; // needed by tabs.php
+$modulepage = SURVEY_UTEMPLATES_BUILD; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $a = get_string('sharinglevel', 'survey');

@@ -428,50 +428,53 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
     public function userform_mform_element($mform, $searchform) {
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
+
+        // element values
         $years = array();
         $months = array();
-        if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
-            $years[SURVEY_INVITATIONVALUE] = get_string('invitationyear', 'surveyfield_age');
-            $months[SURVEY_INVITATIONVALUE] = get_string('invitationmonth', 'surveyfield_age');
+        if (!$searchform) {
+            if ($this->defaultoption == SURVEY_INVITATIONDEFAULT) {
+                $years[SURVEY_INVITATIONVALUE] = get_string('invitationyear', 'surveyfield_age');
+                $months[SURVEY_INVITATIONVALUE] = get_string('invitationmonth', 'surveyfield_age');
+            }
+        } else {
+            $years[SURVEY_IGNOREME] = '';
+            $months[SURVEY_IGNOREME] = '';
         }
         $years += array_combine(range($this->lowerbound_year, $this->upperbound_year), range($this->lowerbound_year, $this->upperbound_year));
         $months += array_combine(range(0, 11), range(0, 11));
+        // End of: element values
 
+        // mform element
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('select', $this->itemname.'_year', '', $years, array('class' => 'indent-'.$this->indent));
         // $elementgroup[] = $mform->createElement('static', 'yearlabel_'.$this->itemid, null, get_string('years'));
         $elementgroup[] = $mform->createElement('select', $this->itemname.'_month', '', $months);
         // $elementgroup[] = $mform->createElement('static', 'monthlabel_'.$this->itemid, null, get_string('months', 'survey'));
 
-        if (!$searchform) {
-            if ($this->required) {
-                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
+        if ($this->required) {
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
 
+            if (!$searchform) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                 // -> I do not want JS form validation if the page is submitted through the "previous" button
                 // -> I do not want JS field validation even if this item is required BUT disabled. See: MDL-34815
                 // simply add a dummy star to the item and the footer note about mandatory fields
                 $starplace = ($this->position != SURVEY_POSITIONLEFT) ? $this->itemname.'_extrarow' : $this->itemname.'_group';
                 $mform->_required[] = $starplace;
-            } else {
-                $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'));
-                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
-                $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
             }
         } else {
-            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('star', 'survey'));
+            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'));
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
             $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
         }
+        // End of: mform element
 
         // default section
         if (!$searchform) {
@@ -492,21 +495,25 @@ EOS;
                 $mform->setDefault($this->itemname.'_month', $agearray['mon']);
             }
         } else {
-            $agearray = $this->item_split_unix_time($this->lowerbound);
-            $mform->setDefault($this->itemname.'_year', $agearray['year']);
-            $mform->setDefault($this->itemname.'_month', $agearray['mon']);
-            $mform->setDefault($this->itemname.'_noanswer', '1');
+            $mform->setDefault($this->itemname.'_year', SURVEY_IGNOREME); // empty label
+            $mform->setDefault($this->itemname.'_month', SURVEY_IGNOREME); // empty label
+            if (!$this->required) {
+                $mform->setDefault($this->itemname.'_noanswer', '0');
+            }
         }
+        // End of: default section
     }
 
     /*
      * userform_mform_validation
      *
-     * @param $answer
-     * @param $olduserdata
+     * @param $data
+     * @param &$errors
+     * @param $survey
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
@@ -517,14 +524,34 @@ EOS;
         $maximumage = get_config('surveyfield_age', 'maximumage');
         $errorkey = $this->itemname.'_group';
 
-        if ( ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) ||
-             ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) ) {
+        // verify the content of each drop down menu
+        if (!$searchform) {
+            $testpassed = true;
+            $testpassed = $testpassed && ($data[$this->itemname.'_year'] != SURVEY_INVITATIONVALUE);
+            $testpassed = $testpassed && ($data[$this->itemname.'_month'] != SURVEY_INVITATIONVALUE);
+        } else {
+            // both drop down menues are allowed to be == SURVEY_IGNOREME
+            // but not only 1
+            $testpassed = true;
+            if ($data[$this->itemname.'_year'] == SURVEY_IGNOREME) {
+                $testpassed = $testpassed && ($data[$this->itemname.'_month'] == SURVEY_IGNOREME);
+            } else {
+                $testpassed = $testpassed && ($data[$this->itemname.'_month'] != SURVEY_IGNOREME);
+            }
+        }
+        if (!$testpassed) {
             if ($this->required) {
                 $errors[$errorkey] = get_string('uerr_agenotsetrequired', 'surveyfield_age');
             } else {
                 $a = get_string('noanswer', 'survey');
                 $errors[$errorkey] = get_string('uerr_agenotset', 'surveyfield_age', $a);
             }
+            return;
+        }
+        // End of: verify the content of each drop down menu
+
+        if ($searchform) {
+            // stop here your investigation. I don't further validations.
             return;
         }
 
@@ -590,16 +617,26 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
-     * @param $answers
-     * @param $format
+     * @param $answer
+     * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
-        if (isset($answer['noanswer'])) {
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
+        if (isset($answer['noanswer'])) { // this is correct for input and search form both
             $olduserdata->content = SURVEY_NOANSWERVALUE;
         } else {
-            $olduserdata->content = $this->item_age_to_unix_time($answer['year'], $answer['month']);
+            if (!$searchform) {
+                $olduserdata->content = $this->item_age_to_unix_time($answer['year'], $answer['month']);
+            } else {
+                if ($answer['year'] == SURVEY_IGNOREME) {
+                    $olduserdata->content = null;
+                } else {
+                    $olduserdata->content = $this->item_age_to_unix_time($answer['year'], $answer['month']);
+                }
+            }
         }
     }
 

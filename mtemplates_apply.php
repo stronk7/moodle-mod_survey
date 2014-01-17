@@ -48,7 +48,7 @@ if (!empty($id)) {
 require_course_login($course, true, $cm);
 
 $context = context_module::instance($cm->id);
-require_capability('mod/survey:applymastertemplate', $context);
+require_capability('mod/survey:applymastertemplates', $context);
 
 add_to_log($course->id, 'survey', 'view', "mtemplates.php?id=$cm->id", $survey->name, $cm->id);
 
@@ -109,8 +109,8 @@ navigation_node::override_active_url($url);
 
 echo $OUTPUT->header();
 
-$currenttab = SURVEY_TABMTEMPLATES; // needed by tabs.php
-$currentpage = SURVEY_MTEMPLATES_APPLY; // needed by tabs.php
+$moduletab = SURVEY_TABMTEMPLATES; // needed by tabs.php
+$modulepage = SURVEY_MTEMPLATES_APPLY; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $mtemplateman->friendly_halt();

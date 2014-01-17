@@ -62,8 +62,8 @@ navigation_node::override_active_url($url);
 
 echo $OUTPUT->header();
 
-$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
-$currentpage = SURVEY_SUBMISSION_REPORT; // needed by tabs.php
+$moduletab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+$modulepage = SURVEY_SUBMISSION_REPORT; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $hassubmissions = survey_count_submissions($survey->id);

@@ -13,10 +13,10 @@ button is needed. (thanks to JR)
 -> possible better solution: use the first 32 chars of the question escaped
 -> is the autofill field saved to userdata even if it is not shown?
 -> allow upperbound date/datetime == to now
--> the option "not answered" is missing in the search form even if a "Answer not provided" may be found
-
-
-
+-> the option "not answered" is missing in the search form even if a "Answer not provided" is part of an item
+-> the workaround suggested by Marina Glancy in MDL-42946 doesn't work if the label is crafted into the tag <p>.
+-> I need a regex to validate an url
+-> mform elements in MMM have different sizes probably because of /theme/yui_combo.php?3.13.0/cssreset/cssreset.css&3.13.0/cssfonts/cssfonts.css&3.13.0/cssgrids/cssgrids.css&3.13.0/cssbase/cssbase.css
 
 
 1) ELOY - IN PROGRESS: While looking for DB columns in the DB I found all the install.xml strangely formatted. And also, built with some old version of the editor (we are PREV/NEXT free since some months ago). Custom formatting continues there. It’s not the end of the world, so keeping it for now.

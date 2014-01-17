@@ -100,8 +100,8 @@ $PAGE->set_heading($course->shortname);
 
 echo $OUTPUT->header();
 
-$currenttab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
-$currentpage = SURVEY_SUBMISSION_EXPORT; // needed by tabs.php
+$moduletab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
+$modulepage = SURVEY_SUBMISSION_EXPORT; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 if ($exportoutcome == SURVEY_NOFIELDSSELECTED) {

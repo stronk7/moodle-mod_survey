@@ -388,9 +388,6 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -398,9 +395,9 @@ EOS;
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
-        $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent, 'itemid' => $this->itemid));
-        $mform->setType($this->itemname, PARAM_RAW); // see: moodlelib.php lines 133+
         if (!$searchform) {
+            $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent, 'itemid' => $this->itemid));
+            $mform->setType($this->itemname, PARAM_RAW); // see: moodlelib.php lines 133+
             if (strlen($this->defaultvalue)) {
                 $mform->setDefault($this->itemname, "$this->defaultvalue");
             }
@@ -413,19 +410,31 @@ EOS;
                 $starplace = ($this->position != SURVEY_POSITIONLEFT) ? $this->itemname.'_extrarow' : $this->itemname;
                 $mform->_required[] = $starplace;
             }
+        } else {
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('text', $this->itemname, '', array('class' => 'indent-'.$this->indent));
+            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_ignoreme', '', get_string('star', 'survey'));
+            $mform->setType($this->itemname, PARAM_RAW);
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
+            $mform->disabledIf($this->itemname.'_group', $this->itemname.'_ignoreme', 'checked');
+            $mform->setDefault($this->itemname.'_ignoreme', '1');
         }
     }
 
     /*
      * userform_mform_validation
      *
-     * @param $data, &$errors
+     * @param $data
+     * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
+        if ($searchform) {
+            return;
+        }
+
         $errorkey = $this->itemname;
 
         $draftuserinput = $data[$this->itemname];
@@ -556,14 +565,21 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
      * @param $answer
      * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
-        if (strlen($answer['mainelement']) == 0) {
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
+        if (isset($answer['ignoreme'])) {
             $olduserdata->content = null;
+            return;
+        }
+
+        if (strlen($answer['mainelement']) == 0) {
+            $olduserdata->content = SURVEY_NOANSWERVALUE;
         } else {
             if (empty($this->decimals)) {
                 $olduserdata->content = $answer['mainelement'];
@@ -611,7 +627,9 @@ EOS;
             return $prefill;
         }
 
-        if (isset($fromdb->content)) {
+        if ($fromdb->content == SURVEY_NOANSWERVALUE) {
+            $prefill[$this->itemname] = '';
+        } else {
             $prefill[$this->itemname] = number_format((double)$fromdb->content, $this->decimals, $this->decimalseparator, '');
         }
 

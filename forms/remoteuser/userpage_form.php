@@ -247,13 +247,14 @@ class survey_submissionform extends moodleform {
         $errors = parent::validation($data, $files);
 
         // Show the item only if: the current item matches the parent value
+        $regexp = '~('.SURVEY_ITEMPREFIX.'|'.SURVEY_PLACEHOLDERPREFIX.')_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
         $olditemid = 0;
-        foreach ($data as $k => $v) {
-            if (preg_match('~^('.SURVEY_ITEMPREFIX.'|'.SURVEY_NEGLECTPREFIX.')_~', $k)) { // if it starts with SURVEY_ITEMPREFIX_
-                $parts = explode('_', $k);
-                $type = $parts[1]; // item type
-                $plugin = $parts[2]; // item plugin
-                $itemid = $parts[3]; // item id
+        foreach ($data as $itemname => $v) {
+            if (preg_match($regexp, $itemname, $matches)) {
+                $type = $matches[2]; // item type
+                $plugin = $matches[3]; // item plugin
+                $itemid = $matches[4]; // item id
+                // $option = $matches[5]; // _text or _noanswer or...
 
                 if ($itemid == $olditemid) {
                     continue;
@@ -263,7 +264,7 @@ class survey_submissionform extends moodleform {
 
                 $item = survey_get_item($itemid, $type, $plugin);
                 if ($survey->newpageforchild) {
-                    $itemisenabled = true; // if it is displayed, it is enabled
+                    $itemisenabled = true; // since it is displayed, it is enabled
                     $parentitem = null;
                 } else {
                     $parentitemid = $item->get_parentid();
@@ -284,9 +285,9 @@ class survey_submissionform extends moodleform {
                 }
 
                 if ($itemisenabled) {
-                    $item->userform_mform_validation($data, $errors, $survey);
+                    $item->userform_mform_validation($data, $errors, $survey, false);
                     // } else {
-                    // echo 'parent item didn\'t allow the validation of the child item '.$item->itemid.', plugin = '.$item->plugin.'('.$item->content.')<br />';
+                    // echo 'parent item doesn\'t allow the validation of the child item '.$item->itemid.', plugin = '.$item->plugin.'('.$item->content.')<br />';
                 }
             }
         }

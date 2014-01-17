@@ -72,24 +72,63 @@ class mod_survey_submissionmanager {
     public $canmanageallsubmissions = false;
 
     /*
-     * $canmanagesubmissions
+     * $canseeownsubmissions
      */
-    public $canmanagesubmissions = false;
+    // public $canseeownsubmissions = true;
 
     /*
-     * $canseegroupsubmissions
+     * $canseegroupmatessubmissions
      */
-    public $canseegroupsubmissions = false;
+    public $canseegroupmatessubmissions = false;
 
     /*
-     * $caneditgroupsubmissions
+     * $canseeseeothergroupsubmissions
      */
-    public $caneditgroupsubmissions = false;
+    public $canseeseeothergroupsubmissions = false;
 
     /*
-     * $candeletegroupsubmissions
+     * $canseeotherssubmissions
      */
-    public $candeletegroupsubmissions = false;
+    public $canseeotherssubmissions = false;
+
+    /*
+     * $caneditownsubmissions
+     */
+    public $caneditownsubmissions = false;
+
+    /*
+     * $caneditgroupmatessubmissions
+     */
+    public $caneditgroupmatessubmissions = false;
+
+    /*
+     * $caneditothergroupsubmissions
+     */
+    public $caneditothergroupsubmissions = false;
+    /*
+     * $caneditotherssubmissions
+     */
+    public $caneditotherssubmissions = false;
+
+    /*
+     * $candeleteownsubmissions
+     */
+    public $candeleteownsubmissions = false;
+
+    /*
+     * $candeletegroupmatessubmissions
+     */
+    public $candeletegroupmatessubmissions = false;
+
+    /*
+     * $candeleteothergroupsubmissions
+     */
+    public $candeleteothergroupsubmissions = false;
+
+    /*
+     * $candeleteotherssubmissions
+     */
+    public $candeleteotherssubmissions = false;
 
     /*
      * $searchfieldsget
@@ -114,11 +153,22 @@ class mod_survey_submissionmanager {
         $this->view = $view;
         $this->searchfields_get = $searchfieldsget;
         $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
-        $this->canmanagesubmissions = has_capability('mod/survey:managesubmissions', $this->context, null, true);
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
-        $this->canseegroupsubmissions = has_capability('mod/survey:seegroupsubmissions', $this->context, null, true);
-        $this->caneditgroupsubmissions = has_capability('mod/survey:editgroupsubmissions', $this->context, null, true);
-        $this->candeletegroupsubmissions = has_capability('mod/survey:deletegroupsubmissions', $this->context, null, true);
+
+        // $this->canseeownsubmissions = true;
+        $this->canseegroupmatessubmissions = has_capability('mod/survey:seegroupmatessubmissions', $this->context, null, true);
+        $this->canseeseeothergroupsubmissions = has_capability('mod/survey:seeothergroupsubmissions', $this->context, null, true);
+        $this->canseeotherssubmissions = has_capability('mod/survey:seeotherssubmissions', $this->context, null, true);
+
+        $this->caneditownsubmissions = has_capability('mod/survey:editownsubmissions', $this->context, null, true);
+        $this->caneditgroupmatessubmissions = has_capability('mod/survey:editgroupmatessubmissions', $this->context, null, true);
+        $this->caneditothergroupsubmissions = has_capability('mod/survey:editothergroupsubmissions', $this->context, null, true);
+        $this->caneditotherssubmissions = has_capability('mod/survey:editotherssubmissions', $this->context, null, true);
+
+        $this->candeleteownsubmissions = has_capability('mod/survey:deleteownsubmissions', $this->context, null, true);
+        $this->candeletegroupmatessubmissions = has_capability('mod/survey:deletegroupmatessubmissions', $this->context, null, true);
+        $this->candeleteothergroupsubmissions = has_capability('mod/survey:deleteothergroupsubmissions', $this->context, null, true);
+        $this->candeleteotherssubmissions = has_capability('mod/survey:deleteotherssubmissions', $this->context, null, true);
     }
 
     /*
@@ -266,9 +316,10 @@ class mod_survey_submissionmanager {
      * @return
      */
     public function get_manage_sql($table) {
-        global $USER;
+        global $COURSE, $USER;
 
-        $mygroups = survey_get_my_groups($this->cm);
+        $courseisgrouped = groups_get_all_groups($COURSE->id);
+        $mygroups = groups_get_my_groups();
 
         $sql = 'SELECT s.*, s.id as submissionid, '.user_picture::fields('u').'
                 FROM {survey_submission} s
@@ -296,8 +347,13 @@ class mod_survey_submissionmanager {
             $sql .= ' JOIN ('.$transposeduserdata.') tud ON tud.submissionid = s.id '; // tud == transposed user data
         }
 
-        if (!$this->canmanageallsubmissions && $mygroups) {
-            $sql .= ' JOIN {groups_members} gm ON gm.userid = s.userid ';
+        if ($courseisgrouped) {
+            $mygroupsonly = true;
+            $mygroupsonly = $mygroupsonly && (!$this->canmanageallsubmissions);
+            $mygroupsonly = $mygroupsonly && (!$this->canseeothergroupsubmissions);
+            if ($mygroupsonly && $mygroups) {
+                $sql .= ' JOIN {groups_members} gm ON gm.userid = s.userid ';
+            }
         }
 
         // now finalise $sql
@@ -305,19 +361,31 @@ class mod_survey_submissionmanager {
         $whereparams['surveyid'] = $this->survey->id;
 
         if (!$this->canmanageallsubmissions) {
-            if (!$this->canseegroupsubmissions) {
-                $sql .= ' AND s.userid = :userid';
-                $whereparams['userid'] = $USER->id;
-            }
-
-            if ($mygroups) {
-                $sql .= ' AND gm.groupid IN ('.implode(',', $mygroups).')';
+            if ($courseisgrouped) {
+                $onlymine = true;
+                $onlymine = $onlymine && (!$this->seegroupmatessubmissions);
+                $onlymine = $onlymine && (!$this->seeothergroupsubmissions);
+                if ($onlymine) {
+                    // restrict to your submissions only
+                    $sql .= ' AND s.userid = :userid';
+                    $whereparams['userid'] = $USER->id;
+                }
+                if (!$this->seeothergroupsubmissions) {
+                    // restrict to your groups only
+                    $sql .= ' AND gm.groupid IN ('.implode(',', $mygroups).')';
+                }
+            } else {
+                if (!$this->canseeotherssubmissions) {
+                    // restrict to your submissions only
+                    $sql .= ' AND s.userid = :userid';
+                    $whereparams['userid'] = $USER->id;
+                }
             }
         }
 
         if ($this->searchfields_get) {
             foreach ($searchrestrictions as $itemid => $searchrestriction) {
-                $sql .= ' AND tud.c_'.$itemid.' = :c_'.$itemid;;
+                $sql .= ' AND tud.c_'.$itemid.' = :c_'.$itemid;
                 $whereparams['c_'.$itemid] = $searchrestriction;
             }
         }
@@ -348,7 +416,7 @@ class mod_survey_submissionmanager {
         require_once($CFG->libdir.'/tablelib.php');
 
         $table = new flexible_table('submissionslist');
-        if ($this->canmanageallsubmissions || $this->canseegroupsubmissions) {
+        if ($this->canmanageallsubmissions || $this->canseegroupmatessubmissions) {
             $table->initialbars(true);
         }
 
@@ -413,15 +481,18 @@ class mod_survey_submissionmanager {
         $downloadpdftitle = get_string('downloadpdf', 'survey');
         $deletetitle = get_string('delete');
         $neverstring = get_string('never');
-        $edittitle = get_string('edit');
-        $restrictedaccess = get_string('restrictedaccess', 'survey');
-        $duplicatetitle = get_string('duplicate');
+        $readonlyaccess = get_string('readonlyaccess', 'survey');
+
+        $nonhistoryedittitle = get_string('edit');
+        $historyedittitle = get_string('duplicate');
+        $edittitle = ($this->survey->history) ? $historyedittitle : $nonhistoryedittitle;
+        $editiconpath = ($this->survey->history) ? 't/copy' : 't/edit';
 
         $paramurlbase = array('id' => $this->cm->id);
         $basepath = new moodle_url('view.php', $paramurlbase);
 
         list($sql, $whereparams) = $this->get_manage_sql($table);
-
+        // echo '$sql = '.$sql.'<br />';
         $submissions = $DB->get_recordset_sql($sql, $whereparams, $table->get_sql_sort());
 
         if ($submissions->valid()) {
@@ -433,7 +504,32 @@ class mod_survey_submissionmanager {
                 echo $OUTPUT->single_button($url, get_string('deleteallsubmissions', 'survey'), 'get');
             }
 
+            if ($courseisgrouped = groups_get_all_groups($COURSE->id)) {
+                $mygroupmates = survey_groupmates();
+            }
+
             foreach ($submissions as $submission) {
+                // before starting, just set some information
+                if (!$ismine = ($submission->userid == $USER->id)) {
+                    if ($courseisgrouped) {
+                        if ($groupuser = in_array($submission->userid, $mygroupmates)) {
+                            if (!$this->canseegroupmatessubmissions) {
+                                continue;
+                            }
+                        } else {
+                            // submission belongs to other users
+                            if (!$this->canseeotherssubmissions) {
+                                continue;
+                            }
+                        }
+                    } else {
+                        if (!$this->canseeotherssubmissions) {
+                            continue;
+                        }
+                    }
+                }
+
+
                 $tablerow = array();
 
                 // icon
@@ -448,6 +544,7 @@ class mod_survey_submissionmanager {
                 // creation time
                 $tablerow[] = userdate($submission->timecreated);
 
+                // ???? if (!$this->survey->history) { maybe do I need to change $submission->timemodified?
                 if (!$this->survey->history) {
                     // modification time
                     if ($submission->timemodified) {
@@ -461,43 +558,72 @@ class mod_survey_submissionmanager {
                 $paramurl = $paramurlbase;
                 $paramurl['submissionid'] = $submission->submissionid;
                 $paramurl['cvp'] = 0;
+
                 // edit
-                if ($this->canmanageallsubmissions || $this->caneditgroupsubmissions) {
-                    $paramurl['view'] = SURVEY_EDITRESPONSE;
-                    if ($submission->status == SURVEY_STATUSCLOSED) {
-                        if ($this->survey->history) {
-                            $icontitle = $duplicatetitle;
-                            $iconpath = 't/copy';
+                if ($ismine) { // am I the owner?
+                    if ($submission->status == SURVEY_STATUSINPROGRESS) {
+                        // you are always allowed to edit your in progress submission?
+                        $paramurl['view'] = SURVEY_EDITRESPONSE;
+                        $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                            new pix_icon('t/edit', $nonhistoryedittitle, 'moodle', array('title' => $nonhistoryedittitle)),
+                            null, array('title' => $nonhistoryedittitle));
+                    } else {
+                        // can you edit your personal submissions?
+                        if ($this->caneditownsubmissions) {
+                            $paramurl['view'] = SURVEY_EDITRESPONSE;
+                            $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                                new pix_icon($editiconpath, $edittitle, 'moodle', array('title' => $edittitle)),
+                                null, array('title' => $edittitle));
                         } else {
-                            $icontitle = $edittitle;
-                            $iconpath = 't/edit';
+                            // you are always allowed to see your personal submissions
+                            $paramurl['view'] = SURVEY_READONLYRESPONSE;
+                            $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                                new pix_icon('readonly', $readonlyaccess, 'survey', array('title' => $readonlyaccess)),
+                                null, array('title' => $readonlyaccess));
+                        }
+                    }
+                } else {
+                    if ($courseisgrouped) {
+                        if ($groupuser) { // the owner is in a group of mine?
+                            // can you edit this submissions?
+                            if ($this->caneditgroupmatessubmissions) {
+                                $paramurl['view'] = SURVEY_EDITRESPONSE;
+                                $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                                    new pix_icon($editiconpath, $edittitle, 'moodle', array('title' => $edittitle)),
+                                    null, array('title' => $edittitle));
+                            } else { // if I am here, I am sure I can see this submission
+                                $paramurl['view'] = SURVEY_READONLYRESPONSE;
+                                $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                                    new pix_icon('readonly', $readonlyaccess, 'survey', array('title' => $readonlyaccess)),
+                                    null, array('title' => $readonlyaccess));
+                            }
+                        } else { // the owner is in a group different from mine?
+                            // can you edit this submissions?
+                            if ($this->caneditothergroupsubmissions) {
+                                $paramurl['view'] = SURVEY_EDITRESPONSE;
+                                $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                                    new pix_icon($editiconpath, $edittitle, 'moodle', array('title' => $edittitle)),
+                                    null, array('title' => $edittitle));
+                            } else { // if I am here, I am sure I can see this submission
+                                $paramurl['view'] = SURVEY_READONLYRESPONSE;
+                                $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                                    new pix_icon('readonly', $readonlyaccess, 'survey', array('title' => $readonlyaccess)),
+                                    null, array('title' => $readonlyaccess));
+                            }
                         }
                     } else {
-                        // always allow the user to finalize his/her submission
-                        $icontitle = $edittitle;
-                        $iconpath = 't/edit';
-                    }
-
-                    $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
-                        new pix_icon($iconpath, $icontitle, 'moodle', array('title' => $icontitle)),
-                        null, array('title' => $icontitle));
-                } else { // read only
-                    // I don't have canmanageallsubmissions && $this->caneditgroupsubmissions
-                    // but if I meet an "in progress" submission of mine...
-                    if (($submission->status == SURVEY_STATUSINPROGRESS) && ($submission->userid == $USER->id)) {
-                        $paramurl['view'] = SURVEY_EDITRESPONSE;
-                        $icontitle = $edittitle;
-
-                        $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
-                            new pix_icon('t/edit', $icontitle, 'moodle', array('title' => $icontitle)),
-                            null, array('title' => $icontitle));
-                    } else { // submission is closed
-                        $paramurl['view'] = SURVEY_READONLYRESPONSE;
-                        $icontitle = $restrictedaccess;
-
-                        $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
-                            new pix_icon('readonly', $icontitle, 'survey', array('title' => $icontitle)),
-                            null, array('title' => $icontitle));
+                        // can you edit this submissions?
+                        if ($this->caneditotherssubmissions) {
+                            $paramurl['view'] = SURVEY_EDITRESPONSE;
+                            $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                                new pix_icon($editiconpath, $edittitle, 'moodle', array('title' => $edittitle)),
+                                null, array('title' => $edittitle));
+                        } else { // if I am here, I am sure I can see this submission
+                            $paramurl['view'] = SURVEY_READONLYRESPONSE;
+                            $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                                new pix_icon('readonly', $readonlyaccess, 'survey', array('title' => $readonlyaccess)),
+                                null, array('title' => $readonlyaccess));
+                        }
                     }
                 }
 
@@ -505,16 +631,47 @@ class mod_survey_submissionmanager {
                 $paramurl = $paramurlbase;
                 $paramurl['submissionid'] = $submission->submissionid;
                 $paramurl['cvp'] = 0;
-                if ($this->canmanageallsubmissions || $this->candeletegroupsubmissions) {
-                    $paramurl['act'] = SURVEY_DELETERESPONSE;
-                    $paramurl['sesskey'] = sesskey();
-
-                    $icons .= $OUTPUT->action_icon(new moodle_url('view_manage.php', $paramurl),
-                        new pix_icon('t/delete', $deletetitle, 'moodle', array('title' => $deletetitle)),
-                        null, array('title' => $deletetitle));
+                if ($ismine) { // am I the owner?
+                    // can you delete your personal submissions?
+                    if ($this->candeleteownsubmissions) {
+                        $paramurl['act'] = SURVEY_DELETERESPONSE;
+                        $paramurl['sesskey'] = sesskey();
+                        $icons .= $OUTPUT->action_icon(new moodle_url('view_manage.php', $paramurl),
+                            new pix_icon('t/delete', $deletetitle, 'moodle', array('title' => $deletetitle)),
+                            null, array('title' => $deletetitle));
+                    }
+                } else {
+                    if ($courseisgrouped) {
+                        if ($groupuser) { // the owner is in a group of mine?
+                            // can you delete this submissions?
+                            if ($this->candeletegroupmatessubmissions) {
+                                $paramurl['act'] = SURVEY_DELETERESPONSE;
+                                $paramurl['sesskey'] = sesskey();
+                                $icons .= $OUTPUT->action_icon(new moodle_url('view_manage.php', $paramurl),
+                                    new pix_icon('t/delete', $deletetitle, 'moodle', array('title' => $deletetitle)),
+                                    null, array('title' => $deletetitle));
+                            }
+                        } else { // the owner is in a group different from mine?
+                            if ($this->candeleteothergroupsubmissions) {
+                                $paramurl['act'] = SURVEY_DELETERESPONSE;
+                                $paramurl['sesskey'] = sesskey();
+                                $icons .= $OUTPUT->action_icon(new moodle_url('view_manage.php', $paramurl),
+                                    new pix_icon('t/delete', $deletetitle, 'moodle', array('title' => $deletetitle)),
+                                    null, array('title' => $deletetitle));
+                            }
+                        }
+                    } else {
+                        if ($this->candeleteotherssubmissions) {
+                            $paramurl['act'] = SURVEY_DELETERESPONSE;
+                            $paramurl['sesskey'] = sesskey();
+                            $icons .= $OUTPUT->action_icon(new moodle_url('view_manage.php', $paramurl),
+                                new pix_icon('t/delete', $deletetitle, 'moodle', array('title' => $deletetitle)),
+                                null, array('title' => $deletetitle));
+                        }
+                    }
                 }
 
-                // if I am here I am sure I can see this submission
+                // download to pdf
                 $paramurl = $paramurlbase;
                 $paramurl['submissionid'] = $submission->submissionid;
                 $paramurl['cvp'] = 0;
@@ -543,13 +700,10 @@ class mod_survey_submissionmanager {
      * @return
      */
     public function prevent_direct_user_input() {
-        global $DB;
+        global $USER, $DB;
 
         if ($this->canmanageallsubmissions) {
             return true;
-        }
-        if (!$this->canmanagesubmissions) {
-            print_error('incorrectaccessdetected', 'survey');
         }
         if ($this->action == SURVEY_NOACTION) {
             return true;
@@ -558,24 +712,40 @@ class mod_survey_submissionmanager {
             print_error('incorrectaccessdetected', 'survey');
         }
 
+        $courseisgrouped = groups_get_all_groups($COURSE->id);
+        if ($courseisgrouped = groups_get_all_groups($COURSE->id)) {
+            $mygroupmates = survey_groupmates();
+        }
+
         $allowed = true;
-        $mygroups = survey_get_my_groups($this->cm);
         switch ($this->action) {
             case SURVEY_DELETERESPONSE:
-                $allowed = $this->candeletegroupsubmissions;
+                if ($ownerid == $USER->id) {
+                    $allowed = $this->candeleteownsubmissions;
+                } else {
+                    if ($courseisgrouped) {
+                        if (in_array($submission->userid, $mygroupmates)) {
+                            $allowed = $this->candeletegroupmatessubmissions;
+                        } else {
+                            $allowed = $this->candeleteothergroupsubmissions;
+                        }
+                    } else {
+                        $allowed = $this->candeleteotherssubmissions;
+                    }
+                }
                 break;
             case SURVEY_DELETEALLRESPONSES:
-                $allowed = has_capability('mod/survey:deleteallsubmissions', $this->context);
+                $allowed = $this->candeleteotherssubmissions;
                 break;
             default:
                 $allowed = false;
         }
         switch ($this->view) {
             case SURVEY_READONLYRESPONSE:
-                $allowed = $this->canseegroupsubmissions;
+                $allowed = $this->canseegroupmatessubmissions;
                 break;
             case SURVEY_EDITRESPONSE:
-                $allowed = $this->caneditgroupsubmissions;
+                $allowed = $this->caneditgroupmatessubmissions;
                 break;
             case SURVEY_RESPONSETOPDF:
                 $allowed = has_capability('mod/survey:submissiontopdf', $this->context);

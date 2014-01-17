@@ -507,9 +507,6 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -519,19 +516,27 @@ EOS;
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
+        // element values
         $days = array();
         $months = array();
         $years = array();
         $hours = array();
         $minutes = array();
-        if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
-            $days[SURVEY_INVITATIONVALUE] = get_string('invitationday', 'surveyfield_datetime');
-            $months[SURVEY_INVITATIONVALUE] = get_string('invitationmonth', 'surveyfield_datetime');
-            $years[SURVEY_INVITATIONVALUE] = get_string('invitationyear', 'surveyfield_datetime');
-            $hours[SURVEY_INVITATIONVALUE] = get_string('invitationhour', 'surveyfield_datetime');
-            $minutes[SURVEY_INVITATIONVALUE] = get_string('invitationminute', 'surveyfield_datetime');
+        if (!$searchform) {
+            if ($this->defaultoption == SURVEY_INVITATIONDEFAULT) {
+                $days[SURVEY_INVITATIONVALUE] = get_string('invitationday', 'surveyfield_datetime');
+                $months[SURVEY_INVITATIONVALUE] = get_string('invitationmonth', 'surveyfield_datetime');
+                $years[SURVEY_INVITATIONVALUE] = get_string('invitationyear', 'surveyfield_datetime');
+                $hours[SURVEY_INVITATIONVALUE] = get_string('invitationhour', 'surveyfield_datetime');
+                $minutes[SURVEY_INVITATIONVALUE] = get_string('invitationminute', 'surveyfield_datetime');
+            }
+        } else {
+            $days[SURVEY_IGNOREME] = '';
+            $months[SURVEY_IGNOREME] = '';
+            $years[SURVEY_IGNOREME] = '';
+            $hours[SURVEY_IGNOREME] = '';
+            $minutes[SURVEY_IGNOREME] = '';
         }
-
         $days += array_combine(range(1, 31), range(1, 31));
         for ($i=1; $i<=12; $i++) {
             $months[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), "%B"); // january, february, march...
@@ -543,7 +548,9 @@ EOS;
         for ($i = 0; $i <= 59; $i += $this->step) {
             $minutes[$i] = sprintf("%02d", $i);
         }
+        // End of: element values
 
+        // mform element
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('select', $this->itemname.'_day', '', $days, array('class' => 'indent-'.$this->indent));
         $elementgroup[] = $mform->createElement('select', $this->itemname.'_month', '', $months);
@@ -552,28 +559,24 @@ EOS;
         $elementgroup[] = $mform->createElement('select', $this->itemname.'_minute', '', $minutes);
 
         $separator = array(' ', ' ', ', ', ':');
-        if (!$searchform) {
-            if ($this->required) {
-                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
+        if ($this->required) {
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
 
+            if (!$searchform) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
                 // -> I do not want JS form validation if the page is submitted through the "previous" button
                 // -> I do not want JS field validation even if this item is required BUT disabled. See: MDL-34815
                 // simply add a dummy star to the item and the footer note about mandatory fields
                 $starplace = ($this->position != SURVEY_POSITIONLEFT) ? $this->itemname.'_extrarow' : $this->itemname.'_group';
                 $mform->_required[] = $starplace;
-            } else {
-                $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'));
-                $separator[] = ' ';
-                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
-                $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
             }
         } else {
-            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('star', 'survey'));
+            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'));
             $separator[] = ' ';
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
             $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
         }
+        // End of: mform element
 
         // default section
         if (!$searchform) {
@@ -615,26 +618,28 @@ EOS;
                 $mform->setDefault($this->itemname.'_minute', $datetimearray['minutes']);
             }
         } else {
-            $datetimearray = $this->item_split_unix_time($this->lowerbound);
-            $mform->setDefault($this->itemname.'_day', $datetimearray['mday']);
-            $mform->setDefault($this->itemname.'_month', $datetimearray['mon']);
-            $mform->setDefault($this->itemname.'_year', $datetimearray['year']);
-            $mform->setDefault($this->itemname.'_hour', $datetimearray['hours']);
-            $mform->setDefault($this->itemname.'_minute', $datetimearray['minutes']);
-            $mform->setDefault($this->itemname.'_noanswer', '1');
+            $mform->setDefault($this->itemname.'_day', SURVEY_IGNOREME);
+            $mform->setDefault($this->itemname.'_month', SURVEY_IGNOREME);
+            $mform->setDefault($this->itemname.'_year', SURVEY_IGNOREME);
+            $mform->setDefault($this->itemname.'_hour', SURVEY_IGNOREME);
+            $mform->setDefault($this->itemname.'_minute', SURVEY_IGNOREME);
+            if (!$this->required) {
+                $mform->setDefault($this->itemname.'_noanswer', '0');
+            }
         }
+        // End of: default section
     }
 
     /*
      * userform_mform_validation
      *
-     * @param $data, &$errors
+     * @param $data
+     * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
         // this plugin displays as dropdown menu. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
 
@@ -644,17 +649,43 @@ EOS;
 
         $errorkey = $this->itemname.'_group';
 
-        if ( ($data[$this->itemname.'_day'] == SURVEY_INVITATIONVALUE) ||
-             ($data[$this->itemname.'_month'] == SURVEY_INVITATIONVALUE) ||
-             ($data[$this->itemname.'_year'] == SURVEY_INVITATIONVALUE) ||
-             ($data[$this->itemname.'_hour'] == SURVEY_INVITATIONVALUE) ||
-             ($data[$this->itemname.'_minute'] == SURVEY_INVITATIONVALUE) ) {
+        // verify the content of each drop down menu
+        if (!$searchform) {
+            $testpassed = true;
+            $testpassed = $testpassed && ($data[$this->itemname.'_day'] != SURVEY_INVITATIONVALUE);
+            $testpassed = $testpassed && ($data[$this->itemname.'_month'] != SURVEY_INVITATIONVALUE);
+            $testpassed = $testpassed && ($data[$this->itemname.'_year'] != SURVEY_INVITATIONVALUE);
+            $testpassed = $testpassed && ($data[$this->itemname.'_hour'] != SURVEY_INVITATIONVALUE);
+            $testpassed = $testpassed && ($data[$this->itemname.'_minute'] != SURVEY_INVITATIONVALUE);
+        } else {
+            // all five drop down menues are allowed to be == SURVEY_IGNOREME
+            // but not only 4, 3, 2 or 1
+            $testpassed = true;
+            if ($data[$this->itemname.'_day'] == SURVEY_IGNOREME) {
+                $testpassed = $testpassed && ($data[$this->itemname.'_month'] == SURVEY_IGNOREME);
+                $testpassed = $testpassed && ($data[$this->itemname.'_year'] == SURVEY_IGNOREME);
+                $testpassed = $testpassed && ($data[$this->itemname.'_hour'] == SURVEY_IGNOREME);
+                $testpassed = $testpassed && ($data[$this->itemname.'_minute'] == SURVEY_IGNOREME);
+            } else {
+                $testpassed = $testpassed && ($data[$this->itemname.'_month'] != SURVEY_IGNOREME);
+                $testpassed = $testpassed && ($data[$this->itemname.'_year'] != SURVEY_IGNOREME);
+                $testpassed = $testpassed && ($data[$this->itemname.'_hour'] != SURVEY_IGNOREME);
+                $testpassed = $testpassed && ($data[$this->itemname.'_minute'] != SURVEY_IGNOREME);
+            }
+        }
+        if (!$testpassed) {
             if ($this->required) {
                 $errors[$errorkey] = get_string('uerr_datetimenotsetrequired', 'surveyfield_datetime');
             } else {
                 $a = get_string('noanswer', 'survey');
                 $errors[$errorkey] = get_string('uerr_datetimenotset', 'surveyfield_datetime', $a);
             }
+            return;
+        }
+        // End of: verify the content of each drop down menu
+
+        if ($searchform) {
+            // stop here your investigation. I don't further validations.
             return;
         }
 
@@ -717,16 +748,26 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
      * @param $answer
      * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
-        if (isset($answer['noanswer'])) {
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
+        if (isset($answer['noanswer'])) { // this is correct for input and search form both
             $olduserdata->content = SURVEY_NOANSWERVALUE;
         } else {
-            $olduserdata->content = $this->item_datetime_to_unix_time($answer['year'], $answer['month'], $answer['day'], $answer['hour'], $answer['minute']);
+            if (!$searchform) {
+                $olduserdata->content = $this->item_datetime_to_unix_time($answer['year'], $answer['month'], $answer['day'], $answer['hour'], $answer['minute']);
+            } else {
+                if ($answer['year'] == SURVEY_IGNOREME) {
+                    $olduserdata->content = null;
+                } else {
+                    $olduserdata->content = $this->item_datetime_to_unix_time($answer['year'], $answer['month'], $answer['day'], $answer['hour'], $answer['minute']);
+                }
+            }
         }
     }
 

@@ -412,9 +412,6 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -437,7 +434,13 @@ EOS;
                 $mform->addElement('static', $this->itemname.'_static', $elementlabel, $label);
             }
         } else {
-            $mform->addElement('text', $this->itemname, $elementlabel, array('class' => 'indent-'.$this->indent));
+            $elementgroup = array();
+            $elementgroup[] = $mform->createElement('text', $this->itemname, '', array('class' => 'indent-'.$this->indent));
+            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_ignoreme', '', get_string('star', 'survey'));
+            $mform->setType($this->itemname, PARAM_RAW);
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, ' ', false);
+            $mform->disabledIf($this->itemname.'_group', $this->itemname.'_ignoreme', 'checked');
+            $mform->setDefault($this->itemname.'_ignoreme', '1');
         }
     }
 
@@ -447,11 +450,10 @@ EOS;
      * @param $data
      * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
         // nothing to do here
     }
 
@@ -459,13 +461,28 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
      * @param $answer
      * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
         global $USER, $COURSE, $survey;
+
+        if ($searchform) {
+            if (isset($answer['ignoreme'])) {
+                $olduserdata->content = null;
+            } else {
+                if (isset($answer['mainelement'])) {
+                    $olduserdata->content = $answer['mainelement'];
+                } else {
+                    print_error('unhandled return value from user submission');
+                }
+            }
+            return;
+        }
 
         $olduserdata->content = '';
         for ($i = 1; $i < 6; $i++) {

@@ -141,8 +141,8 @@ $PAGE->set_heading($course->shortname);
 
 echo $OUTPUT->header();
 
-$currenttab = SURVEY_TABITEMS; // needed by tabs.php
-$currentpage = SURVEY_ITEMS_SETUP; // needed by tabs.php
+$moduletab = SURVEY_TABITEMS; // needed by tabs.php
+$modulepage = SURVEY_ITEMS_SETUP; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 if ($itemlistman->hassubmissions) {

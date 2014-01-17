@@ -423,9 +423,6 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -437,40 +434,60 @@ EOS;
         $nolabel = get_string('no');
 
         if ($this->style == SURVEYFIELD_BOOLEAN_USESELECT) {
+            // element values
             $options = array();
-            if ( ($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform) ) {
-                $options[SURVEY_INVITATIONVALUE] = get_string('choosedots');
+            if (!$searchform) {
+                if ($this->defaultoption == SURVEY_INVITATIONDEFAULT) {
+                    $options[SURVEY_INVITATIONVALUE] = get_string('choosedots');
+                }
+            } else {
+                $options[SURVEY_IGNOREME] = '';
             }
-            $options += array('1' => $yeslabel, '0' => $nolabel);
+            $options['1'] = $yeslabel;
+            $options['0'] = $nolabel;
+            if (!$this->required) {
+                $options += array(SURVEY_NOANSWERVALUE => get_string('noanswer', 'survey'));
+            }
+            // End of: element values
 
-            if ( (!$this->required) || $searchform ) {
-                $checklabel = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-                $options += array(SURVEY_NOANSWERVALUE => $checklabel);
+            // mform element
+            if ($this->required) {
+                if (!$searchform) {
+                    // even if the item is required I CAN NOT ADD ANY RULE HERE because:
+                    // -> I do not want JS form validation if the page is submitted through the "previous" button
+                    // -> I do not want JS field validation even if this item is required BUT disabled. See: MDL-34815
+                    // simply add a dummy star to the item and the footer note about mandatory fields
+                    $starplace = ($this->position != SURVEY_POSITIONLEFT) ? $this->itemname.'_extrarow' : $this->itemname;
+                    $mform->_required[] = $starplace;
+                }
             }
             $mform->addElement('select', $this->itemname, $elementlabel, $options, array('class' => 'indent-'.$this->indent));
+            // End of: mform element
         } else { // SURVEYFIELD_BOOLEAN_USERADIOV or SURVEYFIELD_BOOLEAN_USERADIOH
-            $class = '';
             $separator = ($this->style == SURVEYFIELD_BOOLEAN_USERADIOV) ? '<br />' : ' ';
             $elementgroup = array();
 
-            if ( ($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform) ) {
-                $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('choosedots'), SURVEY_INVITATIONVALUE, array('class' => 'indent-'.$this->indent));
-                $class = ($this->style == SURVEYFIELD_BOOLEAN_USERADIOV) ? array('class' => 'indent-'.$this->indent) : '';
-            } else {
-                $class = array('class' => 'indent-'.$this->indent);
-            }
-            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $yeslabel, '1', $class);
-            $class = ($this->style == SURVEYFIELD_BOOLEAN_USERADIOV) ? array('class' => 'indent-'.$this->indent) : '';
-            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $nolabel, '0', $class);
+            $firstclass = array('class' => 'indent-'.$this->indent);
+            $class = ($this->style == SURVEYFIELD_BOOLEAN_USERADIOV) ? $firstclass : '';
 
+            // mform element
             if (!$searchform) {
-                if (!$this->required) {
-                    $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('noanswer', 'survey'), SURVEY_NOANSWERVALUE, $class);
+                if ($this->defaultoption == SURVEY_INVITATIONDEFAULT) {
+                    $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('choosedots'), SURVEY_INVITATIONVALUE, $firstclass);
                 }
             } else {
-                $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('star', 'survey'), SURVEY_NOANSWERVALUE, $class);
+                $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('star', 'survey'), SURVEY_IGNOREME, $firstclass);
+            }
+
+            $maybeclass = (count($elementgroup)) ? $class : $firstclass;
+            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $yeslabel, '1', $maybeclass);
+            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $nolabel, '0', $class);
+
+            if (!$this->required) {
+                $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('noanswer', 'survey'), SURVEY_NOANSWERVALUE, $class);
             }
             $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
+            // End of: element values
         }
 
         // default section
@@ -506,22 +523,26 @@ EOS;
                     debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
             }
         } else {
-            $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE); // free
+            $mform->setDefault($this->itemname, SURVEY_IGNOREME);
         }
     }
 
     /*
      * userform_mform_validation
      *
-     * @param $data, &$errors
+     * @param $data
+     * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
         // this plugin displays as dropdown menu or a radio buttons set. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
+
+        if ($searchform) {
+            return;
+        }
 
         if ($this->style != SURVEYFIELD_BOOLEAN_USESELECT) {
             $errorkey = $this->itemname.'_group';
@@ -559,12 +580,14 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
      * @param $answer
      * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
         if (isset($answer['noanswer'])) {
             $olduserdata->content = SURVEY_NOANSWERVALUE;
         } else {

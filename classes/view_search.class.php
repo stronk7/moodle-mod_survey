@@ -68,47 +68,41 @@ class mod_survey_searchmanager {
      * @return
      */
     public function get_searchparamurl() {
-        $regexp = '~'.SURVEY_ITEMPREFIX.'_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
+        $regexp = '~('.SURVEY_ITEMPREFIX.'|'.SURVEY_PLACEHOLDERPREFIX.')_('.SURVEY_TYPEFIELD.'|'.SURVEY_TYPEFORMAT.')_([a-z]+)_([0-9]+)_?([a-z0-9]+)?~';
 
         $infoperitem = array();
         foreach ($this->formdata as $elementname => $content) {
-            // echo '$elementname = '.$elementname.'<br />';
-            // echo '$content = '.$content.'<br />';
 
-            // I am interested only in the fields in the search form that contain something but do not contain SURVEY_NOANSWERVALUE
-            if (isset($content) && strlen($content) && ($content != SURVEY_NOANSWERVALUE)) {
-                if (preg_match($regexp, $elementname, $matches)) {
-                    $itemid = $matches[3]; // itemid of the search_form element (or of the search_form family element)
-                    if (!isset($infoperitem[$itemid])) {
-                        $infoperitem[$itemid] = new stdClass();
-                        $infoperitem[$itemid]->type = $matches[1];
-                        $infoperitem[$itemid]->plugin = $matches[2];
-                        $infoperitem[$itemid]->itemid = $itemid;
-                        if (!isset($matches[4])) {
-                            $infoperitem[$itemid]->extra['mainelement'] = $content;
-                        } else {
-                            $infoperitem[$itemid]->extra[$matches[4]] = $content;
-                        }
-                    } else {
-                        $infoperitem[$itemid]->extra[$matches[4]] = $content;
-                    }
+            if (preg_match($regexp, $elementname, $matches)) {
+                $itemid = $matches[4]; // itemid of the search_form element (or of the search_form family element)
+                if (!isset($infoperitem[$itemid])) {
+                    $infoperitem[$itemid] = new stdClass();
+                    $infoperitem[$itemid]->type = $matches[2];
+                    $infoperitem[$itemid]->plugin = $matches[3];
+                    $infoperitem[$itemid]->itemid = $itemid;
+                }
+                if (!isset($matches[5])) {
+                    $infoperitem[$itemid]->contentperelement['mainelement'] = $content;
+                } else {
+                    $infoperitem[$itemid]->contentperelement[$matches[5]] = $content;
                 }
             }
         }
-        // echo '$infoperitem:';
-        // var_dump($infoperitem);
+
         $searchfields = array();
         foreach ($infoperitem as $iteminfo) {
-            // echo '$iteminfo:';
-            // var_dump($iteminfo);
-            if ( isset($iteminfo->extra['noanswer']) && $iteminfo->extra['noanswer'] ) {
+            if ( isset($iteminfo->contentperelement['ignoreme']) && $iteminfo->contentperelement['ignoreme'] ) {
+                // do not waste your time
+                continue;
+            }
+            if ( isset($iteminfo->contentperelement['mainelement']) && ($iteminfo->contentperelement['mainelement'] == SURVEY_IGNOREME)) {
                 // do not waste your time
                 continue;
             }
             $item = survey_get_item($iteminfo->itemid, $iteminfo->type, $iteminfo->plugin);
 
             $userdata = new stdClass();
-            $item->userform_save_preprocessing($iteminfo->extra, $userdata);
+            $item->userform_save_preprocessing($iteminfo->contentperelement, $userdata, true);
 
             if (!is_null($userdata->content)) {
                 $searchfields[$iteminfo->itemid] = $userdata->content;

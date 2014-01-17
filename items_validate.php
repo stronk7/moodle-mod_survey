@@ -63,7 +63,7 @@ $parentid = 0;
 $saveasnew = null;
 
 $context = context_module::instance($cm->id);
-require_capability('mod/survey:setupitems', $context);
+require_capability('mod/survey:additems', $context);
 
 // -----------------------------
 // calculations
@@ -84,8 +84,8 @@ $PAGE->set_heading($course->shortname);
 
 echo $OUTPUT->header();
 
-$currenttab = SURVEY_TABITEMS; // needed by tabs.php
-$currentpage = SURVEY_ITEMS_VALIDATE; // needed by tabs.php
+$moduletab = SURVEY_TABITEMS; // needed by tabs.php
+$modulepage = SURVEY_ITEMS_VALIDATE; // needed by tabs.php
 require_once($CFG->dirroot.'/mod/survey/tabs.php');
 
 $itemlistman->validate_relations();

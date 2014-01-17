@@ -349,9 +349,6 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -361,9 +358,38 @@ EOS;
 
         $labels = $this->item_get_labels_array('options');
 
-        $select = $mform->addElement('select', $this->itemname, $elementlabel, $labels, array('size' => $this->heightinrows, 'class' => 'indent-'.$this->indent));
-        $select->setMultiple(true);
+        $class = array('size' => $this->heightinrows, 'class' => 'indent-'.$this->indent);
+        if (!$searchform) {
+            if ($this->required) {
+                $select = $mform->addElement('select', $this->itemname, $elementlabel, $labels, $class);
+                $select->setMultiple(true);
+            } else {
+                $elementgroup = array();
+                $select = $mform->createElement('select', $this->itemname, '', $labels, $class);
+                $select->setMultiple(true);
+                $elementgroup[] = $select;
+                $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
+                $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, '<br />', false);
+                $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
+            }
+        } else {
+            $elementgroup = array();
+            $select = $mform->createElement('select', $this->itemname, '', $labels, $class);
+            $select->setMultiple(true);
+            $elementgroup[] = $select;
+            if (!$this->required) {
+                $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
+            }
+            $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_ignoreme', '', get_string('star', 'survey'), array('class' => 'indent-'.$this->indent));
+            $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, '<br />', false);
+            if (!$this->required) {
+                $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');
+            }
+            $mform->disabledIf($this->itemname.'_group', $this->itemname.'_ignoreme', 'checked');
+            $mform->setDefault($this->itemname.'_ignoreme', '1');
+        }
 
+        // defaults
         if (!$searchform) {
             if ($defaults = survey_textarea_to_array($this->defaultvalue)) {
                 $defaultkeys = array();
@@ -375,20 +401,21 @@ EOS;
             // } else {
             // $mform->setDefault($this->itemname, array());
         }
+        // End of: defaults
 
-        /* this last item is needed because:
-         * the JS validation MAY BE missing even if the field is required
+        /*
+         * this last item is needed because:
+         * the check for the not empty field is performed in the validation routine. (not by JS)
          * (JS validation is never added because I do not want it when the "previous" button is pressed and when an item is disabled even if mandatory)
-         * so the check for the not empty field is performed in the validation routine.
          * The validation routine is executed ONLY ON ITEM that are actually submitted.
-         * For multiselect, nothing is submitted if no items are checked
-         * so, if the user neglects the mandatory multiselect item AT ALL, it is not submitted and, as conseguence, not validated.
-         * TO ALWAYS SUBMIT A CHECKNBOXES SET I add a dummy hidden item.
+         * For multiselect, nothing is submitted if no item is selected
+         * so, if the user neglects the mandatory multiselect AT ALL, it is not submitted and, as conseguence, not validated.
+         * TO ALWAYS SUBMIT A MULTISELECT I add a dummy hidden item.
          *
          * TAKE CARE: I choose a name for this item that IS UNIQUE BUT is missing the SURVEY_ITEMPREFIX.'_'
          *            In this way I am sure the item will never be saved in the database
          */
-        $placeholderitemname = SURVEY_NEGLECTPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid.'_placeholder';
+        $placeholderitemname = SURVEY_PLACEHOLDERPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid.'_placeholder';
         $mform->addElement('hidden', $placeholderitemname, SURVEYFIELD_MULTISELECT_PLACEHOLDER);
         $mform->setType($placeholderitemname, PARAM_INT);
 
@@ -407,17 +434,21 @@ EOS;
     /*
      * userform_mform_validation
      *
-     * @param $data, &$errors
+     * @param $data
+     * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
+        if ($searchform) {
+            return;
+        }
+
         if ($this->required) {
             $errorkey = $this->itemname;
 
-            if (empty($data[$this->itemname])) {
+            if (!isset($data[$this->itemname])) {
                 $errors[$errorkey] = get_string('required');
             }
         }
@@ -484,21 +515,25 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
      * @param $answer
      * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
-        // $answer is an array with the keys of the selected elements
-        if (!is_null($answer['mainelement'])) {
-            $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $answer['mainelement']);
-        } else {
-            $olduserdata->content = null;
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
+        if (isset($answer['noanswer'])) {
+            $olduserdata->content = SURVEY_NOANSWERVALUE;
+            return;
         }
 
-        if (!isset($answer['mainelement'])) {
-            print_error('unhandled return value from user submission');
+        if (!isset($answer['mainelement'])) { // only placeholder arrived here
+            $labels = $this->item_get_labels_array('options');
+            $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, array_fill(1, count($labels), '0'));
+        } else {
+            // $answer is an array with the keys of the selected elements
+            $olduserdata->content = implode(SURVEY_DBMULTIVALUESEPARATOR, $answer['mainelement']);
         }
     }
 
@@ -592,7 +627,7 @@ EOS;
     public function userform_get_root_elements_name() {
         $elementnames = array();
         $elementnames[] = $this->itemname;
-        $elementnames[] = SURVEY_NEGLECTPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid.'_placeholder';
+        $elementnames[] = SURVEY_PLACEHOLDERPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid.'_placeholder';
 
         return $elementnames;
     }

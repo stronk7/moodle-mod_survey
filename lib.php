@@ -126,11 +126,12 @@ define('SURVEY_NOFEEDBACK', 0);
 
 // ITEMPREFIX
 define('SURVEY_ITEMPREFIX', 'survey');
-define('SURVEY_NEGLECTPREFIX', 'neglect');
+define('SURVEY_PLACEHOLDERPREFIX', 'placeholder');
 
 // INVITATION AND NO ANSWER VALUE
 define('SURVEY_INVITATIONVALUE', '__invItat10n__'); // user should never guess it
 define('SURVEY_NOANSWERVALUE', '__n0__Answer__');   // user should never guess it
+define('SURVEY_IGNOREME', '__1gn0rE__me__');        // user should never guess it
 
 // ADJUSTMENTS
 define('SURVEY_VERTICAL',   0);
@@ -765,8 +766,8 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
     $canimportusertemplates = has_capability('mod/survey:importusertemplates', $context, null, true);
     $canapplyusertemplates = has_capability('mod/survey:applyusertemplates', $context, null, true);
 
-    $cansavemastertemplate = has_capability('mod/survey:savemastertemplate', $context, null, true);
-    $canapplymastertemplate = has_capability('mod/survey:applymastertemplate', $context, null, true);
+    $cansavemastertemplates = has_capability('mod/survey:savemastertemplates', $context, null, true);
+    $canapplymastertemplates = has_capability('mod/survey:applymastertemplates', $context, null, true);
 
     $canaccessreports = has_capability('mod/survey:accessreports', $context, null, true);
     $canaccessownreports = has_capability('mod/survey:accessownreports', $context, null, true);
@@ -829,10 +830,10 @@ function survey_extend_settings_navigation(settings_navigation $settings, naviga
         $navnode = $surveynode->add(SURVEY_TAB4NAME, new moodle_url('/mod/survey/mtemplates_create.php', $paramurl), navigation_node::TYPE_CONTAINER);
 
         // CHILDREN
-        if ($cansavemastertemplate) {
+        if ($cansavemastertemplates) {
             $navnode->add(get_string('tabmtemplatepage1', 'survey'), new moodle_url('/mod/survey/mtemplates_create.php', $paramurl), navigation_node::TYPE_SETTING);
         }
-        if ( (!$hassubmissions || $riskyediting) && $canapplymastertemplate ) {
+        if ( (!$hassubmissions || $riskyediting) && $canapplymastertemplates ) {
             $navnode->add(get_string('tabmtemplatepage2', 'survey'), new moodle_url('/mod/survey/mtemplates_apply.php', $paramurl), navigation_node::TYPE_SETTING);
         }
     }

@@ -437,9 +437,6 @@ EOS;
      * userform_mform_element
      *
      * @param $mform
-     * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
      * @param $searchform
      * @return
      */
@@ -447,23 +444,31 @@ EOS;
         $elementnumber = $this->customnumber ? $this->customnumber.': ' : '';
         $elementlabel = ($this->position == SURVEY_POSITIONLEFT) ? $elementnumber.strip_tags($this->get_content()) : '&nbsp;';
 
-        $labels = $this->item_get_labels_array('options');
-        if (($this->defaultoption == SURVEY_INVITATIONDEFAULT) && (!$searchform)) {
-            $labels = array(SURVEY_INVITATIONVALUE => get_string('choosedots')) + $labels;
-        }
+        $firstclass = array('class' => 'indent-'.$this->indent);
+        $class = ($this->adjustment == SURVEY_VERTICAL) ? $firstclass : '';
 
-        $class = array('class' => 'indent-'.$this->indent);
+        // element values
+        $labels = $this->item_get_labels_array('options');
+        if (!$searchform) {
+            if ($this->defaultoption == SURVEY_INVITATIONDEFAULT) {
+                $labels = array(SURVEY_INVITATIONVALUE => get_string('choosedots')) + $labels;
+            }
+        } else {
+            $labels = array(SURVEY_IGNOREME => get_string('star', 'survey')) + $labels;
+        }
+        // End of: element values
+
+        // mform element
         $elementgroup = array();
         foreach ($labels as $k => $label) {
-            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $label, "$k", $class);
-            $class = ($this->adjustment == SURVEY_VERTICAL) ? array('class' => 'indent-'.$this->indent) : '';
+            $maybeclass = (count($elementgroup)) ? $class : $firstclass;
+            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $label, "$k", $maybeclass);
         }
 
         if (!empty($this->labelother)) {
             list($othervalue, $otherlabel) = $this->item_get_other();
             $labels['other'] = $othervalue;
 
-            $class = ($this->adjustment == SURVEY_VERTICAL) ? array('class' => 'indent-'.$this->indent) : '';
             $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $otherlabel, 'other', $class);
             $elementgroup[] = $mform->createElement('text', $this->itemname.'_text', '');
             $mform->setType($this->itemname.'_text', PARAM_RAW);
@@ -471,11 +476,12 @@ EOS;
             $mform->disabledIf($this->itemname.'_text', $this->itemname, 'neq', 'other');
         }
 
-        if ( (!$this->required) || $searchform ) {
-            $noanswerlabel = ($searchform) ? get_string('star', 'survey') : get_string('noanswer', 'survey');
-            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', $noanswerlabel, SURVEY_NOANSWERVALUE, $class);
+        if (!$this->required) {
+            $elementgroup[] = $mform->createElement('radio', $this->itemname, '', get_string('noanswer', 'survey'), SURVEY_NOANSWERVALUE, $class);
         }
+        // End of: mform element
 
+        // definition of separator
         if ($this->adjustment == SURVEY_VERTICAL) {
             if (!empty($this->labelother)) {
                 // I take 2 <br /> out because:
@@ -508,8 +514,10 @@ EOS;
         } else { // SURVEY_HORIZONTAL
             $separator = ' ';
         }
+        // End of: definition of separator
         $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
 
+        // default section
         if (!$searchform) {
             if ($this->required) {
                 // even if the item is required I CAN NOT ADD ANY RULE HERE because:
@@ -536,27 +544,32 @@ EOS;
                 default:
                     debugging('Error at line '.__LINE__.' of '.__FILE__.'. Unexpected $this->defaultoption = '.$this->defaultoption);
             }
-            // $this->itemname.'_text' has to ALWAYS get a default (if required) even if it is not selected
-            if (!empty($this->labelother)) {
-                $mform->setDefault($this->itemname.'_text', $othervalue);
-            }
         } else {
-            $mform->setDefault($this->itemname, SURVEY_NOANSWERVALUE); // free
+            $mform->setDefault($this->itemname, SURVEY_IGNOREME);
         }
+        // $this->itemname.'_text' has to ALWAYS get a default (if it exists) even if it is not selected
+        if (!empty($this->labelother)) {
+            $mform->setDefault($this->itemname.'_text', $othervalue);
+        }
+        // End of: default section
     }
 
     /*
      * userform_mform_validation
      *
-     * @param $data, &$errors
+     * @param $data
+     * @param &$errors
      * @param $survey
-     * @param $canaccessadvanceditems
-     * @param $parentitem
+     * @param $searchform
      * @return
      */
-    public function userform_mform_validation($data, &$errors, $survey) {
+    public function userform_mform_validation($data, &$errors, $survey, $searchform) {
         // this plugin displays as a set of radio buttons. It will never return empty values.
         // if ($this->required) { if (empty($data[$this->itemname])) { is useless
+
+        if ($searchform) {
+            return;
+        }
 
         $errorkey = $this->itemname.'_group';
 
@@ -644,12 +657,14 @@ EOS;
      * userform_save_preprocessing
      * starting from the info set by the user in the form
      * this method calculates what to save in the db
+     * or what to return for the search form
      *
      * @param $answer
      * @param $olduserdata
+     * @param $searchform
      * @return
      */
-    public function userform_save_preprocessing($answer, $olduserdata) {
+    public function userform_save_preprocessing($answer, $olduserdata, $searchform) {
         if (isset($answer['mainelement'])) {
             switch ($answer['mainelement']) {
                 case 'other':

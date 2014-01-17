@@ -45,3 +45,5 @@ MDL-25067: TinyMCE instance can not be disabled.
 MDL-28194: I am in trouble assigning syles to some mform element.
 MDL-31796: $mform->disabledIf doesn't work for 'filemanager' mform elements.
 MDL-34815: Disabled mform items need to be skipped during validation (and more).
+MDL-43689: With set of advanced checkboxes, if the set is disabled each single chechbox returns its default value instead of its actual value
+MDL-43704: mform multiselect element is not disabled by the grouped checkbox (as many of other mform elements do)
