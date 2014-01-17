@@ -52,19 +52,63 @@ class mod_survey_exportmanager {
     public $canmanageallsubmissions = false;
 
     /*
-     * $canseegroupsubmissions
+     * $canseeownsubmissions
      */
-    public $canseegroupsubmissions = false;
+    // public $canseeownsubmissions = true;
 
     /*
-     * $caneditgroupsubmissions
+     * $canseegroupmatessubmissions
      */
-    public $caneditgroupsubmissions = false;
+    public $canseegroupmatessubmissions = false;
 
     /*
-     * $candeletegroupsubmissions
+     * $canseeseeothergroupsubmissions
      */
-    public $candeletegroupsubmissions = false;
+    public $canseeseeothergroupsubmissions = false;
+
+    /*
+     * $canseeotherssubmissions
+     */
+    public $canseeotherssubmissions = false;
+
+    /*
+     * $caneditownsubmissions
+     */
+    public $caneditownsubmissions = false;
+
+    /*
+     * $caneditgroupmatessubmissions
+     */
+    public $caneditgroupmatessubmissions = false;
+
+    /*
+     * $caneditothergroupsubmissions
+     */
+    public $caneditothergroupsubmissions = false;
+    /*
+     * $caneditotherssubmissions
+     */
+    public $caneditotherssubmissions = false;
+
+    /*
+     * $candeleteownsubmissions
+     */
+    public $candeleteownsubmissions = false;
+
+    /*
+     * $candeletegroupmatessubmissions
+     */
+    public $candeletegroupmatessubmissions = false;
+
+    /*
+     * $candeleteothergroupsubmissions
+     */
+    public $candeleteothergroupsubmissions = false;
+
+    /*
+     * $candeleteotherssubmissions
+     */
+    public $candeleteotherssubmissions = false;
 
     /*
      * $formdata: the form content as submitted by the user
@@ -79,9 +123,21 @@ class mod_survey_exportmanager {
         $this->context = context_module::instance($cm->id);
         $this->survey = $survey;
         $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
-        $this->canseegroupsubmissions = has_capability('mod/survey:seegroupsubmissions', $this->context, null, true);
-        $this->caneditgroupsubmissions = has_capability('mod/survey:editgroupsubmissions', $this->context, null, true);
-        $this->candeletegroupsubmissions = has_capability('mod/survey:deletegroupsubmissions', $this->context, null, true);
+
+        // $this->canseeownsubmissions = true;
+        $this->canseegroupmatessubmissions = has_capability('mod/survey:seegroupmatessubmissions', $this->context, null, true);
+        $this->canseeseeothergroupsubmissions = has_capability('mod/survey:seeothergroupsubmissions', $this->context, null, true);
+        $this->canseeotherssubmissions = has_capability('mod/survey:seeotherssubmissions', $this->context, null, true);
+
+        $this->caneditownsubmissions = has_capability('mod/survey:editownsubmissions', $this->context, null, true);
+        $this->caneditgroupmatessubmissions = has_capability('mod/survey:editgroupmatessubmissions', $this->context, null, true);
+        $this->caneditothergroupsubmissions = has_capability('mod/survey:editothergroupsubmissions', $this->context, null, true);
+        $this->caneditotherssubmissions = has_capability('mod/survey:editotherssubmissions', $this->context, null, true);
+
+        $this->candeleteownsubmissions = has_capability('mod/survey:deleteownsubmissions', $this->context, null, true);
+        $this->candeletegroupmatessubmissions = has_capability('mod/survey:deletegroupmatessubmissions', $this->context, null, true);
+        $this->candeleteothergroupsubmissions = has_capability('mod/survey:deleteothergroupsubmissions', $this->context, null, true);
+        $this->candeleteotherssubmissions = has_capability('mod/survey:deleteotherssubmissions', $this->context, null, true);
     }
 
     /*
@@ -91,8 +147,9 @@ class mod_survey_exportmanager {
      * @return
      */
     public function get_export_sql() {
-        global $USER;
+        global $USER, $COURSE;
 
+        $courseisgrouped = groups_get_all_groups($COURSE->id);
         $mygroups = groups_get_my_groups();
 
         $sql = 'SELECT s.id as submissionid, s.status, s.timecreated, s.timemodified, ';
@@ -131,13 +188,25 @@ class mod_survey_exportmanager {
         }
 
         if (!$this->canmanageallsubmissions) {
-            if (!$this->canseegroupsubmissions) {
-                $sql .= ' AND s.userid = :userid';
-                $whereparams['userid'] = $USER->id;
-            }
-
-            if ($mygroups) {
-                $sql .= ' AND gm.groupid IN ('.implode(',', $mygroups).')';
+            if ($courseisgrouped) {
+                $onlymine = true;
+                $onlymine = $onlymine && (!$this->seegroupmatessubmissions);
+                $onlymine = $onlymine && (!$this->seeothergroupsubmissions);
+                if ($onlymine) {
+                    // restrict to your submissions only
+                    $sql .= ' AND s.userid = :userid';
+                    $whereparams['userid'] = $USER->id;
+                }
+                if (!$this->seeothergroupsubmissions) {
+                    // restrict to your groups only
+                    $sql .= ' AND gm.groupid IN ('.implode(',', $mygroups).')';
+                }
+            } else {
+                if (!$this->canseeotherssubmissions) {
+                    // restrict to your submissions only
+                    $sql .= ' AND s.userid = :userid';
+                    $whereparams['userid'] = $USER->id;
+                }
             }
         }
 

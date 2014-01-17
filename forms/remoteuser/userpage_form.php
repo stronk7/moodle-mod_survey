@@ -43,7 +43,7 @@ class survey_submissionform extends moodleform {
         $submissionid = $this->_customdata->submissionid;
         $formpage = $this->_customdata->formpage;
         $canaccessadvanceditems = $this->_customdata->canaccessadvanceditems;
-        $tabpage = $this->_customdata->tabpage;
+        $modulepage = $this->_customdata->modulepage;
         $cansubmit = $this->_customdata->cansubmit;
 
         // ----------------------------------------
@@ -61,7 +61,7 @@ class survey_submissionform extends moodleform {
         // ----------------------------------------
         // newitem::formpage
         // ----------------------------------------
-        $mform->addElement('hidden', 'formpage', 0); // <-- this value comes from default just set before $mform->display(); in attempt.php
+        $mform->addElement('hidden', 'formpage', 0); // <-- this value comes from default set just before $mform->display(); in view.php
         $mform->setType('formpage', PARAM_INT);
 
         if ($formpage == SURVEY_LEFT_OVERFLOW) {
@@ -88,7 +88,7 @@ class survey_submissionform extends moodleform {
 
             $context = context_module::instance($cmid);
             foreach ($itemseeds as $itemseed) {
-                if ($tabpage == SURVEY_ITEMS_PREVIEW) {
+                if ($modulepage == SURVEY_ITEMS_PREVIEW) {
                     $itemaschildisallowed = true;
                 } else {
                     // is the current item allowed to be displayed in this page?
@@ -167,61 +167,58 @@ class survey_submissionform extends moodleform {
             }
             $itemseeds->close();
 
-            if ($tabpage != SURVEY_ITEMS_PREVIEW) {
+            if ($modulepage != SURVEY_ITEMS_PREVIEW) {
                 if (!empty($survey->captcha)) {
                     $mform->addElement('recaptcha', 'captcha_form_footer');
                 }
             }
         }
 
-        if ($cansubmit) {
-            // ----------------------------------------
-            // buttons
-            $buttonlist = array();
+        // ----------------------------------------
+        // buttons
+        $buttonlist = array();
 
-            // SURVEY_LEFT_OVERFLOW or greater than 1
-            if ( ($formpage == SURVEY_RIGHT_OVERFLOW) || ($formpage > 1) ) {
-                $buttonlist['prevbutton'] = get_string('previousformpage', 'survey');
+        if ( ($formpage == SURVEY_RIGHT_OVERFLOW) || ($formpage > 1) ) {
+            $buttonlist['prevbutton'] = get_string('previousformpage', 'survey');
+        }
+        if ($modulepage != SURVEY_ITEMS_PREVIEW) {
+            if ($survey->saveresume) {
+                $buttonlist['pausebutton'] = get_string('pause', 'survey');
             }
-            if ($tabpage != SURVEY_ITEMS_PREVIEW) {
-                if ($survey->saveresume) {
-                    $buttonlist['pausebutton'] = get_string('pause', 'survey');
-                }
-                if (($formpage == $maxassignedpage) || ($formpage == SURVEY_RIGHT_OVERFLOW)) {
-                    if ($survey->history) {
-                        $submissionstatus = $DB->get_field('survey_submission', 'status', array('id' => $submissionid), IGNORE_MISSING);
-                        if ($submissionstatus === false) { // submissions still does not exist
-                            $usesimplesavebutton = true;
-                        } else {
-                            $usesimplesavebutton = ($submissionstatus == SURVEY_STATUSINPROGRESS);
-                        }
-                    } else {
+            if (($formpage == $maxassignedpage) || ($formpage == SURVEY_RIGHT_OVERFLOW)) {
+                if ($survey->history) {
+                    $submissionstatus = $DB->get_field('survey_submission', 'status', array('id' => $submissionid), IGNORE_MISSING);
+                    if ($submissionstatus === false) { // submissions still does not exist
                         $usesimplesavebutton = true;
-                    }
-                    if ($usesimplesavebutton) {
-                        $buttonlist['savebutton'] = get_string('submit');
                     } else {
-                        $buttonlist['saveasnewbutton'] = get_string('saveasnew', 'survey');
+                        $usesimplesavebutton = ($submissionstatus == SURVEY_STATUSINPROGRESS);
                     }
+                } else {
+                    $usesimplesavebutton = true;
+                }
+                if ($usesimplesavebutton) {
+                    $buttonlist['savebutton'] = get_string('submit');
+                } else {
+                    $buttonlist['saveasnewbutton'] = get_string('saveasnew', 'survey');
                 }
             }
-            if ( ($formpage == SURVEY_LEFT_OVERFLOW) || ($formpage > 0 && $formpage < $maxassignedpage) ) {
-                $buttonlist['nextbutton'] = get_string('nextformpage', 'survey');
-            }
+        }
+        if ( ($formpage == SURVEY_LEFT_OVERFLOW) || ($formpage > 0 && $formpage < $maxassignedpage) ) {
+            $buttonlist['nextbutton'] = get_string('nextformpage', 'survey');
+        }
 
-            if (count($buttonlist) > 1) {
-                $buttonarray = array();
-                foreach ($buttonlist as $name => $label) {
-                    $buttonarray[] = $mform->createElement('submit', $name, $label);
-                }
-                $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
-                $mform->setType('buttonar', PARAM_RAW);
-                $mform->closeHeaderBefore('buttonar');
-            } else { // only one button here
-                foreach ($buttonlist as $name => $label) {
-                    $mform->closeHeaderBefore($name);
-                    $mform->addElement('submit', $name, $label);
-                }
+        if (count($buttonlist) > 1) {
+            $buttonarray = array();
+            foreach ($buttonlist as $name => $label) {
+                $buttonarray[] = $mform->createElement('submit', $name, $label);
+            }
+            $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
+            $mform->setType('buttonar', PARAM_RAW);
+            $mform->closeHeaderBefore('buttonar');
+        } else { // only one button here
+            foreach ($buttonlist as $name => $label) {
+                $mform->closeHeaderBefore($name);
+                $mform->addElement('submit', $name, $label);
             }
         }
     }
@@ -230,9 +227,9 @@ class survey_submissionform extends moodleform {
         $mform = $this->_form;
 
         // $cmid = $this->_customdata->cmid;
-        $tabpage = $this->_customdata->tabpage;
+        $modulepage = $this->_customdata->modulepage;
 
-        if (isset($data['prevbutton']) || ($tabpage == SURVEY_ITEMS_PREVIEW)) {
+        if (isset($data['prevbutton']) || ($modulepage == SURVEY_ITEMS_PREVIEW)) {
             // skip validation
             return array();
         }

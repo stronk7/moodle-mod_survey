@@ -1040,7 +1040,7 @@ class mod_survey_userformmanager {
      * @return
      */
     public function prevent_direct_user_input() {
-        global $DB, $USER;
+        global $DB, $USER, $COURSE;
 
         if ($this->canmanageallsubmissions) {
             return;
@@ -1051,8 +1051,10 @@ class mod_survey_userformmanager {
             }
         }
 
-        $allowed = true;
-        $mygroups = groups_get_my_groups();
+        if ($courseisgrouped = groups_get_all_groups($COURSE->id)) {
+            $mygroupmates = survey_groupmates();
+        }
+
         switch ($this->view) {
             case SURVEY_SERVESURVEY:
                 $allowed = has_capability('mod/survey:submit', $this->context);
@@ -1067,19 +1069,35 @@ class mod_survey_userformmanager {
                     $allowed = false;
                 }
                 if (!$allowed) {
-                    $allowed = has_capability('mod/survey:editgroupsubmissions', $this->context);
+                    if ($courseisgrouped) {
+                        if (in_array($submission->userid, $mygroupmates)) {
+                            $allowed = has_capability('mod/survey:editgroupmatessubmissions', $this->context);
+                        } else {
+                            $allowed = has_capability('mod/survey:editothergroupsubmissions', $this->context);
+                        }
+                    } else {
+                        $allowed = has_capability('mod/survey:editotherssubmissions', $this->context);
+                    }
                 }
                 if (!$allowed) {
-                    $allowed = has_capability('mod/survey:editallsubmissions', $this->context);
+                    $allowed = has_capability('mod/survey:manageallsubmissions', $this->context);
                 }
                 break;
             case SURVEY_READONLYRESPONSE:
                 $allowed = ($USER->id == $submission->userid);
                 if (!$allowed) {
-                    $allowed = has_capability('mod/survey:seegroupsubmissions', $this->context);
+                    if ($courseisgrouped) {
+                        if (in_array($submission->userid, $mygroupmates)) {
+                            $allowed = has_capability('mod/survey:seegroupmatessubmissions', $this->context);
+                        } else {
+                            $allowed = has_capability('mod/survey:seeothergroupsubmissions', $this->context);
+                        }
+                    } else {
+                        $allowed = has_capability('mod/survey:seeotherssubmissions', $this->context);
+                    }
                 }
                 if (!$allowed) {
-                    $allowed = has_capability('mod/survey:seeallsubmissions', $this->context);
+                    $allowed = has_capability('mod/survey:manageallsubmissions', $this->context);
                 }
                 break;
             default:

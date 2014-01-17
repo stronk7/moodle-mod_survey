@@ -94,7 +94,7 @@ $formparams->firstpageright = $userpageman->firstpageright;
 $formparams->maxassignedpage = $userpageman->maxassignedpage;
 $formparams->canaccessadvanceditems = $userpageman->canaccessadvanceditems; // Help selecting the fields to show
 $formparams->formpage = $userpageman->formpage;
-$formparams->tabpage = $userpageman->modulepage; // this is the page to get corresponding fields
+$formparams->modulepage = $userpageman->modulepage; // this is the page to get corresponding fields
 $formparams->cansubmit = $userpageman->cansubmit;
 // end of: prepare params for the form
 // -----------------------------

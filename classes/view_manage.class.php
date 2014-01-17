@@ -700,7 +700,7 @@ class mod_survey_submissionmanager {
      * @return
      */
     public function prevent_direct_user_input() {
-        global $USER, $DB;
+        global $COURSE, $USER, $DB;
 
         if ($this->canmanageallsubmissions) {
             return true;
@@ -712,7 +712,6 @@ class mod_survey_submissionmanager {
             print_error('incorrectaccessdetected', 'survey');
         }
 
-        $courseisgrouped = groups_get_all_groups($COURSE->id);
         if ($courseisgrouped = groups_get_all_groups($COURSE->id)) {
             $mygroupmates = survey_groupmates();
         }
