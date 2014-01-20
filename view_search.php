@@ -49,7 +49,7 @@ require_course_login($course, true, $cm);
 
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 
-$formpage = optional_param('formpage' , 1, PARAM_INT); // form page number
+$formpage = optional_param('formpage', 1, PARAM_INT); // form page number
 
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:searchsubmissions', $context);

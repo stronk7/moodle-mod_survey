@@ -50,7 +50,7 @@ require_course_login($course, true, $cm);
 add_to_log($course->id, 'survey', 'view', "view.php?id=$cm->id", $survey->name, $cm->id);
 
 $cover = optional_param('cvp', 1, PARAM_INT); // by default user asks for the cover page
-$formpage = optional_param('formpage' , 0, PARAM_INT); // form page number
+$formpage = optional_param('formpage', 0, PARAM_INT); // form page number
 $view = optional_param('view', SURVEY_SERVESURVEY, PARAM_INT);
 $submissionid = optional_param('submissionid', 0, PARAM_INT);
 
@@ -99,11 +99,8 @@ $formparams->cansubmit = $userpageman->cansubmit;
 // end of: prepare params for the form
 // -----------------------------
 
-if ($view == SURVEY_READONLYRESPONSE) {
-    $userpageform = new survey_submissionform($formurl, $formparams, 'post', '', array('id' => 'remoteuserentry'), false);
-} else {
-    $userpageform = new survey_submissionform($formurl, $formparams, 'post', '', array('id' => 'remoteuserentry'));
-}
+// if ($view == SURVEY_READONLYRESPONSE) $editable = false, else $editable = true
+$userpageform = new survey_submissionform($formurl, $formparams, 'post', '', array('id' => 'remoteuserentry'), ($view != SURVEY_READONLYRESPONSE));
 
 // -----------------------------
 // manage form submission
@@ -212,9 +209,7 @@ if ($usercansubmit) {
 
 // -----------------------------
 // display an alert to explain why buttons are missing
-if ($userpageman->modulepage == SURVEY_ITEMS_PREVIEW) {
-    $userpageman->message_preview_mode();
-}
+$userpageman->message_preview_mode();
 // end of: display an alert to explain why buttons are missing
 // -----------------------------
 
@@ -227,9 +222,8 @@ $userpageman->display_page_x_of_y();
 // -----------------------------
 // calculate prefill for fields and prepare standard editors and filemanager
 // if sumission already exists
-if (!empty($userpageman->submissionid)) {
-    $prefill = $userpageman->get_prefill_data();
-}
+$prefill = $userpageman->get_prefill_data();
+
 // populate the hidden field of the form
 $prefill['formpage'] = $userpageman->formpage;
 

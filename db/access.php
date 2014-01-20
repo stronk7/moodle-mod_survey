@@ -72,24 +72,18 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
 
     SUB-TAB == SURVEY_SUBMISSION_MANAGE
         $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
-        mod/survey:manageallsubmissions
+        mod/survey:deleteallsubmissions
 
-        mod/survey:seeownsubmissions <-- It does not exist. It is laways allowed.
-        mod/survey:seegroupmatessubmissions
-        mod/survey:seeothergroupsubmissions
+        mod/survey:seeownsubmissions <-- It does not actually exist. It is always allowed.
         mod/survey:seeotherssubmissions
 
         mod/survey:editownsubmissions
-        mod/survey:editgroupmatessubmissions
-        mod/survey:editothergroupsubmissions
         mod/survey:editotherssubmissions
 
         mod/survey:deleteownsubmissions
-        mod/survey:deletegroupmatessubmissions
-        mod/survey:deleteothergroupsubmissions
         mod/survey:deleteotherssubmissions
 
-        mod/survey:submissiontopdf
+        mod/survey:savesubmissiontopdf
     SUB-TAB == SURVEY_SUBMISSION_EDIT
     SUB-TAB == SURVEY_SUBMISSION_READONLY
         $elementurl = new moodle_url('/mod/survey/view.php', $localparamurl);
@@ -212,31 +206,8 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:manageallsubmissions' => array(
+    'mod/survey:deleteallsubmissions' => array(
         'riskbitmask' => RISK_XSS,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/survey:seegroupmatessubmissions' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/survey:seeothergroupsubmissions' => array(
-        'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -258,28 +229,6 @@ $capabilities = array(
     ),
 
     'mod/survey:editownsubmissions' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/survey:editgroupmatessubmissions' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/survey:editothergroupsubmissions' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -312,28 +261,6 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:deletegroupmatessubmissions' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/survey:deleteothergroupsubmissions' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
     'mod/survey:deleteotherssubmissions' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
@@ -345,7 +272,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/survey:submissiontopdf' => array(
+    'mod/survey:savesubmissiontopdf' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

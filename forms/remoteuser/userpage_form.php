@@ -75,7 +75,7 @@ class survey_submissionform extends moodleform {
             // $mform->addElement('static', 'nomoreitems', get_string('note', 'survey'), 'SURVEY_RIGHT_OVERFLOW');
         }
 
-        if ($formpage > 0) {
+        if ($formpage >= 0) {
             // $canaccessadvanceditems, $searchform=false, $type=false, $formpage
             list($sql, $whereparams) = survey_fetch_items_seeds($survey->id, $canaccessadvanceditems, false, false, $formpage);
             $itemseeds = $DB->get_recordset_sql($sql, $whereparams);

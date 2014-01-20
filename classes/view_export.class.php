@@ -47,68 +47,14 @@ class mod_survey_exportmanager {
     public $survey = null;
 
     /*
-     * $canmanageallsubmissions
-     */
-    public $canmanageallsubmissions = false;
-
-    /*
      * $canseeownsubmissions
      */
     // public $canseeownsubmissions = true;
 
     /*
-     * $canseegroupmatessubmissions
-     */
-    public $canseegroupmatessubmissions = false;
-
-    /*
-     * $canseeseeothergroupsubmissions
-     */
-    public $canseeseeothergroupsubmissions = false;
-
-    /*
      * $canseeotherssubmissions
      */
     public $canseeotherssubmissions = false;
-
-    /*
-     * $caneditownsubmissions
-     */
-    public $caneditownsubmissions = false;
-
-    /*
-     * $caneditgroupmatessubmissions
-     */
-    public $caneditgroupmatessubmissions = false;
-
-    /*
-     * $caneditothergroupsubmissions
-     */
-    public $caneditothergroupsubmissions = false;
-    /*
-     * $caneditotherssubmissions
-     */
-    public $caneditotherssubmissions = false;
-
-    /*
-     * $candeleteownsubmissions
-     */
-    public $candeleteownsubmissions = false;
-
-    /*
-     * $candeletegroupmatessubmissions
-     */
-    public $candeletegroupmatessubmissions = false;
-
-    /*
-     * $candeleteothergroupsubmissions
-     */
-    public $candeleteothergroupsubmissions = false;
-
-    /*
-     * $candeleteotherssubmissions
-     */
-    public $candeleteotherssubmissions = false;
 
     /*
      * $formdata: the form content as submitted by the user
@@ -122,22 +68,9 @@ class mod_survey_exportmanager {
         $this->cm = $cm;
         $this->context = context_module::instance($cm->id);
         $this->survey = $survey;
-        $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
 
         // $this->canseeownsubmissions = true;
-        $this->canseegroupmatessubmissions = has_capability('mod/survey:seegroupmatessubmissions', $this->context, null, true);
-        $this->canseeseeothergroupsubmissions = has_capability('mod/survey:seeothergroupsubmissions', $this->context, null, true);
         $this->canseeotherssubmissions = has_capability('mod/survey:seeotherssubmissions', $this->context, null, true);
-
-        $this->caneditownsubmissions = has_capability('mod/survey:editownsubmissions', $this->context, null, true);
-        $this->caneditgroupmatessubmissions = has_capability('mod/survey:editgroupmatessubmissions', $this->context, null, true);
-        $this->caneditothergroupsubmissions = has_capability('mod/survey:editothergroupsubmissions', $this->context, null, true);
-        $this->caneditotherssubmissions = has_capability('mod/survey:editotherssubmissions', $this->context, null, true);
-
-        $this->candeleteownsubmissions = has_capability('mod/survey:deleteownsubmissions', $this->context, null, true);
-        $this->candeletegroupmatessubmissions = has_capability('mod/survey:deletegroupmatessubmissions', $this->context, null, true);
-        $this->candeleteothergroupsubmissions = has_capability('mod/survey:deleteothergroupsubmissions', $this->context, null, true);
-        $this->candeleteotherssubmissions = has_capability('mod/survey:deleteotherssubmissions', $this->context, null, true);
     }
 
     /*
@@ -149,8 +82,9 @@ class mod_survey_exportmanager {
     public function get_export_sql() {
         global $USER, $COURSE;
 
-        $courseisgrouped = groups_get_all_groups($COURSE->id);
-        $mygroups = groups_get_my_groups();
+        if ($groupmode = groups_get_activity_groupmode($this->cm)) {
+            $mygroups = groups_get_my_groups();
+        }
 
         $sql = 'SELECT s.id as submissionid, s.status, s.timecreated, s.timemodified, ';
         if (empty($this->survey->anonymous)) {
@@ -163,8 +97,10 @@ class mod_survey_exportmanager {
                                 LEFT JOIN {survey_userdata} ud ON ud.submissionid = s.id
                                 LEFT JOIN {survey_item} si ON si.id = ud.itemid';
 
-        if (!$this->canmanageallsubmissions && $mygroups) {
-            $sql .= ' JOIN {groups_members} gm ON gm.userid = s.userid ';
+        if ($groupmode == SEPARATEGROUPS) {
+            if (!$this->canseeotherssubmissions) {
+                $sql .= ' JOIN {groups_members} gm ON gm.userid = s.userid ';
+            }
         }
 
         // now finalise $sql
@@ -173,7 +109,7 @@ class mod_survey_exportmanager {
 
         // for IN PROGRESS submission where no fields were filled
         // I need the LEFT JOIN {survey_item}
-        // In thi s case,
+        // In this case,
         // if I add a clause for fields of UNEXISTING {survey_item} (because no fields was filled)
         // I will miss the record if I do not further add OR ISNULL(si.xxxx)
         if (!isset($this->formdata->includehidden)) {
@@ -187,27 +123,14 @@ class mod_survey_exportmanager {
             $whereparams['status'] = $this->formdata->status;
         }
 
-        if (!$this->canmanageallsubmissions) {
-            if ($courseisgrouped) {
-                $onlymine = true;
-                $onlymine = $onlymine && (!$this->seegroupmatessubmissions);
-                $onlymine = $onlymine && (!$this->seeothergroupsubmissions);
-                if ($onlymine) {
-                    // restrict to your submissions only
-                    $sql .= ' AND s.userid = :userid';
-                    $whereparams['userid'] = $USER->id;
-                }
-                if (!$this->seeothergroupsubmissions) {
-                    // restrict to your groups only
-                    $sql .= ' AND gm.groupid IN ('.implode(',', $mygroups).')';
-                }
-            } else {
-                if (!$this->canseeotherssubmissions) {
-                    // restrict to your submissions only
-                    $sql .= ' AND s.userid = :userid';
-                    $whereparams['userid'] = $USER->id;
-                }
-            }
+        if ($groupmode == SEPARATEGROUPS) {
+            // restrict to your groups only
+            $sql .= ' AND gm.groupid IN ('.implode(',', $mygroups).')';
+        }
+        if (!$this->canseeotherssubmissions) {
+            // restrict to your submissions only
+            $sql .= ' AND s.userid = :userid';
+            $whereparams['userid'] = $USER->id;
         }
 
         // echo '$sql = '.$sql.'<br />';

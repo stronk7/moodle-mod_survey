@@ -88,11 +88,6 @@ class mod_survey_userformmanager {
     public $modulepage = '';
 
     /*
-     * $canmanageallsubmissions
-     */
-    public $canmanageallsubmissions = false;
-
-    /*
      * $canaccessadvanceditems
      */
     public $canaccessadvanceditems = false;
@@ -128,7 +123,6 @@ class mod_survey_userformmanager {
         // $this->canmanageitems = has_capability('mod/survey:manageitems', $this->context, null, true);
         $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
         $this->cansubmit = has_capability('mod/survey:submit', $this->context, null, true);
-        $this->canmanageallsubmissions = has_capability('mod/survey:manageallsubmissions', $this->context, null, true);
 
         // assign pages to items
         if (!$this->maxassignedpage = $DB->get_field('survey_item', 'MAX(formpage)', array('surveyid' => $survey->id))) {
@@ -142,10 +136,17 @@ class mod_survey_userformmanager {
             $this->next_not_empty_page(true, 0, $view); // this calculates $this->firstformpage
         }
 
-        if ($formpage == 0) { // you are viewing the survey for the first time
-            $this->formpage = $this->firstpageright;
+        if ($view == SURVEY_READONLYRESPONSE) {
+            // be carefull: with frozen mform (read only mode) there is no way to display submit buttons
+            // this is an issue with multipage submissions (needing 'previous' and 'next') accessed in read only mode.
+            // because of this, I display all the userform in a single page even if it has page breaks
+            $this->formpage = 0;
         } else {
-            $this->formpage = $formpage;
+            if ($formpage == 0) { // you are viewing the survey for the first time
+                $this->formpage = $this->firstpageright;
+            } else {
+                $this->formpage = $formpage;
+            }
         }
     }
 
@@ -895,8 +896,10 @@ class mod_survey_userformmanager {
     public function message_preview_mode() {
         global $OUTPUT;
 
-        $previewmodestring = get_string('previewmode', 'survey');
-        echo $OUTPUT->heading($previewmodestring, 2);
+        if ($this->modulepage == SURVEY_ITEMS_PREVIEW) {
+            $previewmodestring = get_string('previewmode', 'survey');
+            echo $OUTPUT->heading($previewmodestring, 2);
+        }
     }
 
     /*
@@ -908,7 +911,7 @@ class mod_survey_userformmanager {
     public function display_page_x_of_y() {
         global $OUTPUT;
 
-        if ($this->maxassignedpage > 1) {
+        if (($this->modulepage != SURVEY_SUBMISSION_READONLY) && ($this->maxassignedpage > 1)) {
             // if $formpage == 0 no more pages with items are available
             $a = new stdClass();
             $a->formpage = $this->formpage;
@@ -934,20 +937,23 @@ class mod_survey_userformmanager {
         global $DB;
 
         $prefill = array();
-        // $canaccessadvanceditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$this->formpage
-        list($sql, $whereparams) = survey_fetch_items_seeds($this->survey->id, $this->canaccessadvanceditems, false, SURVEY_TYPEFIELD, $this->formpage);
-        if ($itemseeds = $DB->get_recordset_sql($sql, $whereparams)) {
-            foreach ($itemseeds as $itemseed) {
-                $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
 
-                $olduserdata = $DB->get_record('survey_userdata', array('submissionid' => $this->submissionid, 'itemid' => $item->get_itemid()));
-                $singleprefill = $item->userform_set_prefill($olduserdata);
-                $prefill = array_merge($prefill, $singleprefill);
+        if (!empty($this->submissionid)) {
+            // $canaccessadvanceditems, $searchform=false, $type=SURVEY_TYPEFIELD, $formpage=$this->formpage
+            list($sql, $whereparams) = survey_fetch_items_seeds($this->survey->id, $this->canaccessadvanceditems, false, SURVEY_TYPEFIELD, $this->formpage);
+            if ($itemseeds = $DB->get_recordset_sql($sql, $whereparams)) {
+                foreach ($itemseeds as $itemseed) {
+                    $item = survey_get_item($itemseed->id, $itemseed->type, $itemseed->plugin);
+
+                    $olduserdata = $DB->get_record('survey_userdata', array('submissionid' => $this->submissionid, 'itemid' => $item->get_itemid()));
+                    $singleprefill = $item->userform_set_prefill($olduserdata);
+                    $prefill = array_merge($prefill, $singleprefill);
+                }
+                $itemseeds->close();
             }
-            $itemseeds->close();
-        }
 
-        $prefill['submissionid'] = $this->submissionid;
+            $prefill['submissionid'] = $this->submissionid;
+        }
 
         return $prefill;
     }
@@ -1042,17 +1048,18 @@ class mod_survey_userformmanager {
     public function prevent_direct_user_input() {
         global $DB, $USER, $COURSE;
 
-        if ($this->canmanageallsubmissions) {
-            return;
-        }
         if (!empty($this->submissionid)) {
             if (!$submission = $DB->get_record('survey_submission', array('id' => $this->submissionid), '*', IGNORE_MISSING)) {
                 print_error('incorrectaccessdetected', 'survey');
             }
         }
 
-        if ($courseisgrouped = groups_get_all_groups($COURSE->id)) {
-            $mygroupmates = survey_groupmates();
+        if ($submission->userid != $USER->id)) {
+            $groupmode = groups_get_activity_groupmode($this->cm);
+            if ($groupmode == SEPARATEGROUPS) {
+                $mygroupmates = survey_groupmates();
+                $groupuser = in_array($submission->userid, $mygroupmates);
+            }
         }
 
         switch ($this->view) {
@@ -1062,42 +1069,26 @@ class mod_survey_userformmanager {
             case SURVEY_PREVIEWSURVEY:
                 $allowed = has_capability('mod/survey:preview', $this->context);
                 break;
-            case SURVEY_EDITRESPONSE:
+            case SURVEY_READONLYRESPONSE:
                 if ($USER->id == $submission->userid) {
-                    $allowed = has_capability('mod/survey:editownsubmissions', $this->context);
+                    $allowed = true;
                 } else {
-                    $allowed = false;
-                }
-                if (!$allowed) {
-                    if ($courseisgrouped) {
-                        if (in_array($submission->userid, $mygroupmates)) {
-                            $allowed = has_capability('mod/survey:editgroupmatessubmissions', $this->context);
-                        } else {
-                            $allowed = has_capability('mod/survey:editothergroupsubmissions', $this->context);
-                        }
-                    } else {
-                        $allowed = has_capability('mod/survey:editotherssubmissions', $this->context);
+                    if ($groupmode == SEPARATEGROUPS) {
+                        $allowed = $groupuser && $this->caneditotherssubmissions;
+                    } else { // NOGROUPS || VISIBLEGROUPS
+                        $allowed = $this->caneditotherssubmissions;
                     }
-                }
-                if (!$allowed) {
-                    $allowed = has_capability('mod/survey:manageallsubmissions', $this->context);
                 }
                 break;
-            case SURVEY_READONLYRESPONSE:
-                $allowed = ($USER->id == $submission->userid);
-                if (!$allowed) {
-                    if ($courseisgrouped) {
-                        if (in_array($submission->userid, $mygroupmates)) {
-                            $allowed = has_capability('mod/survey:seegroupmatessubmissions', $this->context);
-                        } else {
-                            $allowed = has_capability('mod/survey:seeothergroupsubmissions', $this->context);
-                        }
-                    } else {
-                        $allowed = has_capability('mod/survey:seeotherssubmissions', $this->context);
+            case SURVEY_EDITRESPONSE:
+                if ($USER->id == $submission->userid) {
+                    $allowed = $this->caneditownsubmissions;
+                } else {
+                    if ($groupmode == SEPARATEGROUPS) {
+                        $allowed = $groupuser && $this->caneditotherssubmissions;
+                    } else { // NOGROUPS || VISIBLEGROUPS
+                        $displayediticon = $this->caneditotherssubmissions;
                     }
-                }
-                if (!$allowed) {
-                    $allowed = has_capability('mod/survey:manageallsubmissions', $this->context);
                 }
                 break;
             default:
