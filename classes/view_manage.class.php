@@ -504,11 +504,8 @@ class mod_survey_submissionmanager {
                 // edit
                 if ($ismine) { // I am the owner
                     if ($submission->status == SURVEY_STATUSINPROGRESS) {
-                        // you are always allowed to edit your in progress submission?
-                        $editiconpath = 't/edit';
                         $displayediticon = true;
                     } else {
-                        // can you edit your personal submissions?
                         $displayediticon = $this->caneditownsubmissions;
                     }
                 } else { // I am not the owner
@@ -520,9 +517,15 @@ class mod_survey_submissionmanager {
                 }
                 if ($displayediticon) {
                     $paramurl['view'] = SURVEY_EDITRESPONSE;
-                    $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
-                        new pix_icon($editiconpath, $edittitle, 'moodle', array('title' => $edittitle)),
-                        null, array('title' => $edittitle));
+                    if ($submission->status == SURVEY_STATUSINPROGRESS) {
+                        $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                            new pix_icon('t/edit', $nonhistoryedittitle, 'moodle', array('title' => $nonhistoryedittitle)),
+                            null, array('title' => $nonhistoryedittitle));
+                    } else {
+                        $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
+                            new pix_icon($editiconpath, $edittitle, 'moodle', array('title' => $edittitle)),
+                            null, array('title' => $edittitle));
+                    }
                 } else {
                     $paramurl['view'] = SURVEY_READONLYRESPONSE;
                     $icons = $OUTPUT->action_icon(new moodle_url('view.php', $paramurl),
