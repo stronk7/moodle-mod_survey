@@ -225,11 +225,13 @@ class surveyfield_checkbox extends mod_survey_itembase {
             }
         }
 
-        if (count($parentcontent)) {
-            $childparentvalue['other'] = 1;
-            $childparentvalue['text'] = $parentcontent[0];
-        } else {
-            $childparentvalue['text'] = '';
+        if (!empty($this->labelother)) {
+            if (count($parentcontent)) {
+                $childparentvalue['other'] = 1;
+                $childparentvalue['text'] = $parentcontent[0];
+            } else {
+                $childparentvalue['text'] = '';
+            }
         }
 
         return implode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
@@ -242,12 +244,35 @@ class surveyfield_checkbox extends mod_survey_itembase {
      * return $childparentcontent
      */
     public function item_decode_parentvalue($childparentvalue) {
+        // I need to prevent wrong use of the interface by the user
+        // Example of wrong use:
+        // this item (as parent) has:
+        // $labels = array (size=3)
+        //   0 => string 'Italy' (length=5)
+        //   1 => string 'Great Britain' (length=13)
+        //   2 => string 'Spain' (length=5)
+        // The user in the child item write (as $childparentvalue): 'Gran Bretagna' <-- this is the wrong use
+
+        // In this method I get:
+        // $parentvalue = array (size=5)
+        //   0 => string '0' (length=1)
+        //   1 => string '0' (length=1)
+        //   2 => string '0' (length=1)
+        //   3 => string '1' (length=1)
+        //   4 => string 'Gran Bretagna' (length=13)
+        // because 'Gran Bretagna' is not among options so, to be valid, it is supposed the use of the option 'other'
+
         $labels = $this->item_get_labels_array('options');
         $parentvalue = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
         $childparentcontent = array();
         foreach ($parentvalue as $k => $value) {
             if ($value == 1) {
-                $childparentcontent[] = $labels[$k];
+                if (isset($labels[$k])) {
+                    $childparentcontent[] = $labels[$k];
+                } else {
+                    // The "Validate branching" page will inform the user that this relation will never match
+                    $childparentcontent[] = $k;
+                }
             }
         }
 
@@ -377,7 +402,7 @@ EOS;
 
         // the count is equal: good
         // now I have to consider two following scenarios:
-        // 1) the parent item (this item) may have n label + $this->labelother && the child may have n keys without a label
+        // 1) the parent item (this item) may have n label + $this->labelother && the child may have (n+1) keys without a label
         // 2) the parent item (this item) may have n label without $this->labelother && the child may have (n-1) keys + a label
 
         // case 1: whatever is written as last key of $childparentvalues is compatible with $this->labelother, so nothing to check
@@ -387,7 +412,9 @@ EOS;
 
         // case 2:
         $lastkey = end($childparentvalues);
-        return ($lastkey == $labelcount);
+        return (($lastkey == 0) || ($lastkey == 1));
+
+        // TODO: what is if $lastkey (from the labelother of the child) == '0' or '1'?
     }
 
     // MARK userform

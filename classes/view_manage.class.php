@@ -589,8 +589,10 @@ class mod_survey_submissionmanager {
         if ($this->action == SURVEY_NOACTION) {
             return true;
         }
-        if (!$ownerid = $DB->get_field('survey_submission', 'userid', array('id' => $this->submissionid), IGNORE_MISSING)) {
-            print_error('incorrectaccessdetected', 'survey');
+        if ($this->action != SURVEY_DELETEALLRESPONSES) { // if a specific submission is involved
+            if (!$ownerid = $DB->get_field('survey_submission', 'userid', array('id' => $this->submissionid), IGNORE_MISSING)) {
+                print_error('incorrectaccessdetected', 'survey');
+            }
         }
 
         if (!$ismine = ($ownerid->userid == $USER->id)) {

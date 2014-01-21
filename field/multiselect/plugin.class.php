@@ -230,7 +230,12 @@ class surveyfield_multiselect extends mod_survey_itembase {
 
         $childparentcontent = array();
         foreach ($parentvalue as $key) {
-            $childparentcontent[] = $labels[$key];
+            if (isset($labels[$key])) {
+                $childparentcontent[] = $labels[$key];
+            } else {
+                // The "Validate branching" page will inform the user that this relation will never match
+                $childparentcontent[] = $key;
+            }
         }
 
         return implode("\n", $childparentcontent);

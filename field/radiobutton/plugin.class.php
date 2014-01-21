@@ -298,9 +298,15 @@ class surveyfield_radiobutton extends mod_survey_itembase {
     public function item_decode_parentvalue($childparentvalue) {
         $labels = $this->item_get_labels_array('options');
 
-        $childparentcontent[] = $labels[$childparentvalue];
-
-        return $labels[$childparentvalue];
+        // user is supposed to type one of the label of this item.
+        // But even if he/she types something different, I have to accept it.
+        if (isset($labels[$childparentvalue])) {
+            $childparentcontent[] = $labels[$childparentvalue];
+            return $labels[$childparentvalue];
+        } else {
+            // The "Validate branching" page will inform the user that this relation will never match
+            return $childparentvalue;
+        }
     }
 
     /*

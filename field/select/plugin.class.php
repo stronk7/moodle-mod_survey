@@ -298,6 +298,7 @@ class surveyfield_select extends mod_survey_itembase {
             if (isset($labels[$key])) {
                 $childparentcontent[] = $labels[$key];
             } else {
+                // The "Validate branching" page will inform the user that this relation will never match
                 $childparentcontent[] = $key;
             }
         }

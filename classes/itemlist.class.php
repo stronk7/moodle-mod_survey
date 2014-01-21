@@ -1332,9 +1332,9 @@ class mod_survey_itemlist {
                 } else {
                     if ($status === false) {
                         if (empty($currenthide)) {
-                            $tablerow[] = '<span class="errormessage">'.get_string('wrongrelation', 'survey', $item->get_parentvalue()).'</span>';
+                            $tablerow[] = '<span class="errormessage">'.get_string('wrongrelation', 'survey', $item->get_parentcontent('; ')).'</span>';
                         } else {
-                            $tablerow[] = get_string('wrongrelation', 'survey', $item->get_parentvalue());
+                            $tablerow[] = get_string('wrongrelation', 'survey', $item->get_parentcontent('; '));
                         }
                     } else {
                         $tablerow[] = $status;
