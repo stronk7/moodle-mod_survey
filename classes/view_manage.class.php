@@ -449,7 +449,7 @@ class mod_survey_submissionmanager {
         $submissions = $DB->get_recordset_sql($sql, $whereparams, $table->get_sql_sort());
 
         if ($submissions->valid()) {
-            if (has_capability('mod/survey:deleteallsubmissions', $this->context, null, true)) {
+            if ($this->candeleteownsubmissions && $this->candeleteotherssubmissions) {
                 $paramurl = $paramurlbase;
                 $paramurl['act'] = SURVEY_DELETEALLRESPONSES;
                 $paramurl['sesskey'] = sesskey();

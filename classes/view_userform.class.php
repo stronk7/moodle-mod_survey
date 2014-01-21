@@ -1054,7 +1054,7 @@ class mod_survey_userformmanager {
             }
         }
 
-        if ($submission->userid != $USER->id)) {
+        if ($submission->userid != $USER->id) {
             $groupmode = groups_get_activity_groupmode($this->cm);
             if ($groupmode == SEPARATEGROUPS) {
                 $mygroupmates = survey_groupmates();

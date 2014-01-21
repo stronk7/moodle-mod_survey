@@ -340,7 +340,6 @@ $string['survey:addinstance'] = 'Add a new survey activity';
 $string['survey:additems'] = 'Add survey elements';
 $string['survey:applymastertemplates'] = 'Apply master template';
 $string['survey:applyusertemplates'] = 'Apply user templates';
-$string['survey:deleteallsubmissions'] = 'Delete all responses';
 $string['survey:deleteotherssubmissions'] = 'Delete responses from other users';
 $string['survey:deleteownsubmissions'] = 'Delete own responses';
 $string['survey:deleteusertemplates'] = 'Delete user templates';

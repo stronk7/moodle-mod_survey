@@ -72,7 +72,6 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
 
     SUB-TAB == SURVEY_SUBMISSION_MANAGE
         $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
-        mod/survey:deleteallsubmissions
 
         mod/survey:seeownsubmissions <-- It does not actually exist. It is always allowed.
         mod/survey:seeotherssubmissions
@@ -203,17 +202,6 @@ $capabilities = array(
         'archetypes' => array(
             'frontpage' => CAP_ALLOW,
             'student' => CAP_ALLOW
-        )
-    ),
-
-    'mod/survey:deleteallsubmissions' => array(
-        'riskbitmask' => RISK_XSS,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
         )
     ),
 
