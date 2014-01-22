@@ -1046,19 +1046,19 @@ class mod_survey_userformmanager {
      * @return
      */
     public function prevent_direct_user_input() {
-        global $DB, $USER, $COURSE;
+        global $DB, $USER;
 
-        if (!empty($this->submissionid)) {
+        if (($this->view == SURVEY_READONLYRESPONSE) || ($this->view == SURVEY_EDITRESPONSE)) {
             if (!$submission = $DB->get_record('survey_submission', array('id' => $this->submissionid), '*', IGNORE_MISSING)) {
                 print_error('incorrectaccessdetected', 'survey');
             }
-        }
 
-        if ($submission->userid != $USER->id) {
-            $groupmode = groups_get_activity_groupmode($this->cm);
-            if ($groupmode == SEPARATEGROUPS) {
-                $mygroupmates = survey_groupmates();
-                $groupuser = in_array($submission->userid, $mygroupmates);
+            if ($submission->userid != $USER->id) {
+                $groupmode = groups_get_activity_groupmode($this->cm);
+                if ($groupmode == SEPARATEGROUPS) {
+                    $mygroupmates = survey_groupmates();
+                    $groupuser = in_array($submission->userid, $mygroupmates);
+                }
             }
         }
 
