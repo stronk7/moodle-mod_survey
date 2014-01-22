@@ -764,8 +764,13 @@ class mod_survey_userformmanager {
     public function count_input_items() {
         global $DB;
 
-        $whereparams = array('surveyid' => $this->survey->id, 'formpage' => $this->formpage);
-        $whereclause = 'surveyid = :surveyid AND hide = 0 AND formpage = :formpage';
+        if (empty($this->formpage)) { // for frozen mform
+            $whereparams = array('surveyid' => $this->survey->id);
+            $whereclause = 'surveyid = :surveyid AND hide = 0';
+        } else {
+            $whereparams = array('surveyid' => $this->survey->id, 'formpage' => $this->formpage);
+            $whereclause = 'surveyid = :surveyid AND hide = 0 AND formpage = :formpage';
+        }
         if (!$this->canaccessadvanceditems) {
             $whereclause .= ' AND advanced = 0';
         }
