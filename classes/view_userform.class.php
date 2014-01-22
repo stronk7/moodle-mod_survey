@@ -93,9 +93,19 @@ class mod_survey_userformmanager {
     public $canaccessadvanceditems = false;
 
     /*
-     * $canmanageitems
+     * $canseeotherssubmissions
      */
-    // public $canmanageitems = false;
+    public $canseeotherssubmissions = false;
+
+    /*
+     * $caneditownsubmissions
+     */
+    public $caneditownsubmissions = false;
+
+    /*
+     * $caneditotherssubmissions
+     */
+    public $caneditotherssubmissions = false;
 
     /*
      * $cansubmit
@@ -123,6 +133,11 @@ class mod_survey_userformmanager {
         // $this->canmanageitems = has_capability('mod/survey:manageitems', $this->context, null, true);
         $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
         $this->cansubmit = has_capability('mod/survey:submit', $this->context, null, true);
+
+        $this->canseeotherssubmissions = has_capability('mod/survey:seeotherssubmissions', $this->context, null, true);
+
+        $this->caneditownsubmissions = has_capability('mod/survey:editownsubmissions', $this->context, null, true);
+        $this->caneditotherssubmissions = has_capability('mod/survey:editotherssubmissions', $this->context, null, true);
 
         // assign pages to items
         if (!$this->maxassignedpage = $DB->get_field('survey_item', 'MAX(formpage)', array('surveyid' => $survey->id))) {
@@ -264,7 +279,7 @@ class mod_survey_userformmanager {
      */
     public function set_page_from_view() {
         switch ($this->view) {
-            case SURVEY_NOACTION:
+            case SURVEY_SERVESURVEY:
                 $this->moduletab = SURVEY_TABSUBMISSIONS; // needed by tabs.php
                 $this->modulepage = SURVEY_SUBMISSION_ATTEMPT; // needed by tabs.php
                 break;
@@ -1074,9 +1089,9 @@ class mod_survey_userformmanager {
                     $allowed = true;
                 } else {
                     if ($groupmode == SEPARATEGROUPS) {
-                        $allowed = $groupuser && $this->caneditotherssubmissions;
+                        $allowed = $groupuser && $this->canseeotherssubmissions;
                     } else { // NOGROUPS || VISIBLEGROUPS
-                        $allowed = $this->caneditotherssubmissions;
+                        $allowed = $this->canseeotherssubmissions;
                     }
                 }
                 break;

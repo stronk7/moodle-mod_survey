@@ -107,12 +107,13 @@ define('SURVEY_TYPEFORMAT', 'format');
 
 // VIEW
     // ITEM MANAGEMENT section
-    define('SURVEY_SERVESURVEY'     , '0');
-    define('SURVEY_PREVIEWSURVEY'   , '1');
-    define('SURVEY_EDITRESPONSE'    , '2');
-    define('SURVEY_READONLYRESPONSE', '3');
-    define('SURVEY_EDITITEM'        , '4');
-    define('SURVEY_CHANGEORDERASK'  , '5');
+    define('SURVEY_NOVIEW'          , '0');
+    define('SURVEY_SERVESURVEY'     , '1');
+    define('SURVEY_PREVIEWSURVEY'   , '2');
+    define('SURVEY_EDITRESPONSE'    , '3');
+    define('SURVEY_READONLYRESPONSE', '4');
+    define('SURVEY_EDITITEM'        , '5');
+    define('SURVEY_CHANGEORDERASK'  , '6');
 
     // RESPONSES section
     define('SURVEY_RESPONSETOPDF'   , '6');

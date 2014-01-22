@@ -595,7 +595,7 @@ class mod_survey_submissionmanager {
             }
         }
 
-        if (!$ismine = ($ownerid->userid == $USER->id)) {
+        if (!$ismine = ($ownerid == $USER->id)) {
             $groupmode = groups_get_activity_groupmode($this->cm);
             if ($groupmode == SEPARATEGROUPS) {
                 $mygroupmates = survey_groupmates();
@@ -627,6 +627,9 @@ class mod_survey_submissionmanager {
         }
 
         switch ($this->view) {
+            case SURVEY_NOVIEW:
+                $allowed = true;
+                break;
             case SURVEY_READONLYRESPONSE:
                 if ($ismine) {
                     $allowed = $this->canseeownsubmissions;
@@ -663,6 +666,7 @@ class mod_survey_submissionmanager {
             default:
                 $allowed = false;
         }
+
         if (!$allowed) {
             print_error('incorrectaccessdetected', 'survey');
         }
