@@ -1269,7 +1269,7 @@ class mod_survey_itemlist {
             $sql .= ' ORDER BY si.sortindex';
         }
 
-        $itemseeds = $DB->get_recordset_sql($sql, array('surveyid' => $this->survey->id), $table->get_sql_sort());
+        $itemseeds = $DB->get_recordset_sql($sql, array('surveyid' => $this->survey->id));
         echo $OUTPUT->box(get_string('validationinfo', 'survey'));
 
         foreach ($itemseeds as $itemseed) {
