@@ -593,13 +593,13 @@ class mod_survey_submissionmanager {
             if (!$ownerid = $DB->get_field('survey_submission', 'userid', array('id' => $this->submissionid), IGNORE_MISSING)) {
                 print_error('incorrectaccessdetected', 'survey');
             }
-        }
 
-        if (!$ismine = ($ownerid == $USER->id)) {
-            $groupmode = groups_get_activity_groupmode($this->cm);
-            if ($groupmode == SEPARATEGROUPS) {
-                $mygroupmates = survey_groupmates();
-                $groupuser = in_array($submission->userid, $mygroupmates);
+            if (!$ismine = ($ownerid == $USER->id)) {
+                $groupmode = groups_get_activity_groupmode($this->cm);
+                if ($groupmode == SEPARATEGROUPS) {
+                    $mygroupmates = survey_groupmates();
+                    $groupuser = in_array($submission->userid, $mygroupmates);
+                }
             }
         }
 
