@@ -204,7 +204,7 @@ class surveyfield_numeric extends mod_survey_itembase {
          * type
          * plugin
 
-         * hide
+         * hidden
          * insearchform
          * advanced
 

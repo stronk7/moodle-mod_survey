@@ -223,7 +223,7 @@ class surveyfield_recurrence extends mod_survey_itembase {
          * type
          * plugin
 
-         * hide
+         * hidden
          * insearchform
          * advanced
 

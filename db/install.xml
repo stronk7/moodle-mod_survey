@@ -42,7 +42,7 @@
         <FIELD NAME="surveyid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="type" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="err" SEQUENCE="false"/>
         <FIELD NAME="plugin" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="err" SEQUENCE="false"/>
-        <FIELD NAME="hide" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="hidden" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="insearchform" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="advanced" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="sortindex" TYPE="int" LENGTH="7" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>

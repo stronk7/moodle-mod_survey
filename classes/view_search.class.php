@@ -127,7 +127,7 @@ class mod_survey_searchmanager {
 
         // if no items are available, stop the intervention here
         $whereparams = array('surveyid' => $this->survey->id);
-        $whereclause = 'surveyid = :surveyid AND hide = 0 AND insearchform = 1';
+        $whereclause = 'surveyid = :surveyid AND hidden = 0 AND insearchform = 1';
 
         return $DB->count_records_select('survey_item', $whereclause, $whereparams);
     }

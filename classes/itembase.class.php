@@ -63,9 +63,9 @@ class mod_survey_itembase {
     public $itemname = '';
 
     /*
-     * $hide = is this field going to be shown in the form?
+     * $hidden = is this field going to be shown in the form?
      */
-    public $hide = 0;
+    public $hidden = 0;
 
     /*
      * $insearchform = is this field going to be part of the search form?
@@ -134,7 +134,7 @@ class mod_survey_itembase {
         'required' => true,
         'variable' => true,
         'indent' => true,
-        'hide' => true,
+        'hidden' => true,
         'advanced' => true,
         'insearchform' => true,
         'parentid' => true
@@ -166,7 +166,7 @@ class mod_survey_itembase {
             $this->itemname = SURVEY_ITEMPREFIX.'_'.$this->type.'_'.$this->plugin.'_'.$this->itemid;
             if ($evaluateparentcontent && $this->parentid) {
                 $parentitem = survey_get_item($this->parentid, null, null, false);
-                $this->parentcontent = $parentitem->item_decode_parentvalue($this->parentvalue);
+                $this->parentcontent = $parentitem->parent_decode_child_parentvalue($this->parentvalue);
             }
         } else {
             debugging('Something was wrong at line '.__LINE__.' of file '.__FILE__.'!<br />I can not find the survey item ID = '.$itemid.' using:<br />'.$sql);
@@ -211,7 +211,7 @@ class mod_survey_itembase {
         $record->timemodified = $timenow;
 
         // manage other checkboxes content
-        $checkboxessettings = array('advanced', 'insearchform', 'hideinstructions', 'required', 'hide');
+        $checkboxessettings = array('advanced', 'insearchform', 'hideinstructions', 'required', 'hidden');
         foreach ($checkboxessettings as $checkboxessetting) {
             if ($this->formrequires[$checkboxessetting]) {
                 $record->{$checkboxessetting} = isset($record->{$checkboxessetting}) ? 1 : 0;
@@ -223,10 +223,10 @@ class mod_survey_itembase {
         // survey can be multilang
         // so I can not save labels to parentvalue as they may change
         // because of this, even if the user writes, for instance, "bread\nmilk" to parentvalue
-        // I have to encode it to key(break);key(milk)
+        // I have to encode it to key(bread);key(milk)
         if (isset($record->parentid) && $record->parentid) {
             $parentitem = survey_get_item($record->parentid);
-            $record->parentvalue = $parentitem->item_encode_parentcontent($record->parentcontent);
+            $record->parentvalue = $parentitem->parent_encode_child_parentcontent($record->parentcontent);
             unset($record->parentcontent);
         }
 
@@ -306,7 +306,7 @@ class mod_survey_itembase {
             }
 
             // hide/unhide part 1
-            $oldhide = $DB->get_field('survey_item', 'hide', array('id' => $record->itemid)); // used later
+            $oldhide = $DB->get_field('survey_item', 'hidden', array('id' => $record->itemid)); // used later
             // end of: hide/unhide 1
 
             // limit/unlimit access part 1
@@ -335,12 +335,13 @@ class mod_survey_itembase {
             $logaction = ($this->userfeedback == SURVEY_NOFEEDBACK) ? 'add item failed' : 'add item';
 
             // save process is over. Good.
+
             // now hide or unhide (whether needed) chain of ancestors or descendents
             if ($this->userfeedback & 1) { // bitwise logic, alias: if the item was successfully saved
                 // -----------------------------
-                // manage ($oldhide != $record->hide)
+                // manage ($oldhide != $record->hidden)
                 // -----------------------------
-                if ($oldhide != $record->hide) {
+                if ($oldhide != $record->hidden) {
                     $survey = $DB->get_record('survey', array('id' => $cm->instance), '*', MUST_EXIST);
                     $action = ($oldhide) ? SURVEY_SHOWITEM : SURVEY_HIDEITEM;
                     $view = 0;
@@ -357,13 +358,13 @@ class mod_survey_itembase {
                 }
 
                 // hide/unhide part 2
-                if ( ($oldhide == 1) && ($record->hide == 0) ) {
+                if ( ($oldhide == 1) && ($record->hidden == 0) ) {
                     if ($itemlistman->manage_item_show()) {
                         // a chain of parent items has been showed
                         $this->userfeedback += 4; // 1*2^2
                     }
                 }
-                if ( ($oldhide == 0) && ($record->hide == 1) ) {
+                if ( ($oldhide == 0) && ($record->hidden == 1) ) {
                     if ($itemlistman->manage_item_hide()) {
                         // a chain of child items has been hided
                         $this->userfeedback += 8; // 1*2^3
@@ -411,6 +412,37 @@ class mod_survey_itembase {
 
         // $this->userfeedback is going to be part of $returnurl in items_setup.php and to be send to items_manage.php
     }
+
+    /*
+     * item_update_childparentvalue
+     *
+     * @param stdClass $survey
+     * @return
+     */
+    public function item_update_childrenparentvalue() {
+        global $DB;
+
+        if ($this::$canbeparent) {
+            // take care: you can not use $this->item_get_exportvalues_array('options') to evaluate $exportvalues
+            // because $item was loaded before last save, so $this->item_get_exportvalues_array('options')
+            // is still returning the previous $exportvalues
+
+            $children = $DB->get_records('survey_item', array('parentid' => $this->itemid), 'id', 'id, parentvalue');
+            foreach ($children as $child) {
+                $childparentvalue = $child->parentvalue;
+
+                // decode $childparentvalue to $childparentcontent
+                $childparentcontent = $this->parent_decode_child_parentvalue($childparentvalue);
+
+                // encode $childparentcontent to $childparentvalue, once again
+                $child->parentvalue = $this->parent_encode_child_parentcontent($childparentcontent);
+
+                // save the child
+                $DB->update_record('survey_item', $child);
+            }
+        }
+    }
+
 
     /*
      * item_builtin_string_load_support
@@ -566,8 +598,31 @@ class mod_survey_itembase {
     }
 
     /*
+     * item_get_exportvalues_array
+     * translates the class property $this->{$field} in the array array[$value] = $exportvalues
+     *
+     * @param $field
+     * @return array $values
+     */
+    public function item_get_exportvalues_array($field='options') {
+        $options = survey_textarea_to_array($this->{$field});
+
+        $values = array();
+        foreach ($options as $k => $option) {
+            if (preg_match('/^(.*)'.SURVEY_VALUELABELSEPARATOR.'(.*)$/', $option, $match)) { // do not worry: it can never be equal to zero
+                // print_object($match);
+                $values[] = $match[1];
+            } else {
+                $values[] = $option;
+            }
+        }
+
+        return $values;
+    }
+
+    /*
      * item_get_values_array
-     * translates the class property $this->{$field} in the array array[$value] = $label
+     * translates the class property $this->{$field} in the array array[$value] = $values
      *
      * @param $field
      * @return array $values
@@ -717,7 +772,7 @@ class mod_survey_itembase {
         $schema .= '                <xs:element type="xs:string" name="type"/>'."\n";
         $schema .= '                <xs:element type="xs:string" name="plugin"/>'."\n";
 
-        $schema .= '                <xs:element type="xs:int" name="hide"/>'."\n";
+        $schema .= '                <xs:element type="xs:int" name="hidden"/>'."\n";
         $schema .= '                <xs:element type="xs:int" name="insearchform"/>'."\n";
         $schema .= '                <xs:element type="xs:int" name="advanced"/>'."\n";
 
@@ -830,7 +885,7 @@ class mod_survey_itembase {
      * @return
      */
     public function get_hide() {
-        return $this->hide;
+        return $this->hidden;
     }
 
     /*
@@ -884,7 +939,7 @@ class mod_survey_itembase {
     }
 
     /*
-     * get_parentvalue
+     * get_parentcontent
      *
      * @param
      * @return
@@ -1058,8 +1113,17 @@ class mod_survey_itembase {
      * @return status of child relation
      */
     public function parent_validate_child_constraints($childparentvalue) {
-        // whether not overridden by specific class method...
-        // nothing to do!
+        /*
+         * I can not make ANY assumption about $childparentvalue because of the following explanation:
+         * At child save time, I encode its $parentcontent to $parentvalue.
+         * The encoding is done through a parent method according to parent exportvalues.
+         * Once the child is saved, I can return to parent and I can change it as much as I want.
+         * For instance by changing the number and the content of its options.
+         * At parent save time, the child parentvalue is rewritten
+         * -> but it may result in a too short or too long list of keys
+         * -> or with a wrong number of unrecognized keys so I need to...
+         * ...implement all possible checks to avoid crashes/malfunctions during code execution.
+         */
     }
 
 

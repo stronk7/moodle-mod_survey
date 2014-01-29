@@ -120,7 +120,7 @@ class surveyformat_fieldset extends mod_survey_itembase {
          * type
          * plugin
 
-         * hide
+         * hidden
          * insearchform
          * advanced
 

@@ -62,6 +62,13 @@ class survey_utemplatecreateform extends moodleform {
         $mform->addHelpButton($fieldname, $fieldname, 'survey');
 
         // ----------------------------------------
+        // utemplatecreate::visiblesonly
+        // ----------------------------------------
+        $fieldname = 'visiblesonly';
+        $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
+        $mform->addHelpButton($fieldname, $fieldname, 'survey');
+
+        // ----------------------------------------
         // utemplatecreate::sharinglevel
         // ----------------------------------------
         $fieldname = 'sharinglevel';

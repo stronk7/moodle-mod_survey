@@ -180,7 +180,7 @@ class surveyfield_checkbox extends mod_survey_itembase {
          * type
          * plugin
 
-         * hide
+         * hidden
          * insearchform
          * advanced
 
@@ -205,86 +205,6 @@ class surveyfield_checkbox extends mod_survey_itembase {
     }
 
     /*
-     * item_encode_parentcontent
-     *
-     * @param $childparentcontent
-     * return childparentvalue
-     */
-    public function item_encode_parentcontent($childparentcontent) {
-        $parentcontent = survey_textarea_to_array($childparentcontent);
-        $labels = $this->item_get_labels_array('options');
-
-        $childparentvalue = array();
-        foreach ($labels as $k => $label) {
-            $key = array_search($label, $parentcontent);
-            if ($key !== false) {
-                $childparentvalue[] = 1;
-                unset($parentcontent[$key]);
-            } else {
-                $childparentvalue[] = 0;
-            }
-        }
-
-        if (!empty($this->labelother)) {
-            if (count($parentcontent)) {
-                $childparentvalue['other'] = 1;
-                $childparentvalue['text'] = $parentcontent[0];
-            } else {
-                $childparentvalue['text'] = '';
-            }
-        }
-
-        return implode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
-    }
-
-    /*
-     * item_decode_parentvalue
-     *
-     * @param $childparentvalue
-     * return $childparentcontent
-     */
-    public function item_decode_parentvalue($childparentvalue) {
-        // I need to prevent wrong use of the interface by the user
-        // Example of wrong use:
-        // this item (as parent) has:
-        // $labels = array (size=3)
-        //   0 => string 'Italy' (length=5)
-        //   1 => string 'Great Britain' (length=13)
-        //   2 => string 'Spain' (length=5)
-        // The user in the child item write (as $childparentvalue): 'Gran Bretagna' <-- this is the wrong use
-
-        // In this method I get:
-        // $parentvalue = array (size=5)
-        //   0 => string '0' (length=1)
-        //   1 => string '0' (length=1)
-        //   2 => string '0' (length=1)
-        //   3 => string '1' (length=1)
-        //   4 => string 'Gran Bretagna' (length=13)
-        // because 'Gran Bretagna' is not among options so, to be valid, it is supposed the use of the option 'other'
-
-        $labels = $this->item_get_labels_array('options');
-        $parentvalue = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
-        $childparentcontent = array();
-        foreach ($parentvalue as $k => $value) {
-            if ($value == 1) {
-                if (isset($labels[$k])) {
-                    $childparentcontent[] = $labels[$k];
-                } else {
-                    // The "Validate branching" page will inform the user that this relation will never match
-                    $childparentcontent[] = $k;
-                }
-            }
-        }
-
-        $lastvalue = end($parentvalue);
-        if ($lastvalue) {
-            $childparentcontent[] = $lastvalue;
-        }
-
-        return implode("\n", $childparentcontent);
-    }
-
-    /*
      * item_list_constraints
      *
      * @param
@@ -293,10 +213,10 @@ class surveyfield_checkbox extends mod_survey_itembase {
     public function item_list_constraints() {
         $constraints = array();
 
-        $labels = $this->item_get_labels_array('options');
+        $exportvalues = $this->item_get_exportvalues_array('options');
         $optionstr = get_string('option', 'surveyfield_checkbox');
-        foreach ($labels as $label) {
-            $constraints[] = $optionstr.': '.$label;
+        foreach ($exportvalues as $exportvalue) {
+            $constraints[] = $optionstr.': '.$exportvalue;
         }
         if (!empty($this->labelother)) {
             $constraints[] = get_string('labelother', 'surveyfield_checkbox').': '.get_string('allowed', 'surveyfield_checkbox');
@@ -377,44 +297,122 @@ EOS;
     // MARK parent
 
     /*
+     * parent_encode_child_parentcontent
+     *
+     * this method is called ONLY at item save time
+     * it encodes parentcontent to parentindex
+     * @param $childparentcontent
+     * return childparentvalue
+     */
+    public function parent_encode_child_parentcontent($childparentcontent) {
+        $parentcontents = array_unique(survey_textarea_to_array($childparentcontent));
+        $exportvalues = $this->item_get_exportvalues_array('options');
+
+        $childparentvalue = array_fill(0, count($exportvalues), 0);
+        $labels = array();
+        foreach ($parentcontents as $parentcontent) {
+            $key = array_search($parentcontent, $exportvalues);
+            if ($key !== false) {
+                $childparentvalue[$key] = 1;
+            } else {
+                // only garbage, but user wrote it
+                $labels[] = $parentcontent;
+            }
+        }
+        if (!empty($labels)) {
+            $childparentvalue[] = '>';
+            $childparentvalue = array_merge($childparentvalue, $labels);
+        }
+
+        return implode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
+    }
+
+    /*
+     * parent_decode_child_parentvalue
+     *
+     * this method decodes parentindex to parentcontent
+     * @param $childparentvalue
+     * return $childparentcontent
+     */
+    public function parent_decode_child_parentvalue($childparentvalue) {
+        /*
+         * I can not make ANY assumption about $childparentvalue because of the following explanation:
+         * At child save time, I encode its $parentcontent to $parentvalue.
+         * The encoding is done through a parent method according to parent exportvalues.
+         * Once the child is saved, I can return to parent and I can change it as much as I want.
+         * For instance by changing the number and the content of its options.
+         * At parent save time, the child parentvalue is rewritten
+         * -> but it may result in a too short or too long list of keys
+         * -> or with a wrong number of unrecognized keys so I need to...
+         * ...implement all possible checks to avoid crashes/malfunctions during code execution.
+         */
+
+        $exportvalues = $this->item_get_exportvalues_array('options');
+        $parentvalues = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
+        $actualcount = count($parentvalues);
+
+        $childparentcontent = array();
+        $key = array_search('>', $parentvalues);
+        if ($key !== false) {
+            for ($i = 0; $i < $key; $i++) {
+                if ($parentvalues[$i] == '1') {
+                    if (isset($exportvalues[$i])) {
+                        $childparentcontent[] = $exportvalues[$i];
+                    } else {
+                        $childparentcontent[] = 1;
+                    }
+                }
+            }
+
+            $key++;
+            // only garbage after the first index, but user wrote it
+            for ($i = $key; $i < $actualcount; $i++) {
+                $childparentcontent[] = $parentvalues[$i];
+            }
+        } else {
+            foreach ($parentvalues as $k => $parentvalue) {
+                if ($parentvalue == '1') {
+                    if (isset($exportvalues[$k])) {
+                        $childparentcontent[] = $exportvalues[$k];
+                    } else {
+                        $childparentcontent[] = $k;
+                    }
+                }
+            }
+        }
+
+        return implode("\n", $childparentcontent);
+    }
+
+    /*
      * parent_validate_child_constraints
      *
+     * this method sarting from parentindex declare if the child has chances to be alive
      * @param $childparentvalue
      * @return status of child relation
+     *     0 = it will never match
+     *     1 = OK
+     *     2 = $childparentvalue is malformed
      */
     public function parent_validate_child_constraints($childparentvalue) {
-        // I have here $childparentvalue that was calculated at child save time
-        // I can not be sure the parent item (this item) was not changed in a second time
-        // I need to check for:
-        // - count of elements
-        // - presence of $this->labelother
+        // see parent method for explanation
 
-        $childparentvalues = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
-        $parentoptionscount = count($childparentvalues);
-        $labelcount = count($this->item_get_labels_array('options'));
-        if ($this->labelother) {
-            $labelcount++;
+        $exportvalues = $this->item_get_exportvalues_array('options');
+        $expectedcount = count($exportvalues);
+        $parentvalues = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
+        $actualcount = count($parentvalues);
+
+        $key = array_search('>', $parentvalues);
+        if ($key !== false) {
+            $condition = empty($this->labelother) ? empty($parentvalues[$actualcount-1]) : true;
+            $condition = $condition && ($actualcount == ($key+2)); // only one label is allowed
+            $condition = $condition && ($expectedcount == $key); // only $expectedcount checkboxes are allowed
+            $return = ($condition) ? SURVEY_CONDITIONOK : SURVEY_CONDITIONMALFORMED;
+        } else {
+            $return = ($actualcount == $expectedcount) ? SURVEY_CONDITIONOK : SURVEY_CONDITIONMALFORMED;
         }
 
-        if ($parentoptionscount != $labelcount) {
-            return false;
-        }
-
-        // the count is equal: good
-        // now I have to consider two following scenarios:
-        // 1) the parent item (this item) may have n label + $this->labelother && the child may have (n+1) keys without a label
-        // 2) the parent item (this item) may have n label without $this->labelother && the child may have (n-1) keys + a label
-
-        // case 1: whatever is written as last key of $childparentvalues is compatible with $this->labelother, so nothing to check
-        if ($this->labelother) {
-            return true;
-        }
-
-        // case 2:
-        $lastkey = end($childparentvalues);
-        return (($lastkey == 0) || ($lastkey == 1));
-
-        // TODO: what is if $lastkey (from the labelother of the child) == '0' or '1'?
+        return ($return);
     }
 
     // MARK userform
@@ -444,8 +442,7 @@ EOS;
             $elementgroup[] = $mform->createElement('advcheckbox', $uniqueid, '', $label, $maybeclass, array('0', '1'));
 
             if (!$searchform) {
-                $index = in_array($label, $defaults);
-                if ($index !== false) {
+                if (in_array($label, $defaults)) {
                     $mform->setDefault($uniqueid, '1');
                 }
             }
@@ -564,48 +561,46 @@ EOS;
     public function userform_get_parent_disabilitation_info($childparentvalue) {
         $disabilitationinfo = array();
 
-        $labels = $this->item_get_labels_array('options');
-        $request = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue); // 1;1;0;
+        $parentvalues = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue); // 1;1;0;
 
-        foreach ($labels as $k => $label) {
-            $mformelementinfo = new stdClass();
-
-            $mformelementinfo->parentname = $this->itemname.'_'.$k;
-            if ($request[$k] == 1) {
-                $mformelementinfo->content = 'notchecked';
-            } else {
-                $mformelementinfo->content = 'checked';
-            }
-            unset($request[$k]);
-            $disabilitationinfo[] = $mformelementinfo;
+        $indexsubset = array();
+        $labelsubset = array();
+        $key = array_search('>', $parentvalues);
+        if ($key !== false) {
+            $indexsubset = array_slice($parentvalues, 0, $key);
+            $labelsubset = array_slice($parentvalues, $key+1);
+        } else {
+            $indexsubset = $parentvalues;
         }
 
-        // if among $request ​​there is one that is not among $valueLabel
-        if (count($request)) { // if I STILL have $request
-            if ($this->labelother) {
-                $lastlabel = reset($request);
-                if ($lastlabel) {
-                    $mformelementinfo = new stdClass();
-                    $mformelementinfo->parentname = $this->itemname.'_other';
+        if ($indexsubset) {
+            foreach ($indexsubset as $k => $index) {
+                $mformelementinfo = new stdClass();
+                $mformelementinfo->parentname = $this->itemname.'_'.$k;
+                if ($indexsubset[$k] == 1) {
                     $mformelementinfo->content = 'notchecked';
-                    $disabilitationinfo[] = $mformelementinfo;
-
-                    $mformelementinfo = new stdClass();
-                    $mformelementinfo->parentname = $this->itemname.'_text';
-                    $mformelementinfo->operator = 'neq';
-                    $mformelementinfo->content = reset($request);
-                    $disabilitationinfo[] = $mformelementinfo;
                 } else {
-                    $mformelementinfo = new stdClass();
-                    $mformelementinfo->parentname = $this->itemname.'_other';
                     $mformelementinfo->content = 'checked';
-                    $disabilitationinfo[] = $mformelementinfo;
                 }
-            } else {
-                debugging('Probably $childparentvalue is not correct: '.$childparentvalue);
+                $disabilitationinfo[] = $mformelementinfo;
+            }
+        }
+
+        if ($labelsubset) {
+            foreach ($labelsubset as $k => $label) {
+                $mformelementinfo = new stdClass();
+                $mformelementinfo->parentname = $this->itemname.'_other';
+                $mformelementinfo->content = 'notchecked';
+                $disabilitationinfo[] = $mformelementinfo;
+
+                $mformelementinfo = new stdClass();
+                $mformelementinfo->parentname = $this->itemname.'_text';
+                $mformelementinfo->operator = 'neq';
+                $mformelementinfo->content = $label;
+                $disabilitationinfo[] = $mformelementinfo;
             }
         } else {
-            // even if no more request are found,
+            // even if no labels were provided
             // I have to add one more $disabilitationinfo if $this->other is not empty
             if ($this->labelother) {
                 $mformelementinfo = new stdClass();
@@ -637,19 +632,19 @@ EOS;
 
         // I need to verify (checkbox per checkbox) if they hold the same value the user entered
         $labels = $this->item_get_labels_array('options');
-        $request = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue); // 2;3;shark
+        $parentvalues = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue); // 2;3;shark
 
         $status = true;
         foreach ($labels as $k => $label) {
-            $index = array_search($k, $request);
-            if ($index !== false) {
+            $key = array_search($k, $parentvalues);
+            if ($key !== false) {
                 $status = $status && (isset($data[$this->itemname.'_'.$k]));
             } else {
                 $status = $status && (!isset($data[$this->itemname.'_'.$k]));
             }
         }
         if ($this->labelother) {
-            if (array_search($this->itemname.'_text', $request) !== false) {
+            if (array_search($this->itemname.'_text', $parentvalues) !== false) {
                 $status = $status && (isset($data[$this->itemname.'_check']));
             } else {
                 $status = $status && (!isset($data[$this->itemname.'_check']));

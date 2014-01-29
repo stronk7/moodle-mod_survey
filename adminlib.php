@@ -220,7 +220,7 @@ class survey_plugin_manager {
             if ($visible) {
                 $title = get_string('disable');
                 $row[] = $OUTPUT->action_icon(new moodle_url($this->pageurl,
-                    array('action' => 'hide', 'plugin' => $plugin, 'sesskey' => sesskey())),
+                    array('action' => 'hidden', 'plugin' => $plugin, 'sesskey' => sesskey())),
                     new pix_icon('t/hide', $title, 'moodle', array('title' => $title)),
                     null, array('title' => $title));
             } else {
@@ -418,7 +418,7 @@ class survey_plugin_manager {
         // Process.
         if ($action == 'delete' && $plugin != null) {
             $action = $this->delete_plugin($plugin);
-        } else if ($action == 'hide' && $plugin != null) {
+        } else if ($action == 'hidden' && $plugin != null) {
             $action = $this->hide_plugin($plugin);
         } else if ($action == 'show' && $plugin != null) {
             $action = $this->show_plugin($plugin);

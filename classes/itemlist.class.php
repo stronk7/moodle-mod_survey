@@ -706,7 +706,7 @@ class mod_survey_itemlist {
         // here I must select the whole tree down
         $tohidelist = array($this->itemid);
         $sortindextohidelist = array();
-        $this->add_child_node($tohidelist, $sortindextohidelist, array('hide' => 0));
+        $this->add_child_node($tohidelist, $sortindextohidelist, array('hidden' => 0));
 
         $itemstoprocess = count($tohidelist);
         if ($this->confirm == SURVEY_UNCONFIRMED) {
@@ -737,7 +737,7 @@ class mod_survey_itemlist {
                 echo $OUTPUT->footer();
                 die();
             } else { // hide without asking
-                $DB->set_field('survey_item', 'hide', 1, array('id' => $this->itemid));
+                $DB->set_field('survey_item', 'hidden', 1, array('id' => $this->itemid));
                 survey_reset_items_pages($this->cm->instance);
             }
         } else {
@@ -745,7 +745,7 @@ class mod_survey_itemlist {
                 case SURVEY_CONFIRMED_YES:
                     // hide items
                     foreach ($tohidelist as $tohideitemid) {
-                        $DB->set_field('survey_item', 'hide', 1, array('id' => $tohideitemid));
+                        $DB->set_field('survey_item', 'hidden', 1, array('id' => $tohideitemid));
                     }
                     survey_reset_items_pages($this->cm->instance);
                     break;
@@ -771,7 +771,7 @@ class mod_survey_itemlist {
         global $DB, $OUTPUT;
 
         // build toshowlist
-        list($toshowlist, $sortindextoshowlist) = $this->add_parent_node(array('hide' => 1));
+        list($toshowlist, $sortindextoshowlist) = $this->add_parent_node(array('hidden' => 1));
 
         $itemstoprocess = count($toshowlist); // this is the list of ancestors
         if ($this->confirm == SURVEY_UNCONFIRMED) {
@@ -802,7 +802,7 @@ class mod_survey_itemlist {
                 echo $OUTPUT->footer();
                 die();
             } else { // show without asking
-                $DB->set_field('survey_item', 'hide', 0, array('id' => $this->itemid));
+                $DB->set_field('survey_item', 'hidden', 0, array('id' => $this->itemid));
                 survey_reset_items_pages($this->cm->instance);
             }
         } else {
@@ -810,7 +810,7 @@ class mod_survey_itemlist {
                 case SURVEY_CONFIRMED_YES:
                     // hide items
                     foreach ($toshowlist as $toshowitemid) {
-                        $DB->set_field('survey_item', 'hide', 0, array('id' => $toshowitemid));
+                        $DB->set_field('survey_item', 'hidden', 0, array('id' => $toshowitemid));
                     }
                     survey_reset_items_pages($this->cm->instance);
                     break;
@@ -1327,17 +1327,22 @@ class mod_survey_itemlist {
             // status
             if ($item->get_parentid()) {
                 $status = $parentitem->parent_validate_child_constraints($item->parentvalue);
-                if ($status === true) {
+                if ($status == SURVEY_CONDITIONOK) {
                     $tablerow[] = $okstring;
                 } else {
-                    if ($status === false) {
+                    if ($status == SURVEY_CONDITIONNEVERMATCH) {
                         if (empty($currenthide)) {
                             $tablerow[] = '<span class="errormessage">'.get_string('wrongrelation', 'survey', $item->get_parentcontent('; ')).'</span>';
                         } else {
                             $tablerow[] = get_string('wrongrelation', 'survey', $item->get_parentcontent('; '));
                         }
-                    } else {
-                        $tablerow[] = $status;
+                    }
+                    if ($status == SURVEY_CONDITIONMALFORMED) {
+                        if (empty($currenthide)) {
+                            $tablerow[] = '<span class="errormessage">'.get_string('malformedchildparentvalue', 'survey', $item->get_parentcontent('; ')).'</span>';
+                        } else {
+                            $tablerow[] = get_string('malformedchildparentvalue', 'survey', $item->get_parentcontent('; '));
+                        }
                     }
                 }
             } else {

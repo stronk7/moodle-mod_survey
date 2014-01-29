@@ -244,7 +244,7 @@ class surveyfield_autofill extends mod_survey_itembase {
          * type
          * plugin
 
-         * hide
+         * hidden
          * insearchform
          * advanced
 

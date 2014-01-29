@@ -174,7 +174,6 @@ class survey_submissionform extends moodleform {
             }
         }
 
-        // ----------------------------------------
         // buttons
         $buttonlist = array();
 

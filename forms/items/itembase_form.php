@@ -185,9 +185,9 @@ class mod_survey_itembaseform extends moodleform {
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
         // ----------------------------------------
-        // newitem::hide
+        // newitem::hidden
         // ----------------------------------------
-        $fieldname = 'hide';
+        $fieldname = 'hidden';
         if ($item->get_form_requires($fieldname)) {
             $mform->addElement('checkbox', $fieldname, get_string($fieldname, 'survey'));
             $mform->addHelpButton($fieldname, $fieldname, 'survey');
@@ -264,7 +264,9 @@ class mod_survey_itembaseform extends moodleform {
                 $content = $star.get_string('pluginname', 'surveyfield_'.$parentitem->get_plugin()).' ['.$parentitem->get_sortindex().']: '.strip_tags($parentitem->get_content());
                 $content = survey_fixlength($content, 60);
 
-                $disabled = ($parentitem->get_hide() == 1) ? array('disabled' => 'disabled') : null;
+                $condition = ($parentitem->get_hide() == 1);
+                $condition = $condition && ($item->parentid != $parentitem->itemid);
+                $disabled = $condition ? array('disabled' => 'disabled') : null;
                 $select->addOption($content, $parentitem->itemid, $disabled);
             }
             $parentsseeds->close();
@@ -358,30 +360,14 @@ class mod_survey_itembaseform extends moodleform {
             return $errors;
         }
 
-        // -----------------------------
-        // mform issue (never rose up)
-        // I have a parent-child couple of items.
-        // After the relation was been done, the parent was made hidden.
-        // Now I edit the child.
-        // The parentid drop down menu should:
-        //     -> have the mform item, corresponding to the parentid of the current item, disabled
-        //     -> have that item selected
-        // In this tricky case, parentid is not set at all.
-        // I fix this issue by assigning "manually" the parentid
-        // and I continue as if the parent item is visible
-        if (!isset($data['parentid'])) { // parentid is disabled because parent is hidden
-            $data['parentid'] = $item->get_parentid();
-        }
-        // -----------------------------
-
         // you choosed a parentid but you are missing the parentcontent
-        if (empty($data['parentid']) && (strlen($data['parentcontent']) > 0)) { // $data['parentcontent'] can be = 0
+        if (empty($data['parentid']) && (strlen($data['parentcontent']) > 0)) { // $data['parentcontent'] can be = '0'
             $a = get_string('parentcontent', 'survey');
             $errors['parentid'] = get_string('missingparentid_err', 'survey', $a);
         }
 
         // you did not choose a parent item but you entered an answer
-        if ( !empty($data['parentid']) && (strlen($data['parentcontent']) == 0) ) { // $data['parentcontent'] can be = 0
+        if ( !empty($data['parentid']) && (strlen($data['parentcontent']) == 0) ) { // $data['parentcontent'] can be = '0'
             $a = get_string('parentid', 'survey');
             $errors['parentcontent'] = get_string('missingparentcontent_err', 'survey', $a);
         }

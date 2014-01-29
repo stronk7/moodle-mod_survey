@@ -328,7 +328,7 @@ class mod_survey_userformmanager {
 
         $where = array();
         $where['surveyid'] = $this->survey->id;
-        $where['hide'] = 0;
+        $where['hidden'] = 0;
 
         $lastwaspagebreak = true; // whether 2 page breaks in line, the second one is ignored
         $pagenumber = 1;
@@ -586,6 +586,30 @@ class mod_survey_userformmanager {
     }
 
     /*
+     * drop_jumped_saved_data
+     *
+     * @param
+     * @return
+     */
+    public function drop_jumped_saved_data() {
+        global $DB;
+
+        if ($this->firstpageright == ($this->formpage+1)) {
+            return;
+        }
+
+        $pages = range($this->formpage+1, $this->firstpageright-1);
+        $where = 'surveyid = :surveyid
+                AND formpage IN ('.implode(',', $pages).')';
+        $itemlistid = $DB->get_records_select('survey_item', $where, array('surveyid' => $this->survey->id), 'id', 'id');
+        $itemlistid = array_keys($itemlistid);
+
+        $where = 'submissionid = :submissionid
+            AND itemid IN ('.implode(',', $itemlistid).')';
+        $DB->delete_records_select('survey_userdata', $where, array('submissionid' => $this->formdata->submissionid));
+    }
+
+    /*
      * save_survey_submission
      *
      * @param
@@ -766,10 +790,10 @@ class mod_survey_userformmanager {
 
         if (empty($this->formpage)) { // for frozen mform
             $whereparams = array('surveyid' => $this->survey->id);
-            $whereclause = 'surveyid = :surveyid AND hide = 0';
+            $whereclause = 'surveyid = :surveyid AND hidden = 0';
         } else {
             $whereparams = array('surveyid' => $this->survey->id, 'formpage' => $this->formpage);
-            $whereclause = 'surveyid = :surveyid AND hide = 0 AND formpage = :formpage';
+            $whereclause = 'surveyid = :surveyid AND hidden = 0 AND formpage = :formpage';
         }
         if (!$this->canaccessadvanceditems) {
             $whereclause .= ' AND advanced = 0';

@@ -28,7 +28,7 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 require_once($CFG->dirroot.'/mod/survey/classes/view_userform.class.php');
-require_once($CFG->dirroot.'/mod/survey/forms/remoteuser/userpage_form.php');
+require_once($CFG->dirroot.'/mod/survey/forms/remoteuser/remoteuser_form.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $s = optional_param('s', 0, PARAM_INT);  // survey instance ID
@@ -131,7 +131,6 @@ if ($userpageman->formdata = $userpageform->get_data()) {
     $paramurl['submissionid'] = $userpageman->submissionid;
 
     if ($prevbutton) {
-        // $userpageman->formdata->formpage in the worst case becomes equal to 1 such as left $overflow (-1)
         $userpageman->next_not_empty_page(false, $userpageman->formpage, $userpageman->modulepage);
         $paramurl['formpage'] = $userpageman->firstpageleft;
         redirect(new moodle_url('view.php', $paramurl)); // -> go to the first non empty previous page of the form
@@ -139,8 +138,13 @@ if ($userpageman->formdata = $userpageform->get_data()) {
 
     $nextbutton = (isset($userpageman->formdata->nextbutton) && ($userpageman->formdata->nextbutton));
     if ($nextbutton) {
-        // $userpageman->formdata->formpage in the worst case could become $firstpageleft such as right $overflow (-2)
         $userpageman->next_not_empty_page(true, $userpageman->formpage, $userpageman->modulepage);
+        // ok, I am leaving page $userpageman->formpage
+        // to go to page $userpageman->firstpageright
+        // I need to delete all the answer that were (maybe) written during a previous walk along the survey.
+        // data of each item in a page between ($userpageman->formpage+1) and ($userpageman->formpage-1) included, must be deleted
+        $userpageman->drop_jumped_saved_data();
+
         $paramurl['formpage'] = $userpageman->firstpageright;
         redirect(new moodle_url('view.php', $paramurl)); // -> go to the first non empty next page of the form
     }

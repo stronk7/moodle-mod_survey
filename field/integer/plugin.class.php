@@ -185,7 +185,7 @@ class surveyfield_integer extends mod_survey_itembase {
          * type
          * plugin
 
-         * hide
+         * hidden
          * insearchform
          * advanced
 
@@ -263,49 +263,6 @@ class surveyfield_integer extends mod_survey_itembase {
     }
 
     /*
-     * item_encode_parentcontent
-     *
-     * @param $childparentcontent
-     * return childparentvalue
-     */
-    public function item_encode_parentcontent($childparentcontent) {
-        $childparentvalue = $childparentcontent;
-
-        return $childparentvalue;
-    }
-
-    /*
-     * item_decode_parentvalue
-     *
-     * @param $childparentvalue
-     * return $childparentcontent
-     */
-    public function item_decode_parentvalue($childparentvalue) {
-        $childparentcontent = $childparentvalue;
-
-        return $childparentcontent;
-    }
-
-    /*
-     * userform_child_item_allowed_dynamic
-     * this method is called if (and only if) parent item and child item live in the same form page
-     * this method has two purposes:
-     * - stop userpageform item validation
-     * - drop unexpected returned values from $userpageform->formdata
-     *
-     * as parentitem declare whether my child item is allowed to return a value (is enabled) or is not (is disabled)
-     *
-     * @param string $childparentvalue:
-     * @param array $data:
-     * @return boolean: true: if the item is welcome; false: if the item must be dropped out
-     */
-    public function userform_child_item_allowed_dynamic($childparentvalue, $data) {
-        // 1) I am a boolean item
-        // 2) in $data I can ONLY find $this->itemname
-        return ($data[$this->itemname] == $childparentvalue);
-    }
-
-    /*
      * item_list_constraints
      *
      * @param
@@ -313,6 +270,7 @@ class surveyfield_integer extends mod_survey_itembase {
      */
     public function item_list_constraints() {
         $constraints = array();
+
         $constraints[] = get_string('lowerbound', 'surveyfield_integer').': '.$this->lowerbound;
         $constraints[] = get_string('upperbound', 'surveyfield_integer').': '.$this->upperbound;
 
@@ -329,22 +287,6 @@ class surveyfield_integer extends mod_survey_itembase {
         $fieldlist = parent::item_get_multilang_fields();
 
         return $fieldlist;
-    }
-
-    // MARK parent
-
-    /*
-     * parent_validate_child_constraints
-     *
-     * @param $childparentvalue
-     * @return status of child relation
-     */
-    public function parent_validate_child_constraints($childparentvalue) {
-        $status = true;
-        $status = $status && ($childparentvalue >= $this->lowerbound);
-        $status = $status && ($childparentvalue <= $this->upperbound);
-
-        return $status;
     }
 
     /*
@@ -392,6 +334,117 @@ EOS;
 
         return $schema;
     }
+
+    // MARK parent
+
+    /*
+     * parent_encode_child_parentcontent
+     *
+     * this method is called ONLY at item save time
+     * it encodes parentcontent to parentindex
+     * @param $childparentcontent
+     * return childparentvalue
+     */
+    public function parent_encode_child_parentcontent($childparentcontent) {
+        $parentcontents = array_unique(survey_textarea_to_array($childparentcontent));
+
+        $childparentvalue = array();
+        $labels = array();
+        foreach ($parentcontents as $parentcontent) {
+            $condition = is_numeric($parentcontent);
+            $condition = $condition && ($parentcontent >= $this->$this->lowerbound);
+            $condition = $condition && ($parentcontent <= $this->$this->upperbound);
+            if ($condition) {
+                $childparentvalue[] = $parentcontent;
+            } else {
+                // only garbage, but user wrote it
+                $labels[] = $parentcontent;
+            }
+        }
+        if (!empty($labels)) {
+            $childparentvalue[] = '>';
+            $childparentvalue = array_merge($childparentvalue, $labels);
+        }
+
+        return implode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
+    }
+
+    /*
+     * parent_decode_child_parentvalue
+     *
+     * this method decodes parentindex to parentcontent
+     * @param $childparentvalue
+     * return $childparentcontent
+     */
+    public function parent_decode_child_parentvalue($childparentvalue) {
+        /*
+         * I can not make ANY assumption about $childparentvalue because of the following explanation:
+         * At child save time, I encode its $parentcontent to $parentvalue.
+         * The encoding is done through a parent method according to parent exportvalues.
+         * Once the child is saved, I can return to parent and I can change it as much as I want.
+         * For instance by changing the number and the content of its options.
+         * At parent save time, the child parentvalue is rewritten
+         * -> but it may result in a too short or too long list of keys
+         * -> or with a wrong number of unrecognized keys so I need to...
+         * ...implement all possible checks to avoid crashes/malfunctions during code execution.
+         */
+
+        $parentvalues = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
+        $actualcount = count($parentvalues);
+
+        $childparentcontent = array();
+        $key = array_search('>', $parentvalues);
+        if ($key !== false) {
+            for ($i = 0; $i < $key; $i++) {
+                $childparentcontent[] = $i;
+            }
+
+            $key++;
+            // only garbage after the first label, but user wrote it
+            for ($i = $key; $i < $actualcount; $i++) {
+                $childparentcontent[] = $parentvalues[$i];
+            }
+        } else {
+            foreach ($parentvalues as $parentvalue) {
+                $childparentcontent[] = $parentvalue;
+            }
+        }
+
+        return implode("\n", $childparentcontent);
+    }
+
+    /*
+     * parent_validate_child_constraints
+     *
+     * this method sarting from parentindex declare if the child has chances to be alive
+     * @param $childparentvalue
+     * @return status of child relation
+     *     0 = it will never match
+     *     1 = OK
+     *     2 = $childparentvalue is malformed
+     */
+    public function parent_validate_child_constraints($childparentvalue) {
+        // see parent method for explanation
+
+        $parentvalues = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue);
+        $actualcount = count($parentvalues);
+
+        $key = array_search('>', $parentvalues);
+        if ($key !== false) {
+            $return = ($actualcount == 2) ? SURVEY_CONDITIONNEVERMATCH : SURVEY_CONDITIONMALFORMED;
+        } else {
+            if ($actualcount == 1) {
+                $condition = ($parentvalues[0] >= $this->lowerbound);
+                $condition = $condition && ($parentvalues[0] <= $this->upperbound);
+                $return = ($condition) ? SURVEY_CONDITIONOK : SURVEY_CONDITIONNEVERMATCH;
+            } else {
+                $return = SURVEY_CONDITIONMALFORMED;
+            }
+        }
+
+        return ($return);
+    }
+
 
     // MARK userform
 
@@ -559,13 +612,59 @@ EOS;
     public function userform_get_parent_disabilitation_info($childparentvalue) {
         $disabilitationinfo = array();
 
-        $mformelementinfo = new stdClass();
-        $mformelementinfo->parentname = $this->itemname;
-        $mformelementinfo->operator = 'neq';
-        $mformelementinfo->content = $childparentvalue;
-        $disabilitationinfo[] = $mformelementinfo;
+        $parentvalues = explode(SURVEY_DBMULTIVALUESEPARATOR, $childparentvalue); // 1;1;0;
 
+        $indexsubset = array();
+        $labelsubset = array();
+        $key = array_search('>', $parentvalues);
+        if ($key !== false) {
+            $indexsubset = array_slice($parentvalues, 0, $key);
+            $labelsubset = array_slice($parentvalues, $key+1);
+        } else {
+            $indexsubset = $parentvalues;
+        }
+
+        if ($indexsubset) {
+            // only garbage after the first index, but user wrote it
+            foreach ($indexsubset as $k => $index) {
+                $mformelementinfo = new stdClass();
+                $mformelementinfo->parentname = $this->itemname;
+                $mformelementinfo->operator = 'neq';
+                $mformelementinfo->content = $index;
+                $disabilitationinfo[] = $mformelementinfo;
+            }
+        }
+
+        if ($labelsubset) {
+            // only garbage, but user wrote it
+            foreach ($labelsubset as $k => $label) {
+                $mformelementinfo = new stdClass();
+                $mformelementinfo->parentname = $this->itemname;
+                $mformelementinfo->operator = 'neq';
+                $mformelementinfo->content = $label;
+                $disabilitationinfo[] = $mformelementinfo;
+            }
+        }
         return $disabilitationinfo;
+    }
+
+    /*
+     * userform_child_item_allowed_dynamic
+     * this method is called if (and only if) parent item and child item live in the same form page
+     * this method has two purposes:
+     * - stop userpageform item validation
+     * - drop unexpected returned values from $userpageform->formdata
+     *
+     * as parentitem declare whether my child item is allowed to return a value (is enabled) or is not (is disabled)
+     *
+     * @param string $childparentvalue:
+     * @param array $data:
+     * @return boolean: true: if the item is welcome; false: if the item must be dropped out
+     */
+    public function userform_child_item_allowed_dynamic($childparentvalue, $data) {
+        // 1) I am a boolean item
+        // 2) in $data I can ONLY find $this->itemname
+        return ($data[$this->itemname] == $childparentvalue);
     }
 
     /*

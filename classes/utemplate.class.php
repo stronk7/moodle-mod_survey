@@ -304,7 +304,7 @@ class mod_survey_usertemplate extends mod_survey_templatebase {
     public function save_utemplate() {
         global $USER;
 
-        $xmlcontent = $this->write_template_content(SURVEY_USERTEMPLATE);
+        $xmlcontent = $this->write_template_content(SURVEY_USERTEMPLATE, $this->formdata->visiblesonly);
         // echo '<textarea rows="80" cols="100">'.$xmlcontent.'</textarea>';
 
         $fs = get_file_storage();

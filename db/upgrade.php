@@ -150,5 +150,18 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013121801, 'survey');
     }
 
+    if ($oldversion < 2014012901) {
+
+        // Rename field hide on table survey_item to hidden.
+        $table = new xmldb_table('survey_item');
+        $field = new xmldb_field('hide', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'plugin');
+
+        // Launch rename field hide.
+        $dbman->rename_field($table, $field, 'hidden');
+
+        // Survey savepoint reached.
+        upgrade_mod_savepoint(true, 2014012901, 'survey');
+    }
+
     return true;
 }

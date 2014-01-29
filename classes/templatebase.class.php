@@ -128,10 +128,13 @@ class mod_survey_templatebase {
      * @param
      * @return
      */
-    public function write_template_content($templatetype) {
+    public function write_template_content($templatetype, $visiblesonly=true) {
         global $DB;
 
         $where = array('surveyid' => $this->survey->id);
+        if ($visiblesonly) {
+            $where['hidden'] = '0';
+        }
         $itemseeds = $DB->get_records('survey_item', $where, 'sortindex', 'id, type, plugin');
 
         $fs = get_file_storage();
@@ -306,7 +309,7 @@ class mod_survey_templatebase {
                 break;
             case SURVEY_HIDEITEMS:
                 // BEGIN: hide all other items
-                $DB->set_field('survey_item', 'hide', 1, array('surveyid' => $this->survey->id, 'hide' => 0));
+                $DB->set_field('survey_item', 'hidden', 1, array('surveyid' => $this->survey->id, 'hidden' => 0));
                 // END: hide all other items
                 break;
             case SURVEY_DELETEALLITEMS:
@@ -333,16 +336,16 @@ class mod_survey_templatebase {
                 // BEGIN: delete other items
                 $sqlparam = array('surveyid' => $this->survey->id);
                 if ($this->formdata->actionoverother == SURVEY_DELETEVISIBLEITEMS) {
-                    $sqlparam['hide'] = 0;
+                    $sqlparam['hidden'] = 0;
                 }
                 if ($this->formdata->actionoverother == SURVEY_DELETEHIDDENITEMS) {
-                    $sqlparam['hide'] = 1;
+                    $sqlparam['hidden'] = 1;
                 }
 
                 $sql = 'SELECT si.plugin
                         FROM {survey_item} si
                         WHERE si.surveyid = :surveyid
-                            AND si.hide = :hide
+                            AND si.hidden = :hidden
                         GROUP BY si.plugin';
                 $pluginseeds = $DB->get_records_sql($sql, $sqlparam);
 

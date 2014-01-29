@@ -113,7 +113,7 @@ class mod_survey_exportmanager {
         // if I add a clause for fields of UNEXISTING {survey_item} (because no fields was filled)
         // I will miss the record if I do not further add OR ISNULL(si.xxxx)
         if (!isset($this->formdata->includehidden)) {
-            $sql .= ' AND (si.hide = 0 OR ISNULL(si.hide))';
+            $sql .= ' AND (si.hidden = 0 OR ISNULL(si.hidden))';
         }
         if (!isset($this->formdata->advanced)) {
             $sql .= ' AND (si.advanced = 0 OR ISNULL(si.advanced))';
@@ -162,7 +162,7 @@ class mod_survey_exportmanager {
             $where['advanced'] = 0;
         }
         if (!isset($this->formdata->includehide)) {
-            $where['hide'] = 0;
+            $where['hidden'] = 0;
         }
 
         if (!$itemseeds = $DB->get_records('survey_item', $where, 'sortindex', 'id, plugin')) {

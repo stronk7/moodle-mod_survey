@@ -196,6 +196,11 @@ define('SURVEY_POSITIONTOPLEFT', 2);
 define('SURVEY_USERTEMPLATE', 0);
 define('SURVEY_MASTERTEMPLATE', 1);
 
+// relation condition format
+define('SURVEY_CONDITIONOK', 0);
+define('SURVEY_CONDITIONNEVERMATCH', 1);
+define('SURVEY_CONDITIONMALFORMED', 2);
+
 // -----------------------------
 // Moodle core API
 // -----------------------------
@@ -1008,7 +1013,7 @@ function survey_fetch_items_seeds($surveyid, $canaccessadvanceditems, $searchfor
     $sql = 'SELECT si.*
                FROM {survey_item} si
                WHERE si.surveyid = :surveyid
-                   AND si.hide = 0';
+                   AND si.hidden = 0';
     $params = array();
     $params['surveyid'] = $surveyid;
 

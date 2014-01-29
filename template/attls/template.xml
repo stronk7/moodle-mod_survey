@@ -4,7 +4,7 @@
     <survey_item>
       <type>format</type>
       <plugin>label</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>1</sortindex>
@@ -22,7 +22,7 @@
     <survey_item>
       <type>format</type>
       <plugin>fieldset</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>2</sortindex>
@@ -36,7 +36,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>3</sortindex>
@@ -60,7 +60,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>4</sortindex>
@@ -84,7 +84,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>5</sortindex>
@@ -108,7 +108,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>6</sortindex>
@@ -132,7 +132,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>7</sortindex>
@@ -156,7 +156,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>8</sortindex>
@@ -180,7 +180,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>9</sortindex>
@@ -204,7 +204,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>10</sortindex>
@@ -228,7 +228,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>11</sortindex>
@@ -252,7 +252,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>12</sortindex>
@@ -276,7 +276,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>13</sortindex>
@@ -300,7 +300,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>14</sortindex>
@@ -324,7 +324,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>15</sortindex>
@@ -348,7 +348,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>16</sortindex>
@@ -372,7 +372,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>17</sortindex>
@@ -396,7 +396,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>18</sortindex>
@@ -420,7 +420,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>19</sortindex>
@@ -444,7 +444,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>20</sortindex>
@@ -468,7 +468,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>21</sortindex>
@@ -492,7 +492,7 @@
     <survey_item>
       <type>field</type>
       <plugin>radiobutton</plugin>
-      <hide>0</hide>
+      <hidden>0</hidden>
       <insearchform>1</insearchform>
       <advanced>0</advanced>
       <sortindex>22</sortindex>

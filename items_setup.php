@@ -120,6 +120,9 @@ if ($fromform = $itemform->get_data()) {
     }
 
     $item->item_save($fromform);
+    // overwrite item to get new settings in the object
+    $item = survey_get_item($item->itemid, $item->type, $item->plugin);
+    $item->item_update_childrenparentvalue();
 
     $paramurl = array('id' => $cm->id, 'ufd' => $item->userfeedback);
     $returnurl = new moodle_url('items_manage.php', $paramurl);

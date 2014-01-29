@@ -93,13 +93,13 @@ class report_frequency extends mod_survey_reportbase {
     public function stop_if_textareas_only() {
         global $CFG, $DB, $OUTPUT;
 
-        $where = 'surveyid = :surveyid AND type = :type AND advanced = :advanced AND hide = :hide AND plugin <> :plugin';
+        $where = 'surveyid = :surveyid AND type = :type AND advanced = :advanced AND hidden = :hidden AND plugin <> :plugin';
 
         $params = array();
         $params['surveyid'] = $this->survey->id;
         $params['type'] = SURVEY_TYPEFIELD;
         $params['advanced'] = 0;
-        $params['hide'] = 0;
+        $params['hidden'] = 0;
         $params['plugin'] = 'textarea';
 
         $countfields = $DB->count_records_select('survey_item', $where, $params);
