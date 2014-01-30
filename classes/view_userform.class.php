@@ -113,6 +113,11 @@ class mod_survey_userformmanager {
     public $cansubmit = false;
 
     /*
+     * $canignoremaxentries
+     */
+    public $canignoremaxentries = false;
+
+    /*
      * $formdata: the form content as submitted by the user
      */
     public $formdata = null;
@@ -133,6 +138,7 @@ class mod_survey_userformmanager {
         // $this->canmanageitems = has_capability('mod/survey:manageitems', $this->context, null, true);
         $this->canaccessadvanceditems = has_capability('mod/survey:accessadvanceditems', $this->context, null, true);
         $this->cansubmit = has_capability('mod/survey:submit', $this->context, null, true);
+        $this->canignoremaxentries = has_capability('mod/survey:ignoremaxentries', $this->context, null, true);
 
         $this->canseeotherssubmissions = has_capability('mod/survey:seeotherssubmissions', $this->context, null, true);
 
@@ -586,12 +592,12 @@ class mod_survey_userformmanager {
     }
 
     /*
-     * drop_jumped_saved_data
+     * drop_jumping_saved_data
      *
      * @param
      * @return
      */
-    public function drop_jumped_saved_data() {
+    public function drop_jumping_saved_data() {
         global $DB;
 
         if ($this->firstpageright == ($this->formpage+1)) {
@@ -829,6 +835,9 @@ class mod_survey_userformmanager {
     public function submissions_allowed() {
         // if $this->formdata is available, this means that the form was already displayed and submitted
         // so it is not the time to say the user is not allowed to submit one more survey
+        if ($userpageman->submissionid) { // submissionid is already defined, so I am not going to create one more new submission
+            return true;
+        }
         if ($this->formdata) {
             return true;
         }
@@ -836,23 +845,23 @@ class mod_survey_userformmanager {
             return true;
         }
 
-        return ($this->user_closed_submissions(SURVEY_STATUSALL) < $this->survey->maxentries);
+        return ($this->user_sent_submissions(SURVEY_STATUSALL) < $this->survey->maxentries);
     }
 
     /*
-     * user_closed_submissions
+     * user_sent_submissions
      *
      * @param
      * @return
      */
-    public function user_closed_submissions($status=SURVEY_STATUSALL) {
+    public function user_sent_submissions($status=SURVEY_STATUSALL) {
         global $USER, $DB;
 
         $whereparams = array('surveyid' => $this->survey->id, 'userid' => $USER->id);
         if ($status != SURVEY_STATUSALL) {
             $statuslist = array(SURVEY_STATUSCLOSED, SURVEY_STATUSINPROGRESS);
             if (!in_array($status, $statuslist)) {
-                print_error('invalid $status passed to user_closed_submissions in '.__LINE__.' of file '.__FILE__);
+                print_error('invalid $status passed to user_sent_submissions in '.__LINE__.' of file '.__FILE__);
             }
             $whereparams['status'] = $status;
         }
@@ -1108,7 +1117,18 @@ class mod_survey_userformmanager {
 
         switch ($this->view) {
             case SURVEY_SERVESURVEY:
-                $allowed = has_capability('mod/survey:submit', $this->context);
+                $next = 1 + $this->user_sent_submissions(SURVEY_STATUSALL);
+
+                $allowed = $this->cansubmit;
+                if ($this->survey->timeopen) {
+                    $allowed = $allowed && ($this->survey->timeopen < $timenow);
+                }
+                if ($this->survey->timeclose) {
+                    $allowed = $allowed && ($this->survey->timeclose > $timenow);
+                }
+                if (!$this->canignoremaxentries) {
+                    $allowed = $allowed && (($this->survey->maxentries == 0) || ($next < $this->survey->maxentries));
+                }
                 break;
             case SURVEY_PREVIEWSURVEY:
                 $allowed = has_capability('mod/survey:preview', $this->context);
@@ -1191,16 +1211,22 @@ class mod_survey_userformmanager {
         $messages = array();
         $timenow = time();
 
+        // user attempts number:
+        $countclosed = $this->user_sent_submissions(SURVEY_STATUSCLOSED);
+        $inprogress = $this->user_sent_submissions(SURVEY_STATUSINPROGRESS);
+        $next = $countclosed + $inprogress + 1;
+
         // is the button to add one more survey going to be displayed?
-        $displaybutton = true;
-        $displaybutton = $displaybutton && $this->cansubmit;
+        $displaybutton = $this->cansubmit;
         if ($this->survey->timeopen) {
             $displaybutton = $displaybutton && ($this->survey->timeopen < $timenow);
         }
         if ($this->survey->timeclose) {
             $displaybutton = $displaybutton && ($this->survey->timeclose > $timenow);
         }
-        $displaybutton = $displaybutton && (($this->survey->maxentries == 0) || ($next < $this->survey->maxentries));
+        if (!$this->canignoremaxentries) {
+            $displaybutton = $displaybutton && (($this->survey->maxentries == 0) || ($countclosed < $this->survey->maxentries));
+        }
         // End of: is the button to add one more survey going to be displayed?
 
         echo $OUTPUT->heading(get_string('coverpage_welcome', 'survey', $this->survey->name));
@@ -1221,21 +1247,20 @@ class mod_survey_userformmanager {
         }
 
         if ($this->cansubmit) {
-            // maxentries:
-            $maxentries = ($this->survey->maxentries) ? $this->survey->maxentries : get_string('unlimited', 'survey');
+            if (!$this->canignoremaxentries) {
+                // maxentries:
+                $maxentries = ($this->survey->maxentries) ? $this->survey->maxentries : get_string('unlimited', 'survey');
+            } else {
+                $maxentries =  get_string('unlimited', 'survey');
+            }
             $messages[] = get_string('maxentries', 'survey').': '.$maxentries;
 
-            // your closed attempt number:
-            $countclosed = $this->user_closed_submissions(SURVEY_STATUSCLOSED);
-            $next = $countclosed;
+            // user closed attempt number:
             $messages[] = get_string('closedsubmissions', 'survey', $countclosed);
 
             // your in progress attempt number:
-            $inprogress = $this->user_closed_submissions(SURVEY_STATUSINPROGRESS);
-            $next += $inprogress;
             $messages[] = get_string('inprogresssubmissions', 'survey', $inprogress);
 
-            $next++;
             if ($displaybutton) {
                 $messages[] = get_string('yournextattempt', 'survey', $next);
             }

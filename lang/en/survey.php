@@ -357,6 +357,7 @@ $string['survey:saveusertemplates'] = 'Save user templates';
 $string['survey:searchsubmissions'] = 'Search responses';
 $string['survey:seeotherssubmissions'] = 'See responses from other users';
 $string['survey:submit'] = 'Submit attempts';
+$string['survey:ignoremaxentries'] = 'Submissions are not limited by max entries settings';
 $string['survey:view'] = 'View surveys';
 $string['surveyfield'] = 'survey questions';
 $string['surveyfieldpluginname'] = 'Field element plugin';

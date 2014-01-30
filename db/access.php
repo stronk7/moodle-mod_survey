@@ -69,6 +69,7 @@ For each sub-tab, I would define a capability at first but, I will find, sometim
         mod/survey:view
         mod/survey:accessadvanceditems
         mod/survey:submit
+        mod/survey:ignoremaxentries
 
     SUB-TAB == SURVEY_SUBMISSION_MANAGE
         $elementurl = new moodle_url('/mod/survey/view_manage.php', $paramurl);
@@ -202,6 +203,15 @@ $capabilities = array(
         'archetypes' => array(
             'frontpage' => CAP_ALLOW,
             'student' => CAP_ALLOW
+        )
+    ),
+
+    'mod/survey:ignoremaxentries' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW
         )
     ),
 

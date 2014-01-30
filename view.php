@@ -74,8 +74,8 @@ if ($userpageman->canaccessadvanceditems) {
     }
 }
 
-$usercansubmit = ($userpageman->modulepage != SURVEY_SUBMISSION_READONLY);
-$usercansubmit = $usercansubmit && ($userpageman->modulepage != SURVEY_ITEMS_PREVIEW);
+$pageallowesubmission = ($userpageman->modulepage != SURVEY_SUBMISSION_READONLY);
+$pageallowesubmission = $pageallowesubmission && ($userpageman->modulepage != SURVEY_ITEMS_PREVIEW);
 
 // -----------------------------
 // define $user_form return url
@@ -142,8 +142,8 @@ if ($userpageman->formdata = $userpageform->get_data()) {
         // ok, I am leaving page $userpageman->formpage
         // to go to page $userpageman->firstpageright
         // I need to delete all the answer that were (maybe) written during a previous walk along the survey.
-        // data of each item in a page between ($userpageman->formpage+1) and ($userpageman->formpage-1) included, must be deleted
-        $userpageman->drop_jumped_saved_data();
+        // Data of each item in a page between ($userpageman->formpage+1) and ($userpageman->formpage-1) included, must be deleted
+        $userpageman->drop_jumping_saved_data();
 
         $paramurl['formpage'] = $userpageman->firstpageright;
         redirect(new moodle_url('view.php', $paramurl)); // -> go to the first non empty next page of the form
@@ -190,22 +190,20 @@ if (!$userpageman->canaccessadvanceditems) {
 
 // -----------------------------
 // is the user allowed to submit one more survey?
-if ($usercansubmit) {
-    if (!$userpageman->submissionid) { // I am going to create one more new submission
-        if (!$userpageman->submissions_allowed()) {
-            $userpageman->submissions_exceeded_stopexecution();
-        }
-        // } else {
-        // I am editing an "in progress" submission
-        // you are always allowed to carry on with your "in progress" submission
+if ($pageallowesubmission) {
+    if (!$userpageman->submissions_allowed()) {
+        $userpageman->submissions_exceeded_stopexecution();
     }
+    // } else {
+    // I am editing an "in progress" submission
+    // you are always allowed to carry on with your "in progress" submission
 }
 // end of: is the user allowed to submit one more survey?
 // -----------------------------
 
 // -----------------------------
 // manage the thanks page
-if ($usercansubmit) {
+if ($pageallowesubmission) {
     $userpageman->manage_thanks_page();
 }
 // end of: manage the thanks page
