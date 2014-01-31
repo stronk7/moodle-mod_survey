@@ -25,5 +25,5 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 
-define('SURVEYFIELD_AGE_YEAROFFSET', 1970);
+define('SURVEYFIELD_AGE_YEAROFFSET', 1902);
 define('SURVEYFIELD_AGE_FORMAT', '[yy/mm]');

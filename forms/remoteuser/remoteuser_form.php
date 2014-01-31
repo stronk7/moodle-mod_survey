@@ -121,7 +121,7 @@ class survey_submissionform extends moodleform {
                     $elementnumber = $item->get_customnumber() ? $item->get_customnumber().':' : '';
                     if ($position == SURVEY_POSITIONTOP) {
                         // workaround suggested by Marina Glancy in MDL-42946
-                        $content = html_writer::tag('span', $item->get_content(), array('class' => 'indent-'.$item->get_indent()));
+                        $content = html_writer::tag('div', $item->get_content(), array('class' => 'indent-'.$item->get_indent()));
 
                         $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $content);
                     }

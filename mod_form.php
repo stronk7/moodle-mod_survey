@@ -52,7 +52,7 @@ class mod_survey_mod_form extends moodleform_mod {
         $fieldname = 'timeclose';
         $mform->addElement('date_time_selector', $fieldname, get_string($fieldname, 'survey'), array('optional' => true));
 
-        // ----------------------------------------
+        // dataentry fieldset
         $fieldname = 'dataentry';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'survey'));
 
@@ -84,7 +84,7 @@ class mod_survey_mod_form extends moodleform_mod {
         }
 
         // startyear
-        $boundaryyear = array_combine(range(1655, 2285), range(1655, 2285));
+        $boundaryyear = array_combine(range(1902, 2038), range(1902, 2038));
 
         $fieldname = 'startyear';
         $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $boundaryyear);

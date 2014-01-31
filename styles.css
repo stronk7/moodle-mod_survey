@@ -242,6 +242,7 @@
     margin-bottom: -10px;
 }
 
+/* taken from: http://www.techrepublic.com/blog/web-designer/customize-horizontal-rules-to-add-some-flair/ */
 #page-mod-survey-items_manage hr.pagebreakcontent:before {
     display: block;
     content: "";

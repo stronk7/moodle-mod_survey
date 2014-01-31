@@ -124,6 +124,7 @@ class survey_pluginform extends mod_survey_itembaseform {
             $errors['defaultvalue_group'] = get_string('notalloweddefault', 'survey', $a);
         }
 
+        // echo PHP_INT_SIZE;
         $lowerbound = $item->item_age_to_unix_time($data['lowerbound_year'], $data['lowerbound_month']);
         $upperbound = $item->item_age_to_unix_time($data['upperbound_year'], $data['upperbound_month']);
         if ($lowerbound == $upperbound) {
