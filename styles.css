@@ -227,6 +227,38 @@
 }
 /* END OF: selectors for the static field explaining the format needed by each plugin in parentcontent field */
 
+/* BEGIN OF: Page break and fieldset presentation in the items table and during deletion confirmation */
+/* first hypotesis: only a simple double horizontal line */
+/* #page-mod-survey-items_manage hr.pagebreakcontent {
+    border: none;
+    border-top: medium double;
+} */
+
+#page-mod-survey-items_manage hr.pagebreakcontent {
+    height: 20px;
+    border-style: ridge;
+    border-width: 2px 0 0 0;
+    border-radius: 45px;
+    margin-bottom: -10px;
+}
+
+#page-mod-survey-items_manage hr.pagebreakcontent:before {
+    display: block;
+    content: "";
+    height: 20px;
+    margin-top: -25px;
+    border-style: ridge;
+    border-width: 0 0 2px 0;
+    border-radius: 45px;
+}
+
+#page-mod-survey-items_manage hr.fieldsetendcontent {
+    border: 2px dotted #000;
+    border-style: none none dotted;
+    width: 90%;
+}
+/* END OF: Page break and fieldset presentation in the items table and during deletion confirmation */
+
 /* move horizontal checkbox and radio label closer to corresponding checkboes */
 #page-mod-survey-view .mform .fitem .felement input[type="checkbox"],
 #page-mod-survey-view .mform .fitem .felement input[type="radio"] {

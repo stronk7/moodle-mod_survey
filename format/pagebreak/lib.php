@@ -25,4 +25,4 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 
-define('SURVEYFORMAT_PAGEBREAK_CONTENT', '<hr /><br /><hr />');
+define('SURVEYFORMAT_PAGEBREAK_CONTENT', '<hr class="pagebreakcontent" />');

@@ -25,4 +25,4 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/survey/locallib.php');
 
-define('SURVEYFORMAT_FIELDSETEND_CONTENT', '<hr />');
+define('SURVEYFORMAT_FIELDSETEND_CONTENT', '<hr class="fieldsetendcontent" />');
