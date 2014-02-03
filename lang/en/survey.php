@@ -417,5 +417,5 @@ $string['yournextattempt'] = 'You are going to fill your attempt number {$a}';
 $string['cannotsubmittooearly'] = 'The survey is still not open. You have to wait until {$a}';
 $string['cannotsubmittoolate'] = 'The survey has been closed on {$a}';
 $string['malformedchildparentvalue'] = 'Malformed condition: "{$a}".<br />It might never be verified.';
-$string['visiblesonly'] = 'Only visibles';
+$string['visiblesonly'] = 'Visibles elements only';
 $string['visiblesonly_help'] = 'Include in this template only visibles elements';

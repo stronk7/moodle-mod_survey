@@ -151,8 +151,8 @@ class mod_survey_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
-    // questa funzione viene eseguita dopo aver mostrato la mod_form
-    // e serve per preparare i dati al salvataggio
+    // this function is executed once mod_form has been displayed
+    // and it is an helper to prepare data before saving them
     public function get_data() {
         $data = parent::get_data();
         if (!$data) {
@@ -180,8 +180,8 @@ class mod_survey_mod_form extends moodleform_mod {
         return $data;
     }
 
-    // questa funzione viene eseguita prima di mostrare la mod_form
-    // e serve per definire eventuali preset
+    // this function is executed once mod_form has been displayed
+    // and is needed to define some presets
     public function data_preprocessing(&$defaults) {
         global $DB;
 

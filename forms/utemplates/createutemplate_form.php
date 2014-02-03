@@ -85,6 +85,22 @@ class survey_utemplatecreateform extends moodleform {
         $this->add_action_buttons(false, get_string('continue'));
     }
 
+    public function get_data() {
+        $data = parent::get_data();
+        if (!$data) {
+            return false;
+        }
+
+        $checkboxes = array('overwrite', 'visiblesonly');
+        foreach ($checkboxes as $checkbox) {
+            if (!isset($data->{$checkbox})) {
+                $data->{$checkbox} = '0';
+            }
+        }
+
+        return $data;
+    }
+
     public function validation($data, $files) {
         $mform = $this->_form;
 
