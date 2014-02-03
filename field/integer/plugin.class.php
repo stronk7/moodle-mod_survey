@@ -352,8 +352,8 @@ EOS;
         $labels = array();
         foreach ($parentcontents as $parentcontent) {
             $condition = is_numeric($parentcontent);
-            $condition = $condition && ($parentcontent >= $this->$this->lowerbound);
-            $condition = $condition && ($parentcontent <= $this->$this->upperbound);
+            $condition = $condition && ($parentcontent >= $this->lowerbound);
+            $condition = $condition && ($parentcontent <= $this->upperbound);
             if ($condition) {
                 $childparentvalue[] = $parentcontent;
             } else {
