@@ -835,7 +835,7 @@ class mod_survey_userformmanager {
     public function submissions_allowed() {
         // if $this->formdata is available, this means that the form was already displayed and submitted
         // so it is not the time to say the user is not allowed to submit one more survey
-        if ($userpageman->submissionid) { // submissionid is already defined, so I am not going to create one more new submission
+        if (this->submissionid) { // submissionid is already defined, so I am not going to create one more new submission
             return true;
         }
         if ($this->formdata) {

@@ -30,4 +30,4 @@ require_once(dirname(__FILE__) . '/lib.php');
 
 $settings->add(new admin_setting_configtext('surveyfield_integer/maximuminteger',
     get_string('maximuminteger', 'surveyfield_integer'),
-    get_string('maximuminteger_desc', 'surveyfield_integer'), 105, PARAM_INT));
+    get_string('maximuminteger_desc', 'surveyfield_integer'), 255, PARAM_INT));

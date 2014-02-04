@@ -19,16 +19,48 @@ button is needed. (thanks to JR)
 -> mform elements in MMM have different sizes probably because of /theme/yui_combo.php?3.13.0/cssreset/cssreset.css&3.13.0/cssfonts/cssfonts.css&3.13.0/cssgrids/cssgrids.css&3.13.0/cssbase/cssbase.css
 
 
-1) ELOY - IN PROGRESS: While looking for DB columns in the DB I found all the install.xml strangely formatted. And also, built with some old version of the editor (we are PREV/NEXT free since some months ago). Custom formatting continues there. It’s not the end of the world, so keeping it for now.
-2) DONE: reviewing 1) will also review this. Some indexes in those files should be defined as foreign keys.
-3) DANIELE to provide a huge example with all branching/options exposed: Creating some items I discovered that they content was being stored into item->content (missing format) instead of survey_textarea
-4) The field/format subplugin duality... is tricky. Perhaps it would be better to make all them fileds (with/without accepting responses).
-5) Still it seems to be something strange when handling fileareas. I just grepped by get_area_files and found a bunch of them new/strange for me. ELOY has to review this!
+> 1) ELOY - IN PROGRESS: While looking for DB columns in the DB I found all the install.xml strangely formatted. And also, built with some old version of the editor (we are PREV/NEXT free since some months ago). Custom formatting continues there. It’s not the end of the world, so keeping it for now.
+
+...and I feel, it can be closed. Am I wrong?
+
+> 2) DONE: reviewing 1) will also review this. Some indexes in those files should be defined as foreign keys.
+
+...can I delete it from the list?
+
+> 3) DANIELE to provide a huge example with all branching/options exposed: Creating some items I discovered that they content was being stored into item->content (missing format) instead of survey_textarea
+
+Last revision of parent-child_rev7.xml reday to be imported as usertemplate is here: https://dl.dropboxusercontent.com/u/32667040/parent-child_rev7.xml You may like to test it in order to have material to discuss many aspects of survey.
+
+> 4) The field/format subplugin duality... is tricky. Perhaps it would be better to make all them fileds (with/without accepting responses).
+
+As already discussed, the only difference is that I store them into two different folders. Why do you suggest to put them all into the same folder? Is not this going to increase the confusion?
+
+My point is… what’s the real difference between a field and a format subplugin? Form my understanding it’s just an “attribute” difference. Anyway, not critical.
+
+> 5) Still it seems to be something strange when handling fileareas. I just grepped by get_area_files and found a bunch of them new/strange for me. ELOY has to review this!
+
+Please let me know better what do you mean. I can not understand it.
+
 6) Comments in italian.
+
 7) Done: The way an "attempt" is started (especially when the student has already filled a previous one is strange. DANIELE fixed this.
+
 8) Some settings, like the max/min year sound strange in the module.
+
 9) More coming, for sure.
-MDL-28194: I am in trouble assigning syles to some mform element. MDL-31796: $mform->disabledIf doesn't work for 'filemanager' mform elements. MDL-34815: Disabled mform items need to be skipped during validation (and more).
+
+must:
+
+MDL-25067: Not able to disable the editor
+MDL-31796: $mform->disabledIf doesn't work for 'filemanager' mform elements.
+MDL-43689: Adv. check box not returning actual level but default one.
+MDL-43704: multiselect not disabled by checkbox
+
+may:
+
+MDL-28194: I am in trouble assigning syles to some mform element.
+MDL-34815: Disabled mform items need to be skipped during validation (and more).
+
 > Also. I'd recommend taking rid of the filearea constants. They don't help
 > much. And it seems that there are more than the currently used ones. Using
 > literals is ok.
@@ -40,13 +72,28 @@ MDL-28194: I am in trouble assigning syles to some mform element. MDL-31796: $mf
 > more yet, if there are groups... then everything (listing, reports, graphs)
 > must be by group.
 things like the "phantom tabs" (sorry for the expression, lol, just joking) or the way "attempts" are performed... are substandard (to name it in some way).
+
 10) A read me about what's missing (backup, migration from old, usability review and discussion)
+
 11) A commit (decided by you) where you want me to cut history. Can be current commit of anything else if you want to preserve your latest commits for any reason.
-12) A BIG WARNING saying that it must not be used in production sites with existing old surveys because they will be erased completely (beacuse of 1). README.md (so it will display nicely in github) ?
+
+12) A BIG WARNING saying that it must not be used in production sites with existing old surveys because they will be erased completely (beacuse of 1).
+README.md (so it will display nicely in github) ?
+
 13) Delete any other todo and similar.
+
 14) start using the tracker for issues, lol.
-15) start using proper commit messages with tracker issues always (headbang) we can do that toady, np, here. what do you think?
-16) Add support for generators
+
+15) start using proper commit messages with tracker issues always
+(headbang)
+we can do that toady, np, here. what do you think?
+
+16) Add support for generators + acceptance & unit tests.
+
 17) Attempts / responses. How should we name those things?
-18) Discuss how to get advantages by MDL-42961 fix.
-19) Discuss how to get advantages by MDL-41767 fix.
+
+18) surveyfield_integer_maxnuminteger defaults to 105 (copy/pasted from age?)
+
+19) Anything else annotated in https://github.com/kordan/moodle-mod_survey/blob/master/state_of_art_*** files.
+
+20) Discuss how to get advantages by MDL-41767 fix.
