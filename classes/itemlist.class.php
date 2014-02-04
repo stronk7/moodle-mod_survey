@@ -371,7 +371,7 @@ class mod_survey_itemlist {
                 $message = get_string('parentid_alt', 'survey');
                 $parentsortindex = $DB->get_field('survey_item', 'sortindex', array('id' => $item->get_parentid()));
                 $content = $parentsortindex;
-                $content .= $OUTPUT->pix_icon('link', $message, 'survey',
+                $content .= $OUTPUT->pix_icon('branch', $message, 'survey',
                         array('title' => $message, 'class' => 'smallicon'));
                 $content .= $item->get_parentcontent('; ');
             } else {
@@ -1295,7 +1295,7 @@ class mod_survey_itemlist {
             if ($item->get_parentid()) {
                 $message = get_string('parentid_alt', 'survey');
                 $content = $parentitem->get_sortindex();
-                $content .= $OUTPUT->pix_icon('link', $message, 'survey',
+                $content .= $OUTPUT->pix_icon('branch', $message, 'survey',
                         array('title' => $message, 'class' => 'smallicon'));
                 $content .= $item->get_parentcontent('; ');
             } else {
