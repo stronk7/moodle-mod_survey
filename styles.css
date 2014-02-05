@@ -234,7 +234,8 @@
     border-top: medium double;
 } */
 
-#page-mod-survey-items_manage hr.pagebreakcontent {
+#page-mod-survey-items_manage hr.pagebreakcontent,
+#page-mod-survey-items_validate hr.pagebreakcontent {
     height: 20px;
     border-style: ridge;
     border-width: 2px 0 0 0;
@@ -243,7 +244,8 @@
 }
 
 /* taken from: http://www.techrepublic.com/blog/web-designer/customize-horizontal-rules-to-add-some-flair/ */
-#page-mod-survey-items_manage hr.pagebreakcontent:before {
+#page-mod-survey-items_manage hr.pagebreakcontent:before,
+#page-mod-survey-items_validate hr.pagebreakcontent:before {
     display: block;
     content: "";
     height: 20px;
@@ -253,7 +255,8 @@
     border-radius: 45px;
 }
 
-#page-mod-survey-items_manage hr.fieldsetendcontent {
+#page-mod-survey-items_manage hr.fieldsetendcontent,
+#page-mod-survey-items_validate hr.fieldsetendcontent {
     border: 2px dotted #000;
     border-style: none none dotted;
     width: 90%;
