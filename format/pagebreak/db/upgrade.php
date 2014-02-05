@@ -30,7 +30,7 @@
  * @return bool true
  */
 function xmldb_surveyformat_pagebreak_upgrade($oldversion) {
-    global $DB;
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager();
 
@@ -44,6 +44,14 @@ function xmldb_surveyformat_pagebreak_upgrade($oldversion) {
 
         // Survey savepoint reached.
         upgrade_plugin_savepoint(true, 2013103101, 'surveyformat', 'pagebreak');
+    }
+
+    if ($oldversion < 2014020504) {
+        require_once($CFG->dirroot.'/mod/survey/format/pagebreak/lib.php');
+
+        $sql = 'UPDATE {surveyformat_pagebreak} SET content = ?';
+        $params = array(SURVEYFORMAT_PAGEBREAK_CONTENT);
+        $DB->execute($sql, $params);
     }
 
     return true;
