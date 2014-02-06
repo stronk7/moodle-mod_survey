@@ -500,9 +500,6 @@ class mod_survey_templatebase {
         $simplexml = new SimpleXMLElement($xml);
         foreach ($simplexml->children() as $xmlitem) {
             foreach ($xmlitem->children() as $xmltable) {
-                // for instance:
-                //     <survey_item>
-                //     <survey_radiobutton>
                 $tablename = $xmltable->getName();
 
                 // I am assuming that survey_item table is ALWAYS before the survey_<<plugin>> table

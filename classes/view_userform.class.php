@@ -1195,7 +1195,7 @@ class mod_survey_userformmanager {
      * @return
      */
     public function display_cover() {
-        global $OUTPUT, $CFG, $COURSE;
+        global $OUTPUT, $CFG, $COURSE, $PAGE;
 
         $canaccessreports = has_capability('mod/survey:accessreports', $this->context, null, true);;
         $canaccessownreports = has_capability('mod/survey:accessownreports', $this->context, null, true);

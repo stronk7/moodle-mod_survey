@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 $options = array(
     SURVEY_POSITIONLEFT => get_string('left', 'survey'),
     SURVEY_POSITIONTOP => get_string('top', 'survey'),
-    SURVEY_POSITIONTOPLEFT => get_string('topleft', 'survey'),
+    SURVEY_POSITIONFULLWIDTH => get_string('fullwidth', 'survey'),
 );
 
 $settings->add(new admin_setting_configselect('surveytemplate_attls/position',

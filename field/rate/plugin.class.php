@@ -430,9 +430,12 @@ EOS;
         }
 
         if ($this->MDL41767wasfixed) {
-            $elementlabel = implode('<br />', $options);
-
+            $elementlabel = '';
             if ($this->style == SURVEYFIELD_RATE_USERADIO) {
+                foreach ($options as $option) {
+                    $elementlabel .= html_writer::tag('p', $option, array('class' => 'optionsradio'));
+                }
+
                 $separatorblock = array_fill(0, count($rates) - 1, ' ');
 
                 $separator = array();
@@ -450,13 +453,17 @@ EOS;
 
                 if (!$this->required) {
                     $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
-                    // no need to add one more $separator, the elements stops here
+                    // no need to add one more $separator, the group stops here
                 }
 
                 $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, $separator, false);
             }
 
             if ($this->style == SURVEYFIELD_RATE_USESELECT) {
+                foreach ($options as $option) {
+                    $elementlabel .= html_writer::tag('p', $option, array('class' => 'optionsselect'));
+                }
+
                 $elementgroup = array();
                 foreach ($options as $k => $option) {
                     $uniquename = $this->itemname.'_'.$k;
@@ -465,7 +472,7 @@ EOS;
 
                 if (!$this->required) {
                     $elementgroup[] = $mform->createElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
-                    // no need to add one more $separator, the elements stops here
+                    // no need to add one more $separator, the group stops here
                 }
 
                 $mform->addGroup($elementgroup, $this->itemname.'_group', $elementlabel, '<br />', false);
@@ -488,8 +495,11 @@ EOS;
                 foreach ($options as $k => $option) {
                     $uniquename = $this->itemname.'_'.$k;
                     $mform->addElement('select', $uniquename, $option, $rates, array('class' => 'indent-'.$this->indent));
-
                 }
+            }
+
+            if (!$this->required) {
+                $mform->addElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
             }
         }
 
@@ -500,8 +510,6 @@ EOS;
             // simply add a dummy star to the item and the footer note about mandatory fields
             $mform->_required[] = $this->itemname.'_extrarow';
         } else {
-            $mform->addElement('checkbox', $this->itemname.'_noanswer', '', get_string('noanswer', 'survey'), array('class' => 'indent-'.$this->indent));
-
             // disable if $this->itemname.'_noanswer' is selected
             if ($this->MDL41767wasfixed) {
                 $mform->disabledIf($this->itemname.'_group', $this->itemname.'_noanswer', 'checked');

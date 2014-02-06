@@ -10,13 +10,13 @@
       <sortindex>1</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_label>
+    <surveyformat_label>
       <content>label_content_01</content>
       <contentformat>1</contentformat>
       <indent>0</indent>
       <fullwidth>0</fullwidth>
       <leftlabel>label_leftlabel_01</leftlabel>
-    </survey_label>
+    </surveyformat_label>
   </item>
   <item>
     <survey_item>
@@ -28,9 +28,9 @@
       <sortindex>2</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_fieldset>
+    <surveyformat_fieldset>
       <content>fieldset_content_01</content>
-    </survey_fieldset>
+    </surveyformat_fieldset>
   </item>
   <item>
     <survey_item>
@@ -42,7 +42,7 @@
       <sortindex>3</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_02</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -54,7 +54,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -66,7 +66,7 @@
       <sortindex>4</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_03</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -78,7 +78,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -90,7 +90,7 @@
       <sortindex>5</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_04</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -102,7 +102,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -114,7 +114,7 @@
       <sortindex>6</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_05</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -126,7 +126,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -138,7 +138,7 @@
       <sortindex>7</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_06</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -150,7 +150,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -162,7 +162,7 @@
       <sortindex>8</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_07</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -174,7 +174,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -186,7 +186,7 @@
       <sortindex>9</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_08</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -198,7 +198,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -210,7 +210,7 @@
       <sortindex>10</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_09</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -222,7 +222,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -234,7 +234,7 @@
       <sortindex>11</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_10</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -246,7 +246,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -258,7 +258,7 @@
       <sortindex>12</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_11</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -270,7 +270,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -282,7 +282,7 @@
       <sortindex>13</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_12</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -294,7 +294,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -306,7 +306,7 @@
       <sortindex>14</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_13</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -318,7 +318,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -330,7 +330,7 @@
       <sortindex>15</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_14</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -342,7 +342,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -354,7 +354,7 @@
       <sortindex>16</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_15</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -366,7 +366,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -378,7 +378,7 @@
       <sortindex>17</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_16</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -390,7 +390,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -402,7 +402,7 @@
       <sortindex>18</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_17</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -414,7 +414,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -426,7 +426,7 @@
       <sortindex>19</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_18</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -438,7 +438,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -450,7 +450,7 @@
       <sortindex>20</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_19</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -462,7 +462,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -474,7 +474,7 @@
       <sortindex>21</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_20</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -486,7 +486,7 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
   <item>
     <survey_item>
@@ -498,7 +498,7 @@
       <sortindex>22</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_radiobutton>
+    <surveyfield_radiobutton>
       <content>radiobutton_content_21</content>
       <contentformat>1</contentformat>
       <position>1</position>
@@ -510,6 +510,6 @@
       <defaultvalue>radiobutton_defaultvalue_01</defaultvalue>
       <downloadformat>0</downloadformat>
       <adjustment>1</adjustment>
-    </survey_radiobutton>
+    </surveyfield_radiobutton>
   </item>
 </items>

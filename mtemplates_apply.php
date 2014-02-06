@@ -86,7 +86,7 @@ if ($applymtemplate->is_cancelled()) {
 if ($mtemplateman->formdata = $applymtemplate->get_data()) {
     $mtemplateman->apply_template(SURVEY_MASTERTEMPLATE);
 
-    $redirecturl = new moodle_url('view.php', array('id' => $cm->id, 'view' => SURVEY_PREVIEWSURVEY));
+    $redirecturl = new moodle_url('view.php', array('id' => $cm->id, 'cvp' => 0, 'view' => SURVEY_PREVIEWSURVEY));
     redirect($redirecturl);
 }
 // end of: manage form submission

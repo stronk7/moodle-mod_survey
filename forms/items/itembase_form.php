@@ -125,7 +125,7 @@ class mod_survey_itembaseform extends moodleform {
         $fieldname = 'position';
         if ($position = $item->get_form_requires($fieldname)) {
             $options = array(SURVEY_POSITIONTOP => get_string('top', 'survey'),
-                            SURVEY_POSITIONTOPLEFT => get_string('topleft', 'survey'));
+                            SURVEY_POSITIONFULLWIDTH => get_string('fullwidth', 'survey'));
             if ($item->item_left_position_allowed()) { // position can even be SURVEY_POSITIONLEFT
                 $options = array(SURVEY_POSITIONLEFT => get_string('left', 'survey')) + $options;
             }

@@ -97,3 +97,19 @@ we can do that toady, np, here. what do you think?
 19) Anything else annotated in https://github.com/kordan/moodle-mod_survey/blob/master/state_of_art_*** files.
 
 20) Discuss how to get advantages by MDL-41767 fix.
+
+21) “pugin” ? LOL.
+
+22) Are these accurate/correct:
+define('SURVEY_MINEVERYEAR'        , 1970);
+define('SURVEY_MAXEVERYEAR'        , 2020);
+
+Daniele on it.
+
+23) empty notifirole by default? survey settings. => Change behavior to list of roles having some cap (or caps), so it does not require enrollments.
+
+24) Webservices?
+
+25) events vs add_to_log()
+
+26) Verify guests submissions. Permissions, relations with anonymous….

@@ -125,7 +125,7 @@ class survey_submissionform extends moodleform {
 
                         $mform->addElement('static', $item->get_itemname().'_extrarow', $elementnumber, $content);
                     }
-                    if ($position == SURVEY_POSITIONTOPLEFT) {
+                    if ($position == SURVEY_POSITIONFULLWIDTH) {
                         $questioncontent = $item->get_content();
                         if ($elementnumber) {
                             // I want to change "4.2:<p>Do you live in NY?</p>" to "<p>4.2: Do you live in NY?</p>"

@@ -105,7 +105,7 @@ class mod_survey_mod_form extends moodleform_mod {
 
         // maxentries
         $fieldname = 'maxentries';
-        $countoptions = array(0 => get_string('unlimited', 'survey'))+
+        $countoptions = array(0 => get_string('unlimited', 'survey')) +
                         (array_combine(range(1, SURVEY_MAX_ENTRIES),   // keys
                                        range(1, SURVEY_MAX_ENTRIES))); // values
         $mform->addElement('select', $fieldname, get_string($fieldname, 'survey'), $countoptions);
@@ -115,7 +115,10 @@ class mod_survey_mod_form extends moodleform_mod {
         $fieldname = 'notifyrole';
         $options = array();
         $context = context_course::instance($COURSE->id);
-        $roles = get_roles_used_in_context($context);
+        $roles = get_all_roles($context);
+        // always drop 'guest'
+        unset($roles[6]); // <-- TODO: Ugly. If it changes in the future?
+
         $roleoptions = role_fix_names($roles, $context, ROLENAME_ALIAS, true);
         foreach ($roleoptions as $roleid => $rolename) {
             $options[$roleid] = $rolename;

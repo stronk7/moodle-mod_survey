@@ -10,13 +10,13 @@
       <sortindex>1</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_label>
+    <surveyformat_label>
       <content>label_content_01</content>
       <contentformat>1</contentformat>
       <indent>0</indent>
       <fullwidth>0</fullwidth>
       <leftlabel>label_leftlabel_01</leftlabel>
-    </survey_label>
+    </surveyformat_label>
   </item>
   <item>
     <survey_item>
@@ -28,7 +28,7 @@
       <sortindex>2</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_textarea>
+    <surveyfield_textarea>
       <content>textarea_content_02</content>
       <contentformat>1</contentformat>
       <position>0</position>
@@ -40,7 +40,7 @@
       <areacols>60</areacols>
       <minlength>0</minlength>
       <maxlength>0</maxlength>
-    </survey_textarea>
+    </surveyfield_textarea>
   </item>
   <item>
     <survey_item>
@@ -52,7 +52,7 @@
       <sortindex>3</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_textarea>
+    <surveyfield_textarea>
       <content>textarea_content_03</content>
       <contentformat>1</contentformat>
       <position>0</position>
@@ -64,7 +64,7 @@
       <areacols>60</areacols>
       <minlength>0</minlength>
       <maxlength>0</maxlength>
-    </survey_textarea>
+    </surveyfield_textarea>
   </item>
   <item>
     <survey_item>
@@ -76,7 +76,7 @@
       <sortindex>4</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_textarea>
+    <surveyfield_textarea>
       <content>textarea_content_04</content>
       <contentformat>1</contentformat>
       <position>0</position>
@@ -88,7 +88,7 @@
       <areacols>60</areacols>
       <minlength>0</minlength>
       <maxlength>0</maxlength>
-    </survey_textarea>
+    </surveyfield_textarea>
   </item>
   <item>
     <survey_item>
@@ -100,7 +100,7 @@
       <sortindex>5</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_textarea>
+    <surveyfield_textarea>
       <content>textarea_content_05</content>
       <contentformat>1</contentformat>
       <position>0</position>
@@ -112,7 +112,7 @@
       <areacols>60</areacols>
       <minlength>0</minlength>
       <maxlength>0</maxlength>
-    </survey_textarea>
+    </surveyfield_textarea>
   </item>
   <item>
     <survey_item>
@@ -124,7 +124,7 @@
       <sortindex>6</sortindex>
       <parentvalue>item_parentvalue_01</parentvalue>
     </survey_item>
-    <survey_textarea>
+    <surveyfield_textarea>
       <content>textarea_content_06</content>
       <contentformat>1</contentformat>
       <position>0</position>
@@ -136,6 +136,6 @@
       <areacols>60</areacols>
       <minlength>0</minlength>
       <maxlength>0</maxlength>
-    </survey_textarea>
+    </surveyfield_textarea>
   </item>
 </items>
