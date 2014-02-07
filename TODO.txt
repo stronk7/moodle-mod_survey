@@ -18,10 +18,11 @@ button is needed. (thanks to JR)
 -> I need a regex to validate an url
 -> mform elements in MMM have different sizes probably because of /theme/yui_combo.php?3.13.0/cssreset/cssreset.css&3.13.0/cssfonts/cssfonts.css&3.13.0/cssgrids/cssgrids.css&3.13.0/cssbase/cssbase.css
 
-
 > 1) ELOY - IN PROGRESS: While looking for DB columns in the DB I found all the install.xml strangely formatted. And also, built with some old version of the editor (we are PREV/NEXT free since some months ago). Custom formatting continues there. It’s not the end of the world, so keeping it for now.
 
 ...and I feel, it can be closed. Am I wrong?
+
+- Some DB fields do not have any implementation?
 
 > 2) DONE: reviewing 1) will also review this. Some indexes in those files should be defined as foreign keys.
 
@@ -41,52 +42,37 @@ My point is… what’s the real difference between a field and a format subplug
 
 Please let me know better what do you mean. I can not understand it.
 
-6) Comments in italian.
+6) Comments in italian. 
 
-7) Done: The way an "attempt" is started (especially when the student has already filled a previous one is strange. DANIELE fixed this.
+7) Done: The way an "attempt" is started (especially when the student has already filled a previous one is strange. DANIELE fixed this.
 
-8) Some settings, like the max/min year sound strange in the module.
+8) Some settings, like the max/min year sound strange in the module. 
 
-9) More coming, for sure.
+9) More coming, for sure.
 
 must:
 
-MDL-25067: Not able to disable the editor
-MDL-31796: $mform->disabledIf doesn't work for 'filemanager' mform elements.
+MDL-25067: Not able to disable the editor 
+MDL-31796: $mform->disabledIf doesn't work for 'filemanager' mform elements. 
 MDL-43689: Adv. check box not returning actual level but default one.
 MDL-43704: multiselect not disabled by checkbox
 
 may:
 
-MDL-28194: I am in trouble assigning syles to some mform element.
-MDL-34815: Disabled mform items need to be skipped during validation (and more).
+MDL-28194: I am in trouble assigning syles to some mform element.
+MDL-34815: Disabled mform items need to be skipped during validation (and more).
 
-> Also. I'd recommend taking rid of the filearea constants. They don't help
-> much. And it seems that there are more than the currently used ones. Using
-> literals is ok.
-> ah, one more detail. It just came to my mind now. When looking for user
-> attempts... it's correct (i think) to show the pager and the alphabet
-> (abcdef...) but only if the user is teacher or so (some capability). Normal
-> students are only able to see OWN attempts, correct? The alphabet does not
-> have any sense there.
-> more yet, if there are groups... then everything (listing, reports, graphs)
-> must be by group.
-things like the "phantom tabs" (sorry for the expression, lol, just joking) or the way "attempts" are performed... are substandard (to name it in some way).
+> Also. I'd recommend taking rid of the filearea constants. They don't help  > much. And it seems that there are more than the currently used ones. Using  > literals is ok. 
+> ah, one more detail. It just came to my mind now. When looking for user  > attempts... it's correct (i think) to show the pager and the alphabet  > (abcdef...) but only if the user is teacher or so (some capability). Normal  > students are only able to see OWN attempts, correct? The alphabet does not  > have any sense there. 
+> more yet, if there are groups... then everything (listing, reports, graphs)  > must be by group. 
+things like the "phantom tabs" (sorry for the expression, lol, just joking) or the way "attempts" are performed... are substandard (to name it in some way). 
 
-10) A read me about what's missing (backup, migration from old, usability review and discussion)
-
-11) A commit (decided by you) where you want me to cut history. Can be current commit of anything else if you want to preserve your latest commits for any reason.
-
-12) A BIG WARNING saying that it must not be used in production sites with existing old surveys because they will be erased completely (beacuse of 1).
-README.md (so it will display nicely in github) ?
-
-13) Delete any other todo and similar.
-
-14) start using the tracker for issues, lol.
-
-15) start using proper commit messages with tracker issues always
-(headbang)
-we can do that toady, np, here. what do you think?
+10) A read me about what's missing (backup, migration from old, usability review and discussion)  
+11) A commit (decided by you) where you want me to cut history. Can be current commit of anything else if you want to preserve your latest commits for any reason.  
+12) A BIG WARNING saying that it must not be used in production sites with existing old surveys because they will be erased completely (beacuse of 1).  README.md (so it will display nicely in github) ?  
+13) Delete any other todo and similar.  
+14) start using the tracker for issues, lol.  
+15) start using proper commit messages with tracker issues always  (headbang)  we can do that toady, np, here. what do you think? 
 
 16) Add support for generators + acceptance & unit tests.
 
@@ -98,18 +84,22 @@ we can do that toady, np, here. what do you think?
 
 20) Discuss how to get advantages by MDL-41767 fix.
 
-21) “pugin” ? LOL.
+21) FIXED: “pugin” ? LOL.
 
 22) Are these accurate/correct:
 define('SURVEY_MINEVERYEAR'        , 1970);
 define('SURVEY_MAXEVERYEAR'        , 2020);
 
-Daniele on it.
+They are useless, getting rid of them. Daniele on it.
 
-23) empty notifirole by default? survey settings. => Change behavior to list of roles having some cap (or caps), so it does not require enrollments.
+23) empty notifirole by default? survey settings. => Change behavior to list of roles having some cap (or caps), so it does not require enrollments. About to use get_role_names_with_caps_in_context() for that, asking to some key capabilities.
 
 24) Webservices?
 
 25) events vs add_to_log()
 
 26) Verify guests submissions. Permissions, relations with anonymous….
+
+27) templatemaster directory?
+
+28) SURVEY_MASTERTEMPLATE and his sister in apply_template8) seem unnecessary. you can define the the type on constructor.
